@@ -69,11 +69,11 @@ dependencies {
     api 'org.seamless:seamless-http:'+seamlessVersion
     api 'org.seamless:seamless-xml:'+seamlessVersion
     api 'org.seamless:seamless-swing:'+seamlessVersion
-    implementation group: 'org.xmlpull', name: 'com.springsource.org.xmlpull', version: '1.1.4'
+    compileOnly group: 'org.xmlpull', name: 'com.springsource.org.xmlpull', version: '1.1.4'
 
     compileOnly 'javax.enterprise:cdi-api:2.0.SP1'
     //implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation ('com.google.android:android:4.1.1.4'){
+    compileOnly ('com.google.android:android:4.1.1.4'){
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'org.khronos', module: 'opengl-api'
         exclude group: 'org.json', module: 'json'
@@ -81,9 +81,9 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
     var jettyVersion='8.+'
-    implementation 'org.eclipse.jetty:jetty-server:'+jettyVersion
-    implementation 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
-    implementation 'org.eclipse.jetty:jetty-client:'+jettyVersion
+    compileOnly 'org.eclipse.jetty:jetty-server:'+jettyVersion
+    compileOnly 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
+    compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
     compileOnly 'net.sf.kxml:kxml2:2.3.0'
 }
 

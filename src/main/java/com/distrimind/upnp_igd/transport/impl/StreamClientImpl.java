@@ -100,7 +100,7 @@ public class StreamClientImpl implements StreamClient {
         System.setProperty("http.keepAlive", Boolean.toString(configuration.isUsePersistentConnections()));
 
         // Hack the environment to allow additional HTTP methods
-        if (System.getProperty(HACK_STREAM_HANDLER_SYSTEM_PROPERTY) == null) {
+        /*if (System.getProperty(HACK_STREAM_HANDLER_SYSTEM_PROPERTY) == null) {
             log.fine("Setting custom static URLStreamHandlerFactory to work around bad JDK defaults");
             try {
                 // Use reflection to avoid dependency on sun.net package so this class at least
@@ -117,7 +117,7 @@ public class StreamClientImpl implements StreamClient {
                 );
             }
             System.setProperty(HACK_STREAM_HANDLER_SYSTEM_PROPERTY, "alreadyWorkedAroundTheEvilJDK");
-        }
+        }*/
     }
 
     @Override

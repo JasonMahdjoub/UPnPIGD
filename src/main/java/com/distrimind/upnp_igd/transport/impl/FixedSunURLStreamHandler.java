@@ -52,6 +52,10 @@ public class FixedSunURLStreamHandler implements URLStreamHandlerFactory {
                 }
 
                 protected java.net.URLConnection openConnection(URL u, Proxy p) throws IOException {
+                    /*if (p==null)
+                        return u.openConnection();
+                    else
+                        return u.openConnection(p);*/
                     return new UpnpURLConnection(u, this);
                 }
             };
@@ -68,13 +72,15 @@ public class FixedSunURLStreamHandler implements URLStreamHandlerFactory {
         };
 
         protected UpnpURLConnection(URL u, URLStreamHandler handler) throws IOException {
-            super(u);
-            httpURLConnection=(HttpURLConnection) u.openConnection();
+            super(new URL(u.getProtocol(), u.getHost(), u.getPort(), u.getFile()));
+            httpURLConnection=(HttpURLConnection) getURL().openConnection();
+            assert httpURLConnection!=null;
         }
 
         public UpnpURLConnection(URL u, String host, int port) throws IOException {
-            super(u);
-            httpURLConnection=(HttpURLConnection) u.openConnection();
+            super(new URL(u.getProtocol(), host, port, u.getFile()));
+            httpURLConnection=(HttpURLConnection) getURL().openConnection();
+            assert httpURLConnection!=null;
             //super(u, host, port);
         }
 
@@ -227,7 +233,7 @@ public class FixedSunURLStreamHandler implements URLStreamHandlerFactory {
 
         @Override
         public URL getURL() {
-            return httpURLConnection.getURL();
+            return super.getURL();
         }
 
         @Override
