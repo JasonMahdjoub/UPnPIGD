@@ -65,7 +65,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class RouterImpl implements Router {
 
-    private static Logger log = Logger.getLogger(Router.class.getName());
+    private static final Logger log = Logger.getLogger(Router.class.getName());
 
     protected UpnpServiceConfiguration configuration;
     protected ProtocolFactory protocolFactory;
@@ -456,7 +456,7 @@ public class RouterImpl implements Router {
                 try {
                     if (log.isLoggable(Level.FINE))
                         log.fine("Init datagram I/O on address: " + address);
-                    datagramIO.init(address, this, getConfiguration().getDatagramProcessor());
+                    datagramIO.init(networkAddressFactory, address, this, getConfiguration().getDatagramProcessor());
                     datagramIOs.put(address, datagramIO);
                 } catch (InitializationException ex) {
                     /* TODO: What are some recoverable exceptions for this?

@@ -59,7 +59,7 @@ public interface DatagramIO<C extends DatagramIOConfiguration> extends Runnable 
      * @param datagramProcessor Reads and writes datagrams.
      * @throws InitializationException If the service could not be initialized or started.
      */
-    public void init(InetAddress bindAddress, Router router, DatagramProcessor datagramProcessor) throws InitializationException;
+    public void init(NetworkAddressFactory networkAddressFactory, InetAddress bindAddress, Router router, DatagramProcessor datagramProcessor) throws InitializationException;
 
     /**
      * Stops the service, closes any listening sockets.

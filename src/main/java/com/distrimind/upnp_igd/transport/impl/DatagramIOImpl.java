@@ -15,18 +15,17 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
+import com.distrimind.upnp_igd.model.message.IncomingDatagramMessage;
+import com.distrimind.upnp_igd.transport.Common;
 import com.distrimind.upnp_igd.transport.Router;
 import com.distrimind.upnp_igd.model.message.OutgoingDatagramMessage;
 import com.distrimind.upnp_igd.transport.spi.DatagramIO;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
+import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.MulticastSocket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
 
-    private static Logger log = Logger.getLogger(DatagramIO.class.getName());
+    private static final Logger log = Logger.getLogger(DatagramIO.class.getName());
 
     /* Implementation notes for unicast/multicast UDP:
 
@@ -59,7 +58,7 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
 
     protected Router router;
     protected DatagramProcessor datagramProcessor;
-
+    protected NetworkAddressFactory networkAddressFactory;
     protected InetSocketAddress localAddress;
     protected MulticastSocket socket; // For sending unicast & multicast, and reveiving unicast
 
@@ -71,9 +70,10 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
         return configuration;
     }
 
-    synchronized public void init(InetAddress bindAddress, Router router, DatagramProcessor datagramProcessor) throws InitializationException {
+    synchronized public void init(NetworkAddressFactory networkAddressFactory, InetAddress bindAddress, Router router, DatagramProcessor datagramProcessor) throws InitializationException {
 
         this.router = router;
+        this.networkAddressFactory = networkAddressFactory;
         this.datagramProcessor = datagramProcessor;
 
         try {
@@ -107,7 +107,14 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
                 DatagramPacket datagram = new DatagramPacket(buf, buf.length);
 
                 socket.receive(datagram);
-
+                InetAddress receivedOnLocalAddress =
+                        networkAddressFactory.getLocalAddress(
+                                null,
+                                datagram.getAddress() instanceof Inet6Address,
+                                datagram.getAddress()
+                        );
+                if (receivedOnLocalAddress==null)
+                    continue;
                 log.fine(
                         "UDP datagram received from: "
                                 + datagram.getAddress().getHostAddress()
@@ -116,7 +123,10 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
                 );
 
 
-                router.received(datagramProcessor.read(localAddress.getAddress(), datagram));
+                IncomingDatagramMessage<?> idm= Common.getValidIncomingDatagramMessage(datagramProcessor.read(localAddress.getAddress(), datagram), networkAddressFactory);
+                if (idm==null)
+                    continue;
+                router.received(idm);
 
             } catch (SocketException ex) {
                 log.fine("Socket closed");

@@ -15,6 +15,8 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
+import com.distrimind.upnp_igd.model.message.IncomingDatagramMessage;
+import com.distrimind.upnp_igd.transport.Common;
 import com.distrimind.upnp_igd.transport.Router;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
@@ -119,7 +121,8 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
                             multicastAddress.getAddress() instanceof Inet6Address,
                             datagram.getAddress()
                         );
-
+                if (receivedOnLocalAddress==null)
+                    continue;
                 log.fine(
                         "UDP datagram received from: " + datagram.getAddress().getHostAddress() 
                                 + ":" + datagram.getPort()
@@ -127,7 +130,10 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
                                 + " and address: " + receivedOnLocalAddress.getHostAddress()
                 );
 
-                router.received(datagramProcessor.read(receivedOnLocalAddress, datagram));
+                IncomingDatagramMessage<?> idm=Common.getValidIncomingDatagramMessage(datagramProcessor.read(receivedOnLocalAddress, datagram),networkAddressFactory);
+                if (idm==null)
+                    continue;
+                router.received(idm);
 
             } catch (SocketException ex) {
                 log.fine("Socket closed");
