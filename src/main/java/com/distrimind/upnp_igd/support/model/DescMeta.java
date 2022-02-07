@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.support.model;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -93,7 +94,7 @@ public class DescMeta<M> {
 
     public Document createMetadataDocument() {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
             factory.setNamespaceAware(true);
             Document d = factory.newDocumentBuilder().newDocument();
             Element rootElement = d.createElementNS(DIDLContent.DESC_WRAPPER_NAMESPACE_URI, "desc-wrapper");

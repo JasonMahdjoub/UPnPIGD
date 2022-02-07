@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.binding.staging.MutableDevice;
 import com.distrimind.upnp_igd.binding.staging.MutableIcon;
 import com.distrimind.upnp_igd.binding.staging.MutableService;
@@ -84,7 +85,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
             // And by the way... try this with JAXB instead of manual DOM processing! And you thought it couldn't get worse....
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
             documentBuilder.setErrorHandler(this);
@@ -392,7 +393,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         try {
             log.fine("Generating DOM from device model: " + deviceModel);
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
             factory.setNamespaceAware(true);
 
             Document d = factory.newDocumentBuilder().newDocument();

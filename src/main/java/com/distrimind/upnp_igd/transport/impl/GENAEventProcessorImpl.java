@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.message.UpnpMessage;
@@ -51,7 +52,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     private static Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
 
     protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
-    	return DocumentBuilderFactory.newInstance();
+    	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
     }
 
     public void writeBody(OutgoingEventRequestMessage requestMessage) throws UnsupportedDataException {
@@ -59,7 +60,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
         try {
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = createDocumentBuilderFactory();
             factory.setNamespaceAware(true);
             Document d = factory.newDocumentBuilder().newDocument();
             Element propertysetElement = writePropertysetElement(d);

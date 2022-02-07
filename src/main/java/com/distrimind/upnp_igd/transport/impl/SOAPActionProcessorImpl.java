@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.action.ActionArgumentValue;
@@ -59,7 +60,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     private static Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
     
     protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
-    	return DocumentBuilderFactory.newInstance();
+    	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
     }
 
     public void writeBody(ActionRequestMessage requestMessage, ActionInvocation actionInvocation) throws UnsupportedDataException {
@@ -68,7 +69,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
         try {
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = createDocumentBuilderFactory();
             factory.setNamespaceAware(true);
             Document d = factory.newDocumentBuilder().newDocument();
             Element body = writeBodyElement(d);
@@ -92,7 +93,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
         try {
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = createDocumentBuilderFactory();
             factory.setNamespaceAware(true);
             Document d = factory.newDocumentBuilder().newDocument();
             Element body = writeBodyElement(d);

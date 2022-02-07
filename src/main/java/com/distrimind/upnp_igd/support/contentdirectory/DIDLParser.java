@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.support.contentdirectory;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.support.model.DIDLAttribute;
@@ -323,7 +324,7 @@ public class DIDLParser extends SAXParser {
 
     protected Document buildDOM(DIDLContent content, boolean nestedItems) throws Exception {
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
         factory.setNamespaceAware(true);
 
         Document d = factory.newDocumentBuilder().newDocument();

@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.support.shared.AbstractMap;
@@ -195,7 +196,7 @@ public abstract class LastChangeParser extends SAXParser {
 
     protected Document buildDOM(Event event) throws Exception {
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
         factory.setNamespaceAware(true);
 
         Document d = factory.newDocumentBuilder().newDocument();

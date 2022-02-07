@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.binding.xml;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.binding.staging.MutableAction;
 import com.distrimind.upnp_igd.binding.staging.MutableActionArgument;
 import com.distrimind.upnp_igd.binding.staging.MutableAllowedValueRange;
@@ -70,7 +71,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         try {
             log.fine("Populating service from XML descriptor: " + undescribedService);
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
             documentBuilder.setErrorHandler(this);
@@ -363,7 +364,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         try {
             log.fine("Generating XML descriptor from service model: " + service);
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
             factory.setNamespaceAware(true);
 
             Document d = factory.newDocumentBuilder().newDocument();
