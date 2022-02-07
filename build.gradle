@@ -69,7 +69,10 @@ dependencies {
     var androidVersion='4.1.1.4'
     var kxmlVersion='2.3.0'
     var jettyVersion='8.+'
+    var slf4jVersion='1.7.35'
     testImplementation 'org.testng:testng:7.5'
+    testImplementation 'org.slf4j:slf4j-api:'+slf4jVersion
+    testImplementation 'org.slf4j:slf4j-simple:'+slf4jVersion
 
     api 'org.seamless:seamless-util:'+seamlessVersion
     api 'org.seamless:seamless-http:'+seamlessVersion
