@@ -5,7 +5,7 @@ import com.distrimind.upnp_igd.model.meta.DeviceDetails;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
-import org.fourthline.cling.test.data.SampleData;
+import com.distrimind.upnp_igd.test.data.SampleData;
 
 /**
  * @author Christian Bauer

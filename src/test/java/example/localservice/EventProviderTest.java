@@ -25,7 +25,7 @@ import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.model.message.UpnpResponse;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
-import org.fourthline.cling.test.data.SampleData;
+import com.distrimind.upnp_igd.test.data.SampleData;
 import org.seamless.util.Reflections;
 import org.testng.annotations.Test;
 

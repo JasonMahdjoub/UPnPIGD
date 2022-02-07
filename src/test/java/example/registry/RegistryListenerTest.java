@@ -28,7 +28,7 @@ import com.distrimind.upnp_igd.model.types.UDAServiceId;
 import com.distrimind.upnp_igd.protocol.RetrieveRemoteDescriptors;
 import com.distrimind.upnp_igd.registry.DefaultRegistryListener;
 import com.distrimind.upnp_igd.registry.Registry;
-import org.fourthline.cling.test.data.SampleData;
+import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.Test;
 import org.xml.sax.SAXParseException;
 

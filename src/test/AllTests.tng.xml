@@ -3,50 +3,50 @@
 
     <test name="Service">
         <packages>
-            <package name="org.fourthline.cling.test.service"/>
+            <package name="com.distrimind.upnp_igd.test.service"/>
         </packages>
     </test>
 
     <test name="Model">
         <packages>
-            <package name="org.fourthline.cling.test.model"/>
-            <package name="org.fourthline.cling.test.model.profile"/>
+            <package name="com.distrimind.upnp_igd.test.model"/>
+            <package name="com.distrimind.upnp_igd.test.model.profile"/>
         </packages>
     </test>
 
     <test name="Local">
         <packages>
-            <package name="org.fourthline.cling.test.local"/>
+            <package name="com.distrimind.upnp_igd.test.local"/>
         </packages>
     </test>
 
     <test name="SSDP">
         <packages>
-            <package name="org.fourthline.cling.test.ssdp"/>
+            <package name="com.distrimind.upnp_igd.test.ssdp"/>
         </packages>
     </test>
 
     <test name="Description">
         <packages>
-            <package name="org.fourthline.cling.test.resources"/>
+            <package name="com.distrimind.upnp_igd.test.resources"/>
         </packages>
     </test>
 
     <test name="Control">
         <packages>
-            <package name="org.fourthline.cling.test.control"/>
+            <package name="com.distrimind.upnp_igd.test.control"/>
         </packages>
     </test>
 
     <test name="GENA">
         <packages>
-            <package name="org.fourthline.cling.test.gena"/>
+            <package name="com.distrimind.upnp_igd.test.gena"/>
         </packages>
     </test>
 
     <test name="Protocol">
         <packages>
-            <package name="org.fourthline.cling.test.protocol"/>
+            <package name="com.distrimind.upnp_igd.test.protocol"/>
         </packages>
     </test>
 
@@ -73,7 +73,7 @@
             </method-selector>
         </method-selectors>
         <packages>
-            <package name="org.fourthline.cling.test.transport"/>
+            <package name="com.distrimind.upnp_igd.test.transport"/>
         </packages>
     </test>
 

@@ -63,28 +63,53 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.testng:testng:7.5'
     var seamlessVersion='1.1.2'
+    var xmlpullVersion='1.1.4'
+    var cdiapiVerison='2.0.SP1'
+    var androidVersion='4.1.1.4'
+    var kxmlVersion='2.3.0'
+    var jettyVersion='8.+'
+    testImplementation 'org.testng:testng:7.5'
+
     api 'org.seamless:seamless-util:'+seamlessVersion
     api 'org.seamless:seamless-http:'+seamlessVersion
     api 'org.seamless:seamless-xml:'+seamlessVersion
     api 'org.seamless:seamless-swing:'+seamlessVersion
-    compileOnly group: 'org.xmlpull', name: 'com.springsource.org.xmlpull', version: '1.1.4'
 
-    compileOnly 'javax.enterprise:cdi-api:2.0.SP1'
+    compileOnly 'org.xmlpull:com.springsource.org.xmlpull:'+xmlpullVersion
+
+    compileOnly 'javax.enterprise:cdi-api:'+cdiapiVerison
     //implementation 'androidx.appcompat:appcompat:1.4.1'
-    compileOnly ('com.google.android:android:4.1.1.4'){
+    compileOnly ('com.google.android:android:'+androidVersion){
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'org.khronos', module: 'opengl-api'
         exclude group: 'org.json', module: 'json'
         exclude group: 'xerces', module: 'xmlParserAPIs'
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    var jettyVersion='8.+'
+
     compileOnly 'org.eclipse.jetty:jetty-server:'+jettyVersion
     compileOnly 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
     compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
-    compileOnly 'net.sf.kxml:kxml2:2.3.0'
+    compileOnly 'net.sf.kxml:kxml2:'+kxmlVersion
+
+
+    testImplementation 'org.xmlpull:com.springsource.org.xmlpull:'+xmlpullVersion
+
+    testImplementation 'javax.enterprise:cdi-api:'+cdiapiVerison
+    //implementation 'androidx.appcompat:appcompat:1.4.1'
+    testImplementation ('com.google.android:android:'+androidVersion){
+        exclude group: 'xpp3', module: 'xpp3'
+        exclude group: 'org.khronos', module: 'opengl-api'
+        exclude group: 'org.json', module: 'json'
+        exclude group: 'xerces', module: 'xmlParserAPIs'
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+
+    testImplementation 'org.eclipse.jetty:jetty-server:'+jettyVersion
+    testImplementation 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
+    testImplementation 'org.eclipse.jetty:jetty-client:'+jettyVersion
+    testImplementation 'net.sf.kxml:kxml2:'+kxmlVersion
 }
 
 def javaVersion="8"

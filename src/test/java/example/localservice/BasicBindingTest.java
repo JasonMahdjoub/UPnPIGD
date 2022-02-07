@@ -26,7 +26,7 @@ import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UDAServiceId;
 import com.distrimind.upnp_igd.model.types.UDAServiceType;
-import org.fourthline.cling.test.data.SampleData;
+import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

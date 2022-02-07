@@ -26,9 +26,9 @@ import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UDAServiceType;
 import com.distrimind.upnp_igd.model.types.UDN;
 import com.distrimind.upnp_igd.registry.Registry;
-import org.fourthline.cling.test.data.SampleData;
-import org.fourthline.cling.test.data.SampleDeviceRoot;
-import org.fourthline.cling.test.data.SampleDeviceRootLocal;
+import com.distrimind.upnp_igd.test.data.SampleData;
+import com.distrimind.upnp_igd.test.data.SampleDeviceRoot;
+import com.distrimind.upnp_igd.test.data.SampleDeviceRootLocal;
 import org.testng.annotations.Test;
 
 import java.net.URI;

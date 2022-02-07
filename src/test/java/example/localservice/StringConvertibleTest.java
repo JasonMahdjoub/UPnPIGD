@@ -25,7 +25,7 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.DeviceType;
-import org.fourthline.cling.test.data.SampleData;
+import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
