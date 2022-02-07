@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.transport.impl;
 import com.distrimind.upnp_igd.transport.Router;
 import com.distrimind.upnp_igd.model.message.Connection;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
+import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
 
 import javax.servlet.AsyncContext;
@@ -30,7 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +59,7 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
         return configuration;
     }
 
-    synchronized public void init(InetAddress bindAddress, final Router router) throws InitializationException {
+    synchronized public void init(InetAddress bindAddress, final Router router, NetworkAddressFactory networkAddressFactory) throws InitializationException {
         try {
             if (log.isLoggable(Level.FINE))
                 log.fine("Setting executor service on servlet container adapter");
@@ -67,6 +70,17 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
             if (log.isLoggable(Level.FINE))
                 log.fine("Adding connector: " + bindAddress + ":" + getConfiguration().getListenPort());
             hostAddress = bindAddress.getHostAddress();
+            if (hostAddress==null)
+                throw new InitializationException("");
+            InetSocketAddress isa=new InetSocketAddress(hostAddress, getConfiguration().getListenPort());
+            InetAddress receivedOnLocalAddress =
+                    networkAddressFactory.getLocalAddress(
+                            null,
+                            isa.getAddress() instanceof Inet6Address,
+                            isa.getAddress()
+                    );
+            if (receivedOnLocalAddress==null)
+                throw new InitializationException("");
             localPort = getConfiguration().getServletContainerAdapter().addConnector(
                 hostAddress,
                 getConfiguration().getListenPort()

@@ -79,11 +79,11 @@ public interface StreamServer<C extends StreamServerConfiguration> extends Runna
      * @param router The router which handles the incoming {@link UpnpStream}.
      * @throws InitializationException If the service could not be initialized or started.
      */
-    public void init(InetAddress bindAddress, Router router) throws InitializationException;
+    public void init(InetAddress bindAddress, Router router, NetworkAddressFactory networkAddressFactory) throws InitializationException;
 
     /**
      * This method will be called potentially right after
-     * {@link #init(java.net.InetAddress, Router)}, the
+     * {@link #init(java.net.InetAddress, Router, NetworkAddressFactory)}, the
      * actual assigned local port must be available before the server is started.
      *
      * @return The TCP port this service is listening on, e.g. the actual ephemeral port.

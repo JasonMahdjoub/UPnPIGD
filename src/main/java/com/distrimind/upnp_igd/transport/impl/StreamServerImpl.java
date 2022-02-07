@@ -16,6 +16,7 @@
 package com.distrimind.upnp_igd.transport.impl;
 
 import com.distrimind.upnp_igd.transport.Router;
+import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -24,6 +25,7 @@ import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
 
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Logger;
@@ -56,12 +58,12 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
         this.configuration = configuration;
     }
 
-    synchronized public void init(InetAddress bindAddress, Router router) throws InitializationException {
+    synchronized public void init(InetAddress bindAddress, Router router, NetworkAddressFactory networkAddressFactory) throws InitializationException {
         try {
             InetSocketAddress socketAddress = new InetSocketAddress(bindAddress, configuration.getListenPort());
 
             server = HttpServer.create(socketAddress, configuration.getTcpConnectionBacklog());
-            server.createContext("/", new RequestHttpHandler(router));
+            server.createContext("/", new RequestHttpHandler(router, networkAddressFactory));
 
             log.info("Created server (for receiving TCP streams) on: " + server.getAddress());
 
@@ -92,13 +94,26 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
     protected class RequestHttpHandler implements HttpHandler {
 
         private final Router router;
+        private final NetworkAddressFactory networkAddressFactory;
 
-        public RequestHttpHandler(Router router) {
+        public RequestHttpHandler(Router router, NetworkAddressFactory networkAddressFactory) {
             this.router = router;
+            this.networkAddressFactory=networkAddressFactory;
         }
 
         // This is executed in the request receiving thread!
         public void handle(final HttpExchange httpExchange) throws IOException {
+            InetSocketAddress isa=httpExchange.getRemoteAddress();
+            if (isa==null)
+                return;
+            InetAddress receivedOnLocalAddress =
+                    networkAddressFactory.getLocalAddress(
+                            null,
+                            isa.getAddress() instanceof Inet6Address,
+                            isa.getAddress()
+                    );
+            if (receivedOnLocalAddress==null)
+                return;
             // And we pass control to the service, which will (hopefully) start a new thread immediately so we can
             // continue the receiving thread ASAP
             log.fine("Received HTTP exchange: " + httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI());

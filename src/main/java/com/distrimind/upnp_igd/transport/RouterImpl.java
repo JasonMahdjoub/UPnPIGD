@@ -431,7 +431,7 @@ public class RouterImpl implements Router {
                 try {
                     if (log.isLoggable(Level.FINE))
                         log.fine("Init stream server on address: " + address);
-                    streamServer.init(address, this);
+                    streamServer.init(address, this, networkAddressFactory);
                     streamServers.put(address, streamServer);
                 } catch (InitializationException ex) {
                     // Try to recover

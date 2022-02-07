@@ -89,7 +89,7 @@ abstract public class StreamServerClientTest {
     @BeforeClass
     public void start() throws Exception {
         server = createStreamServer(TEST_PORT);
-        server.init(InetAddress.getByName(TEST_HOST), router);
+        server.init(InetAddress.getByName(TEST_HOST), router, configuration.createNetworkAddressFactory());
         configuration.getStreamServerExecutorService().execute(server);
 
         client = createStreamClient(configuration);
