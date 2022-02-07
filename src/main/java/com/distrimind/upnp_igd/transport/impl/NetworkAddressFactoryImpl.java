@@ -21,22 +21,8 @@ import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.transport.spi.NoNetworkException;
 import org.seamless.util.Iterators;
 
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.Locale;
+import java.net.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,15 +49,16 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
     final protected List<InetAddress> bindAddresses = new ArrayList<>();
 
     protected int streamListenPort;
+    private int multicastPort;
 
     /**
      * Defaults to an ephemeral port.
      */
     public NetworkAddressFactoryImpl() throws InitializationException {
-        this(DEFAULT_TCP_HTTP_LISTEN_PORT);
+        this(DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
     }
 
-    public NetworkAddressFactoryImpl(int streamListenPort) throws InitializationException {
+    public NetworkAddressFactoryImpl(int streamListenPort, int multicastPort) throws InitializationException {
     	
     	System.setProperty("java.net.preferIPv4Stack", "true");
 
@@ -100,7 +87,10 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
         }
 
         this.streamListenPort = streamListenPort;
+        this.multicastPort=multicastPort;
     }
+
+
 
     /**
      * @return <code>true</code> (the default) if a <code>MissingNetworkInterfaceException</code> should be thrown
@@ -134,7 +124,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
     }
 
     public int getMulticastPort() {
-        return Constants.UPNP_MULTICAST_PORT;
+        return multicastPort;
     }
 
     public int getStreamListenPort() {
@@ -213,8 +203,9 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
 
     public InetAddress getLocalAddress(NetworkInterface networkInterface, boolean isIPv6, InetAddress remoteAddress) {
 
+        return getBindAddressInSubnetOf(remoteAddress);
         // First try to find a local IP that is in the same subnet as the remote IP
-        InetAddress localIPInSubnet = getBindAddressInSubnetOf(remoteAddress);
+        /*InetAddress localIPInSubnet = getBindAddressInSubnetOf(remoteAddress);
         if (localIPInSubnet != null) return localIPInSubnet;
 
         // There are two reasons why we end up here:
@@ -233,7 +224,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
             if (!isIPv6 && interfaceAddress instanceof Inet4Address)
                 return interfaceAddress;
         }
-        throw new IllegalStateException("Can't find any IPv4 or IPv6 address on interface: " + networkInterface.getDisplayName());
+        throw new IllegalStateException("Can't find any IPv4 or IPv6 address on interface: " + networkInterface.getDisplayName());*/
     }
 
     protected List<InterfaceAddress> getInterfaceAddresses(NetworkInterface networkInterface) {

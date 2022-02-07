@@ -19,6 +19,7 @@ import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.UDA10DeviceDescriptorBinderImpl;
 import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderImpl;
+import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.Namespace;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
@@ -100,29 +101,30 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     final private ServiceDescriptorBinder serviceDescriptorBinderUDA10;
 
     final private Namespace namespace;
+    final private int multicastPort;
 
     /**
      * Defaults to port '0', ephemeral.
      */
     public DefaultUpnpServiceConfiguration() {
-        this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT);
+        this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
     }
 
-    public DefaultUpnpServiceConfiguration(int streamListenPort) {
-        this(streamListenPort, true);
+    public DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) {
+        this(streamListenPort, multicastPort, true);
     }
 
     protected DefaultUpnpServiceConfiguration(boolean checkRuntime) {
-        this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, checkRuntime);
+        this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT, checkRuntime);
     }
 
-    protected DefaultUpnpServiceConfiguration(int streamListenPort, boolean checkRuntime) {
+    protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime) {
         if (checkRuntime && ModelUtil.ANDROID_RUNTIME) {
             throw new Error("Unsupported runtime environment, use org.fourthline.cling.android.AndroidUpnpServiceConfiguration");
         }
 
         this.streamListenPort = streamListenPort;
-
+        this.multicastPort=multicastPort;
         defaultExecutorService = createDefaultExecutorService();
 
         datagramProcessor = createDatagramProcessor();
@@ -145,6 +147,10 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
     public GENAEventProcessor getGenaEventProcessor() {
         return genaEventProcessor;
+    }
+
+    public int getMulticastPort() {
+        return multicastPort;
     }
 
     public StreamClient createStreamClient() {
@@ -254,7 +260,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     }
 
     public NetworkAddressFactory createNetworkAddressFactory() {
-        return createNetworkAddressFactory(streamListenPort);
+        return createNetworkAddressFactory(streamListenPort, multicastPort);
     }
 
     public void shutdown() {
@@ -262,8 +268,8 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         getDefaultExecutorService().shutdownNow();
     }
 
-    protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort) {
-        return new NetworkAddressFactoryImpl(streamListenPort);
+    protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multicastPort) {
+        return new NetworkAddressFactoryImpl(streamListenPort, multicastPort);
     }
 
     protected DatagramProcessor createDatagramProcessor() {

@@ -16,6 +16,7 @@
 package com.distrimind.upnp_igd.android;
 
 import android.os.Build;
+import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.DefaultUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
@@ -24,10 +25,7 @@ import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderSAXImpl;
 import com.distrimind.upnp_igd.model.Namespace;
 import com.distrimind.upnp_igd.model.ServerClientTokens;
-import com.distrimind.upnp_igd.transport.impl.AsyncServletStreamServerConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.AsyncServletStreamServerImpl;
-import com.distrimind.upnp_igd.transport.impl.RecoveringGENAEventProcessorImpl;
-import com.distrimind.upnp_igd.transport.impl.RecoveringSOAPActionProcessorImpl;
+import com.distrimind.upnp_igd.transport.impl.*;
 import com.distrimind.upnp_igd.transport.impl.jetty.JettyServletContainer;
 import com.distrimind.upnp_igd.transport.impl.jetty.StreamClientConfigurationImpl;
 import com.distrimind.upnp_igd.transport.impl.jetty.StreamClientImpl;
@@ -63,19 +61,19 @@ import com.distrimind.upnp_igd.transport.spi.StreamServer;
 public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfiguration {
 
     public AndroidUpnpServiceConfiguration() {
-        this(0); // Ephemeral port
+        this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
     }
 
-    public AndroidUpnpServiceConfiguration(int streamListenPort) {
-        super(streamListenPort, false);
+    public AndroidUpnpServiceConfiguration(int streamListenPort, int multicastPort) {
+        super(streamListenPort, multicastPort, false);
 
         // This should be the default on Android 2.1 but it's not set by default
         System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
     }
 
     @Override
-    protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort) {
-        return new AndroidNetworkAddressFactory(streamListenPort);
+    protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multicastPort) {
+        return new AndroidNetworkAddressFactory(streamListenPort, multicastPort);
     }
 
     @Override
