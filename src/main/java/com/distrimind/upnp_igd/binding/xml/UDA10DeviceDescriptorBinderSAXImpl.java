@@ -27,6 +27,7 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.model.types.ServiceId;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDN;
+import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import org.seamless.util.MimeType;
 import org.seamless.xml.SAXParser;
 import org.xml.sax.Attributes;
@@ -50,6 +51,10 @@ import static com.distrimind.upnp_igd.binding.xml.Descriptor.Device.ELEMENT;
 public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBinderImpl {
 
     private static Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
+
+    public UDA10DeviceDescriptorBinderSAXImpl(NetworkAddressFactory networkAddressFactory) {
+        super(networkAddressFactory);
+    }
 
     @Override
     public <D extends Device> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {

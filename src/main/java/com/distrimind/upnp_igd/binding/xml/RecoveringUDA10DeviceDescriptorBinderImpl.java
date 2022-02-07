@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.binding.xml;
 
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.Device;
+import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import org.seamless.util.Exceptions;
 import org.seamless.xml.ParserException;
 import org.seamless.xml.XmlPullParserUtils;
@@ -33,6 +34,10 @@ import java.util.regex.Pattern;
 public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescriptorBinderImpl {
 
     private static Logger log = Logger.getLogger(RecoveringUDA10DeviceDescriptorBinderImpl.class.getName());
+
+    public RecoveringUDA10DeviceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory) {
+        super(networkAddressFactory);
+    }
 
     @Override
     public <D extends Device> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {

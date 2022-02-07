@@ -88,7 +88,7 @@ public class InvalidUDA10DeviceDescriptorParsingTest {
             new MockUpnpService(new MockUpnpServiceConfiguration() {
                 @Override
                 public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10() {
-                    return new RecoveringUDA10DeviceDescriptorBinderImpl();
+                    return new RecoveringUDA10DeviceDescriptorBinderImpl(getNetworkAddressFactory());
                 }
             })
         );
@@ -108,7 +108,7 @@ public class InvalidUDA10DeviceDescriptorParsingTest {
             new MockUpnpService(new MockUpnpServiceConfiguration() {
                 @Override
                 public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10() {
-                    return new UDA10DeviceDescriptorBinderSAXImpl();
+                    return new UDA10DeviceDescriptorBinderSAXImpl(getNetworkAddressFactory());
                 }
             })
         );
@@ -121,7 +121,7 @@ public class InvalidUDA10DeviceDescriptorParsingTest {
             new MockUpnpService(new MockUpnpServiceConfiguration() {
                 @Override
                 public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10() {
-                    return new RecoveringUDA10DeviceDescriptorBinderImpl();
+                    return new RecoveringUDA10DeviceDescriptorBinderImpl(getNetworkAddressFactory());
                 }
             })
         );
@@ -134,7 +134,7 @@ public class InvalidUDA10DeviceDescriptorParsingTest {
             new MockUpnpService(new MockUpnpServiceConfiguration() {
                 @Override
                 public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10() {
-                    return new RecoveringUDA10DeviceDescriptorBinderImpl();
+                    return new RecoveringUDA10DeviceDescriptorBinderImpl(getNetworkAddressFactory());
                 }
             })
         );

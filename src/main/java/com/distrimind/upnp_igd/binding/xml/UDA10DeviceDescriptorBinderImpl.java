@@ -19,6 +19,8 @@ import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElement;
 import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
 
 import java.io.StringReader;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
 import java.util.logging.Logger;
@@ -49,6 +51,7 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.model.types.ServiceId;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDN;
+import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import org.seamless.util.Exceptions;
 import org.seamless.util.MimeType;
 import org.w3c.dom.Document;
@@ -68,7 +71,33 @@ import org.xml.sax.SAXParseException;
 public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, ErrorHandler {
 
     private static Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
-
+    private final NetworkAddressFactory networkAddressFactory;
+    static boolean isNotValidRemoteAddress(URL u, NetworkAddressFactory networkAddressFactory)
+    {
+        if (u==null)
+            return false;
+        return isNotValidRemoteAddress(u.getHost(), networkAddressFactory);
+    }
+    static boolean isNotValidRemoteAddress(String host, NetworkAddressFactory networkAddressFactory)
+    {
+        try {
+            InetAddress ia = InetAddress.getByName(host);
+            ia = networkAddressFactory.getLocalAddress(
+                    null,
+                    ia instanceof Inet6Address,
+                    ia
+            );
+            if (ia == null)
+                return true;
+        } catch (Exception ignored) {
+            return true;
+        }
+        return false;
+    }
+    public UDA10DeviceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory)
+    {
+        this.networkAddressFactory=networkAddressFactory;
+    }
     public <D extends Device> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
 
         if (descriptorXml == null || descriptorXml.length() == 0) {
@@ -126,7 +155,11 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
     }
 
     public <D extends Device> D buildInstance(D undescribedDevice, MutableDevice descriptor) throws ValidationException {
-        return (D) descriptor.build(undescribedDevice);
+        D res=(D) descriptor.build(undescribedDevice);
+        if (res.getDetails()!=null && isNotValidRemoteAddress(res.getDetails().getBaseURL(), networkAddressFactory))
+            return null;
+
+        return res;
     }
 
     protected void hydrateRoot(MutableDevice descriptor, Element rootElement) throws DescriptorBindingException {

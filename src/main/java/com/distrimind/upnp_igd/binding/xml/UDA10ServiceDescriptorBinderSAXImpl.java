@@ -26,6 +26,7 @@ import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.meta.StateVariableEventDetails;
 import com.distrimind.upnp_igd.model.types.CustomDatatype;
 import com.distrimind.upnp_igd.model.types.Datatype;
+import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import org.seamless.xml.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -48,6 +49,10 @@ import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ELEMENT;
 public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorBinderImpl {
 
     private static Logger log = Logger.getLogger(ServiceDescriptorBinder.class.getName());
+
+    public UDA10ServiceDescriptorBinderSAXImpl(NetworkAddressFactory networkAddressFactory) {
+        super(networkAddressFactory);
+    }
 
     @Override
     public <S extends Service> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {

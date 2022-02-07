@@ -116,12 +116,12 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 
     @Override
     protected DeviceDescriptorBinder createDeviceDescriptorBinderUDA10() {
-        return new RecoveringUDA10DeviceDescriptorBinderImpl();
+        return new RecoveringUDA10DeviceDescriptorBinderImpl(getNetworkAddressFactory());
     }
 
     @Override
     protected ServiceDescriptorBinder createServiceDescriptorBinderUDA10() {
-        return new UDA10ServiceDescriptorBinderSAXImpl();
+        return new UDA10ServiceDescriptorBinderSAXImpl(getNetworkAddressFactory());
     }
 
     @Override

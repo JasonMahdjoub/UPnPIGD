@@ -22,6 +22,7 @@ import com.distrimind.upnp_igd.binding.xml.UDA10DeviceDescriptorBinderSAXImpl;
 import com.distrimind.upnp_igd.mock.MockUpnpService;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
+import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import org.fourthline.cling.test.data.SampleData;
 import org.fourthline.cling.test.data.SampleDeviceRoot;
 import org.seamless.util.io.IO;
@@ -36,7 +37,7 @@ public class UDA10DeviceDescriptorParsingTest {
     @Test
     public void readUDA10DescriptorDOM() throws Exception {
 
-        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl();
+        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
 
         RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
         device = binder.describe(device, IO.readLines(getClass().getResourceAsStream("/descriptors/device/uda10.xml")));
@@ -51,7 +52,7 @@ public class UDA10DeviceDescriptorParsingTest {
     @Test
     public void readUDA10DescriptorSAX() throws Exception {
 
-        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderSAXImpl();
+        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderSAXImpl(new NetworkAddressFactoryImpl());
 
         RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
         device = binder.describe(device, IO.readLines(getClass().getResourceAsStream("/descriptors/device/uda10.xml")));
@@ -67,7 +68,7 @@ public class UDA10DeviceDescriptorParsingTest {
     public void writeUDA10Descriptor() throws Exception {
 
         MockUpnpService upnpService = new MockUpnpService();
-        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl();
+        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
         
         RemoteDevice device = SampleData.createRemoteDevice();
         String descriptorXml = binder.generate(
@@ -97,7 +98,7 @@ public class UDA10DeviceDescriptorParsingTest {
     public void writeUDA10DescriptorWithProvider() throws Exception {
 
         MockUpnpService upnpService = new MockUpnpService();
-        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl();
+        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
 
         LocalDevice device = SampleData.createLocalDevice(true);
         String descriptorXml = binder.generate(
@@ -216,7 +217,7 @@ public class UDA10DeviceDescriptorParsingTest {
 
     @Test
     public void readUDA10DescriptorWithEmptyURLBase() throws Exception {
-        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl();
+        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
 
         RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
         device = binder.describe(device, IO.readLines(getClass().getResourceAsStream("/descriptors/device/uda10_emptybase.xml")));

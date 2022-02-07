@@ -102,6 +102,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
     final private Namespace namespace;
     final private int multicastPort;
+    private NetworkAddressFactory networkAddressFactory;
 
     /**
      * Defaults to port '0', ephemeral.
@@ -135,6 +136,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         serviceDescriptorBinderUDA10 = createServiceDescriptorBinderUDA10();
 
         namespace = createNamespace();
+        networkAddressFactory=null;
     }
 
     public DatagramProcessor getDatagramProcessor() {
@@ -267,7 +269,11 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         log.fine("Shutting down default executor service");
         getDefaultExecutorService().shutdownNow();
     }
-
+    protected NetworkAddressFactory getNetworkAddressFactory() {
+        if (networkAddressFactory==null)
+            networkAddressFactory=createNetworkAddressFactory();
+        return networkAddressFactory;
+    }
     protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multicastPort) {
         return new NetworkAddressFactoryImpl(streamListenPort, multicastPort);
     }
@@ -285,11 +291,11 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     }
 
     protected DeviceDescriptorBinder createDeviceDescriptorBinderUDA10() {
-        return new UDA10DeviceDescriptorBinderImpl();
+        return new UDA10DeviceDescriptorBinderImpl(getNetworkAddressFactory());
     }
 
     protected ServiceDescriptorBinder createServiceDescriptorBinderUDA10() {
-        return new UDA10ServiceDescriptorBinderImpl();
+        return new UDA10ServiceDescriptorBinderImpl(getNetworkAddressFactory());
     }
 
     protected Namespace createNamespace() {

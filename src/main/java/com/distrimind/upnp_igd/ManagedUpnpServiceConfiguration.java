@@ -19,6 +19,7 @@ import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.UDA10DeviceDescriptorBinderImpl;
 import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderImpl;
+import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.Namespace;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
@@ -78,6 +79,8 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     private ServiceDescriptorBinder serviceDescriptorBinderUDA10;
 
     private Namespace namespace;
+    private NetworkAddressFactory networkAddressFactory=null;
+    private int multicastPort;
 
     @PostConstruct
     public void init() {
@@ -95,8 +98,12 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
 
         deviceDescriptorBinderUDA10 = createDeviceDescriptorBinderUDA10();
         serviceDescriptorBinderUDA10 = createServiceDescriptorBinderUDA10();
-
+        multicastPort= Constants.UPNP_MULTICAST_PORT;
         namespace = createNamespace();
+    }
+
+    public int getMulticastPort() {
+        return multicastPort;
     }
 
     public DatagramProcessor getDatagramProcessor() {
@@ -118,7 +125,11 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
             )
         );
     }
-
+    protected NetworkAddressFactory getNetworkAddressFactory() {
+        if (networkAddressFactory==null)
+            networkAddressFactory=createNetworkAddressFactory();
+        return networkAddressFactory;
+    }
     public MulticastReceiver createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
         return new MulticastReceiverImpl(
                 new MulticastReceiverConfigurationImpl(
@@ -218,7 +229,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     }
 
     public NetworkAddressFactory createNetworkAddressFactory() {
-        return createNetworkAddressFactory(streamListenPort);
+        return createNetworkAddressFactory(streamListenPort, multicastPort);
     }
 
     public void shutdown() {
@@ -226,8 +237,8 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
         getDefaultExecutorService().shutdownNow();
     }
 
-    protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort) {
-        return new NetworkAddressFactoryImpl(streamListenPort);
+    protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multicastPort) {
+        return new NetworkAddressFactoryImpl(streamListenPort, multicastPort);
     }
 
     protected SOAPActionProcessor createSOAPActionProcessor() {
@@ -239,11 +250,11 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     }
 
     protected DeviceDescriptorBinder createDeviceDescriptorBinderUDA10() {
-        return new UDA10DeviceDescriptorBinderImpl();
+        return new UDA10DeviceDescriptorBinderImpl(getNetworkAddressFactory());
     }
 
     protected ServiceDescriptorBinder createServiceDescriptorBinderUDA10() {
-        return new UDA10ServiceDescriptorBinderImpl();
+        return new UDA10ServiceDescriptorBinderImpl(getNetworkAddressFactory());
     }
 
     protected Namespace createNamespace() {

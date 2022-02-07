@@ -20,6 +20,7 @@ import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderImpl;
 import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderSAXImpl;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
+import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import org.fourthline.cling.test.data.SampleData;
 import org.fourthline.cling.test.data.SampleServiceOne;
 import org.seamless.util.io.IO;
@@ -31,7 +32,7 @@ public class UDA10ServiceDescriptorParsingTest {
     @Test
     public void readUDA10DescriptorDOM() throws Exception {
 
-        ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderImpl();
+        ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
 
         RemoteService service = SampleData.createUndescribedRemoteService();
 
@@ -43,7 +44,7 @@ public class UDA10ServiceDescriptorParsingTest {
     @Test
     public void readUDA10DescriptorSAX() throws Exception {
 
-        ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderSAXImpl();
+        ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderSAXImpl(new NetworkAddressFactoryImpl());
 
         RemoteService service = SampleData.createUndescribedRemoteService();
 
@@ -55,7 +56,7 @@ public class UDA10ServiceDescriptorParsingTest {
     @Test
     public void writeUDA10Descriptor() throws Exception {
 
-        ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderImpl();
+        ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
 
         RemoteDevice rd = SampleData.createRemoteDevice();
         String descriptorXml = binder.generate(SampleData.getFirstService(rd));

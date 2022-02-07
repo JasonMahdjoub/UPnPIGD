@@ -32,6 +32,7 @@ import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.meta.StateVariableEventDetails;
 import com.distrimind.upnp_igd.model.types.CustomDatatype;
 import com.distrimind.upnp_igd.model.types.Datatype;
+import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -62,7 +63,11 @@ import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
 public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder, ErrorHandler {
 
     private static Logger log = Logger.getLogger(ServiceDescriptorBinder.class.getName());
-
+    private NetworkAddressFactory networkAddressFactory;
+    public UDA10ServiceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory)
+    {
+        this.networkAddressFactory=networkAddressFactory;
+    }
     public <S extends Service> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {
         if (descriptorXml == null || descriptorXml.length() == 0) {
             throw new DescriptorBindingException("Null or empty descriptor");
@@ -115,7 +120,10 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     }
 
     protected <S extends Service> S buildInstance(S undescribedService, MutableService descriptor) throws ValidationException {
-        return (S)descriptor.build(undescribedService.getDevice());
+        S res= (S)descriptor.build(undescribedService.getDevice());
+        if (res.getDevice()!=null && res.getDevice().getDetails()!=null && UDA10DeviceDescriptorBinderImpl.isNotValidRemoteAddress(res.getDevice().getDetails().getBaseURL(), networkAddressFactory))
+            return null;
+        return res;
     }
 
     protected void hydrateBasic(MutableService descriptor, Service undescribedService) {

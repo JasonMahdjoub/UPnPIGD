@@ -31,6 +31,7 @@ import com.distrimind.upnp_igd.model.message.gena.OutgoingEventRequestMessage;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
+import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import org.fourthline.cling.test.data.SampleData;
 import com.distrimind.upnp_igd.transport.impl.PullGENAEventProcessorImpl;
 import com.distrimind.upnp_igd.transport.impl.RecoveringGENAEventProcessorImpl;
@@ -137,7 +138,7 @@ public class InvalidEventXMLProcessingTest {
     }
 
     protected void read(String invalidXMLFile, UpnpService upnpService) throws Exception {
-        ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderImpl();
+        ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
         RemoteService service = SampleData.createUndescribedRemoteService();
         service = binder.describe(service, IO.readLines(
             getClass().getResourceAsStream("/descriptors/service/uda10_avtransport.xml"))

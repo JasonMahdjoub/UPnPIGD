@@ -36,6 +36,7 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UDAServiceId;
 import com.distrimind.upnp_igd.model.types.UDN;
+import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import org.fourthline.cling.test.data.SampleData;
 import org.fourthline.cling.test.data.SampleDeviceRoot;
 import org.testng.annotations.Test;
@@ -149,7 +150,7 @@ public class IncompatibilityTest {
                         "   </device>\n" +
                         "</root>";
 
-        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl();
+        DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
         RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
         device = binder.describe(device, descriptor);
         assertEquals(device.findServices().length, 2);

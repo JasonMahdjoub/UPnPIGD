@@ -35,6 +35,7 @@ import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.types.SoapActionType;
+import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import org.fourthline.cling.test.data.SampleData;
 import com.distrimind.upnp_igd.transport.impl.PullSOAPActionProcessorImpl;
 import com.distrimind.upnp_igd.transport.impl.RecoveringSOAPActionProcessorImpl;
@@ -135,7 +136,7 @@ public class InvalidActionXMLProcessingTest {
     @Test
    	public void uppercaseOutputArguments() throws Exception {
    		SOAPActionProcessor processor = new RecoveringSOAPActionProcessorImpl();
-   		ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderImpl();
+   		ServiceDescriptorBinder binder = new UDA10ServiceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
 
    		RemoteService service = SampleData.createUndescribedRemoteService();
    		service = binder.describe(
