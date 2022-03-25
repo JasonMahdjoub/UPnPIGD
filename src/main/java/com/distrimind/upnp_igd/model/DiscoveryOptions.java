@@ -48,7 +48,7 @@ public class DiscoveryOptions {
     }
 
     /**
-     * @return <boolean>true</boolean> for regular advertisement with alive
+     * @return true for regular advertisement with alive
      *         messages and in search responses.
      */
     public boolean isAdvertised() {
@@ -56,7 +56,7 @@ public class DiscoveryOptions {
     }
 
     /**
-     * @return <boolean>true</boolean> if a byebye NOTIFY message will be send before the
+     * @return true if a byebye NOTIFY message will be send before the
      *         first alive NOTIFY message.
      */
     public boolean isByeByeBeforeFirstAlive() {

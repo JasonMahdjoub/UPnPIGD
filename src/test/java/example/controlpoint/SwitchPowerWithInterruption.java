@@ -81,19 +81,19 @@ import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
  * <tbody>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.StreamClientImpl (default)</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.StreamClientImpl (default)</code>
  * </td>
  * <td>NO</td>
  * </tr>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.apache.StreamClientImpl</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.apache.StreamClientImpl</code>
  * </td>
  * <td>YES</td>
  * </tr>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.jetty.StreamClientImpl (default on Android)</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.jetty.StreamClientImpl (default on Android)</code>
  * </td>
  * <td>YES</td>
  * </tr>
@@ -114,20 +114,20 @@ import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
  * <tbody>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.StreamServerImpl (default)</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.StreamServerImpl (default)</code>
  * </td>
  * <td>NO</td>
  * </tr>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.apache.StreamServerImpl</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.apache.StreamServerImpl</code>
  * </td>
  * <td>YES</td>
  * </tr>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.AsyncServletStreamServerImpl</code><br/>
- * with <code>org.fourthline.cling.transport.impl.jetty.JettyServletContainer (default on Android)</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.AsyncServletStreamServerImpl</code><br/>
+ * with <code>com.distrimind.upnp_igd.transport.impl.jetty.JettyServletContainer (default on Android)</code>
  * </td>
  * <td>YES</td>
  * </tr>

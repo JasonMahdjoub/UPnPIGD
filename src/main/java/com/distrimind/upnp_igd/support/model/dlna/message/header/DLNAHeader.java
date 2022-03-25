@@ -116,7 +116,7 @@ public abstract class DLNAHeader<T> extends UpnpHeader<T> {
      * <p>
      * This method iterates through all potential header subtype classes as declared in {@link Type}.
      * It creates a new instance of the subtype class and calls its {@link #setString(String)} method.
-     * If no {@link org.fourthline.cling.model.message.header.InvalidHeaderException} is thrown, the subtype
+     * If no {@link com.distrimind.upnp_igd.model.message.header.InvalidHeaderException} is thrown, the subtype
      * instance is returned.
      * </p>
      *

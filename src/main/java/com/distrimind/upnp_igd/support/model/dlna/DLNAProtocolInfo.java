@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * Encaspulates a MIME type (content format) and transport, protocol, additional information.
- * <p/>
+ * <p></p>
  * Parses DLNA attributes in the additional information.
  *
  * @author Mario Franco

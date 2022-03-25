@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 /**
  * Default implementation of network interface and address configuration/discovery.
- * <p
+ * <p>
  * This implementation has been tested on Windows XP, Windows Vista, Mac OS X 10.8,
  * and whatever kernel ships in Ubuntu 9.04. This implementation does not support IPv6.
  * </p>

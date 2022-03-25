@@ -25,7 +25,7 @@
         <p>
             For debugging, usually more detailed logging levels for various log categories are required.
             The logging categories in Cling Core are package names, e.g the root logger is available under
-            the name <code>org.fourthline.cling</code>. The following tables show typically used categories and the
+            the name <code>com.distrimind.upnp_igd</code>. The following tables show typically used categories and the
             recommended level for debugging:
         </p>
 
@@ -39,40 +39,40 @@
             <tbody>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.transport.spi.DatagramIO (FINE)</code><br/>
-                    <code>org.fourthline.cling.transport.spi.MulticastReceiver (FINE)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.spi.DatagramIO (FINE)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.spi.MulticastReceiver (FINE)</code><br/>
                 </td>
                 <td>UDP communication</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.transport.spi.DatagramProcessor (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.spi.DatagramProcessor (FINER)</code><br/>
                 </td>
                 <td>UDP datagram processing and content</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.transport.spi.UpnpStream (FINER)</code><br/>
-                    <code>org.fourthline.cling.transport.spi.StreamServer (FINE)</code><br/>
-                    <code>org.fourthline.cling.transport.spi.StreamClient (FINE)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.spi.UpnpStream (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.spi.StreamServer (FINE)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.spi.StreamClient (FINE)</code><br/>
                 </td>
                 <td>TCP communication</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.transport.spi.SOAPActionProcessor (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor (FINER)</code><br/>
                 </td>
                 <td>SOAP action message processing and content</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.transport.spi.GENAEventProcessor (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.spi.GENAEventProcessor (FINER)</code><br/>
                 </td>
                 <td>GENA event message processing and content</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.transport.impl.HttpHeaderConverter (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.impl.HttpHeaderConverter (FINER)</code><br/>
                 </td>
                 <td>HTTP header processing</td>
             </tr>
@@ -91,16 +91,16 @@
             <tbody>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.protocol.ProtocolFactory (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.async (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.async (FINER)</code><br/>
                 </td>
                 <td>Discovery (Notification &amp; Search)</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.protocol.ProtocolFactory (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.RetrieveRemoteDescriptors (FINE)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.ReceivingRetrieval (FINE)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.RetrieveRemoteDescriptors (FINE)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingRetrieval (FINE)</code><br/>
                     <code>DeviceDescriptorBinder (FINE)</code><br/>
                     <code>ServiceDescriptorBinder (FINE)</code><br/>
                 </td>
@@ -108,16 +108,16 @@
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.protocol.ProtocolFactory (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.ReceivingAction (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.SendingAction (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingAction (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.SendingAction (FINER)</code><br/>
                 </td>
                 <td>Control</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.model.gena (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.ProtocolFactory (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.model.gena (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
                     <code>org.fourthline.cling.protocol.sync.ReceivingEvent (FINER)</code><br/>
                     <code>org.fourthline.cling.protocol.sync.ReceivingSubscribe (FINER)</code><br/>
                     <code>org.fourthline.cling.protocol.sync.ReceivingUnsubscribe (FINER)</code><br/>

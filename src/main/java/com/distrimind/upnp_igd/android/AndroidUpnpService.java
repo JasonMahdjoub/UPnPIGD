@@ -61,7 +61,7 @@ import com.distrimind.upnp_igd.registry.Registry;
  * <pre>{@code
  *<application ...>
  *  ...
- *  <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl"/>
+ *  <service android:name="com.distrimind.upnp_igd.android.AndroidUpnpServiceImpl"/>
  *</application>
  * }</pre>
  *

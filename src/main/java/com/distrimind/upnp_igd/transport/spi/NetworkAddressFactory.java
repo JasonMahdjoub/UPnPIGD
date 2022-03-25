@@ -30,8 +30,8 @@ import java.util.Iterator;
 public interface NetworkAddressFactory {
 
     // An implementation can honor these if it wants (the default does)
-    public static final String SYSTEM_PROPERTY_NET_IFACES = "org.fourthline.cling.network.useInterfaces";
-    public static final String SYSTEM_PROPERTY_NET_ADDRESSES = "org.fourthline.cling.network.useAddresses";
+    public static final String SYSTEM_PROPERTY_NET_IFACES = "com.distrimind.upnp_igd.network.useInterfaces";
+    public static final String SYSTEM_PROPERTY_NET_ADDRESSES = "com.distrimind.upnp_igd.network.useAddresses";
 
 
     /**

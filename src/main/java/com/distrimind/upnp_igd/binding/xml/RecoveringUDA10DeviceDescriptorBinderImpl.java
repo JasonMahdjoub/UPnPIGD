@@ -211,7 +211,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
 
     /**
      * Handle processing errors while reading XML descriptors.
-     * <p/>
+     *
      * <p>
      * Typically you want to log this problem or create an error report, and in any
      * case, throw a {@link DescriptorBindingException} to notify the caller of the
@@ -229,7 +229,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
 
     /**
      * Handle processing errors while binding XML descriptors.
-     * <p/>
+     *
      * <p>
      * Typically you want to log this problem or create an error report. You
      * should throw a {@link ValidationException} to notify the caller of the

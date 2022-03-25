@@ -73,9 +73,9 @@ import com.distrimind.upnp_igd.binding.annotations.*;
  * <tr><td><code>short</code></td><td><code>i2</code></td></tr>
  * <tr><td><code>java.lang.Integer</code></td><td><code>i4</code></td></tr>
  * <tr><td><code>int</code></td><td><code>i4</code></td></tr>
- * <tr><td><code>org.fourthline.cling.model.types.UnsignedIntegerOneByte</code></td><td><code>ui1</code></td></tr>
- * <tr><td><code>org.fourthline.cling.model.types.UnsignedIntegerTwoBytes</code></td><td><code>ui2</code></td></tr>
- * <tr><td><code>org.fourthline.cling.model.types.UnsignedIntegerFourBytes</code></td><td><code>ui4</code></td></tr>
+ * <tr><td><code>com.distrimind.upnp_igd.model.types.UnsignedIntegerOneByte</code></td><td><code>ui1</code></td></tr>
+ * <tr><td><code>com.distrimind.upnp_igd.model.types.UnsignedIntegerTwoBytes</code></td><td><code>ui2</code></td></tr>
+ * <tr><td><code>com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes</code></td><td><code>ui4</code></td></tr>
  * <tr><td><code>java.lang.Float</code></td><td><code>r4</code></td></tr>
  * <tr><td><code>float</code></td><td><code>r4</code></td></tr>
  * <tr><td><code>java.lang.Double</code></td><td><code>float</code></td></tr>

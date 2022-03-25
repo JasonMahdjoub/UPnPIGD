@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 /**
  * Integrity rule for a state variable, restricting its values to a range with steps.
- * <p/>
+ * <p></p>
  * TODO: The question here is: Are they crazy enough to use this for !integer (e.g. floating point) numbers?
  *
  * @author Christian Bauer

@@ -86,7 +86,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     public void init() {
 
         if (ModelUtil.ANDROID_RUNTIME) {
-            throw new Error("Unsupported runtime environment, use org.fourthline.cling.android.AndroidUpnpServiceConfiguration");
+            throw new Error("Unsupported runtime environment, use com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration");
         }
 
         this.streamListenPort = NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT;

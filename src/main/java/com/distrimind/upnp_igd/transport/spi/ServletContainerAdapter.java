@@ -15,7 +15,9 @@
 
 package com.distrimind.upnp_igd.transport.spi;
 
-import javax.servlet.Servlet;
+
+import jakarta.servlet.Servlet;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 

@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * application component instead.
  * </p>
  * <p>
- * Override the various <tt>create...()</tt> methods to customize instantiation of protocol factory,
+ * Override the various <code>create...()</code> methods to customize instantiation of protocol factory,
  * router, etc.
  * </p>
  *

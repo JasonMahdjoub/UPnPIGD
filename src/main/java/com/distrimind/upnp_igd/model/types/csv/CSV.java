@@ -31,7 +31,7 @@ import java.util.List;
  * such strings back into individual values.
  * </p>
  * <p>
- * Your action method returns a <code>CSV<...></code> instance as an output argument. It can
+ * Your action method returns a <code>CSV&lt;...&lt;</code> instance as an output argument. It can
  * also accept a concrecte subclass of this type as an input argument, e.g. <code>CSVString</code>.
  * This type extends a regular <code>List</code>, so within your action method you can
  * handle the elements as usual.

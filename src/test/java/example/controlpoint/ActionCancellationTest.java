@@ -86,19 +86,19 @@ import static org.testng.Assert.assertEquals;
  * <tbody>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.StreamClientImpl (default)</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.StreamClientImpl (default)</code>
  * </td>
  * <td>NO</td>
  * </tr>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.apache.StreamClientImpl</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.apache.StreamClientImpl</code>
  * </td>
  * <td>YES</td>
  * </tr>
  * <tr>
  * <td class="nowrap">
- * <code>org.fourthline.cling.transport.impl.jetty.StreamClientImpl (default on Android)</code>
+ * <code>com.distrimind.upnp_igd.transport.impl.jetty.StreamClientImpl (default on Android)</code>
  * </td>
  * <td>YES</td>
  * </tr>

@@ -22,7 +22,7 @@ package com.distrimind.upnp_igd.model;
  */
 public interface Constants {
 
-    public static final String SYSTEM_PROPERTY_ANNOUNCE_MAC_ADDRESS = "org.fourthline.cling.network.announceMACAddress";
+    public static final String SYSTEM_PROPERTY_ANNOUNCE_MAC_ADDRESS = "com.distrimind.upnp_igd.network.announceMACAddress";
 
     public static final int UPNP_MULTICAST_PORT = 1900;
 

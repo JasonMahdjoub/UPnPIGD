@@ -275,12 +275,12 @@ public abstract class SubscriptionCallback implements Runnable {
 
     /**
      * Called when establishing a local or remote subscription failed. To get a nice error message that
-     * transparently detects local or remote errors use <tt>createDefaultFailureMessage()</tt>.
+     * transparently detects local or remote errors use <code>createDefaultFailureMessage()</code>.
      *
      * @param subscription   The failed subscription object, not very useful at this point.
-     * @param responseStatus For a remote subscription, if a response was received at all, this is it, otherwise <tt>null</tt>.
+     * @param responseStatus For a remote subscription, if a response was received at all, this is it, otherwise <code>null</code>.
      * @param exception      For a local subscription and failed creation of a remote subscription protocol (before
-     *                       sending the subscribe request), any exception that caused the failure, otherwise <tt>null</tt>.
+     *                       sending the subscribe request), any exception that caused the failure, otherwise <code>null</code>.
      * @param defaultMsg     A user-friendly error message.
      * @see #createDefaultFailureMessage
      */
@@ -297,7 +297,7 @@ public abstract class SubscriptionCallback implements Runnable {
      * Called when a local or remote subscription ended, either on user request or because of a failure.
      *
      * @param subscription   The ended subscription instance.
-     * @param reason         If the subscription ended regularly (through <tt>end()</tt>), this is <tt>null</tt>.
+     * @param reason         If the subscription ended regularly (through <code>end()</code>), this is <code>null</code>.
      * @param responseStatus For a remote subscription, if the cause implies a remopte response and it was
      *                       received, this is it (e.g. renewal failure response).
      */

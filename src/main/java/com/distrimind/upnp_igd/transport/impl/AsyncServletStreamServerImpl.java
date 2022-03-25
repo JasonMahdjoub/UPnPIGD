@@ -20,15 +20,11 @@ import com.distrimind.upnp_igd.model.message.Connection;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.AsyncEvent;
-import javax.servlet.AsyncListener;
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.net.Inet6Address;

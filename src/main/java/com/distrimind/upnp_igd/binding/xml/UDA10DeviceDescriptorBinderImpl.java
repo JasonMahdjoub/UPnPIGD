@@ -166,6 +166,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
         if (rootElement.getNamespaceURI() == null || !rootElement.getNamespaceURI().equals(Descriptor.Device.NAMESPACE_URI)) {
             log.warning("Wrong XML namespace declared on root element: " + rootElement.getNamespaceURI());
+            return;
         }
 
         if (!rootElement.getNodeName().equals(ELEMENT.root.name())) {

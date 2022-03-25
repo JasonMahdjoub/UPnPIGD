@@ -15,31 +15,27 @@
 
 package com.distrimind.upnp_igd.transport.impl.jetty;
 
-import org.eclipse.jetty.client.ContentExchange;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.http.HttpFields;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.io.ByteArrayBuffer;
-import org.eclipse.jetty.util.thread.ExecutorThreadPool;
-import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
-import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
-import com.distrimind.upnp_igd.model.message.UpnpHeaders;
-import com.distrimind.upnp_igd.model.message.UpnpMessage;
-import com.distrimind.upnp_igd.model.message.UpnpRequest;
-import com.distrimind.upnp_igd.model.message.UpnpResponse;
-import com.distrimind.upnp_igd.model.message.header.ContentTypeHeader;
+import com.distrimind.upnp_igd.model.message.*;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.transport.spi.AbstractStreamClient;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
-import org.seamless.util.Exceptions;
-import org.seamless.util.MimeType;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpContentResponse;
+import org.eclipse.jetty.client.HttpRequest;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.util.BytesRequestContent;
+import org.eclipse.jetty.client.util.StringRequestContent;
+import org.eclipse.jetty.http.HttpField;
+import org.eclipse.jetty.http.HttpFields;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,7 +48,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigurationImpl, StreamClientImpl.HttpContentExchange> {
+public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigurationImpl, HttpRequest> {
 
     final private static Logger log = Logger.getLogger(StreamClient.class.getName());
 
@@ -67,21 +63,21 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
         // Jetty client needs threads for its internal expiration routines, which we don't need but
         // can't disable, so let's abuse the request executor service for this
-        client.setThreadPool(
+        /*client.setThreadPool(
             new ExecutorThreadPool(getConfiguration().getRequestExecutorService()) {
                 @Override
                 protected void doStop() throws Exception {
                     // Do nothing, don't shut down the Cling ExecutorService when Jetty stops!
                 }
             }
-        );
+        );*/
 
         // These are some safety settings, we should never run into these timeouts as we
         // do our own expiration checking
-        client.setTimeout((configuration.getTimeoutSeconds()+5) * 1000);
-        client.setConnectTimeout((configuration.getTimeoutSeconds()+5) * 1000);
+        //client.setIdleTimeout((configuration.getTimeoutSeconds()+5) * 1000L);
+        client.setConnectTimeout((configuration.getTimeoutSeconds()+5) * 1000L);
 
-        client.setMaxRetries(configuration.getRequestRetryCount());
+        //client.setMaxRetries(configuration.getRequestRetryCount());
 
         try {
             client.start();
@@ -98,46 +94,164 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
     }
 
     @Override
-    protected HttpContentExchange createRequest(StreamRequestMessage requestMessage) {
-        return new HttpContentExchange(getConfiguration(), client, requestMessage);
+    protected HttpRequest createRequest(StreamRequestMessage requestMessage) {
+        UpnpRequest requestOperation=requestMessage.getOperation();
+
+        if (log.isLoggable(Level.FINE))
+            log.fine(
+                    "Preparing HTTP request message with method '"
+                            + requestOperation.getHttpMethodName()
+                            + "': " + requestMessage
+            );
+        HttpRequest request=(HttpRequest)client.newRequest(requestOperation.getURI());
+        request.method(requestOperation.getHttpMethodName());
+
+        //set headers
+        UpnpHeaders headers = requestMessage.getHeaders();
+        if (log.isLoggable(Level.FINE))
+            log.fine("Writing headers on HttpContentExchange: " + headers.size());
+        // TODO Always add the Host header
+        // TODO: ? setRequestHeader(UpnpHeader.Type.HOST.getHttpName(), );
+        // Add the default user agent if not already set on the message
+        if (!headers.containsKey(UpnpHeader.Type.USER_AGENT)) {
+            request.addHeader(new HttpField(UpnpHeader.Type.USER_AGENT.getHttpName(), getConfiguration().getUserAgentValue(
+                    requestMessage.getUdaMajorVersion(),
+                    requestMessage.getUdaMinorVersion())));
+        }
+        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+            for (String v : entry.getValue()) {
+                String headerName = entry.getKey();
+                if (log.isLoggable(Level.FINE))
+                    log.fine("Setting header '" + headerName + "': " + v);
+                request.addHeader(new HttpField(headerName, v));
+            }
+        }
+
+        //set body
+        if (requestMessage.hasBody()) {
+            if (requestMessage.getBodyType() == UpnpMessage.BodyType.STRING) {
+                if (log.isLoggable(Level.FINE))
+                    log.fine("Writing textual request body: " + requestMessage);
+
+                /*MimeType contentType =
+                        requestMessage.getContentTypeHeader() != null
+                                ? requestMessage.getContentTypeHeader().getValue()
+                                : ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8;*/
+
+                String charset =
+                        requestMessage.getContentTypeCharset() != null
+                                ? requestMessage.getContentTypeCharset()
+                                : "UTF-8";
+
+                Request.Content body=new StringRequestContent(requestMessage.getBodyString(), charset);
+                request.body(body);
+
+            } else {
+                if (log.isLoggable(Level.FINE))
+                    log.fine("Writing binary request body: " + requestMessage);
+
+                if (requestMessage.getContentTypeHeader() == null)
+                    throw new RuntimeException(
+                            "Missing content type header in request message: " + requestMessage
+                    );
+                Request.Content body=new BytesRequestContent(requestMessage.getBodyBytes());
+                request.body(body);
+            }
+        }
+
+        return request;
+        //return new HttpContentExchange(getConfiguration(), client, requestMessage);
     }
 
     @Override
     protected Callable<StreamResponseMessage> createCallable(final StreamRequestMessage requestMessage,
-                                                             final HttpContentExchange exchange) {
+                                                             final HttpRequest exchange) {
         return new Callable<StreamResponseMessage>() {
             public StreamResponseMessage call() throws Exception {
 
                 if (log.isLoggable(Level.FINE))
                     log.fine("Sending HTTP request: " + requestMessage);
+                final Callable<StreamResponseMessage> callable=this;
+                final AtomicReference<StreamResponseMessage> result=new AtomicReference<>(null);
+                final AtomicBoolean responseOK=new AtomicBoolean(false);
+                exchange.onResponseSuccess((response)->{
+                    // Status
+                    UpnpResponse.Status s=UpnpResponse.Status.getByStatusCode(response.getStatus());
+                    UpnpResponse responseOperation =
+                            new UpnpResponse(
+                                    response.getStatus(),
+                                    s==null?null:s.getStatusMsg()
+                            );
 
-                client.send(exchange);
-                int exchangeState = exchange.waitForDone();
+                    if (log.isLoggable(Level.FINE))
+                        log.fine("Received response: " + responseOperation);
 
-                if (exchangeState == HttpExchange.STATUS_COMPLETED) {
-                    try {
-                        return exchange.createResponse();
-                    } catch (Throwable t) {
-                        log.log(Level.WARNING, "Error reading response: " + requestMessage, Exceptions.unwrap(t));
-                        return null;
+                    StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
+
+                    // Headers
+                    UpnpHeaders headers = new UpnpHeaders();
+                    HttpFields responseFields = response.getHeaders();
+                    for (String name : responseFields.getFieldNamesCollection()) {
+                        for (Enumeration<String> e = responseFields.getValues(name);e.hasMoreElements();) {
+                            headers.add(name, e.nextElement());
+                        }
                     }
-                } else if (exchangeState == HttpExchange.STATUS_CANCELLED) {
-                    // That's ok, happens when we abort the exchange after timeout
-                    return null;
-                } else if (exchangeState == HttpExchange.STATUS_EXCEPTED) {
-                    // The warnings of the "excepted" condition are logged in HttpContentExchange
-                    return null;
-                } else {
-                    log.warning("Unhandled HTTP exchange status: " + exchangeState);
-                    return null;
+                    responseMessage.setHeaders(headers);
+
+                    // Body
+                    byte[] bytes = ((HttpContentResponse)response).getContent();
+                    if (bytes != null && bytes.length > 0 && responseMessage.isContentTypeMissingOrText()) {
+
+                        if (log.isLoggable(Level.FINE))
+                            log.fine("Response contains textual entity body, converting then setting string on message");
+                        try {
+                            responseMessage.setBodyCharacters(bytes);
+                        } catch (UnsupportedEncodingException ex) {
+                            throw new RuntimeException("Unsupported character encoding: " + ex, ex);
+                        }
+
+                    } else if (bytes != null && bytes.length > 0) {
+
+                        if (log.isLoggable(Level.FINE))
+                            log.fine("Response contains binary entity body, setting bytes on message");
+                        responseMessage.setBody(UpnpMessage.BodyType.BYTES, bytes);
+
+                    } else {
+                        if (log.isLoggable(Level.FINE))
+                            log.fine("Response did not contain entity body");
+                    }
+
+                    if (log.isLoggable(Level.FINE))
+                        log.fine("Response message complete: " + responseMessage);
+                    result.set(responseMessage);
+                    synchronized (callable)
+                    {
+                        responseOK.set(true);
+                        callable.notifyAll();
+                    }
+                });
+                exchange.onResponseFailure(((response, failure) -> {
+                    synchronized (callable)
+                    {
+                        responseOK.set(true);
+                        callable.notifyAll();
+                    }
+                }));
+                synchronized (callable)
+                {
+                    while(!responseOK.get()) {
+                        callable.wait();
+                    }
                 }
+                return result.get();
+
             }
         };
     }
 
     @Override
-    protected void abort(HttpContentExchange exchange) {
-        exchange.cancel();
+    protected void abort(HttpRequest exchange) {
+        exchange.abort(new UnknownError());
     }
 
     @Override
@@ -154,7 +268,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         }
     }
 
-    static public class HttpContentExchange extends ContentExchange {
+    /*static public class HttpContentExchange extends ContentExchange {
 
         final protected StreamClientConfigurationImpl configuration;
         final protected HttpClient client;
@@ -327,7 +441,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
                 log.fine("Response message complete: " + responseMessage);
             return responseMessage;
         }
-    }
+    }*/
 }
 
 

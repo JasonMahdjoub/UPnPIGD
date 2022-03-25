@@ -23,6 +23,7 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -90,13 +91,15 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
     @Override
     public InetAddress getLocalAddress(NetworkInterface networkInterface, boolean isIPv6, InetAddress remoteAddress) {
         // TODO: This is totally random because we can't access low level InterfaceAddress on Android!
-        for (InetAddress localAddress : getInetAddresses(networkInterface)) {
-            if (isIPv6 && localAddress instanceof Inet6Address)
-                return localAddress;
-            if (!isIPv6 && localAddress instanceof Inet4Address)
-                return localAddress;
-        }
-        throw new IllegalStateException("Can't find any IPv4 or IPv6 address on interface: " + networkInterface.getDisplayName());
+		for (NetworkInterface ni : (networkInterface==null?networkInterfaces: Collections.singletonList(networkInterface))) {
+			for (InetAddress localAddress : getInetAddresses(ni)) {
+				if (isIPv6 && localAddress instanceof Inet6Address)
+					return localAddress;
+				if (!isIPv6 && localAddress instanceof Inet4Address)
+					return localAddress;
+			}
+		}
+        throw new IllegalStateException("Can't find any IPv4 or IPv6 address on interface: " + (networkInterface==null?"null":networkInterface.getDisplayName()));
     }
 
     @Override

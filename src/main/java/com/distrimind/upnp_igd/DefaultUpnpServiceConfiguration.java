@@ -63,11 +63,11 @@ import java.util.logging.Logger;
  * Default configuration data of a typical UPnP stack.
  * <p>
  * This configuration utilizes the default network transport implementation found in
- * {@link org.fourthline.cling.transport.impl}.
+ * {@link com.distrimind.upnp_igd.transport.impl}.
  * </p>
  * <p>
  * This configuration utilizes the DOM default descriptor binders found in
- * {@link org.fourthline.cling.binding.xml}.
+ * {@link com.distrimind.upnp_igd.binding.xml}.
  * </p>
  * <p>
  * The thread <code>Executor</code> is an <code>Executors.newCachedThreadPool()</code> with
@@ -121,7 +121,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
     protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime) {
         if (checkRuntime && ModelUtil.ANDROID_RUNTIME) {
-            throw new Error("Unsupported runtime environment, use org.fourthline.cling.android.AndroidUpnpServiceConfiguration");
+            throw new Error("Unsupported runtime environment, use com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration");
         }
 
         this.streamListenPort = streamListenPort;

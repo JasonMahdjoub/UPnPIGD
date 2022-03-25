@@ -15,21 +15,19 @@
 
 package com.distrimind.upnp_igd.transport.impl.jetty;
 
-import org.eclipse.jetty.server.AbstractHttpConnection;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.bio.SocketConnector;
+
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import com.distrimind.upnp_igd.transport.spi.ServletContainerAdapter;
 
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +51,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
 
     // Singleton
     public static final JettyServletContainer INSTANCE = new JettyServletContainer();
+    private ThreadPoolExecutor poolExecutor;
     private JettyServletContainer() {
         resetServer();
     }
@@ -61,19 +60,28 @@ public class JettyServletContainer implements ServletContainerAdapter {
 
     @Override
     synchronized public void setExecutorService(ExecutorService executorService) {
-        if (INSTANCE.server.getThreadPool() == null) {
-            INSTANCE.server.setThreadPool(new ExecutorThreadPool(executorService) {
+        this.poolExecutor=(ThreadPoolExecutor) executorService;
+        server=null;
+        resetServer();
+        /*if (INSTANCE.server.getThreadPool() == null) {
+            server=new Server(new ExecutorThreadPool((ThreadPoolExecutor) executorService) {
                 @Override
                 protected void doStop() throws Exception {
                     // Do nothing, don't shut down the Cling ExecutorService when Jetty stops!
                 }
             });
-        }
+            /*INSTANCE.server.setThreadPool(new ExecutorThreadPool(executorService) {
+                @Override
+                protected void doStop() throws Exception {
+                    // Do nothing, don't shut down the Cling ExecutorService when Jetty stops!
+                }
+            });
+        }*/
     }
 
     @Override
     synchronized public int addConnector(String host, int port) throws IOException {
-        SocketConnector connector = new SocketConnector();
+        ServerConnector connector = new ServerConnector(server);
         connector.setHost(host);
         connector.setPort(port);
 
@@ -99,21 +107,24 @@ public class JettyServletContainer implements ServletContainerAdapter {
     synchronized public void removeConnector(String host, int port)  {
         Connector[] connectors = server.getConnectors();
         for (Connector connector : connectors) {
-            if (connector.getHost().equals(host) && connector.getLocalPort() == port) {
-                if (connector.isStarted() || connector.isStarting()) {
-                    try {
-                        connector.stop();
-                    } catch (Exception ex) {
-                        log.severe("Couldn't stop connector: " + connector + " " + ex);
-                        throw new RuntimeException(ex);
+            if (connector instanceof ServerConnector) {
+                ServerConnector sc=(ServerConnector)connector;
+                if (sc.getHost().equals(host) && sc.getLocalPort() == port) {
+                    if (connector.isStarted() || connector.isStarting()) {
+                        try {
+                            connector.stop();
+                        } catch (Exception ex) {
+                            log.severe("Couldn't stop connector: " + connector + " " + ex);
+                            throw new RuntimeException(ex);
+                        }
                     }
+                    server.removeConnector(connector);
+                    if (connectors.length == 1) {
+                        log.info("No more connectors, stopping Jetty server");
+                        stopIfRunning();
+                    }
+                    break;
                 }
-                server.removeConnector(connector);
-                if (connectors.length == 1) {
-                    log.info("No more connectors, stopping Jetty server");
-                    stopIfRunning();
-                }
-                break;
             }
         }
     }
@@ -162,8 +173,15 @@ public class JettyServletContainer implements ServletContainerAdapter {
     }
 
     protected void resetServer() {
-        server = new Server(); // Has its own QueuedThreadPool
-        server.setGracefulShutdown(1000); // Let's wait a second for ongoing transfers to complete
+        if (poolExecutor!=null) {
+            server = new Server(new ExecutorThreadPool(poolExecutor) {
+                @Override
+                protected void doStop() throws Exception {
+                    // Do nothing, don't shut down the Cling ExecutorService when Jetty stops!
+                }
+            }); // Has its own QueuedThreadPool
+            //server.setGracefulShutdown(1000); // Let's wait a second for ongoing transfers to complete
+        }
     }
 
     /**
@@ -180,7 +198,8 @@ public class JettyServletContainer implements ServletContainerAdapter {
 
     public static boolean isConnectionOpen(HttpServletRequest request, byte[] heartbeat) {
         Request jettyRequest = (Request)request;
-        AbstractHttpConnection connection = jettyRequest.getConnection();
+        HttpChannel connection=jettyRequest.getHttpChannel();
+        //AbstractHttpConnection connection = jettyRequest.getConnection();
         Socket socket = (Socket)connection.getEndPoint().getTransport();
         if (log.isLoggable(Level.FINE))
             log.fine("Checking if client connection is still open: " + socket.getRemoteSocketAddress());

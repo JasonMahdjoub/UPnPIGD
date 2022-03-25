@@ -39,7 +39,7 @@ import com.distrimind.upnp_igd.transport.spi.StreamServer;
  * Configuration settings for deployment on Android.
  * <p>
  * This configuration utilizes the Jetty transport implementation
- * found in {@link org.fourthline.cling.transport.impl.jetty} for TCP/HTTP networking, as
+ * found in {@link com.distrimind.upnp_igd.transport.impl.jetty} for TCP/HTTP networking, as
  * client and server. The servlet context path for UPnP is set to <code>/upnp</code>.
  * </p>
  * <p>
