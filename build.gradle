@@ -17,21 +17,32 @@ plugins {
 }
 Properties props = new Properties()
 def propFile = new File(project.getProjectDir().getParentFile(), 'credentials.properties')
-def artifactory_Url="https://artifactory.distri-mind.fr:443/artifactory"
-def user=""
-def pwd=""
+def artifactoryUrl="https://artifactory.distri-mind.fr:443/artifactory"
+def sonatypeStagingUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+def artifactoryUser=""
+def artifactoryPwd=""
+def sonatypeUser=""
+def sonatypePwd=""
+
 if (propFile.canRead())
 {
     props.load(new FileInputStream(propFile))
 
 
     if (props!=null && props.containsKey('artifactory_contextUrl'))
-        artifactory_Url=props.get("artifactory_contextUrl")
+        artifactoryUrl=props.get("artifactory_contextUrl")
     if (props!=null && props.containsKey('artifactory_user'))
-        user=props.get("artifactory_user")
+        artifactoryUser=props.get("artifactory_user")
     if (props!=null && props.containsKey('artifactory_password'))
-        pwd=props.get("artifactory_password")
+        artifactoryPwd=props.get("artifactory_password")
+    if (props!=null && props.containsKey('sonatype_staging_url'))
+        sonatypeStagingUrl=props.get("sonatype_staging_url")
+    if (props!=null && props.containsKey('sonatype_user'))
+        sonatypeUser=props.get("sonatype_user")
+    if (props!=null && props.containsKey('sonatype_password'))
+        sonatypePwd=props.get("sonatype_password")
 }
+
 
 	
 
@@ -47,16 +58,16 @@ eclipse {
 repositories {
 
 
-   	maven {
-       		url "${artifactory_Url}/gradle-release/"
-       		if (user!="")
-       		{
-	       		credentials {
-	              username "${user}"
-	              password "${pwd}"
-	            }
-	         }
-   	}
+    maven {
+        url "${artifactoryUrl}/gradle-release/"
+        if (artifactoryUser!="")
+        {
+            credentials {
+                username "${artifactoryUser}"
+                password "${artifactoryPwd}"
+            }
+        }
+    }
 
 
 }
@@ -290,6 +301,8 @@ publishing {
                 }
                 scm {
                     connection = 'https://github.com/JasonMahdjoub/UPnPIGD'
+                    developerConnection = connection
+                    url = connection
                 }
                 licenses {
                     license {
@@ -304,10 +317,17 @@ publishing {
     repositories {
         maven {
             credentials {
-              username "${user}"
-              password "${pwd}"
+                username "${artifactoryUser}"
+                password "${artifactoryPwd}"
             }
-            url "${artifactory_Url}/DistriMind-Public"
+            url "${artifactoryUrl}/DistriMind-Public"
+        }
+        maven {
+            credentials {
+                username "${sonatypeUser}"
+                password "${sonatypePwd}"
+            }
+            url "${sonatypeStagingUrl}"
         }
     }
 }
