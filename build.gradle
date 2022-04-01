@@ -140,7 +140,7 @@ targetCompatibility= javaVersion
     }
 }*/
 
-version='1.0.0-STABLE'
+version='1.0.1-STABLE'
 
 
 /*task generateVersionsFile(type:JavaExec, dependsOn:classes) {
@@ -285,6 +285,13 @@ publishing {
                 description = 'UPnP IGD stack for Java and Android'
                 url = 'https://github.com/JasonMahdjoub/UPnPIGD'
                 developers {
+                    developer {
+                        id = 'cb'
+                        name = 'Christian Bauer'
+                        email = 'cb@4thline.com'
+                        organization = '4th Line GmbH, Switzerland'
+                        roles.add('Project Lead')
+                    }
                     developer {
                         id = 'jmahdjoub'
                         name = 'Jason Mahdjoub'
