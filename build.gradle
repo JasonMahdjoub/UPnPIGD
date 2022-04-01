@@ -286,9 +286,12 @@ publishing {
                 url = 'https://github.com/JasonMahdjoub/UPnPIGD'
                 developers {
                     developer {
-                        id = 'mahdjoub'
+                        id = 'jmahdjoub'
                         name = 'Jason Mahdjoub'
                         email = 'jason.mahdjoub@distri-mind.fr'
+                        organization = 'DistriMind'
+                        roles.add('Entrepreneur')
+                        roles.add('Developer')
                     }
                 }
                 organization {
