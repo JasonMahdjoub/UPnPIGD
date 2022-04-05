@@ -1,3 +1,5 @@
+[![CodeQL](https://github.com/JasonMahdjoub/UpnpIGD/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/JasonMahdjoub/UpnpIGD/actions/workflows/codeql-analysis.yml)
+
 This is a fork of Cling, the UPnP stack for Java and Android
 ------------------------------------------------------------
 
