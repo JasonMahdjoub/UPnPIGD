@@ -106,6 +106,7 @@ dependencies {
     compileOnly 'org.eclipse.jetty:jetty-server:'+jettyVersion
     compileOnly 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
     compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
+    compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '5.0.0'
     compileOnly 'net.sf.kxml:kxml2:'+kxmlVersion
 
 
