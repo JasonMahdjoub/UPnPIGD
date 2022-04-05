@@ -22,8 +22,8 @@ import com.distrimind.upnp_igd.transport.impl.jetty.StreamClientConfigurationImp
 import com.distrimind.upnp_igd.transport.impl.jetty.StreamClientImpl;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Christian Bauer

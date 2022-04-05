@@ -127,6 +127,7 @@ dependencies {
     testImplementation 'net.sf.kxml:kxml2:'+kxmlVersion
 
     implementation 'javax.annotation:javax.annotation-api:'+javaXAnnotationVersion
+
 }
 
 def javaVersion="8"
@@ -140,7 +141,7 @@ targetCompatibility= javaVersion
     }
 }*/
 
-version='1.0.1-STABLE'
+version='1.0.2-STABLE'
 
 
 /*task generateVersionsFile(type:JavaExec, dependsOn:classes) {
