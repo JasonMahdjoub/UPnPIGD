@@ -20,6 +20,17 @@ Adapt into your build.gradle file, the next code :
 		...
 	}
 	...
+When using UpnpIGD into Android, if you want to use UpnpIGD functions, please use this additionnal dependencies (minimum Java version is 11) :
+	...
+	dependencies {
+		...
+		var jettyVersion='11.+'
+    		implementation 'org.eclipse.jetty:jetty-server:'+jettyVersion
+		implementation 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
+		implementation 'org.eclipse.jetty:jetty-client:'+jettyVersion
+		...
+	}
+	...
 Librairies are available on Maven Central. You can check signatures of dependencies with this [public GPG key](./gpg_key.asc). You can also use the next repository : 
 	...
 	repositories {
@@ -49,6 +60,24 @@ Adapt into your pom.xml file, the next code :
 		</dependencies>
 		...
 	</project>
+	...
+When using UpnpIGD into Android, if you want to use UpnpIGD functions, please use this additionnal dependencies (minimum Java version is 11) :
+	...
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>11.0.8</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-servlet</artifactId>
+				<version>11.0.8</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-client</artifactId>
+				<version>11.0.8</version>
+			</dependency>	
 	...
 Librairies are available on Maven Central. You can check signatures of dependencies with this [public GPG key](./gpg_key.asc). You can also use the next repository : 
 		...

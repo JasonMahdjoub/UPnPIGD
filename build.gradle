@@ -78,10 +78,10 @@ dependencies {
     var cdiapiVerison='2.0.SP1'
     var androidVersion='4.1.1.4'
     var kxmlVersion='2.3.0'
-    //var jettyVersion='8.+'
-    var jettyVersion='11.0.8'
+    var jettyVersion='11.+'
     var slf4jVersion='1.7.35'
     var javaXAnnotationVersion='1.3.2'
+
     testImplementation 'org.testng:testng:7.5'
     testImplementation 'org.slf4j:slf4j-api:'+slf4jVersion
     testImplementation 'org.slf4j:slf4j-simple:'+slf4jVersion
@@ -106,7 +106,6 @@ dependencies {
     compileOnly 'org.eclipse.jetty:jetty-server:'+jettyVersion
     compileOnly 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
     compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
-    compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '5.0.0'
     compileOnly 'net.sf.kxml:kxml2:'+kxmlVersion
 
 
@@ -122,9 +121,9 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
 
-    compileOnly 'org.eclipse.jetty:jetty-server:'+jettyVersion
-    compileOnly 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
-    compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
+    testImplementation 'org.eclipse.jetty:jetty-server:'+jettyVersion
+    testImplementation 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
+    testImplementation 'org.eclipse.jetty:jetty-client:'+jettyVersion
     testImplementation 'net.sf.kxml:kxml2:'+kxmlVersion
 
     implementation 'javax.annotation:javax.annotation-api:'+javaXAnnotationVersion
