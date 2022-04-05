@@ -57,7 +57,7 @@ import java.util.logging.Logger;
  *
  *      public void eventReceived(GENASubscription sub) {
  *          System.out.println("Event: " + sub.getCurrentSequence().getValue());
- *          Map&lt;String, StateVariableValue> values = sub.getCurrentValues();
+ *          Map&lt;String, StateVariableValue&gt; values = sub.getCurrentValues();
  *          StateVariableValue status = values.get("Status");
  *          System.out.println("Status is: " + status.toString());
  *      }
