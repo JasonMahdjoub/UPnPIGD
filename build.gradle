@@ -86,10 +86,10 @@ dependencies {
     testImplementation 'org.slf4j:slf4j-api:'+slf4jVersion
     testImplementation 'org.slf4j:slf4j-simple:'+slf4jVersion
 
-    api 'org.seamless:seamless-util:'+seamlessVersion
-    api 'org.seamless:seamless-http:'+seamlessVersion
-    api 'org.seamless:seamless-xml:'+seamlessVersion
-    api 'org.seamless:seamless-swing:'+seamlessVersion
+    implementation 'org.seamless:seamless-util:'+seamlessVersion
+    implementation 'org.seamless:seamless-http:'+seamlessVersion
+    implementation 'org.seamless:seamless-xml:'+seamlessVersion
+    implementation 'org.seamless:seamless-swing:'+seamlessVersion
 
     compileOnly 'org.xmlpull:com.springsource.org.xmlpull:'+xmlpullVersion
 
@@ -121,9 +121,9 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
 
-    testImplementation 'org.eclipse.jetty:jetty-server:'+jettyVersion
-    testImplementation 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
-    testImplementation 'org.eclipse.jetty:jetty-client:'+jettyVersion
+    compileOnly 'org.eclipse.jetty:jetty-server:'+jettyVersion
+    compileOnly 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
+    compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
     testImplementation 'net.sf.kxml:kxml2:'+kxmlVersion
 
     implementation 'javax.annotation:javax.annotation-api:'+javaXAnnotationVersion
