@@ -79,7 +79,7 @@ dependencies {
     var androidVersion='4.1.1.4'
     var kxmlVersion='2.3.0'
     var jettyVersion='11.+'
-    var slf4jVersion='1.7.35'
+    var slf4jVersion='2.0.0'
     var javaXAnnotationVersion='1.3.2'
 
     testImplementation 'org.testng:testng:7.5'
