@@ -130,9 +130,8 @@ dependencies {
 
 }
 
-def javaVersion="8"
-sourceCompatibility = javaVersion
-targetCompatibility= javaVersion
+sourceCompatibility = "8"
+targetCompatibility= "11"
 
 /*idea {
     project {
