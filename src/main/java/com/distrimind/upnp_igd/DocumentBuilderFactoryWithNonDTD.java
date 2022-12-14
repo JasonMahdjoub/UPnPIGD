@@ -1,5 +1,5 @@
 /*
- * Copyright or © or Copr. Jason Mahdjoub (01/04/2013)
+ * Copyright or © or Corp. Jason Mahdjoub (01/04/2013)
  *
  * The contents of this file are subject to the terms of either the GNU
  * Lesser General Public License Version 2 or later ("LGPL") or the

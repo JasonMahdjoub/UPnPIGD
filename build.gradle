@@ -140,7 +140,7 @@ targetCompatibility= javaVersion
     }
 }*/
 
-version='1.0.3-STABLE'
+version='1.0.4-STABLE'
 
 
 /*task generateVersionsFile(type:JavaExec, dependsOn:classes) {
