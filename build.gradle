@@ -129,7 +129,7 @@ dependencies {
     implementation 'javax.annotation:javax.annotation-api:'+javaXAnnotationVersion
 
 }
-def javaVersion="8"
+def javaVersion=11
 sourceCompatibility = javaVersion
 targetCompatibility= javaVersion
 
