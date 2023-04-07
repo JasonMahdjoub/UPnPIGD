@@ -7,11 +7,11 @@ target
 MANIFEST.MF
 out
 
-/.gradle/
-/bin/
-/gradle.properties
-/build/
-/test-output/
+.gradle/
+bin/
+gradle.properties
+build/
+test-output/
 
 # User-specific stuff
 .idea/**/workspace.xml
