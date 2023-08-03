@@ -129,9 +129,12 @@ dependencies {
     implementation 'javax.annotation:javax.annotation-api:'+javaXAnnotationVersion
 
 }
-def javaVersion=11
-sourceCompatibility = javaVersion
-targetCompatibility= javaVersion
+def javaVersion = JavaVersion.VERSION_11
+java {
+
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
 
 /*idea {
     project {
@@ -206,10 +209,8 @@ task generateMDFiles (dependsOn: generateVersionsFile) {
 allprojects {
 	group='com.distrimind.upnp_igd'
 
-    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9)) {
-        compileJava.options.compilerArgs.addAll(['--release', javaVersion] as Collection<? extends String>)
-        javadoc.options.addStringOption("html5", "-quiet")
-    }
+    compileJava.options.compilerArgs.addAll(['--release', javaVersion] as Collection<? extends String>)
+    javadoc.options.addStringOption("html5", "-quiet")
 
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile).tap {
