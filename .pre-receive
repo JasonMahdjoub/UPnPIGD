@@ -1,0 +1,14 @@
+#!/bin/bash
+
+while read oldrev newrev refname; do
+    # Parcourir tous les nouveaux commits dans la référence
+    for commit in $(git rev-list ${oldrev}..${newrev}); do
+        # Vérifier si le commit est signé
+        if ! git log --show-signature -n 1 $commit | grep -q 'gpg: Good signature'; then
+            echo "Erreur : Le commit $commit n'est pas signé."
+            exit 1
+        fi
+    done
+done
+
+exit 0
