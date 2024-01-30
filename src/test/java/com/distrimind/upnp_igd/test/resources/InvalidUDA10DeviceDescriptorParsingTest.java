@@ -28,6 +28,8 @@ import org.seamless.util.io.IO;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.Objects;
+
 /**
  * @author Christian Bauer
  */
@@ -143,7 +145,7 @@ public class InvalidUDA10DeviceDescriptorParsingTest {
 	protected void readDevice(String invalidXMLFile, UpnpService upnpService) throws Exception {
 		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
 		upnpService.getConfiguration().getDeviceDescriptorBinderUDA10()
-            .describe(device, IO.readLines(getClass().getResourceAsStream(invalidXMLFile)));
+            .describe(device, IO.readLines(Objects.requireNonNull(getClass().getResourceAsStream(invalidXMLFile))));
 	}
 
 }

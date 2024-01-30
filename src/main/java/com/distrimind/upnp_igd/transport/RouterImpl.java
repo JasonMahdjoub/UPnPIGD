@@ -34,10 +34,10 @@ import com.distrimind.upnp_igd.transport.spi.StreamServer;
 import com.distrimind.upnp_igd.transport.spi.UpnpStream;
 import org.seamless.util.Exceptions;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Default;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Default;
+import jakarta.inject.Inject;
 import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;

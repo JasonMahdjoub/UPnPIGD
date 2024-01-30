@@ -35,7 +35,7 @@ import com.distrimind.upnp_igd.protocol.sync.SendingRenewal;
 import com.distrimind.upnp_igd.protocol.sync.SendingSubscribe;
 import com.distrimind.upnp_igd.protocol.sync.SendingUnsubscribe;
 
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Alternative;
 import java.net.URL;
 
 /**

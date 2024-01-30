@@ -86,7 +86,7 @@ public class MutableDevice {
     }
 
     public DeviceType createDeviceType() {
-        return DeviceType.valueOf(deviceType);
+        return deviceType==null?null:DeviceType.valueOf(deviceType);
     }
 
     public DeviceDetails createDeviceDetails(URL baseURL) {

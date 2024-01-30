@@ -19,7 +19,7 @@ import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.DefaultUpnpServiceConfiguration;
 
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Alternative;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;

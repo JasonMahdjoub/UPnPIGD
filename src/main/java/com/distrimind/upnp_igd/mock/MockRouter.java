@@ -27,7 +27,7 @@ import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.transport.spi.UpnpStream;
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
 
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Alternative;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;

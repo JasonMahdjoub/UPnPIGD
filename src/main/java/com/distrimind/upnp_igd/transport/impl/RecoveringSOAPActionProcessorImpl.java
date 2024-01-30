@@ -24,7 +24,7 @@ import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
 import org.seamless.xml.XmlPullParserUtils;
 
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Alternative;
 
 /**
  * Implementation based on the <em>Xml Pull Parser</em> XML processing API.

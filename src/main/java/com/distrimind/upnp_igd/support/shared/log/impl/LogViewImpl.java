@@ -25,9 +25,9 @@ import org.seamless.swing.logging.LogTableCellRenderer;
 import org.seamless.swing.logging.LogTableModel;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;

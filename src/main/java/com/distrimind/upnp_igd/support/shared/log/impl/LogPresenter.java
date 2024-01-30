@@ -20,9 +20,9 @@ import com.distrimind.upnp_igd.support.shared.log.LogView;
 import org.seamless.swing.logging.LogMessage;
 
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 import javax.swing.SwingUtilities;
 
 /**

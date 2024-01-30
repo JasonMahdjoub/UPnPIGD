@@ -49,8 +49,8 @@ import com.distrimind.upnp_igd.protocol.sync.SendingRenewal;
 import com.distrimind.upnp_igd.protocol.sync.SendingSubscribe;
 import com.distrimind.upnp_igd.protocol.sync.SendingUnsubscribe;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;

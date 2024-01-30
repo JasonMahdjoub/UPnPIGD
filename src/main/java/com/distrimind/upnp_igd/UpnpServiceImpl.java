@@ -28,7 +28,7 @@ import com.distrimind.upnp_igd.transport.RouterException;
 import com.distrimind.upnp_igd.transport.RouterImpl;
 import org.seamless.util.Exceptions;
 
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Alternative;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

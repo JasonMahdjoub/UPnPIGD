@@ -31,7 +31,7 @@ import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
 
-import javax.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Alternative;
 
 /**
  * Simplifies testing of core and non-core modules.

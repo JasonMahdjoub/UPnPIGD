@@ -24,9 +24,10 @@ import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.protocol.ProtocolFactory;
 import com.distrimind.upnp_igd.registry.Registry;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
@@ -43,7 +44,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class ControlPointImpl implements ControlPoint {
 
-    private static Logger log = Logger.getLogger(ControlPointImpl.class.getName());
+    private static final Logger log = Logger.getLogger(ControlPointImpl.class.getName());
 
     protected UpnpServiceConfiguration configuration;
     protected ProtocolFactory protocolFactory;

@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.registry.event;
 
-import javax.inject.Qualifier;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

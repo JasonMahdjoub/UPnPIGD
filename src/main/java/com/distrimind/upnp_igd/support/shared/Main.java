@@ -15,26 +15,16 @@
 
 package com.distrimind.upnp_igd.support.shared;
 
-import com.distrimind.upnp_igd.support.shared.NewPlatformApple;
-import com.distrimind.upnp_igd.support.shared.ShutdownHandler;
 import com.distrimind.upnp_igd.support.shared.log.LogView;
-import org.seamless.util.logging.LoggingUtil;
+import jakarta.inject.Inject;
 import org.seamless.swing.Application;
 import org.seamless.swing.logging.LogMessage;
 import org.seamless.swing.logging.LoggingHandler;
 import org.seamless.util.OS;
+import org.seamless.util.logging.LoggingUtil;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;

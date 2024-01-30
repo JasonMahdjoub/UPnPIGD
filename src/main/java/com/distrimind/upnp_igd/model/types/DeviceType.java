@@ -81,7 +81,7 @@ public class DeviceType {
         DeviceType deviceType = null;
 
         // Sometimes crazy UPnP devices deliver spaces in a URN, don't ask...
-        s = s.replaceAll("\\s", "");
+        s = s==null?null:s.replaceAll("\\s", "");
 
         // First try UDADeviceType parse
         try {
