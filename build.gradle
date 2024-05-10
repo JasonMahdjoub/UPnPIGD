@@ -308,8 +308,6 @@ publishing {
                         name = 'Jason Mahdjoub'
                         email = 'jason.mahdjoub@distri-mind.fr'
                         organization = 'DistriMind'
-                        roles.add('Entrepreneur')
-                        roles.add('Developer')
                     }
                 }
                 organization {

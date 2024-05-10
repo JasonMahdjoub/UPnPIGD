@@ -9,7 +9,6 @@ out
 
 .gradle/
 bin/
-gradle.properties
 build/
 test-output/
 
