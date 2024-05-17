@@ -81,7 +81,7 @@ dependencies {
     var jettyVersion='12.+'
     var slf4jVersion='2.0.13'
     var javaXAnnotationVersion='1.3.2'
-    var testngVersion='7.10.1'
+    var testngVersion='7.10.2'
     var beanShellVersion='2.0b6'
 
     testImplementation 'org.testng:testng:'+testngVersion
