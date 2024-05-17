@@ -37,7 +37,7 @@ When using UpnpIGD into Android, if you want to use UpnpIGD functions, please us
 	}
 	...
 ```	
-Librairies are available on Maven Central. You can check signatures of dependencies with this [public GPG key](./gpg_key.asc). You can also use the next repository : 
+Librairies are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
 ```
 	...
 	repositories {
@@ -89,7 +89,7 @@ When using UpnpIGD into Android, if you want to use UpnpIGD functions, please us
 	</dependency>	
 	...
 ```
-Librairies are available on Maven Central. You can check signatures of dependencies with this [public GPG key](./gpg_key.asc). You can also use the next repository : 
+Librairies are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
 ```
 	...
 	<repositories>
