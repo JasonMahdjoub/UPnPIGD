@@ -17,7 +17,7 @@ package com.distrimind.upnp_igd.support.lastchange;
 
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.net.URI;
 import java.util.Map;

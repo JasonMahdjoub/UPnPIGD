@@ -32,7 +32,7 @@ public @interface UpnpStateVariable {
 
     // String types
     String[] allowedValues() default {};
-    Class allowedValuesEnum() default void.class;
+    Class<?> allowedValuesEnum() default void.class;
 
     // Numeric types
     long allowedValueMinimum() default 0;
@@ -40,8 +40,8 @@ public @interface UpnpStateVariable {
     long allowedValueStep() default 1;
 
     // Dynamic
-    Class allowedValueProvider() default void.class;
-    Class allowedValueRangeProvider() default void.class;
+    Class<?> allowedValueProvider() default void.class;
+    Class<?> allowedValueRangeProvider() default void.class;
 
     boolean sendEvents() default true;
     int eventMaximumRateMilliseconds() default 0;

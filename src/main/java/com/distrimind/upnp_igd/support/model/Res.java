@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.support.model;
 
-import org.seamless.util.MimeType;
+import com.distrimind.upnp_igd.util.MimeType;
 
 import java.net.URI;
 

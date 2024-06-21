@@ -26,7 +26,7 @@ import com.distrimind.upnp_igd.registry.RegistryListener;
 import com.distrimind.upnp_igd.transport.Router;
 import com.distrimind.upnp_igd.transport.RouterException;
 import com.distrimind.upnp_igd.transport.RouterImpl;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import jakarta.enterprise.inject.Alternative;
 import java.util.logging.Level;

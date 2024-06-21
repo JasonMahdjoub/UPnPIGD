@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.support.shared;
 
-import org.seamless.swing.Controller;
+import com.distrimind.upnp_igd.swing.Controller;
 
 import javax.swing.JFrame;
 import java.lang.reflect.InvocationHandler;

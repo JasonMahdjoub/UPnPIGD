@@ -21,6 +21,7 @@ import com.distrimind.upnp_igd.binding.staging.MutableService;
 import com.distrimind.upnp_igd.binding.staging.MutableUDAVersion;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.Device;
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.DLNACaps;
 import com.distrimind.upnp_igd.model.types.DLNADoc;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
@@ -28,8 +29,8 @@ import com.distrimind.upnp_igd.model.types.ServiceId;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDN;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
-import org.seamless.util.MimeType;
-import org.seamless.xml.SAXParser;
+import com.distrimind.upnp_igd.util.MimeType;
+import com.distrimind.upnp_igd.xml.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -37,8 +38,8 @@ import org.xml.sax.SAXException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static com.distrimind.upnp_igd.binding.xml.Descriptor.Device.ELEMENT;
@@ -50,16 +51,16 @@ import static com.distrimind.upnp_igd.binding.xml.Descriptor.Device.ELEMENT;
  */
 public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBinderImpl {
 
-    private static Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
+    private static final Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
 
     public UDA10DeviceDescriptorBinderSAXImpl(NetworkAddressFactory networkAddressFactory) {
         super(networkAddressFactory);
     }
 
     @Override
-    public <D extends Device> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
 
-        if (descriptorXml == null || descriptorXml.length() == 0) {
+        if (descriptorXml == null || descriptorXml.isEmpty()) {
             throw new DescriptorBindingException("Null or empty descriptor");
         }
 
@@ -70,8 +71,8 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
 
             SAXParser parser = new SAXParser();
 
-            MutableDevice descriptor = new MutableDevice();
-            new RootHandler(descriptor, parser);
+            MutableDevice<D, S> descriptor = new MutableDevice<>();
+            new RootHandler<>(descriptor, parser);
 
             parser.parse(
                     new InputSource(
@@ -81,7 +82,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
             );
 
             // Build the immutable descriptor graph
-            return (D) descriptor.build(undescribedDevice);
+            return descriptor.build(undescribedDevice);
 
         } catch (ValidationException ex) {
             throw ex;
@@ -90,9 +91,9 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
     }
 
-    protected static class RootHandler extends DeviceDescriptorHandler<MutableDevice> {
+    protected static class RootHandler<D extends Device<?, D, S>, S extends Service<?, D, S>> extends DeviceDescriptorHandler<MutableDevice<D, S>> {
 
-        public RootHandler(MutableDevice instance, SAXParser parser) {
+        public RootHandler(MutableDevice<D, S> instance, SAXParser parser) {
             super(instance, parser);
         }
 
@@ -106,26 +107,24 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
             }
 
             if (element.equals(DeviceHandler.EL)) {
-                new DeviceHandler(getInstance(), this);
+                new DeviceHandler<>(getInstance(), this);
             }
 
         }
 
         @Override
         public void endElement(ELEMENT element) throws SAXException {
-            switch (element) {
-                case URLBase:
-                    try {
-                        String urlString = getCharacters();
-                        if (urlString != null && urlString.length() > 0) {
-                            // We hope it's  RFC 2396 and RFC 2732 compliant
-                            getInstance().baseURL = new URL(urlString);
-                        }
-                    } catch (Exception ex) {
-                        throw new SAXException("Invalid URLBase: " + ex.toString());
-                    }
-                    break;
-            }
+			if (Objects.requireNonNull(element) == ELEMENT.URLBase) {
+				try {
+					String urlString = getCharacters();
+					if (urlString != null && !urlString.isEmpty()) {
+						// We hope it's  RFC 2396 and RFC 2732 compliant
+						getInstance().baseURL = new URL(urlString);
+					}
+				} catch (Exception ex) {
+					throw new SAXException("Invalid URLBase: " + ex.toString());
+				}
+			}
         }
     }
 
@@ -133,7 +132,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
 
         public static final ELEMENT EL = ELEMENT.specVersion;
 
-        public SpecVersionHandler(MutableUDAVersion instance, DeviceDescriptorHandler parent) {
+        public SpecVersionHandler(MutableUDAVersion instance, DeviceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
@@ -146,15 +145,14 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                         log.warning("Unsupported UDA major version, ignoring: " + majorVersion);
                         majorVersion = "1";
                     }
-                    getInstance().major = Integer.valueOf(majorVersion);
+                    getInstance().major = Integer.parseInt(majorVersion);
                     break;
                 case minor:
                     String minorVersion = getCharacters().trim();
                     if (!minorVersion.equals("0")) {
                         log.warning("Unsupported UDA minor version, ignoring: " + minorVersion);
-                        minorVersion = "0";
                     }
-                    getInstance().minor = Integer.valueOf(minorVersion);
+                    getInstance().minor = 0;
                     break;
             }
         }
@@ -165,11 +163,11 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
     }
 
-    protected static class DeviceHandler extends DeviceDescriptorHandler<MutableDevice> {
+    protected static class DeviceHandler<D extends Device<?, D, S>, S extends Service<?, D, S>> extends DeviceDescriptorHandler<MutableDevice<D, S>> {
 
         public static final ELEMENT EL = ELEMENT.device;
 
-        public DeviceHandler(MutableDevice instance, DeviceDescriptorHandler parent) {
+        public DeviceHandler(MutableDevice<D, S> instance, DeviceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
@@ -183,15 +181,15 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
             }
 
             if (element.equals(ServiceListHandler.EL)) {
-                List<MutableService> services = new ArrayList<>();
+                List<MutableService<D, S>> services = new ArrayList<>();
                 getInstance().services = services;
-                new ServiceListHandler(services, this);
+                new ServiceListHandler<>(services, this);
             }
 
             if (element.equals(DeviceListHandler.EL)) {
-                List<MutableDevice> devices = new ArrayList<>();
+                List<MutableDevice<D, S>> devices = new ArrayList<>();
                 getInstance().embeddedDevices = devices;
-                new DeviceListHandler(devices, this);
+                new DeviceListHandler<>(devices, this);
             }
         }
 
@@ -258,7 +256,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
 
         public static final ELEMENT EL = ELEMENT.iconList;
 
-        public IconListHandler(List<MutableIcon> instance, DeviceDescriptorHandler parent) {
+        public IconListHandler(List<MutableIcon> instance, DeviceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
@@ -281,7 +279,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
 
         public static final ELEMENT EL = ELEMENT.icon;
 
-        public IconHandler(MutableIcon instance, DeviceDescriptorHandler parent) {
+        public IconHandler(MutableIcon instance, DeviceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
@@ -289,14 +287,14 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         public void endElement(ELEMENT element) throws SAXException {
             switch (element) {
                 case width:
-                    getInstance().width = Integer.valueOf(getCharacters());
+                    getInstance().width = Integer.parseInt(getCharacters());
                     break;
                 case height:
-                    getInstance().height = Integer.valueOf(getCharacters());
+                    getInstance().height = Integer.parseInt(getCharacters());
                     break;
                 case depth:
                 	try {
-                		getInstance().depth = Integer.valueOf(getCharacters());
+                		getInstance().depth = Integer.parseInt(getCharacters());
                 	} catch(NumberFormatException ex) {
                 		log.warning("Invalid icon depth '" + getCharacters() + "', using 16 as default: " + ex);
                 		getInstance().depth = 16;
@@ -323,20 +321,20 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
     }
 
-    protected static class ServiceListHandler extends DeviceDescriptorHandler<List<MutableService>> {
+    protected static class ServiceListHandler<D extends Device<?, D, S>, S extends Service<?, D, S>> extends DeviceDescriptorHandler<List<MutableService<D, S>>> {
 
         public static final ELEMENT EL = ELEMENT.serviceList;
 
-        public ServiceListHandler(List<MutableService> instance, DeviceDescriptorHandler parent) {
+        public ServiceListHandler(List<MutableService<D, S>> instance, DeviceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
         @Override
         public void startElement(ELEMENT element, Attributes attributes) throws SAXException {
             if (element.equals(ServiceHandler.EL)) {
-                MutableService service = new MutableService();
+                MutableService<D, S> service = new MutableService<>();
                 getInstance().add(service);
-                new ServiceHandler(service, this);
+                new ServiceHandler<>(service, this);
             }
         }
 
@@ -344,22 +342,17 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         public boolean isLastElement(ELEMENT element) {
             boolean last = element.equals(EL);
             if (last) {
-                Iterator<MutableService> it = getInstance().iterator();
-                while (it.hasNext()) {
-                    MutableService service = it.next();
-                    if (service.serviceType == null || service.serviceId == null)
-                        it.remove();
-                }
+				getInstance().removeIf(service -> service.serviceType == null || service.serviceId == null);
             }
             return last;
         }
     }
 
-    protected static class ServiceHandler extends DeviceDescriptorHandler<MutableService> {
+    protected static class ServiceHandler<D extends Device<?, D, S>, S extends Service<?, D, S>> extends DeviceDescriptorHandler<MutableService<D, S>> {
 
         public static final ELEMENT EL = ELEMENT.service;
 
-        public ServiceHandler(MutableService instance, DeviceDescriptorHandler parent) {
+        public ServiceHandler(MutableService<D, S> instance, DeviceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
@@ -396,20 +389,20 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
     }
 
-    protected static class DeviceListHandler extends DeviceDescriptorHandler<List<MutableDevice>> {
+    protected static class DeviceListHandler<D extends Device<?, D, S>, S extends Service<?, D, S>> extends DeviceDescriptorHandler<List<MutableDevice<D, S>>> {
 
         public static final ELEMENT EL = ELEMENT.deviceList;
 
-        public DeviceListHandler(List<MutableDevice> instance, DeviceDescriptorHandler parent) {
+        public DeviceListHandler(List<MutableDevice<D, S>> instance, DeviceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
         @Override
         public void startElement(ELEMENT element, Attributes attributes) throws SAXException {
             if (element.equals(DeviceHandler.EL)) {
-                MutableDevice device = new MutableDevice();
+                MutableDevice<D,S> device = new MutableDevice<>();
                 getInstance().add(device);
-                new DeviceHandler(device, this);
+                new DeviceHandler<>(device, this);
             }
         }
 
@@ -429,11 +422,11 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
             super(instance, parser);
         }
 
-        public DeviceDescriptorHandler(I instance, DeviceDescriptorHandler parent) {
+        public DeviceDescriptorHandler(I instance, DeviceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
-        public DeviceDescriptorHandler(I instance, SAXParser parser, DeviceDescriptorHandler parent) {
+        public DeviceDescriptorHandler(I instance, SAXParser parser, DeviceDescriptorHandler<?> parent) {
             super(instance, parser, parent);
         }
 

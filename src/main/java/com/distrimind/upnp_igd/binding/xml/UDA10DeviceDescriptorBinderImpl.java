@@ -52,8 +52,8 @@ import com.distrimind.upnp_igd.model.types.ServiceId;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDN;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
-import org.seamless.util.Exceptions;
-import org.seamless.util.MimeType;
+import com.distrimind.upnp_igd.util.Exceptions;
+import com.distrimind.upnp_igd.util.MimeType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,7 +70,7 @@ import org.xml.sax.SAXParseException;
  */
 public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, ErrorHandler {
 
-    private static Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
+    private static final Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
     private final NetworkAddressFactory networkAddressFactory;
     static boolean isNotValidRemoteAddress(URL u, NetworkAddressFactory networkAddressFactory)
     {
@@ -98,9 +98,9 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
     {
         this.networkAddressFactory=networkAddressFactory;
     }
-    public <D extends Device> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
 
-        if (descriptorXml == null || descriptorXml.length() == 0) {
+        if (descriptorXml == null || descriptorXml.isEmpty()) {
             throw new DescriptorBindingException("Null or empty descriptor");
         }
 
@@ -135,7 +135,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public <D extends Device> D describe(D undescribedDevice, Document dom) throws DescriptorBindingException, ValidationException {
+    public <D extends Device<?, D, ?>> D describe(D undescribedDevice, Document dom) throws DescriptorBindingException, ValidationException {
         try {
             log.fine("Populating device from DOM: " + undescribedDevice);
 
@@ -154,8 +154,8 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public <D extends Device> D buildInstance(D undescribedDevice, MutableDevice descriptor) throws ValidationException {
-        D res=(D) descriptor.build(undescribedDevice);
+    public <D extends Device<?, D, ?>> D buildInstance(D undescribedDevice, MutableDevice descriptor) throws ValidationException {
+        @SuppressWarnings("unchecked") D res=(D) descriptor.build(undescribedDevice);
         if (res.getDetails()!=null && isNotValidRemoteAddress(res.getDetails().getBaseURL(), networkAddressFactory))
             return null;
 
@@ -188,7 +188,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
             } else if (ELEMENT.URLBase.equals(rootChild)) {
                 try {
                     String urlString = XMLUtil.getTextContent(rootChild);
-                    if (urlString != null && urlString.length() > 0) {
+                    if (urlString != null && !urlString.isEmpty()) {
                         // We hope it's  RFC 2396 and RFC 2732 compliant
                         descriptor.baseURL = new URL(urlString);
                     }
@@ -226,14 +226,13 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                     log.warning("Unsupported UDA major version, ignoring: " + version);
                     version = "1";
                 }
-                descriptor.udaVersion.major = Integer.valueOf(version);
+                descriptor.udaVersion.major = Integer.parseInt(version);
             } else if (ELEMENT.minor.equals(specVersionChild)) {
                 String version = XMLUtil.getTextContent(specVersionChild).trim();
                 if (!version.equals("0")) {
                     log.warning("Unsupported UDA minor version, ignoring: " + version);
-                    version = "0";
                 }
-                descriptor.udaVersion.minor = Integer.valueOf(version);
+                descriptor.udaVersion.minor = 0;
             }
 
         }
@@ -316,13 +315,13 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                         continue;
 
                     if (ELEMENT.width.equals(iconChild)) {
-                        icon.width = (Integer.valueOf(XMLUtil.getTextContent(iconChild)));
+                        icon.width = (Integer.parseInt(XMLUtil.getTextContent(iconChild)));
                     } else if (ELEMENT.height.equals(iconChild)) {
-                        icon.height = (Integer.valueOf(XMLUtil.getTextContent(iconChild)));
+                        icon.height = (Integer.parseInt(XMLUtil.getTextContent(iconChild)));
                     } else if (ELEMENT.depth.equals(iconChild)) {
                         String depth = XMLUtil.getTextContent(iconChild);
                         try {
-                            icon.depth = (Integer.valueOf(depth));
+                            icon.depth = (Integer.parseInt(depth));
                        	} catch(NumberFormatException ex) {
                        		log.warning("Invalid icon depth '" + depth + "', using 16 as default: " + ex);
                        		icon.depth = 16;
@@ -346,7 +345,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public void hydrateServiceList(MutableDevice descriptor, Node serviceListNode) throws DescriptorBindingException {
+    public void hydrateServiceList(MutableDevice descriptor, Node serviceListNode) {
 
         NodeList serviceListNodeChildren = serviceListNode.getChildNodes();
         for (int i = 0; i < serviceListNodeChildren.getLength(); i++) {
@@ -411,7 +410,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
     }
 
-    public String generate(Device deviceModel, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException {
+    public String generate(Device<?, ?, ?> deviceModel, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException {
         try {
             log.fine("Generating XML descriptor from device model: " + deviceModel);
 
@@ -422,7 +421,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public Document buildDOM(Device deviceModel, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException {
+    public Document buildDOM(Device<?, ?, ?> deviceModel, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException {
 
         try {
             log.fine("Generating DOM from device model: " + deviceModel);
@@ -440,7 +439,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    protected void generateRoot(Namespace namespace, Device deviceModel, Document descriptor, RemoteClientInfo info) {
+    protected void generateRoot(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, RemoteClientInfo info) {
 
         Element rootElement = descriptor.createElementNS(Descriptor.Device.NAMESPACE_URI, ELEMENT.root.toString());
         descriptor.appendChild(rootElement);
@@ -456,13 +455,13 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         generateDevice(namespace, deviceModel, descriptor, rootElement, info);
     }
 
-    protected void generateSpecVersion(Namespace namespace, Device deviceModel, Document descriptor, Element rootElement) {
+    protected void generateSpecVersion(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element rootElement) {
         Element specVersionElement = appendNewElement(descriptor, rootElement, ELEMENT.specVersion);
         appendNewElementIfNotNull(descriptor, specVersionElement, ELEMENT.major, deviceModel.getVersion().getMajor());
         appendNewElementIfNotNull(descriptor, specVersionElement, ELEMENT.minor, deviceModel.getVersion().getMinor());
     }
 
-    protected void generateDevice(Namespace namespace, Device deviceModel, Document descriptor, Element rootElement, RemoteClientInfo info) {
+    protected void generateDevice(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element rootElement, RemoteClientInfo info) {
 
         Element deviceElement = appendNewElement(descriptor, rootElement, ELEMENT.device);
 
@@ -543,7 +542,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         generateDeviceList(namespace, deviceModel, descriptor, deviceElement, info);
     }
 
-    protected void generateIconList(Namespace namespace, Device deviceModel, Document descriptor, Element deviceElement) {
+    protected void generateIconList(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element deviceElement) {
         if (!deviceModel.hasIcons()) return;
 
         Element iconListElement = appendNewElement(descriptor, deviceElement, ELEMENT.iconList);
@@ -563,12 +562,12 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    protected void generateServiceList(Namespace namespace, Device deviceModel, Document descriptor, Element deviceElement) {
+    protected void generateServiceList(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element deviceElement) {
         if (!deviceModel.hasServices()) return;
 
         Element serviceListElement = appendNewElement(descriptor, deviceElement, ELEMENT.serviceList);
 
-        for (Service service : deviceModel.getServices()) {
+        for (Service<?, ?, ?> service : deviceModel.getServices()) {
             Element serviceElement = appendNewElement(descriptor, serviceListElement, ELEMENT.service);
 
             appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.serviceType, service.getServiceType());
@@ -579,7 +578,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                 appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.controlURL, rs.getControlURI());
                 appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.eventSubURL, rs.getEventSubscriptionURI());
             } else if (service instanceof LocalService) {
-                LocalService ls = (LocalService) service;
+                LocalService<?> ls = (LocalService<?>) service;
                 appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.SCPDURL, namespace.getDescriptorPath(ls));
                 appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.controlURL, namespace.getControlPath(ls));
                 appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.eventSubURL, namespace.getEventSubscriptionPath(ls));
@@ -587,12 +586,12 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    protected void generateDeviceList(Namespace namespace, Device deviceModel, Document descriptor, Element deviceElement, RemoteClientInfo info) {
+    protected void generateDeviceList(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element deviceElement, RemoteClientInfo info) {
         if (!deviceModel.hasEmbeddedDevices()) return;
 
         Element deviceListElement = appendNewElement(descriptor, deviceElement, ELEMENT.deviceList);
 
-        for (Device device : deviceModel.getEmbeddedDevices()) {
+        for (Device<?, ?, ?> device : deviceModel.getEmbeddedDevices()) {
             generateDevice(namespace, device, descriptor, deviceListElement, info);
         }
     }

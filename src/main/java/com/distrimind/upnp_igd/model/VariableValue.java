@@ -29,7 +29,7 @@ public class VariableValue {
 
     final private static Logger log = Logger.getLogger(VariableValue.class.getName());
 
-    final private Datatype datatype;
+    final private Datatype<?> datatype;
     final private Object value;
 
     /**
@@ -50,7 +50,7 @@ public class VariableValue {
      * @throws InvalidValueException If the value is invalid for the given datatype, or if
      *         its string representation is invalid in XML.
      */
-    public VariableValue(Datatype datatype, Object value) throws InvalidValueException {
+    public VariableValue(Datatype<?> datatype, Object value) throws InvalidValueException {
         this.datatype = datatype;
         this.value = value instanceof String ? datatype.valueOf((String) value) : value;
 
@@ -72,13 +72,13 @@ public class VariableValue {
         // most likely be caught by the metadata/annotation binder when the service is
         // created.
 
-        if (!getDatatype().isValid(getValue()))
+        if (!getDatatype().isValidObject(getValue()))
             throw new InvalidValueException("Invalid value for " + getDatatype() +": " + getValue());
         
         logInvalidXML(toString());
     }
 
-    public Datatype getDatatype() {
+    public Datatype<?> getDatatype() {
         return datatype;
     }
 
@@ -105,7 +105,7 @@ public class VariableValue {
 
     @Override
     public String toString() {
-        return getDatatype().getString(getValue());
+        return getDatatype().getObjectString(getValue());
     }
 
 }

@@ -20,7 +20,7 @@ import com.distrimind.upnp_igd.model.meta.ActionArgument;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.state.StateVariableAccessor;
 import com.distrimind.upnp_igd.model.types.ErrorCode;
-import org.seamless.util.Reflections;
+import com.distrimind.upnp_igd.util.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class MethodActionExecutor extends AbstractActionExecutor {
 
-    private static Logger log = Logger.getLogger(MethodActionExecutor.class.getName());
+    private static final Logger log = Logger.getLogger(MethodActionExecutor.class.getName());
 
     protected Method method;
 
@@ -51,7 +51,7 @@ public class MethodActionExecutor extends AbstractActionExecutor {
         this.method = method;
     }
 
-    public MethodActionExecutor(Map<ActionArgument<LocalService>, StateVariableAccessor> outputArgumentAccessors, Method method) {
+    public MethodActionExecutor(Map<? extends ActionArgument<? extends LocalService<?>>, StateVariableAccessor> outputArgumentAccessors, Method method) {
         super(outputArgumentAccessors);
         this.method = method;
     }
@@ -61,7 +61,7 @@ public class MethodActionExecutor extends AbstractActionExecutor {
     }
 
     @Override
-    protected void execute(ActionInvocation<LocalService> actionInvocation, Object serviceImpl) throws Exception {
+    protected void execute(ActionInvocation<LocalService<?>> actionInvocation, Object serviceImpl) throws Exception {
 
         // Find the "real" parameters of the method we want to call, and create arguments
         Object[] inputArgumentValues = createInputArgumentValues(actionInvocation, method);
@@ -97,27 +97,27 @@ public class MethodActionExecutor extends AbstractActionExecutor {
             isArrayResultProcessed = false; // We never want to process e.g. byte[] as individual variable values
         }
 
-        ActionArgument<LocalService>[] outputArgs = actionInvocation.getAction().getOutputArguments();
+        List<ActionArgument<LocalService<?>>> outputArgs = actionInvocation.getAction().getOutputArguments();
 
-        if (isArrayResultProcessed && result instanceof Object[]) {
-            Object[] results = (Object[]) result;
-            log.fine("Accessors returned Object[], setting output argument values: " + results.length);
-            for (int i = 0; i < outputArgs.length; i++) {
-                setOutputArgumentValue(actionInvocation, outputArgs[i], results[i]);
+        if (isArrayResultProcessed && result instanceof List) {
+            @SuppressWarnings("unchecked") List<Object> results = (List<Object>) result;
+            log.fine("Accessors returned Object[], setting output argument values: " + results.size());
+            for (int i = 0; i < outputArgs.size(); i++) {
+                setOutputArgumentValue(actionInvocation, outputArgs.get(i), results.get(i));
             }
-        } else if (outputArgs.length == 1) {
-            setOutputArgumentValue(actionInvocation, outputArgs[0], result);
+        } else if (outputArgs.size() == 1) {
+            setOutputArgumentValue(actionInvocation, outputArgs.iterator().next(), result);
         } else {
             throw new ActionException(
                     ErrorCode.ACTION_FAILED,
-                    "Method return does not match required number of output arguments: " + outputArgs.length
+                    "Method return does not match required number of output arguments: " + outputArgs.size()
             );
         }
 
     }
 
-    protected boolean isUseOutputArgumentAccessors(ActionInvocation<LocalService> actionInvocation) {
-        for (ActionArgument argument : actionInvocation.getAction().getOutputArguments()) {
+    protected boolean isUseOutputArgumentAccessors(ActionInvocation<LocalService<?>> actionInvocation) {
+        for (ActionArgument<LocalService<?>> argument : actionInvocation.getAction().getOutputArguments()) {
             // If there is one output argument for which we have an accessor, all arguments need accessors
             if (getOutputArgumentAccessors().get(argument) != null) {
                 return true;
@@ -126,20 +126,20 @@ public class MethodActionExecutor extends AbstractActionExecutor {
         return false;
     }
 
-    protected Object[] createInputArgumentValues(ActionInvocation<LocalService> actionInvocation, Method method) throws ActionException {
+    protected Object[] createInputArgumentValues(ActionInvocation<LocalService<?>> actionInvocation, Method method) throws ActionException {
 
-        LocalService service = actionInvocation.getAction().getService();
+        LocalService<?> service = actionInvocation.getAction().getService();
 
-        List values = new ArrayList<>();
+        List<Object> values = new ArrayList<>();
         int i = 0;
-        for (ActionArgument<LocalService> argument : actionInvocation.getAction().getInputArguments()) {
+        for (ActionArgument<LocalService<?>> argument : actionInvocation.getAction().getInputArguments()) {
 
-            Class methodParameterType = method.getParameterTypes()[i];
+            Class<?> methodParameterType = method.getParameterTypes()[i];
 
-            ActionArgumentValue<LocalService> inputValue = actionInvocation.getInput(argument);
+            ActionArgumentValue<LocalService<?>> inputValue = actionInvocation.getInput(argument);
 
             // If it's a primitive argument, we need a value
-            if (methodParameterType.isPrimitive() && (inputValue == null || inputValue.toString().length() == 0))
+            if (methodParameterType.isPrimitive() && (inputValue == null || inputValue.toString().isEmpty()))
                 throw new ActionException(
                         ErrorCode.ARGUMENT_VALUE_INVALID,
                         "Primitive action method argument '" + argument.getName() + "' requires input value, can't be null or empty string"
@@ -154,9 +154,9 @@ public class MethodActionExecutor extends AbstractActionExecutor {
             // If it's not null, maybe it was a string-convertible type, if so, try to instantiate it
             String inputCallValueString = inputValue.toString();
             // Empty string means null and we can't instantiate Enums!
-            if (inputCallValueString.length() > 0 && service.isStringConvertibleType(methodParameterType) && !methodParameterType.isEnum()) {
+            if (!inputCallValueString.isEmpty() && service.isStringConvertibleType(methodParameterType) && !methodParameterType.isEnum()) {
                 try {
-                    Constructor<String> ctor = methodParameterType.getConstructor(String.class);
+                    Constructor<?> ctor = methodParameterType.getConstructor(String.class);
                     log.finer("Creating new input argument value instance with String.class constructor of type: " + methodParameterType);
                     Object o = ctor.newInstance(inputCallValueString);
                     values.add(i++, o);
@@ -185,7 +185,7 @@ public class MethodActionExecutor extends AbstractActionExecutor {
             }
         }
 
-        return values.toArray(new Object[values.size()]);
+        return values.toArray();
     }
 
 }

@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.binding.staging;
 
 import com.distrimind.upnp_igd.model.meta.Action;
 import com.distrimind.upnp_igd.model.meta.ActionArgument;
+import com.distrimind.upnp_igd.model.meta.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,20 +25,19 @@ import java.util.List;
 /**
  * @author Christian Bauer
  */
-public class MutableAction {
+public class MutableAction<S extends Service<?, ?, ?>> {
 
     public String name;
-    public List<MutableActionArgument> arguments = new ArrayList<>();
+    public List<MutableActionArgument<S>> arguments = new ArrayList<>();
 
-    public Action build() {
-        return new Action(name, createActionArgumennts());
+    public Action<S> build() {
+        return new Action<>(name, createActionArgumennts());
     }
 
-    public ActionArgument[] createActionArgumennts() {
-        ActionArgument[] array = new ActionArgument[arguments.size()];
-        int i = 0;
-        for (MutableActionArgument argument : arguments) {
-            array[i++] = argument.build();
+    public List<ActionArgument<S>> createActionArgumennts() {
+        List<ActionArgument<S>> array = new ArrayList<>(arguments.size());
+        for (MutableActionArgument<S> argument : arguments) {
+            array.add(argument.build());
         }
         return array;
     }

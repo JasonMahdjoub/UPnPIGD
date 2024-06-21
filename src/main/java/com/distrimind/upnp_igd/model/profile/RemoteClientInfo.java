@@ -21,7 +21,7 @@ import com.distrimind.upnp_igd.model.message.Connection;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.model.message.header.UserAgentHeader;
-import org.seamless.http.RequestInfo;
+import com.distrimind.upnp_igd.http.RequestInfo;
 
 import java.net.InetAddress;
 

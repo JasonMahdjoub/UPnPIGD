@@ -14,7 +14,7 @@
  */
 package com.distrimind.upnp_igd.support.model.dlna;
 
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.HashMap;
 import java.util.Locale;

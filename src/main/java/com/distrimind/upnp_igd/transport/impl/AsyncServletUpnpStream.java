@@ -23,8 +23,8 @@ import com.distrimind.upnp_igd.model.message.UpnpMessage;
 import com.distrimind.upnp_igd.model.message.UpnpRequest;
 import com.distrimind.upnp_igd.protocol.ProtocolFactory;
 import com.distrimind.upnp_igd.transport.spi.UpnpStream;
-import org.seamless.util.Exceptions;
-import org.seamless.util.io.IO;
+import com.distrimind.upnp_igd.util.Exceptions;
+import com.distrimind.upnp_igd.util.io.IO;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncEvent;

@@ -45,7 +45,7 @@ import com.distrimind.upnp_igd.protocol.async.ReceivingSearch;
 import com.distrimind.upnp_igd.mock.MockUpnpService;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import com.distrimind.upnp_igd.test.data.SampleUSNHeaders;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.URIUtil;
 import org.testng.annotations.Test;
 
 import java.net.InetAddress;

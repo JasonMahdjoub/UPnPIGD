@@ -83,7 +83,7 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
     }
 
     @Override
-    public StreamClient createStreamClient() {
+    public StreamClient<?> createStreamClient() {
         // Use Jetty
         return new StreamClientImpl(
             new StreamClientConfigurationImpl(
@@ -104,7 +104,7 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
     }
 
     @Override
-    public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
+    public StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory) {
         // Use Jetty, start/stop a new shared instance of JettyServletContainer
         return new AsyncServletStreamServerImpl(
             new AsyncServletStreamServerConfigurationImpl(

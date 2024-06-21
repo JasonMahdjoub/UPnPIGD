@@ -24,12 +24,13 @@ public abstract class AbstractDatatype<V> implements Datatype<V> {
 
     private Builtin builtin;
 
-    protected Class<V> getValueType() {
+    @SuppressWarnings("unchecked")
+	protected Class<V> getValueType() {
         return (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
     @Override
-    public boolean isHandlingJavaType(Class type) {
+    public boolean isHandlingJavaType(Class<?> type) {
         return getValueType().isAssignableFrom(type);
     }
 

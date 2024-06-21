@@ -16,7 +16,7 @@
 package com.distrimind.upnp_igd.support.model;
 
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
-import org.seamless.util.MimeType;
+import com.distrimind.upnp_igd.util.MimeType;
 
 /**
  * Encaspulates a MIME type (content format) and transport, protocol, additional information.

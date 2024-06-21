@@ -25,7 +25,7 @@ import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import com.distrimind.upnp_igd.test.data.SampleDeviceRoot;
-import org.seamless.util.io.IO;
+import com.distrimind.upnp_igd.util.io.IO;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

@@ -25,5 +25,8 @@ public class InvalidHeaderException extends RuntimeException {
     public InvalidHeaderException(String s) {
         super(s);
     }
+    public InvalidHeaderException(Exception e) {
+        super(e);
+    }
 
 }

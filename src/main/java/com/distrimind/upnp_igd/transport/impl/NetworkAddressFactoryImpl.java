@@ -19,7 +19,7 @@ import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.transport.spi.NoNetworkException;
-import org.seamless.util.Iterators;
+import com.distrimind.upnp_igd.util.Iterators;
 
 import java.net.*;
 import java.util.*;

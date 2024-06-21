@@ -60,13 +60,17 @@ public class DocumentBuilderFactoryWithNonDTD extends DocumentBuilderFactory {
 		base.setNamespaceAware(false);
 		base.setCoalescing(false);
 		base.setFeature("http://xml.org/sax/features/validation", false);
-		if (!enableDocType)
-			base.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		base.setFeature("http://apache.org/xml/features/disallow-doctype-decl", !enableDocType);
 		base.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 		base.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 		base.setFeature("http://xml.org/sax/features/external-general-entities", false);
 		base.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 		base.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		base.setFeature("http://apache.org/xml/features/xinclude/fixup-base-uris", false);
+		base.setFeature("http://apache.org/xml/features/xinclude/fixup-language", false);
+		base.setXIncludeAware(false);
+		base.setExpandEntityReferences(false);
+		base.setFeature("http://apache.org/xml/features/validation/dynamic", true);
 	}
 
 	@Override

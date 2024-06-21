@@ -35,7 +35,7 @@ import com.distrimind.upnp_igd.model.resource.DeviceDescriptorResource;
 import com.distrimind.upnp_igd.model.resource.IconResource;
 import com.distrimind.upnp_igd.model.resource.Resource;
 import com.distrimind.upnp_igd.model.resource.ServiceDescriptorResource;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.net.URI;
 import java.util.logging.Level;

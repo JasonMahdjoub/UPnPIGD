@@ -25,9 +25,9 @@ import com.distrimind.upnp_igd.model.meta.StateVariable;
  *
  * @author Christian Bauer
  */
-public class StateVariableValue<S extends Service> extends VariableValue {
+public class StateVariableValue<S extends Service<?, ?, ?>> extends VariableValue {
 
-    private StateVariable<S> stateVariable;
+    private final StateVariable<S> stateVariable;
 
     public StateVariableValue(StateVariable<S> stateVariable, Object value) throws InvalidValueException {
         super(stateVariable.getTypeDetails().getDatatype(), value);

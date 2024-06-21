@@ -33,7 +33,7 @@ import com.distrimind.upnp_igd.model.types.DLNADoc;
 import com.distrimind.upnp_igd.model.types.DeviceType;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UDN;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.URIUtil;
 
 import java.net.URI;
 import java.net.URL;

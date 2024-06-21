@@ -17,10 +17,11 @@ package com.distrimind.upnp_igd.binding.xml;
 
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.Device;
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
-import org.seamless.util.Exceptions;
-import org.seamless.xml.ParserException;
-import org.seamless.xml.XmlPullParserUtils;
+import com.distrimind.upnp_igd.util.Exceptions;
+import com.distrimind.upnp_igd.xml.ParserException;
+import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 import org.xml.sax.SAXParseException;
 
 import java.util.Locale;
@@ -33,14 +34,14 @@ import java.util.regex.Pattern;
  */
 public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescriptorBinderImpl {
 
-    private static Logger log = Logger.getLogger(RecoveringUDA10DeviceDescriptorBinderImpl.class.getName());
+    private static final Logger log = Logger.getLogger(RecoveringUDA10DeviceDescriptorBinderImpl.class.getName());
 
     public RecoveringUDA10DeviceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory) {
         super(networkAddressFactory);
     }
 
     @Override
-    public <D extends Device> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
 
         D device = null;
         DescriptorBindingException originalException;
@@ -118,6 +119,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
     }
 
     private String fixGarbageLeadingChars(String descriptorXml) {
+        if (descriptorXml == null)
+            return null;
     		/* Recover this:
 
     		HTTP/1.1 200 OK
@@ -135,12 +138,14 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
     		<?xml version="1.0"?>...
     	    */
 
-    		int index = descriptorXml.indexOf("<?xml");
-    		if(index == -1) return descriptorXml;
-    		return descriptorXml.substring(index);
-    	}
+        int index = descriptorXml.indexOf("<?xml");
+        if (index == -1) return descriptorXml;
+        return descriptorXml.substring(index);
+    }
 
     protected String fixGarbageTrailingChars(String descriptorXml, DescriptorBindingException ex) {
+        if (descriptorXml==null)
+            return null;
         int index = descriptorXml.indexOf("</root>");
         if (index == -1) {
             log.warning("No closing </root> element in descriptor");
@@ -247,7 +252,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
      * @param exception The errors found when validating the {@link Device} model.
      * @return Device A "fixed" {@link Device} model, instead of throwing an exception.
      */
-    protected <D extends Device> D handleInvalidDevice(String xml, D device, ValidationException exception)
+    protected <D extends Device<?, D, ?>> D handleInvalidDevice(String xml, D device, ValidationException exception)
         throws ValidationException {
         throw exception;
     }

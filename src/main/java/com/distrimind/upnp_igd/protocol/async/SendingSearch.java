@@ -58,7 +58,7 @@ public class SendingSearch extends SendingAsync {
     /**
      * @param mxSeconds The time in seconds a host should wait before responding.
      */
-    public SendingSearch(UpnpService upnpService, UpnpHeader searchTarget, int mxSeconds) {
+    public SendingSearch(UpnpService upnpService, UpnpHeader<?> searchTarget, int mxSeconds) {
         super(upnpService);
 
         if (!UpnpHeader.Type.ST.isValidHeaderType(searchTarget.getClass())) {

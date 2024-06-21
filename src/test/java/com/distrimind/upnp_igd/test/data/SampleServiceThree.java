@@ -21,10 +21,12 @@ import com.distrimind.upnp_igd.model.types.ServiceId;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDAServiceId;
 import com.distrimind.upnp_igd.model.types.UDAServiceType;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.URIUtil;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author Christian Bauer
@@ -73,13 +75,13 @@ public class SampleServiceThree extends SampleService {
     }
 
     @Override
-    public Action[] getActions() {
-        return new Action[0];
+    public Collection<Action> getActions() {
+        return Collections.emptyList();
     }
 
     @Override
-    public StateVariable[] getStateVariables() {
-        return new StateVariable[0];
+    public Collection<StateVariable> getStateVariables() {
+        return Collections.emptyList();
     }
 
 }

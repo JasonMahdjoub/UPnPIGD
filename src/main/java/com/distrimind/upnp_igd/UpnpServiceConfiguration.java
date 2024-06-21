@@ -58,70 +58,70 @@ public interface UpnpServiceConfiguration {
     /**
      * @return A new instance of the {@link NetworkAddressFactory} interface.
      */
-    public NetworkAddressFactory createNetworkAddressFactory();
+	NetworkAddressFactory createNetworkAddressFactory();
 
     /**
      * @return The shared implementation of {@link DatagramProcessor}.
      */
-    public DatagramProcessor getDatagramProcessor();
+	DatagramProcessor getDatagramProcessor();
 
     /**
      * @return The shared implementation of {@link SOAPActionProcessor}.
      */
-    public SOAPActionProcessor getSoapActionProcessor();
+	SOAPActionProcessor getSoapActionProcessor();
 
     /**
      * @return The shared implementation of {@link GENAEventProcessor}.
      */
-    public GENAEventProcessor getGenaEventProcessor();
+	GENAEventProcessor getGenaEventProcessor();
 
     /**
      * @return A new instance of the {@link StreamClient} interface.
      */
-    public StreamClient createStreamClient();
+	StreamClient<?> createStreamClient();
 
     /**
      * @param networkAddressFactory The configured {@link NetworkAddressFactory}.
      * @return A new instance of the {@link MulticastReceiver} interface.
      */
-    public MulticastReceiver createMulticastReceiver(NetworkAddressFactory networkAddressFactory);
+	MulticastReceiver<?> createMulticastReceiver(NetworkAddressFactory networkAddressFactory);
 
     /**
      * @param networkAddressFactory The configured {@link NetworkAddressFactory}.
      * @return A new instance of the {@link DatagramIO} interface.
      */
-    public DatagramIO createDatagramIO(NetworkAddressFactory networkAddressFactory);
+	DatagramIO<?> createDatagramIO(NetworkAddressFactory networkAddressFactory);
 
     /**
      * @param networkAddressFactory The configured {@link NetworkAddressFactory}.
      * @return A new instance of the {@link StreamServer} interface.
      */
-    public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory);
+	StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory);
 
     /**
      * @return The executor which runs the listening background threads for multicast datagrams.
      */
-    public Executor getMulticastReceiverExecutor();
+	Executor getMulticastReceiverExecutor();
 
     /**
      * @return The executor which runs the listening background threads for unicast datagrams.
      */
-    public Executor getDatagramIOExecutor();
+	Executor getDatagramIOExecutor();
 
     /**
      * @return The executor which runs the listening background threads for HTTP requests.
      */
-    public ExecutorService getStreamServerExecutorService();
+	ExecutorService getStreamServerExecutorService();
 
     /**
      * @return The shared implementation of {@link DeviceDescriptorBinder} for the UPnP 1.0 Device Architecture..
      */
-    public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10();
+	DeviceDescriptorBinder getDeviceDescriptorBinderUDA10();
 
     /**
      * @return The shared implementation of {@link ServiceDescriptorBinder} for the UPnP 1.0 Device Architecture..
      */
-    public ServiceDescriptorBinder getServiceDescriptorBinderUDA10();
+	ServiceDescriptorBinder getServiceDescriptorBinderUDA10();
 
     /**
      * Returns service types that can be handled by this UPnP stack, all others will be ignored.
@@ -142,12 +142,12 @@ public interface UpnpServiceConfiguration {
      *         be discovered. A <code>null</code> return value will disable discovery!
      *         An empty array means all services will be discovered.
      */
-    public ServiceType[] getExclusiveServiceTypes();
+	ServiceType[] getExclusiveServiceTypes();
 
     /**
      * @return The time in milliseconds to wait between each registry maintenance operation.
      */
-    public int getRegistryMaintenanceIntervalMillis();
+	int getRegistryMaintenanceIntervalMillis();
     
     /**
      * Optional setting for flooding alive NOTIFY messages for local devices.
@@ -164,7 +164,7 @@ public interface UpnpServiceConfiguration {
      *
      * @return The time in milliseconds for ALIVE message intervals, set to <code>0</code> to disable
      */
-    public int getAliveIntervalMillis();
+	int getAliveIntervalMillis();
 
     /**
      * Ignore the received event subscription timeout from remote control points.
@@ -180,7 +180,7 @@ public interface UpnpServiceConfiguration {
      *         should be used instead.
      *
      */
-    public boolean isReceivedSubscriptionTimeoutIgnored();
+	boolean isReceivedSubscriptionTimeoutIgnored();
 
     /**
      * Returns the time in seconds a remote device will be registered until it is expired.
@@ -200,7 +200,7 @@ public interface UpnpServiceConfiguration {
      * @return <code>null</code> (the default) to accept the remote device's proposed maximum age, or
      *         <code>0</code> for unlimited age, or a value in seconds.
      */
-    public Integer getRemoteDeviceMaxAgeSeconds();
+	Integer getRemoteDeviceMaxAgeSeconds();
 
     /**
      * Optional extra headers for device descriptor retrieval HTTP requests.
@@ -214,7 +214,7 @@ public interface UpnpServiceConfiguration {
      * @param identity The (so far) discovered identity of the remote device.
      * @return <code>null</code> or extra HTTP headers.
      */
-    public UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity);
+	UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity);
 
     /**
      * Optional extra headers for event subscription (almost HTTP) messages.
@@ -226,36 +226,36 @@ public interface UpnpServiceConfiguration {
      *
      * @return <code>null</code> or extra HTTP headers.
      */
-    public UpnpHeaders getEventSubscriptionHeaders(RemoteService service);
+	UpnpHeaders getEventSubscriptionHeaders(RemoteService service);
 
     /**
      * @return The executor which runs the processing of asynchronous aspects of the UPnP stack (discovery).
      */
-    public Executor getAsyncProtocolExecutor();
+	Executor getAsyncProtocolExecutor();
 
     /**
      * @return The executor service which runs the processing of synchronous aspects of the UPnP stack (description, control, GENA).
      */
-    public ExecutorService getSyncProtocolExecutorService();
+	ExecutorService getSyncProtocolExecutorService();
 
     /**
      * @return An instance of {@link Namespace} for this UPnP stack.
      */
-    public Namespace getNamespace();
+	Namespace getNamespace();
 
     /**
      * @return The executor which runs the background thread for maintaining the registry.
      */
-    public Executor getRegistryMaintainerExecutor();
+	Executor getRegistryMaintainerExecutor();
 
     /**
      * @return The executor which runs the notification threads of registry listeners.
      */
-    public Executor getRegistryListenerExecutor();
+	Executor getRegistryListenerExecutor();
 
     /**
      * Called by the {@link UpnpService} on shutdown, useful to e.g. shutdown thread pools.
      */
-    public void shutdown();
+	void shutdown();
 
 }

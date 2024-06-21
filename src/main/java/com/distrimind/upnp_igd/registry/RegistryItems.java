@@ -23,7 +23,6 @@ import com.distrimind.upnp_igd.model.types.DeviceType;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDN;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +32,7 @@ import java.util.Set;
  *
  * @author Christian Bauer
  */
-abstract class RegistryItems<D extends Device, S extends GENASubscription> {
+abstract class RegistryItems<D extends Device<?, D, ?>, S extends GENASubscription<?>> {
 
     protected final RegistryImpl registry;
 
@@ -93,9 +92,9 @@ abstract class RegistryItems<D extends Device, S extends GENASubscription> {
     Collection<D> get(DeviceType deviceType) {
         Collection<D> devices = new HashSet<>();
         for (RegistryItem<UDN, D> item : deviceItems) {
-            D[] d = (D[])item.getItem().findDevices(deviceType);
+            Collection<D> d = item.getItem().findDevices(deviceType);
             if (d != null) {
-                devices.addAll(Arrays.asList(d));
+                devices.addAll(d);
             }
         }
         return devices;
@@ -110,10 +109,9 @@ abstract class RegistryItems<D extends Device, S extends GENASubscription> {
     Collection<D> get(ServiceType serviceType) {
         Collection<D> devices = new HashSet<>();
         for (RegistryItem<UDN, D> item : deviceItems) {
-
-            D[] d = (D[])item.getItem().findDevices(serviceType);
+            Collection<D> d = item.getItem().findDevices(serviceType);
             if (d != null) {
-                devices.addAll(Arrays.asList(d));
+                devices.addAll(d);
             }
         }
         return devices;
@@ -168,7 +166,7 @@ abstract class RegistryItems<D extends Device, S extends GENASubscription> {
         return null;
     }
 
-    Resource[] getResources(Device device) throws RegistrationException {
+    Collection<Resource<?>> getResources(Device<?, ?, ?> device) throws RegistrationException {
         try {
             return registry.getConfiguration().getNamespace().getResources(device);
         } catch (ValidationException ex) {

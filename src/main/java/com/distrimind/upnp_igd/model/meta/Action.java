@@ -20,6 +20,8 @@ import com.distrimind.upnp_igd.model.Validatable;
 import com.distrimind.upnp_igd.model.ValidationError;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -28,26 +30,26 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public class Action<S extends Service> implements Validatable {
+public class Action<S extends Service<?, ?, ?>> implements Validatable {
 
     final private static Logger log = Logger.getLogger(Action.class.getName());
 
     final private String name;
-    final private ActionArgument[] arguments;
-    final private ActionArgument[] inputArguments;
-    final private ActionArgument[] outputArguments;
+    final private Collection<ActionArgument<S>> arguments;
+    final private List<ActionArgument<S>> inputArguments;
+    final private List<ActionArgument<S>> outputArguments;
 
     // Package mutable state
     private S service;
 
-    public Action(String name, ActionArgument[] arguments) {
+    public Action(String name, Collection<ActionArgument<S>> arguments) {
         this.name = name;
         if (arguments != null) {
 
-            List<ActionArgument> inputList= new ArrayList<>();
-            List<ActionArgument> outputList = new ArrayList<>();
+            List<ActionArgument<S>> inputList= new ArrayList<>();
+            List<ActionArgument<S>> outputList = new ArrayList<>();
 
-            for (ActionArgument argument : arguments) {
+            for (ActionArgument<S> argument : arguments) {
                 argument.setAction(this);
                 if (argument.getDirection().equals(ActionArgument.Direction.IN))
                     inputList.add(argument);
@@ -56,12 +58,12 @@ public class Action<S extends Service> implements Validatable {
             }
 
             this.arguments = arguments;
-            this.inputArguments = inputList.toArray(new ActionArgument[inputList.size()]);
-            this.outputArguments = outputList.toArray(new ActionArgument[outputList.size()]);
+            this.inputArguments = Collections.unmodifiableList(inputList);
+            this.outputArguments = Collections.unmodifiableList(outputList);
         } else {
-            this.arguments = new ActionArgument[0];
-            this.inputArguments = new ActionArgument[0];
-            this.outputArguments = new ActionArgument[0];
+            this.arguments = Collections.emptyList();
+            this.inputArguments = Collections.emptyList();
+            this.outputArguments = Collections.emptyList();
         }
     }
 
@@ -70,10 +72,10 @@ public class Action<S extends Service> implements Validatable {
     }
 
     public boolean hasArguments() {
-        return getArguments() != null && getArguments().length > 0;
+        return getArguments() != null && !getArguments().isEmpty();
     }
 
-    public ActionArgument[] getArguments() {
+    public Collection<ActionArgument<S>> getArguments() {
         return arguments;
     }
 
@@ -89,15 +91,15 @@ public class Action<S extends Service> implements Validatable {
 
     public ActionArgument<S> getFirstInputArgument() {
         if (!hasInputArguments()) throw new IllegalStateException("No input arguments: " + this);
-        return getInputArguments()[0];
+        return getInputArguments().iterator().next();
     }
 
     public ActionArgument<S> getFirstOutputArgument() {
         if (!hasOutputArguments()) throw new IllegalStateException("No output arguments: " + this);
-        return getOutputArguments()[0];
+        return getOutputArguments().iterator().next();
     }
 
-    public ActionArgument<S>[] getInputArguments() {
+    public List<ActionArgument<S>> getInputArguments() {
         return inputArguments;
     }
 
@@ -108,7 +110,7 @@ public class Action<S extends Service> implements Validatable {
         return null;
     }
 
-    public ActionArgument<S>[] getOutputArguments() {
+    public List<ActionArgument<S>> getOutputArguments() {
         return outputArguments;
     }
 
@@ -120,25 +122,25 @@ public class Action<S extends Service> implements Validatable {
     }
 
     public boolean hasInputArguments() {
-        return getInputArguments() != null && getInputArguments().length > 0;
+        return getInputArguments() != null && !getInputArguments().isEmpty();
     }
 
     public boolean hasOutputArguments() {
-        return getOutputArguments() != null && getOutputArguments().length > 0;
+        return getOutputArguments() != null && !getOutputArguments().isEmpty();
     }
 
 
     @Override
     public String toString() {
         return "(" + getClass().getSimpleName() +
-                ", Arguments: " + (getArguments() != null ? getArguments().length : "NO ARGS") +
+                ", Arguments: " + (getArguments() != null ? getArguments().size() : "NO ARGS") +
                 ") " + getName();
     }
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
-        if (getName() == null || getName().length() == 0) {
+        if (getName() == null || getName().isEmpty()) {
             errors.add(new ValidationError(
                     getClass(),
                     "name",
@@ -149,7 +151,7 @@ public class Action<S extends Service> implements Validatable {
             log.warning("Invalid action name: " + this);
         }
 
-        for (ActionArgument actionArgument : getArguments()) {
+        for (ActionArgument<S> actionArgument : getArguments()) {
             // Check argument relatedStateVariable in service state table
 
             if (getService().getStateVariable(actionArgument.getRelatedStateVariableName()) == null) {
@@ -161,10 +163,9 @@ public class Action<S extends Service> implements Validatable {
             }
         }
 
-        ActionArgument retValueArgument = null;
-        int retValueArgumentIndex = 0;
-        int i = 0;
-        for (ActionArgument actionArgument : getArguments()) {
+        ActionArgument<S> retValueArgument = null;
+
+        for (ActionArgument<S> actionArgument : getArguments()) {
             // Check retval
             if (actionArgument.isReturnValue()) {
                 if (actionArgument.getDirection() == ActionArgument.Direction.IN) {
@@ -176,14 +177,11 @@ public class Action<S extends Service> implements Validatable {
                         log.warning("Only one argument of action '" + getName() + "' can be <retval/>");
                     }
                     retValueArgument = actionArgument;
-                    retValueArgumentIndex = i;
                 }
             }
-            i++;
         }
         if (retValueArgument != null) {
-            for (int j = 0; j < retValueArgumentIndex; j++) {
-                ActionArgument a = getArguments()[j];
+            for (ActionArgument<S> a : getArguments()) {
                 if (a.getDirection() == ActionArgument.Direction.OUT) {
                     log.warning("UPnP specification violation of: " + getService().getDevice());
                     log.warning("Argument '" + retValueArgument.getName() + "' of action '" + getName() + "' is <retval/> but not the first OUT argument");
@@ -191,7 +189,7 @@ public class Action<S extends Service> implements Validatable {
             }
         }
 
-        for (ActionArgument argument : arguments) {
+        for (ActionArgument<S> argument : arguments) {
             errors.addAll(argument.validate());
         }
 
@@ -199,10 +197,9 @@ public class Action<S extends Service> implements Validatable {
     }
 
     public Action<S> deepCopy() {
-        ActionArgument<S>[] actionArgumentsDupe = new ActionArgument[getArguments().length];
-        for (int i = 0; i < getArguments().length; i++) {
-            ActionArgument arg = getArguments()[i];
-            actionArgumentsDupe[i] = arg.deepCopy();
+        List<ActionArgument<S>> actionArgumentsDupe = new ArrayList<>(getArguments().size());
+        for (ActionArgument<S> arg : getArguments()) {
+            actionArgumentsDupe.add(arg.deepCopy());
         }
 
         return new Action<>(

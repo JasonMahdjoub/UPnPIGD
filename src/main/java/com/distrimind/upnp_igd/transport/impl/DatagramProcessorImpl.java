@@ -26,7 +26,7 @@ import com.distrimind.upnp_igd.model.message.UpnpRequest;
 import com.distrimind.upnp_igd.model.message.UpnpResponse;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import org.seamless.http.Headers;
+import com.distrimind.upnp_igd.http.Headers;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;

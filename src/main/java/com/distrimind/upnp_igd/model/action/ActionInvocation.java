@@ -21,16 +21,14 @@ import com.distrimind.upnp_igd.model.meta.ActionArgument;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The input, output, and failure values of an action invocation.
  *
  * @author Christian Bauer
  */
-public class ActionInvocation<S extends Service> {
+public class ActionInvocation<S extends Service<?, ?, ?>> {
 
     final protected Action<S> action;
     final protected ClientInfo clientInfo;
@@ -52,25 +50,25 @@ public class ActionInvocation<S extends Service> {
     }
 
     public ActionInvocation(Action<S> action,
-                            ActionArgumentValue<S>[] input) {
+                            List<ActionArgumentValue<S>> input) {
         this(action, input, null, null);
     }
 
     public ActionInvocation(Action<S> action,
-                            ActionArgumentValue<S>[] input,
+                            List<ActionArgumentValue<S>> input,
                             ClientInfo clientInfo) {
         this(action, input, null, clientInfo);
     }
 
     public ActionInvocation(Action<S> action,
-                            ActionArgumentValue<S>[] input,
-                            ActionArgumentValue<S>[] output) {
+                            List<ActionArgumentValue<S>> input,
+                            List<ActionArgumentValue<S>> output) {
         this(action, input, output, null);
     }
 
     public ActionInvocation(Action<S> action,
-                            ActionArgumentValue<S>[] input,
-                            ActionArgumentValue<S>[] output,
+                            List<ActionArgumentValue<S>> input,
+                            List<ActionArgumentValue<S>> output,
                             ClientInfo clientInfo) {
         if (action == null) {
             throw new IllegalArgumentException("Action can not be null");
@@ -95,8 +93,8 @@ public class ActionInvocation<S extends Service> {
         return action;
     }
 
-    public ActionArgumentValue<S>[] getInput() {
-        return input.values().toArray(new ActionArgumentValue[input.size()]);
+    public Collection<ActionArgumentValue<S>> getInput() {
+        return input.values();
     }
 
     public ActionArgumentValue<S> getInput(String argumentName) {
@@ -111,8 +109,8 @@ public class ActionInvocation<S extends Service> {
         return Collections.unmodifiableMap(input);
     }
 
-    public ActionArgumentValue<S>[] getOutput() {
-        return output.values().toArray(new ActionArgumentValue[output.size()]);
+    public Collection<ActionArgumentValue<S>> getOutput() {
+        return output.values();
     }
 
     public ActionArgumentValue<S> getOutput(String argumentName) {
@@ -128,14 +126,14 @@ public class ActionInvocation<S extends Service> {
     }
 
     public void setInput(String argumentName, Object value) throws InvalidValueException {
-        setInput(new ActionArgumentValue(getInputArgument(argumentName), value));
+        setInput(new ActionArgumentValue<>(getInputArgument(argumentName), value));
     }
 
     public void setInput(ActionArgumentValue<S> value) {
         input.put(value.getArgument().getName(), value);
     }
 
-    public void setInput(ActionArgumentValue<S>[] input) {
+    public void setInput(List<ActionArgumentValue<S>> input) {
         if (input == null) return;
         for (ActionArgumentValue<S> argumentValue : input) {
             this.input.put(argumentValue.getArgument().getName(), argumentValue);
@@ -143,14 +141,14 @@ public class ActionInvocation<S extends Service> {
     }
 
     public void setOutput(String argumentName, Object value) throws InvalidValueException {
-        setOutput(new ActionArgumentValue(getOutputArgument(argumentName), value));
+        setOutput(new ActionArgumentValue<>(getOutputArgument(argumentName), value));
     }
 
     public void setOutput(ActionArgumentValue<S> value){
         output.put(value.getArgument().getName(), value);
     }
 
-    public void setOutput(ActionArgumentValue<S>[] output) {
+    public void setOutput(List<ActionArgumentValue<S>> output) {
         if (output == null) return;
         for (ActionArgumentValue<S> argumentValue : output) {
             this.output.put(argumentValue.getArgument().getName(), argumentValue);

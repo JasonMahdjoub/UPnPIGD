@@ -26,10 +26,10 @@ import com.distrimind.upnp_igd.model.message.UpnpResponse;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
-import org.seamless.http.Headers;
-import org.seamless.util.Exceptions;
-import org.seamless.util.URIUtil;
-import org.seamless.util.io.IO;
+import com.distrimind.upnp_igd.http.Headers;
+import com.distrimind.upnp_igd.util.Exceptions;
+import com.distrimind.upnp_igd.util.URIUtil;
+import com.distrimind.upnp_igd.util.io.IO;
 
 import java.io.IOException;
 import java.io.InputStream;

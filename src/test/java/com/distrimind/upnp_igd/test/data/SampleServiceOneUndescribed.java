@@ -18,18 +18,21 @@ package com.distrimind.upnp_igd.test.data;
 import com.distrimind.upnp_igd.model.meta.Action;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * @author Christian Bauer
  */
 public class SampleServiceOneUndescribed extends SampleServiceOne {
 
     @Override
-    public Action[] getActions() {
-        return null;
+    public Collection<Action> getActions() {
+        return Collections.emptyList();
     }
 
     @Override
-    public StateVariable[] getStateVariables() {
-        return null;
+    public Collection<StateVariable> getStateVariables() {
+        return Collections.emptyList();
     }
 }

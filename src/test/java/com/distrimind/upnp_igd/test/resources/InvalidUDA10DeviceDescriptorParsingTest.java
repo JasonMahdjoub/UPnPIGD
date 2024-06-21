@@ -24,7 +24,7 @@ import com.distrimind.upnp_igd.mock.MockUpnpService;
 import com.distrimind.upnp_igd.mock.MockUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.test.data.SampleData;
-import org.seamless.util.io.IO;
+import com.distrimind.upnp_igd.util.io.IO;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

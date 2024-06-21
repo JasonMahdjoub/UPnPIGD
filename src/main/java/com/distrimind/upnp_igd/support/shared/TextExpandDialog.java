@@ -16,9 +16,9 @@
 package com.distrimind.upnp_igd.support.shared;
 
 import com.distrimind.upnp_igd.model.ModelUtil;
-import org.seamless.swing.Application;
-import org.seamless.xml.DOM;
-import org.seamless.xml.DOMParser;
+import com.distrimind.upnp_igd.swing.Application;
+import com.distrimind.upnp_igd.xml.DOM;
+import com.distrimind.upnp_igd.xml.DOMParser;
 import org.w3c.dom.Document;
 
 import javax.swing.JDialog;
@@ -35,7 +35,7 @@ public class TextExpandDialog extends JDialog {
 
     // TODO: Make this a plugin SPI and let the plugin impl decide how text should be detected and rendered
 
-    private static Logger log = Logger.getLogger(TextExpandDialog.class.getName());
+    private static final Logger log = Logger.getLogger(TextExpandDialog.class.getName());
 
     public TextExpandDialog(Frame frame, String text) {
         super(frame);
@@ -49,7 +49,7 @@ public class TextExpandDialog extends JDialog {
         String pretty;
         if (text.startsWith("<") && text.endsWith(">")) {
             try {
-                pretty = new DOMParser() {
+                pretty = new DOMParser<>() {
                     @Override
                     protected DOM createDOM(Document document) {
                         return null;

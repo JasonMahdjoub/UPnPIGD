@@ -17,9 +17,9 @@ package com.distrimind.upnp_igd.support.shared.log.impl;
 
 import com.distrimind.upnp_igd.support.shared.TextExpand;
 import com.distrimind.upnp_igd.support.shared.log.LogView;
-import org.seamless.swing.logging.LogMessage;
+import com.distrimind.upnp_igd.swing.logging.LogMessage;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;

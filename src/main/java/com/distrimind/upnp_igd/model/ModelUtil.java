@@ -36,7 +36,7 @@ public class ModelUtil {
     static {
         boolean foundAndroid = false;
         try {
-            Class androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
+            @SuppressWarnings("Java9ReflectionClassVisibility") Class<?> androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
             foundAndroid = androidBuild.getField("ID").get(null) != null;
         } catch (Exception ex) {
             // Ignore
@@ -51,7 +51,7 @@ public class ModelUtil {
     static {
         boolean foundEmulator = false;
         try {
-            Class androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
+            @SuppressWarnings("Java9ReflectionClassVisibility") Class<?> androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
             String product = (String)androidBuild.getField("PRODUCT").get(null);
             if ("google_sdk".equals(product) || ("sdk".equals(product)))
                 foundEmulator = true;
@@ -66,9 +66,9 @@ public class ModelUtil {
      * @param clazz An interface to test.
      * @return <code>true</code> if the given interface is an Enum, or if the collection contains a super-interface.
      */
-    public static boolean isStringConvertibleType(Set<Class> stringConvertibleTypes, Class clazz) {
+    public static boolean isStringConvertibleType(Set<Class<?>> stringConvertibleTypes, Class<?> clazz) {
         if (clazz.isEnum()) return true;
-        for (Class toStringOutputType : stringConvertibleTypes) {
+        for (Class<?> toStringOutputType : stringConvertibleTypes) {
             if (toStringOutputType.isAssignableFrom(clazz)) {
                 return true;
             }
@@ -83,9 +83,9 @@ public class ModelUtil {
      */
     public static boolean isValidUDAName(String name) {
         if (ANDROID_RUNTIME) {
-            return name != null && name.length() != 0;
+            return name != null && !name.isEmpty();
         }
-        return name != null && name.length() != 0 && !name.toLowerCase(Locale.ROOT).startsWith("xml") && name.matches(Constants.REGEX_UDA_NAME);
+        return name != null && !name.isEmpty() && !name.toLowerCase(Locale.ROOT).startsWith("xml") && name.matches(Constants.REGEX_UDA_NAME);
     }
 
     /**
@@ -147,7 +147,7 @@ public class ModelUtil {
      * optionally unescaping backslashed commas.
      */
     public static String[] fromCommaSeparatedList(String s, boolean unescapeCommas) {
-        if (s == null || s.length() == 0) {
+        if (s == null || s.isEmpty()) {
             return null;
         }
 
@@ -222,7 +222,7 @@ public class ModelUtil {
             String hostname = InetAddress.getLocalHost().getHostName();
             return includeDomain
                     ? hostname
-                    : hostname.indexOf(".") != -1 ? hostname.substring(0, hostname.indexOf(".")) : hostname;
+                    : hostname.contains(".") ? hostname.substring(0, hostname.indexOf(".")) : hostname;
 
         } catch (Exception ex) {
             // Return a dummy String

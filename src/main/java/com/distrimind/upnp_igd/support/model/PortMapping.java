@@ -45,7 +45,7 @@ public class PortMapping {
     }
 
 
-    public PortMapping(Map<String, ActionArgumentValue<Service>> map) {
+    public PortMapping(Map<String, ? extends ActionArgumentValue<? extends Service<?, ?, ?>>> map) {
         this(
                 (Boolean) map.get("NewEnabled").getValue(),
                 (UnsignedIntegerFourBytes) map.get("NewLeaseDuration").getValue(),
@@ -126,7 +126,7 @@ public class PortMapping {
     }
 
     public boolean hasRemoteHost() {
-        return remoteHost != null && remoteHost.length() > 0;
+        return remoteHost != null && !remoteHost.isEmpty();
     }
 
     public String getRemoteHost() {
@@ -134,7 +134,7 @@ public class PortMapping {
     }
 
     public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost == null || remoteHost.equals("-") || remoteHost.length() == 0 ? null : remoteHost;
+        this.remoteHost = remoteHost == null || remoteHost.equals("-") || remoteHost.isEmpty() ? null : remoteHost;
     }
 
     public UnsignedIntegerTwoBytes getExternalPort() {
@@ -178,7 +178,7 @@ public class PortMapping {
     }
 
     public void setDescription(String description) {
-        this.description = description == null || description.equals("-") || description.length() == 0 ? null : description;
+        this.description = description == null || description.equals("-") || description.isEmpty() ? null : description;
     }
 
     @Override

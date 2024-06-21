@@ -24,13 +24,17 @@ import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.message.control.ActionRequestMessage;
 import com.distrimind.upnp_igd.model.message.control.ActionResponseMessage;
 import com.distrimind.upnp_igd.model.meta.ActionArgument;
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import org.seamless.xml.XmlPullParserUtils;
-import org.xmlpull.v1.XmlPullParser;
+import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 
 import jakarta.enterprise.inject.Alternative;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Implementation based on the <em>Xml Pull Parser</em> XML processing API.
@@ -49,54 +53,50 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
 
     protected static Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
 
-    public void readBody(ActionRequestMessage requestMessage, ActionInvocation actionInvocation) throws UnsupportedDataException {
+    public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
         String body = getMessageBody(requestMessage);
         try {
-            XmlPullParser xpp = XmlPullParserUtils.createParser(body);
-            readBodyRequest(xpp, requestMessage, actionInvocation);
+            Document doc=createDocumentBuilderFactory().newDocumentBuilder().parse(body);
+            readBodyRequest(doc, requestMessage, actionInvocation);
         } catch (Exception ex) {
             throw new UnsupportedDataException("Can't transform message payload: " + ex, ex, body);
         }
     }
 
-    public void readBody(ActionResponseMessage responseMsg, ActionInvocation actionInvocation) throws UnsupportedDataException {
+    public <S extends Service<?, ?, ?>> void readBody(ActionResponseMessage responseMsg, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
         String body = getMessageBody(responseMsg);
         try {
-            XmlPullParser xpp = XmlPullParserUtils.createParser(body);
-            readBodyElement(xpp);
-            readBodyResponse(xpp, actionInvocation);
+            Document doc=createDocumentBuilderFactory().newDocumentBuilder().parse(body);
+            readBodyElement(doc);
+            readBodyResponse(doc, actionInvocation);
         } catch (Exception ex) {
             throw new UnsupportedDataException("Can't transform message payload: " + ex, ex, body);
         }
     }
 
-    protected void readBodyElement(XmlPullParser xpp) throws Exception {
-        XmlPullParserUtils.searchTag(xpp, "Body");
+
+
+    protected <S extends Service<?, ?, ?>> void readBodyRequest(Document doc, ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws Exception {
+        XmlPullParserUtils.searchTag(doc, actionInvocation.getAction().getName());
+        readActionInputArguments(doc, actionInvocation);
     }
 
-    protected void readBodyRequest(XmlPullParser xpp, ActionRequestMessage requestMessage, ActionInvocation actionInvocation) throws Exception {
-        XmlPullParserUtils.searchTag(xpp, actionInvocation.getAction().getName());
-        readActionInputArguments(xpp, actionInvocation);
-    }
-
-    protected void readBodyResponse(XmlPullParser xpp, ActionInvocation actionInvocation) throws Exception {
-        // We're in the "Body" tag
-        int event;
-        do {
-            event = xpp.next();
-            if (event == XmlPullParser.START_TAG) {
-                if (xpp.getName().equals("Fault")) {
-                    ActionException e = readFaultElement(xpp);
-                    actionInvocation.setFailure(e);
-                    return;
-                } else if (xpp.getName().equals(actionInvocation.getAction().getName() + "Response")) {
-                    readActionOutputArguments(xpp, actionInvocation);
-                    return;
-                }
+    protected <S extends Service<?, ?, ?>>  boolean readBodyResponse(Node node, ActionInvocation<S> actionInvocation) throws Exception {
+        NodeList nl=node.getChildNodes();
+        for (int i=0;i<nl.getLength();i++)
+        {
+            Node n=nl.item(i);
+            if (n.getNodeName().equalsIgnoreCase("Fault")) {
+                ActionException e = readFaultElement(n);
+                actionInvocation.setFailure(e);
+                return true;
+            } else if (n.getNodeName().equalsIgnoreCase(actionInvocation.getAction().getName() + "Response")) {
+                readActionOutputArguments(n, actionInvocation);
+                return true;
             }
-
+            else if (readBodyResponse(n, actionInvocation))
+                return true;
         }
-        while (event != XmlPullParser.END_DOCUMENT && (event != XmlPullParser.END_TAG || !xpp.getName().equals("Body")));
 
         throw new ActionException(
             ErrorCode.ACTION_FAILED,
@@ -106,58 +106,55 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
         );
     }
 
-    protected void readActionInputArguments(XmlPullParser xpp, ActionInvocation actionInvocation) throws Exception {
-        actionInvocation.setInput(readArgumentValues(xpp, actionInvocation.getAction().getInputArguments()));
+    protected <S extends Service<?, ?, ?>> void readActionInputArguments(Document doc, ActionInvocation<S> actionInvocation) throws Exception {
+        actionInvocation.setInput(readArgumentValues(doc, actionInvocation.getAction().getInputArguments()));
     }
-
-    protected void readActionOutputArguments(XmlPullParser xpp, ActionInvocation actionInvocation) throws Exception {
-        actionInvocation.setOutput(readArgumentValues(xpp, actionInvocation.getAction().getOutputArguments()));
+    protected <S extends Service<?, ?, ?>> void readActionOutputArguments(Node node, ActionInvocation<S> actionInvocation) throws Exception {
+        if (node instanceof Element)
+            readActionOutputArguments((Element) node, actionInvocation);
+        else
+            actionInvocation.setOutput(readArgumentValues(node, actionInvocation.getAction().getOutputArguments()));
     }
-
-    protected Map<String, String> getMatchingNodes(XmlPullParser xpp, ActionArgument[] args) throws Exception {
-
-        // This is a case-insensitive search!
-        List<String> names = new ArrayList<>();
-        for (ActionArgument argument : args) {
-            names.add(argument.getName().toUpperCase(Locale.ROOT));
-            for (String alias : Arrays.asList(argument.getAliases())) {
-                names.add(alias.toUpperCase(Locale.ROOT));
-            }
+    protected <S extends Service<?, ?, ?>> void readActionOutputArguments(Document doc, ActionInvocation<S> actionInvocation) throws Exception {
+        actionInvocation.setOutput(readArgumentValues(doc, actionInvocation.getAction().getOutputArguments()));
+    }
+    private void getMatchingNodes(Node node, List<String> names, Map<String, String> matches) {
+        NodeList nl=node.getChildNodes();
+        for (int i=0;i<nl.getLength();i++)
+        {
+            Node n=nl.item(i);
+            String name=n.getNodeName().toLowerCase(Locale.ROOT);
+            if (names.contains(name))
+                matches.put(name, n.getTextContent());
+            getMatchingNodes(n, names, matches);
         }
+
+    }
+    protected <S extends Service<?, ?, ?>> Map<String, String> getMatchingNodes(Node node, List<ActionArgument<S>> args) throws Exception {
+
+        List<String> names = getNames(args);
 
         Map<String, String> matches = new HashMap<>();
+        getMatchingNodes(node, names, matches);
 
-        String enclosingTag = xpp.getName();
-
-        int event;
-        do {
-            event = xpp.next();
-            if(event == XmlPullParser.START_TAG && names.contains(xpp.getName().toUpperCase(Locale.ROOT))) {
-                matches.put(xpp.getName(), xpp.nextText());
-            }
-
-        }
-        while (event != XmlPullParser.END_DOCUMENT && (event != XmlPullParser.END_TAG || !xpp.getName().equals(enclosingTag)));
-
-        if (matches.size() < args.length) {
+        if (matches.size() < args.size()) {
             throw new ActionException(
                 ErrorCode.ARGUMENT_VALUE_INVALID,
                 "Invalid number of input or output arguments in XML message, expected "
-                    + args.length + " but found " + matches.size()
+                    + args.size() + " but found " + matches.size()
             );
         }
         return matches;
     }
 
-    protected ActionArgumentValue[] readArgumentValues(XmlPullParser xpp, ActionArgument[] args) throws Exception {
+    protected <S extends Service<?, ?, ?>> List<ActionArgumentValue<S>> readArgumentValues(Node node, List<ActionArgument<S>> args) throws Exception {
         // We're in the <ActionName>Response tag
-        Map<String, String> matches = getMatchingNodes(xpp, args);
+        Map<String, String> matches = getMatchingNodes(node, args);
+        List<ActionArgumentValue<S>> values=new ArrayList<>(args.size());
 
-        ActionArgumentValue[] values = new ActionArgumentValue[args.length];
 
-        for (int i = 0; i < args.length; i++) {
+        for (ActionArgument<S> arg : args) {
 
-            ActionArgument arg = args[i];
             String value = findActionArgumentValue(matches, arg);
             if (value == null) {
                 throw new ActionException(
@@ -166,56 +163,72 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
             }
 
             log.fine("Reading action argument: " + arg.getName());
-            values[i] = createValue(arg, value);
+            values.add(createValue(arg, value));
         }
         return values;
     }
 
-    protected String findActionArgumentValue(Map<String, String> entries, ActionArgument arg) {
+    protected <S extends Service<?, ?, ?>>  String findActionArgumentValue(Map<String, String> entries, ActionArgument<S> arg) {
         for (Map.Entry<String, String> entry : entries.entrySet()) {
             if (arg.isNameOrAlias(entry.getKey())) return entry.getValue();
         }
         return null;
     }
+    private boolean readFaultElement(Node node, StringBuilder errorCode, StringBuilder errorDescription) throws Exception {
+        NodeList nl = node.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node n = nl.item(i);
+            switch (n.getNodeName()) {
+                case "errorCode":
+                    if (errorCode.length()==0)
+                        errorCode.append(n.getTextContent());
+                    break;
+                case "errorDescription":
+                    if (errorDescription.length()==0)
+                        errorDescription.append(n.getTextContent());
+                    break;
+                case "UPnPError":
+                    return false;
+            }
+            if (errorCode.length()>0 && errorDescription.length()>0)
+                return false;
+            if (!readFaultElement(n, errorCode, errorDescription))
+                return false;
+        }
+        return true;
+    }
+    protected ActionException readFaultElement(Node node) throws Exception {
+        if (node instanceof Element)
+            return readFaultElement((Element) node);
+        else {
+            // We're in the "Fault" tag
 
-    protected ActionException readFaultElement(XmlPullParser xpp) throws Exception {
-        // We're in the "Fault" tag
 
-        String errorCode = null;
-        String errorDescription = null;
 
-        XmlPullParserUtils.searchTag(xpp, "UPnPError");
+            XmlPullParserUtils.searchTag(node, "UPnPError");
+            final StringBuilder errorCode = new StringBuilder();
+            final StringBuilder errorDescription = new StringBuilder();
+            readFaultElement(node, errorCode, errorDescription);
 
-        int event;
-        do {
-            event = xpp.next();
-            if (event == XmlPullParser.START_TAG) {
-                String tag = xpp.getName();
-                if (tag.equals("errorCode")) {
-                    errorCode = xpp.nextText();
-                } else if (tag.equals("errorDescription")) {
-                    errorDescription = xpp.nextText();
+
+
+            if (errorCode.length()>0) {
+                try {
+                    int numericCode = Integer.parseInt(errorCode.toString());
+                    ErrorCode standardErrorCode = ErrorCode.getByCode(numericCode);
+                    if (standardErrorCode != null) {
+                        log.fine("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
+                        return new ActionException(standardErrorCode, errorDescription.toString(), false);
+                    } else {
+                        log.fine("Reading fault element: " + numericCode + " - " + errorDescription);
+                        return new ActionException(numericCode, errorDescription.toString());
+                    }
+                } catch (NumberFormatException ex) {
+                    throw new RuntimeException("Error code was not a number");
                 }
             }
-        }
-        while (event != XmlPullParser.END_DOCUMENT && (event != XmlPullParser.END_TAG || !xpp.getName().equals("UPnPError")));
 
-        if (errorCode != null) {
-            try {
-                int numericCode = Integer.valueOf(errorCode);
-                ErrorCode standardErrorCode = ErrorCode.getByCode(numericCode);
-                if (standardErrorCode != null) {
-                    log.fine("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
-                    return new ActionException(standardErrorCode, errorDescription, false);
-                } else {
-                    log.fine("Reading fault element: " + numericCode + " - " + errorDescription);
-                    return new ActionException(numericCode, errorDescription);
-                }
-            } catch (NumberFormatException ex) {
-                throw new RuntimeException("Error code was not a number");
-            }
+            throw new RuntimeException("Received fault element but no error code");
         }
-
-        throw new RuntimeException("Received fault element but no error code");
     }
 }

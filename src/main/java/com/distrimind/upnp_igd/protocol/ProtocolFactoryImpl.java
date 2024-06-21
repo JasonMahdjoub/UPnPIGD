@@ -83,13 +83,14 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         return upnpService;
     }
 
-    public ReceivingAsync createReceivingAsync(IncomingDatagramMessage message) throws ProtocolCreationException {
+    @SuppressWarnings("unchecked")
+	public ReceivingAsync<?> createReceivingAsync(IncomingDatagramMessage<?> message) throws ProtocolCreationException {
         if (log.isLoggable(Level.FINE)) {
             log.fine("Creating protocol for incoming asynchronous: " + message);
         }
 
         if (message.getOperation() instanceof UpnpRequest) {
-            IncomingDatagramMessage<UpnpRequest> incomingRequest = message;
+            IncomingDatagramMessage<UpnpRequest> incomingRequest = (IncomingDatagramMessage<UpnpRequest>)message;
 
             switch (incomingRequest.getOperation().getMethod()) {
                 case NOTIFY:
@@ -100,7 +101,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
             }
 
         } else if (message.getOperation() instanceof UpnpResponse) {
-            IncomingDatagramMessage<UpnpResponse> incomingResponse = message;
+            IncomingDatagramMessage<UpnpResponse> incomingResponse = (IncomingDatagramMessage<UpnpResponse>)message;
 
             return isSupportedServiceAdvertisement(incomingResponse)
                 ? createReceivingSearchResponse(incomingResponse) : null;
@@ -109,26 +110,26 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         throw new ProtocolCreationException("Protocol for incoming datagram message not found: " + message);
     }
 
-    protected ReceivingAsync createReceivingNotification(IncomingDatagramMessage<UpnpRequest> incomingRequest) {
+    protected ReceivingAsync<?> createReceivingNotification(IncomingDatagramMessage<UpnpRequest> incomingRequest) {
         return new ReceivingNotification(getUpnpService(), incomingRequest);
     }
 
-    protected ReceivingAsync createReceivingSearch(IncomingDatagramMessage<UpnpRequest> incomingRequest) {
+    protected ReceivingAsync<?> createReceivingSearch(IncomingDatagramMessage<UpnpRequest> incomingRequest) {
         return new ReceivingSearch(getUpnpService(), incomingRequest);
     }
 
-    protected ReceivingAsync createReceivingSearchResponse(IncomingDatagramMessage<UpnpResponse> incomingResponse) {
+    protected ReceivingAsync<?> createReceivingSearchResponse(IncomingDatagramMessage<UpnpResponse> incomingResponse) {
         return new ReceivingSearchResponse(getUpnpService(), incomingResponse);
     }
 
     // DO NOT USE THE PARSED/TYPED MSG HEADERS! THIS WOULD DEFEAT THE PURPOSE OF THIS OPTIMIZATION!
 
-    protected boolean isByeBye(IncomingDatagramMessage message) {
+    protected boolean isByeBye(IncomingDatagramMessage<?> message) {
         String ntsHeader = message.getHeaders().getFirstHeader(UpnpHeader.Type.NTS.getHttpName());
         return ntsHeader != null && ntsHeader.equals(NotificationSubtype.BYEBYE.getHeaderString());
     }
 
-    protected boolean isSupportedServiceAdvertisement(IncomingDatagramMessage message) {
+    protected boolean isSupportedServiceAdvertisement(IncomingDatagramMessage<?> message) {
         ServiceType[] exclusiveServiceTypes = getUpnpService().getConfiguration().getExclusiveServiceTypes();
         if (exclusiveServiceTypes == null) return false; // Discovery is disabled
         if (exclusiveServiceTypes.length == 0) return true; // Any advertisement is fine
@@ -149,7 +150,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         return false;
     }
 
-    public ReceivingSync createReceivingSync(StreamRequestMessage message) throws ProtocolCreationException {
+    public ReceivingSync<?, ?> createReceivingSync(StreamRequestMessage message) throws ProtocolCreationException {
         log.fine("Creating protocol for incoming synchronous: " + message);
 
         if (message.getOperation().getMethod().equals(UpnpRequest.Method.GET)) {
@@ -206,11 +207,11 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         return new SendingNotificationByebye(getUpnpService(), localDevice);
     }
 
-    public SendingSearch createSendingSearch(UpnpHeader searchTarget, int mxSeconds) {
+    public SendingSearch createSendingSearch(UpnpHeader<?> searchTarget, int mxSeconds) {
         return new SendingSearch(getUpnpService(), searchTarget, mxSeconds);
     }
 
-    public SendingAction createSendingAction(ActionInvocation actionInvocation, URL controlURL) {
+    public SendingAction createSendingAction(ActionInvocation<?> actionInvocation, URL controlURL) {
         return new SendingAction(getUpnpService(), actionInvocation, controlURL);
     }
 

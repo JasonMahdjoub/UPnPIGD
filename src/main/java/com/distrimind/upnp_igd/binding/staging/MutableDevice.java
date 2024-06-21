@@ -31,12 +31,13 @@ import com.distrimind.upnp_igd.model.types.UDN;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author Christian Bauer
  */
-public class MutableDevice {
+public class MutableDevice<D extends Device<?, D, S>, S extends Service<?, D, S>> {
 
     public UDN udn;
     public MutableUDAVersion udaVersion = new MutableUDAVersion();
@@ -55,19 +56,19 @@ public class MutableDevice {
     public List<DLNADoc> dlnaDocs = new ArrayList<>();
     public DLNACaps dlnaCaps;
     public List<MutableIcon> icons = new ArrayList<>();
-    public List<MutableService> services = new ArrayList<>();
-    public List<MutableDevice> embeddedDevices = new ArrayList<>();
-    public MutableDevice parentDevice;
+    public List<MutableService<D,S>> services = new ArrayList<>();
+    public List<MutableDevice<D, S>> embeddedDevices = new ArrayList<>();
+    public MutableDevice<D, S> parentDevice;
 
-    public Device build(Device prototype) throws ValidationException {
+    public D build(D prototype) throws ValidationException {
         // Note how all embedded devices inherit the version and baseURL of the root!
         return build(prototype, createDeviceVersion(), baseURL);
     }
 
-    public Device build(Device prototype, UDAVersion deviceVersion, URL baseURL) throws ValidationException {
+    public D build(D prototype, UDAVersion deviceVersion, URL baseURL) throws ValidationException {
 
-        List<Device> embeddedDevicesList = new ArrayList<>();
-        for (MutableDevice embeddedDevice : embeddedDevices) {
+        List<D> embeddedDevicesList = new ArrayList<>();
+        for (MutableDevice<D, S> embeddedDevice : embeddedDevices) {
             embeddedDevicesList.add(embeddedDevice.build(prototype, deviceVersion, baseURL));
         }
         return prototype.newInstance(
@@ -95,24 +96,22 @@ public class MutableDevice {
                 friendlyName,
                 new ManufacturerDetails(manufacturer, manufacturerURI),
                 new ModelDetails(modelName, modelDescription, modelNumber, modelURI),
-                serialNumber, upc, presentationURI, dlnaDocs.toArray(new DLNADoc[dlnaDocs.size()]), dlnaCaps
+                serialNumber, upc, presentationURI, dlnaDocs, dlnaCaps
         );
     }
 
-    public Icon[] createIcons() {
-        Icon[] iconArray = new Icon[icons.size()];
-        int i = 0;
+    public List<Icon> createIcons() {
+        List<Icon> iconArray = new ArrayList<>(icons.size());
         for (MutableIcon icon : icons) {
-            iconArray[i++] = icon.build();
+            iconArray.add(icon.build());
         }
         return iconArray;
     }
 
-    public Service[] createServices(Device prototype) throws ValidationException {
-        Service[] services = prototype.newServiceArray(this.services.size());
-        int i = 0;
-        for (MutableService service : this.services) {
-            services[i++] = service.build(prototype);
+    public Collection<S> createServices(D prototype) throws ValidationException {
+        Collection<S> services = new ArrayList<>(this.services.size());
+        for (MutableService<D, S> service : this.services) {
+            services.add(service.build(prototype));
         }
         return services;
     }

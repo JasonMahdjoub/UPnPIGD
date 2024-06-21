@@ -32,7 +32,7 @@ import com.distrimind.upnp_igd.transport.spi.NoNetworkException;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
 import com.distrimind.upnp_igd.transport.spi.UpnpStream;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;

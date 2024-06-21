@@ -62,7 +62,7 @@ public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends
     final protected void execute() throws RouterException {
         outputMessage = executeSync();
 
-        if (outputMessage != null && getRemoteClientInfo().getExtraResponseHeaders().size() > 0) {
+        if (outputMessage != null && !getRemoteClientInfo().getExtraResponseHeaders().isEmpty()) {
             log.fine("Setting extra headers on response message: " + getRemoteClientInfo().getExtraResponseHeaders().size());
             outputMessage.getHeaders().putAll(getRemoteClientInfo().getExtraResponseHeaders());
         }

@@ -25,6 +25,7 @@ import com.distrimind.upnp_igd.model.message.control.ActionMessage;
 import com.distrimind.upnp_igd.model.message.control.ActionRequestMessage;
 import com.distrimind.upnp_igd.model.message.control.ActionResponseMessage;
 import com.distrimind.upnp_igd.model.meta.ActionArgument;
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
@@ -45,8 +46,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,13 +58,14 @@ import java.util.logging.Logger;
  */
 public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandler {
 
-    private static Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
+    private static final Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
     
     protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
     	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
     }
 
-    public void writeBody(ActionRequestMessage requestMessage, ActionInvocation actionInvocation) throws UnsupportedDataException {
+    @Override
+    public <S extends Service<?, ?, ?>> void writeBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
         log.fine("Writing body of " + requestMessage + " for: " + actionInvocation);
 
@@ -87,7 +89,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         }
     }
 
-    public void writeBody(ActionResponseMessage responseMessage, ActionInvocation actionInvocation) throws UnsupportedDataException {
+    @Override
+    public <S extends Service<?, ?, ?>> void writeBody(ActionResponseMessage responseMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
         log.fine("Writing body of " + responseMessage + " for: " + actionInvocation);
 
@@ -115,7 +118,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         }
     }
 
-    public void readBody(ActionRequestMessage requestMessage, ActionInvocation actionInvocation) throws UnsupportedDataException {
+    @Override
+    public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
         log.fine("Reading body of " + requestMessage + " for: " + actionInvocation);
         if (log.isLoggable(Level.FINER)) {
@@ -143,7 +147,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         }
     }
 
-    public void readBody(ActionResponseMessage responseMsg, ActionInvocation actionInvocation) throws UnsupportedDataException {
+    @Override
+    public <S extends Service<?, ?, ?>> void readBody(ActionResponseMessage responseMsg, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
         log.fine("Reading body of " + responseMsg + " for: " + actionInvocation);
         if (log.isLoggable(Level.FINER)) {
@@ -179,19 +184,19 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     /* ##################################################################################################### */
 
-    protected void writeBodyFailure(Document d,
+    protected <S extends Service<?, ?, ?>> void writeBodyFailure(Document d,
                                     Element bodyElement,
                                     ActionResponseMessage message,
-                                    ActionInvocation actionInvocation) throws Exception {
+                                    ActionInvocation<S> actionInvocation) throws Exception {
 
         writeFaultElement(d, bodyElement, actionInvocation);
         message.setBody(toString(d));
     }
 
-    protected void writeBodyRequest(Document d,
+    protected <S extends Service<?, ?, ?>> void writeBodyRequest(Document d,
                                     Element bodyElement,
                                     ActionRequestMessage message,
-                                    ActionInvocation actionInvocation) throws Exception {
+                                    ActionInvocation<S> actionInvocation) throws Exception {
 
         Element actionRequestElement = writeActionRequestElement(d, bodyElement, message, actionInvocation);
         writeActionInputArguments(d, actionRequestElement, actionInvocation);
@@ -199,10 +204,10 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     }
 
-    protected void writeBodyResponse(Document d,
+    protected <S extends Service<?, ?, ?>> void writeBodyResponse(Document d,
                                      Element bodyElement,
                                      ActionResponseMessage message,
-                                     ActionInvocation actionInvocation) throws Exception {
+                                     ActionInvocation<S> actionInvocation) throws Exception {
 
         Element actionResponseElement = writeActionResponseElement(d, bodyElement, message, actionInvocation);
         writeActionOutputArguments(d, actionResponseElement, actionInvocation);
@@ -213,19 +218,19 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         return readFaultElement(bodyElement);
     }
 
-    protected void readBodyRequest(Document d,
+    protected <S extends Service<?, ?, ?>> void readBodyRequest(Document d,
                                    Element bodyElement,
                                    ActionRequestMessage message,
-                                   ActionInvocation actionInvocation) throws Exception {
+                                   ActionInvocation<S> actionInvocation) throws Exception {
 
         Element actionRequestElement = readActionRequestElement(bodyElement, message, actionInvocation);
         readActionInputArguments(actionRequestElement, actionInvocation);
     }
 
-    protected void readBodyResponse(Document d,
+    protected <S extends Service<?, ?, ?>> void readBodyResponse(Document d,
                                     Element bodyElement,
                                     ActionResponseMessage message,
-                                    ActionInvocation actionInvocation) throws Exception {
+                                    ActionInvocation<S> actionInvocation) throws Exception {
 
         Element actionResponse = readActionResponseElement(bodyElement, actionInvocation);
         readActionOutputArguments(actionResponse, actionInvocation);
@@ -272,10 +277,10 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     /* ##################################################################################################### */
 
-    protected Element writeActionRequestElement(Document d,
+    protected <S extends Service<?, ?, ?>> Element writeActionRequestElement(Document d,
                                                 Element bodyElement,
                                                 ActionRequestMessage message,
-                                                ActionInvocation actionInvocation) {
+                                                ActionInvocation<S> actionInvocation) {
 
         log.fine("Writing action request element: " + actionInvocation.getAction().getName());
 
@@ -288,9 +293,9 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         return actionRequestElement;
     }
 
-    protected Element readActionRequestElement(Element bodyElement,
+    protected <S extends Service<?, ?, ?>> Element readActionRequestElement(Element bodyElement,
                                                ActionRequestMessage message,
-                                               ActionInvocation actionInvocation) {
+                                               ActionInvocation<S> actionInvocation) {
         NodeList bodyChildren = bodyElement.getChildNodes();
 
         log.fine("Looking for action request element matching namespace:" + message.getActionNamespace());
@@ -319,10 +324,10 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     /* ##################################################################################################### */
 
-    protected Element writeActionResponseElement(Document d,
+    protected <S extends Service<?, ?, ?>> Element writeActionResponseElement(Document d,
                                                  Element bodyElement,
                                                  ActionResponseMessage message,
-                                                 ActionInvocation actionInvocation) {
+                                                 ActionInvocation<S> actionInvocation) {
 
         log.fine("Writing action response element: " + actionInvocation.getAction().getName());
         Element actionResponseElement = d.createElementNS(
@@ -334,7 +339,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         return actionResponseElement;
     }
 
-    protected Element readActionResponseElement(Element bodyElement, ActionInvocation actionInvocation) {
+    protected <S extends Service<?, ?, ?>> Element readActionResponseElement(Element bodyElement, ActionInvocation<S> actionInvocation) {
         NodeList bodyChildren = bodyElement.getChildNodes();
 
         for (int i = 0; i < bodyChildren.getLength(); i++) {
@@ -354,19 +359,19 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     /* ##################################################################################################### */
 
-    protected void writeActionInputArguments(Document d,
+    protected <S extends Service<?, ?, ?>> void writeActionInputArguments(Document d,
                                              Element actionRequestElement,
-                                             ActionInvocation actionInvocation) {
+                                             ActionInvocation<S> actionInvocation) {
 
-        for (ActionArgument argument : actionInvocation.getAction().getInputArguments()) {
+        for (ActionArgument<S> argument : actionInvocation.getAction().getInputArguments()) {
             log.fine("Writing action input argument: " + argument.getName());
             String value = actionInvocation.getInput(argument) != null ? actionInvocation.getInput(argument).toString() : "";
             XMLUtil.appendNewElement(d, actionRequestElement, argument.getName(), value);
         }
     }
 
-    public void readActionInputArguments(Element actionRequestElement,
-                                         ActionInvocation actionInvocation) throws ActionException {
+    public <S extends Service<?, ?, ?>> void readActionInputArguments(Element actionRequestElement,
+                                         ActionInvocation<S> actionInvocation) throws ActionException {
         actionInvocation.setInput(
                 readArgumentValues(
                         actionRequestElement.getChildNodes(),
@@ -377,19 +382,19 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     /* ##################################################################################################### */
 
-    protected void writeActionOutputArguments(Document d,
+    protected <S extends Service<?, ?, ?>> void writeActionOutputArguments(Document d,
                                               Element actionResponseElement,
-                                              ActionInvocation actionInvocation) {
+                                              ActionInvocation<S> actionInvocation) {
 
-        for (ActionArgument argument : actionInvocation.getAction().getOutputArguments()) {
+        for (ActionArgument<S> argument : actionInvocation.getAction().getOutputArguments()) {
             log.fine("Writing action output argument: " + argument.getName());
             String value = actionInvocation.getOutput(argument) != null ? actionInvocation.getOutput(argument).toString() : "";
             XMLUtil.appendNewElement(d, actionResponseElement, argument.getName(), value);
         }
     }
 
-    protected void readActionOutputArguments(Element actionResponseElement,
-                                             ActionInvocation actionInvocation) throws ActionException {
+    protected <S extends Service<?, ?, ?>> void readActionOutputArguments(Element actionResponseElement,
+                                             ActionInvocation<S> actionInvocation) throws ActionException {
 
         actionInvocation.setOutput(
                 readArgumentValues(
@@ -401,7 +406,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     /* ##################################################################################################### */
 
-    protected void writeFaultElement(Document d, Element bodyElement, ActionInvocation actionInvocation) {
+    protected <S extends Service<?, ?, ?>> void writeFaultElement(Document d, Element bodyElement, ActionInvocation<S> actionInvocation) {
 
         Element faultElement = d.createElementNS(Constants.SOAP_NS_ENVELOPE, "s:Fault");
         bodyElement.appendChild(faultElement);
@@ -485,7 +490,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
         if (errorCode != null) {
             try {
-                int numericCode = Integer.valueOf(errorCode);
+                int numericCode = Integer.parseInt(errorCode);
                 ErrorCode standardErrorCode = ErrorCode.getByCode(numericCode);
                 if (standardErrorCode != null) {
                     log.fine("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
@@ -536,16 +541,14 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
      * in the XML can be in any order, as long as they are all there everything
      * is OK.
      */
-    protected ActionArgumentValue[] readArgumentValues(NodeList nodeList, ActionArgument[] args)
+    protected <S extends Service<?, ?, ?>> List<ActionArgumentValue<S>> readArgumentValues(NodeList nodeList, List<ActionArgument<S>> args)
             throws ActionException {
 
         List<Node> nodes = getMatchingNodes(nodeList, args);
 
-        ActionArgumentValue[] values = new ActionArgumentValue[args.length];
+        List<ActionArgumentValue<S>> values = new ArrayList<>(args.size());
 
-        for (int i = 0; i < args.length; i++) {
-        	
-            ActionArgument arg = args[i];
+        for (ActionArgument<S> arg : args) {
             Node node = findActionArgumentNode(nodes, arg);
             if(node == null) {
                 throw new ActionException(
@@ -554,22 +557,28 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             }
             log.fine("Reading action argument: " + arg.getName());
             String value = XMLUtil.getTextContent(node);
-            values[i] = createValue(arg, value);
+            values.add(createValue(arg, value));
         }
         return values;
     }
-
+    protected <S extends Service<?, ?, ?>> List<String> getNames(List<ActionArgument<S>> args)
+    {
+        List<String> names = new ArrayList<>();
+        for (ActionArgument<?> argument : args) {
+            names.add(argument.getName().toUpperCase(Locale.ROOT));
+            for (String alias : argument.getAliases()) {
+                names.add(alias.toUpperCase(Locale.ROOT));
+            }
+        }
+        return names;
+    }
     /**
      * Finds all element nodes in the list that match any argument name or argument
      * alias, throws {@link ActionException} if not all arguments were found.
      */
-    protected List<Node> getMatchingNodes(NodeList nodeList, ActionArgument[] args) throws ActionException {
-
-        List<String> names = new ArrayList<>();
-        for (ActionArgument argument : args) {
-            names.add(argument.getName());
-            names.addAll(Arrays.asList(argument.getAliases()));
-        }
+    protected <S extends Service<?, ?, ?>> List<Node> getMatchingNodes(NodeList nodeList, List<ActionArgument<S>> args) throws ActionException {
+        //TODO check if must be a case-insensitive search!
+        List<String> names = getNames(args);
 
         List<Node> matches = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -582,10 +591,10 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                 matches.add(child);
         }
 
-        if (matches.size() < args.length) {
+        if (matches.size() < args.size()) {
             throw new ActionException(
                     ErrorCode.ARGUMENT_VALUE_INVALID,
-                    "Invalid number of input or output arguments in XML message, expected " + args.length + " but found " + matches.size()
+                    "Invalid number of input or output arguments in XML message, expected " + args.size() + " but found " + matches.size()
             );
         }
         return matches;
@@ -596,9 +605,9 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
      * {@link InvalidValueException} as an {@link ActionException} with the
      * appropriate {@link ErrorCode}.
      */
-    protected ActionArgumentValue createValue(ActionArgument arg, String value) throws ActionException {
+    protected <S extends Service<?, ?, ?>> ActionArgumentValue<S> createValue(ActionArgument<S> arg, String value) throws ActionException {
         try {
-            return new ActionArgumentValue(arg, value);
+            return new ActionArgumentValue<>(arg, value);
         } catch (InvalidValueException ex) {
             throw new ActionException(
                     ErrorCode.ARGUMENT_VALUE_INVALID,
@@ -612,7 +621,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
      * Returns the node with the same unprefixed name as the action argument
      * name/alias or <code>null</code>.
      */
-    protected Node findActionArgumentNode(List<Node> nodes, ActionArgument arg) {
+    protected <S extends Service<?, ?, ?>> Node findActionArgumentNode(List<Node> nodes, ActionArgument<S> arg) {
     	for(Node node : nodes) {
     		if(arg.isNameOrAlias(getUnprefixedNodeName(node))) return node;
     	}

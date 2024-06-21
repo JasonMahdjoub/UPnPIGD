@@ -17,14 +17,14 @@ package com.distrimind.upnp_igd.support.shared.log.impl;
 
 import com.distrimind.upnp_igd.support.shared.CenterWindow;
 import com.distrimind.upnp_igd.support.shared.log.LogView;
-import org.seamless.swing.Application;
-import org.seamless.swing.logging.LogCategorySelector;
-import org.seamless.swing.logging.LogController;
-import org.seamless.swing.logging.LogMessage;
-import org.seamless.swing.logging.LogTableCellRenderer;
-import org.seamless.swing.logging.LogTableModel;
+import com.distrimind.upnp_igd.swing.Application;
+import com.distrimind.upnp_igd.swing.logging.LogCategorySelector;
+import com.distrimind.upnp_igd.swing.logging.LogController;
+import com.distrimind.upnp_igd.swing.logging.LogMessage;
+import com.distrimind.upnp_igd.swing.logging.LogTableCellRenderer;
+import com.distrimind.upnp_igd.swing.logging.LogTableModel;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

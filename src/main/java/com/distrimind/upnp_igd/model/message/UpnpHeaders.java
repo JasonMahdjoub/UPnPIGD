@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.model.message;
 
-import org.seamless.http.Headers;
+import com.distrimind.upnp_igd.http.Headers;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 
 import java.io.ByteArrayInputStream;

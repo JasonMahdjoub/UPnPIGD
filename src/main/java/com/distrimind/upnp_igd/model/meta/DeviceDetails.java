@@ -22,6 +22,7 @@ import com.distrimind.upnp_igd.model.types.DLNADoc;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -42,7 +43,7 @@ public class DeviceDetails implements Validatable {
     final private String serialNumber;
     final private String upc;
     final private URI presentationURI;
-    final private DLNADoc[] dlnaDocs;
+    final private List<DLNADoc> dlnaDocs;
     final private DLNACaps dlnaCaps;
     final private DLNACaps secProductCaps; 
 
@@ -50,7 +51,7 @@ public class DeviceDetails implements Validatable {
         this(null, friendlyName, null, null, null, null, null);
     }
 
-    public DeviceDetails(String friendlyName, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps) {
+    public DeviceDetails(String friendlyName, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps) {
         this(null, friendlyName, null, null, null, null, null, dlnaDocs, dlnaCaps);
     }
 
@@ -58,7 +59,7 @@ public class DeviceDetails implements Validatable {
         this(null, friendlyName, manufacturerDetails, null, null, null, null);
     }
 
-    public DeviceDetails(String friendlyName, ManufacturerDetails manufacturerDetails, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps) {
+    public DeviceDetails(String friendlyName, ManufacturerDetails manufacturerDetails, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps) {
         this(null, friendlyName, manufacturerDetails, null, null, null, null, dlnaDocs, dlnaCaps);
     }
 
@@ -68,12 +69,12 @@ public class DeviceDetails implements Validatable {
     }
 
     public DeviceDetails(String friendlyName, ManufacturerDetails manufacturerDetails,
-                         ModelDetails modelDetails, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps) {
+                         ModelDetails modelDetails, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps) {
         this(null, friendlyName, manufacturerDetails, modelDetails, null, null, null, dlnaDocs, dlnaCaps);
     }
     
     public DeviceDetails(String friendlyName, ManufacturerDetails manufacturerDetails,
-            ModelDetails modelDetails, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps, DLNACaps secProductCaps) {
+            ModelDetails modelDetails, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps, DLNACaps secProductCaps) {
     	this(null, friendlyName, manufacturerDetails, modelDetails, null, null, null, dlnaDocs, dlnaCaps, secProductCaps);
     }
 
@@ -83,7 +84,7 @@ public class DeviceDetails implements Validatable {
     }
 
     public DeviceDetails(String friendlyName, ManufacturerDetails manufacturerDetails, ModelDetails modelDetails,
-                         String serialNumber, String upc, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps) {
+                         String serialNumber, String upc, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps) {
         this(null, friendlyName, manufacturerDetails, modelDetails, serialNumber, upc, null, dlnaDocs, dlnaCaps);
     }
 
@@ -91,7 +92,7 @@ public class DeviceDetails implements Validatable {
         this(null, friendlyName, null, null, null, null, presentationURI);
     }
 
-    public DeviceDetails(String friendlyName, URI presentationURI, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps) {
+    public DeviceDetails(String friendlyName, URI presentationURI, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps) {
         this(null, friendlyName, null, null, null, null, presentationURI, dlnaDocs, dlnaCaps);
     }
 
@@ -101,7 +102,7 @@ public class DeviceDetails implements Validatable {
     }
 
     public DeviceDetails(String friendlyName, ManufacturerDetails manufacturerDetails,
-                         ModelDetails modelDetails, URI presentationURI, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps) {
+                         ModelDetails modelDetails, URI presentationURI, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps) {
         this(null, friendlyName, manufacturerDetails, modelDetails, null, null, presentationURI, dlnaDocs, dlnaCaps);
     }
 
@@ -111,7 +112,7 @@ public class DeviceDetails implements Validatable {
     }
 
     public DeviceDetails(String friendlyName, ManufacturerDetails manufacturerDetails, ModelDetails modelDetails,
-                         String serialNumber, String upc, URI presentationURI, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps) {
+                         String serialNumber, String upc, URI presentationURI, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps) {
         this(null, friendlyName, manufacturerDetails, modelDetails, serialNumber, upc, presentationURI, dlnaDocs, dlnaCaps);
     }
 
@@ -122,7 +123,7 @@ public class DeviceDetails implements Validatable {
     }
 
     public DeviceDetails(String friendlyName, ManufacturerDetails manufacturerDetails, ModelDetails modelDetails,
-                         String serialNumber, String upc, String presentationURI, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps)
+                         String serialNumber, String upc, String presentationURI, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps)
             throws IllegalArgumentException {
         this(null, friendlyName, manufacturerDetails, modelDetails, serialNumber, upc, URI.create(presentationURI), dlnaDocs, dlnaCaps);
     }
@@ -135,16 +136,16 @@ public class DeviceDetails implements Validatable {
     }
 
     public DeviceDetails(URL baseURL, String friendlyName,
-            ManufacturerDetails manufacturerDetails, ModelDetails modelDetails,
-            String serialNumber, String upc,
-            URI presentationURI, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps) {
+                         ManufacturerDetails manufacturerDetails, ModelDetails modelDetails,
+                         String serialNumber, String upc,
+                         URI presentationURI, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps) {
     	 this(baseURL, friendlyName, manufacturerDetails, modelDetails, serialNumber, upc, presentationURI, dlnaDocs, dlnaCaps, null);
     }
     
     public DeviceDetails(URL baseURL, String friendlyName,
                          ManufacturerDetails manufacturerDetails, ModelDetails modelDetails,
                          String serialNumber, String upc,
-                         URI presentationURI, DLNADoc[] dlnaDocs, DLNACaps dlnaCaps, DLNACaps secProductCaps) {
+                         URI presentationURI, List<DLNADoc> dlnaDocs, DLNACaps dlnaCaps, DLNACaps secProductCaps) {
         this.baseURL = baseURL;
         this.friendlyName = friendlyName;
         this.manufacturerDetails = manufacturerDetails == null ? new ManufacturerDetails() : manufacturerDetails;
@@ -152,7 +153,7 @@ public class DeviceDetails implements Validatable {
         this.serialNumber = serialNumber;
         this.upc = upc;
         this.presentationURI = presentationURI;
-        this.dlnaDocs = dlnaDocs != null ? dlnaDocs : new DLNADoc[0];
+        this.dlnaDocs = dlnaDocs != null ? List.copyOf(dlnaDocs) : Collections.emptyList();
         this.dlnaCaps = dlnaCaps;
         this.secProductCaps = secProductCaps;
     }
@@ -185,7 +186,7 @@ public class DeviceDetails implements Validatable {
         return presentationURI;
     }
 
-    public DLNADoc[] getDlnaDocs() {
+    public List<DLNADoc> getDlnaDocs() {
         return dlnaDocs;
     }
 

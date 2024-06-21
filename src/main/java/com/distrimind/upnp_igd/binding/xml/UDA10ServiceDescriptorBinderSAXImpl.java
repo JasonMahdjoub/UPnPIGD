@@ -22,12 +22,13 @@ import com.distrimind.upnp_igd.binding.staging.MutableService;
 import com.distrimind.upnp_igd.binding.staging.MutableStateVariable;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.ActionArgument;
+import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.meta.StateVariableEventDetails;
 import com.distrimind.upnp_igd.model.types.CustomDatatype;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
-import org.seamless.xml.SAXParser;
+import com.distrimind.upnp_igd.xml.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -36,6 +37,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ATTRIBUTE;
@@ -48,16 +50,16 @@ import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ELEMENT;
  */
 public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorBinderImpl {
 
-    private static Logger log = Logger.getLogger(ServiceDescriptorBinder.class.getName());
+    private static final Logger log = Logger.getLogger(ServiceDescriptorBinder.class.getName());
 
     public UDA10ServiceDescriptorBinderSAXImpl(NetworkAddressFactory networkAddressFactory) {
         super(networkAddressFactory);
     }
 
     @Override
-    public <S extends Service> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {
 
-        if (descriptorXml == null || descriptorXml.length() == 0) {
+        if (descriptorXml == null || descriptorXml.isEmpty()) {
             throw new DescriptorBindingException("Null or empty descriptor");
         }
 
@@ -66,11 +68,11 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
 
             SAXParser parser = new SAXParser();
 
-            MutableService descriptor = new MutableService();
+            MutableService<D, S> descriptor = new MutableService<>();
 
             hydrateBasic(descriptor, undescribedService);
 
-            new RootHandler(descriptor, parser);
+            new RootHandler<>(descriptor, parser);
 
             parser.parse(
                     new InputSource(
@@ -89,9 +91,9 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
         }
     }
 
-    protected static class RootHandler extends ServiceDescriptorHandler<MutableService> {
+    protected static class RootHandler<D extends Device<?, D, S>, S extends Service<?, D, S>> extends ServiceDescriptorHandler<MutableService<D, S>> {
 
-        public RootHandler(MutableService instance, SAXParser parser) {
+        public RootHandler(MutableService<D, S> instance, SAXParser parser) {
             super(instance, parser);
         }
 
@@ -107,15 +109,15 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
             */
 
             if (element.equals(ActionListHandler.EL)) {
-                List<MutableAction> actions = new ArrayList<>();
+                List<MutableAction<S>> actions = new ArrayList<>();
                 getInstance().actions = actions;
-                new ActionListHandler(actions, this);
+                new ActionListHandler<>(actions, this);
             }
 
             if (element.equals(StateVariableListHandler.EL)) {
-                List<MutableStateVariable> stateVariables = new ArrayList<>();
+                List<MutableStateVariable<S>> stateVariables = new ArrayList<>();
                 getInstance().stateVariables = stateVariables;
-                new StateVariableListHandler(stateVariables, this);
+                new StateVariableListHandler<>(stateVariables, this);
             }
 
         }
@@ -149,20 +151,20 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
     }
     */
 
-    protected static class ActionListHandler extends ServiceDescriptorHandler<List<MutableAction>> {
+    protected static class ActionListHandler<S extends Service<?, ?, ?>> extends ServiceDescriptorHandler<List<MutableAction<S>>> {
 
         public static final ELEMENT EL = ELEMENT.actionList;
 
-        public ActionListHandler(List<MutableAction> instance, ServiceDescriptorHandler parent) {
+        public ActionListHandler(List<MutableAction<S>> instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
         @Override
         public void startElement(ELEMENT element, Attributes attributes) throws SAXException {
             if (element.equals(ActionHandler.EL)) {
-                MutableAction action = new MutableAction();
+                MutableAction<S> action = new MutableAction<>();
                 getInstance().add(action);
-                new ActionHandler(action, this);
+                new ActionHandler<>(action, this);
             }
         }
 
@@ -172,30 +174,28 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
         }
     }
 
-    protected static class ActionHandler extends ServiceDescriptorHandler<MutableAction> {
+    protected static class ActionHandler<S extends Service<?, ?, ?>> extends ServiceDescriptorHandler<MutableAction<S>> {
 
         public static final ELEMENT EL = ELEMENT.action;
 
-        public ActionHandler(MutableAction instance, ServiceDescriptorHandler parent) {
+        public ActionHandler(MutableAction<S> instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
         @Override
         public void startElement(ELEMENT element, Attributes attributes) throws SAXException {
             if (element.equals(ActionArgumentListHandler.EL)) {
-                List<MutableActionArgument> arguments = new ArrayList<>();
+                List<MutableActionArgument<S>> arguments = new ArrayList<>();
                 getInstance().arguments = arguments;
-                new ActionArgumentListHandler(arguments, this);
+                new ActionArgumentListHandler<>(arguments, this);
             }
         }
 
         @Override
         public void endElement(ELEMENT element) throws SAXException {
-            switch (element) {
-                case name:
-                    getInstance().name = getCharacters();
-                    break;
-            }
+			if (Objects.requireNonNull(element) == ELEMENT.name) {
+				getInstance().name = getCharacters();
+			}
         }
 
         @Override
@@ -204,20 +204,20 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
         }
     }
 
-    protected static class ActionArgumentListHandler extends ServiceDescriptorHandler<List<MutableActionArgument>> {
+    protected static class ActionArgumentListHandler<S extends Service<?, ?, ?>> extends ServiceDescriptorHandler<List<MutableActionArgument<S>>> {
 
         public static final ELEMENT EL = ELEMENT.argumentList;
 
-        public ActionArgumentListHandler(List<MutableActionArgument> instance, ServiceDescriptorHandler parent) {
+        public ActionArgumentListHandler(List<MutableActionArgument<S>> instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
         @Override
         public void startElement(ELEMENT element, Attributes attributes) throws SAXException {
             if (element.equals(ActionArgumentHandler.EL)) {
-                MutableActionArgument argument = new MutableActionArgument();
+                MutableActionArgument<S> argument = new MutableActionArgument<>();
                 getInstance().add(argument);
-                new ActionArgumentHandler(argument, this);
+                new ActionArgumentHandler<>(argument, this);
             }
         }
 
@@ -227,11 +227,11 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
         }
     }
 
-    protected static class ActionArgumentHandler extends ServiceDescriptorHandler<MutableActionArgument> {
+    protected static class ActionArgumentHandler<S extends Service<?, ?, ?>> extends ServiceDescriptorHandler<MutableActionArgument<S>> {
 
         public static final ELEMENT EL = ELEMENT.argument;
 
-        public ActionArgumentHandler(MutableActionArgument instance, ServiceDescriptorHandler parent) {
+        public ActionArgumentHandler(MutableActionArgument<S> instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
@@ -266,18 +266,18 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
         }
     }
 
-    protected static class StateVariableListHandler extends ServiceDescriptorHandler<List<MutableStateVariable>> {
+    protected static class StateVariableListHandler<S extends Service<?, ?, ?>> extends ServiceDescriptorHandler<List<MutableStateVariable<S>>> {
 
         public static final ELEMENT EL = ELEMENT.serviceStateTable;
 
-        public StateVariableListHandler(List<MutableStateVariable> instance, ServiceDescriptorHandler parent) {
+        public StateVariableListHandler(List<MutableStateVariable<S>> instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
         @Override
         public void startElement(ELEMENT element, Attributes attributes) throws SAXException {
             if (element.equals(StateVariableHandler.EL)) {
-                MutableStateVariable stateVariable = new MutableStateVariable();
+                MutableStateVariable<S> stateVariable = new MutableStateVariable<>();
 
                 String sendEventsAttributeValue = attributes.getValue(ATTRIBUTE.sendEvents.toString());
                 stateVariable.eventDetails = new StateVariableEventDetails(
@@ -285,7 +285,7 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
                 );
 
                 getInstance().add(stateVariable);
-                new StateVariableHandler(stateVariable, this);
+                new StateVariableHandler<>(stateVariable, this);
             }
         }
 
@@ -295,11 +295,11 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
         }
     }
 
-    protected static class StateVariableHandler extends ServiceDescriptorHandler<MutableStateVariable> {
+    protected static class StateVariableHandler<S extends Service<?, ?, ?>> extends ServiceDescriptorHandler<MutableStateVariable<S>> {
 
         public static final ELEMENT EL = ELEMENT.stateVariable;
 
-        public StateVariableHandler(MutableStateVariable instance, ServiceDescriptorHandler parent) {
+        public StateVariableHandler(MutableStateVariable<S> instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
@@ -345,17 +345,15 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
 
         public static final ELEMENT EL = ELEMENT.allowedValueList;
 
-        public AllowedValueListHandler(List<String> instance, ServiceDescriptorHandler parent) {
+        public AllowedValueListHandler(List<String> instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
         @Override
         public void endElement(ELEMENT element) throws SAXException {
-            switch (element) {
-                case allowedValue:
-                    getInstance().add(getCharacters());
-                    break;
-            }
+			if (Objects.requireNonNull(element) == ELEMENT.allowedValue) {
+				getInstance().add(getCharacters());
+			}
         }
 
         @Override
@@ -368,7 +366,7 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
 
         public static final ELEMENT EL = ELEMENT.allowedValueRange;
 
-        public AllowedValueRangeHandler(MutableAllowedValueRange instance, ServiceDescriptorHandler parent) {
+        public AllowedValueRangeHandler(MutableAllowedValueRange instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
@@ -407,11 +405,11 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
             super(instance, parser);
         }
 
-        public ServiceDescriptorHandler(I instance, ServiceDescriptorHandler parent) {
+        public ServiceDescriptorHandler(I instance, ServiceDescriptorHandler<?> parent) {
             super(instance, parent);
         }
 
-        public ServiceDescriptorHandler(I instance, SAXParser parser, ServiceDescriptorHandler parent) {
+        public ServiceDescriptorHandler(I instance, SAXParser parser, ServiceDescriptorHandler<?> parent) {
             super(instance, parser, parent);
         }
 

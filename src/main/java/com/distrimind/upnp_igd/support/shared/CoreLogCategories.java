@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.support.shared;
 
-import org.seamless.swing.logging.LogCategory;
+import com.distrimind.upnp_igd.swing.logging.LogCategory;
 
 import java.util.ArrayList;
 import java.util.logging.Level;

@@ -23,7 +23,7 @@ import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import com.distrimind.upnp_igd.test.data.SampleServiceOne;
-import org.seamless.util.io.IO;
+import com.distrimind.upnp_igd.util.io.IO;
 import org.testng.annotations.Test;
 
 

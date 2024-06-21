@@ -16,7 +16,7 @@ package com.distrimind.upnp_igd.transport.spi;
 
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;

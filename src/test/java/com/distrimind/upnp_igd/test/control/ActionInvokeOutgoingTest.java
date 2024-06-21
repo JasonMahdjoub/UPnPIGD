@@ -111,7 +111,7 @@ public class ActionInvokeOutgoingTest {
     public void callLocalGet() throws Exception {
 
         // Registery local device and its service
-        MockUpnpService upnpService = new MockUpnpService();
+        MockUpnpService<?> upnpService = new MockUpnpService<>();
         LocalDevice ld = ActionSampleData.createTestDevice();
         LocalService service = ld.getServices()[0];
         upnpService.getRegistry().addDevice(ld);
@@ -200,7 +200,7 @@ public class ActionInvokeOutgoingTest {
     @Test
     public void callRemoteGet() throws Exception {
 
-        MockUpnpService upnpService = new MockUpnpService() {
+        MockUpnpService<?> upnpService = new MockUpnpService<>() {
             @Override
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
@@ -222,17 +222,17 @@ public class ActionInvokeOutgoingTest {
 
         // Register remote device and its service
         RemoteDevice device = SampleData.createRemoteDevice();
-        Service service = SampleData.getFirstService(device);
+        RemoteService service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action action = service.getAction("GetTarget");
+        Action<?> action = service.getAction("GetTarget");
 
         UpnpHeaders extraHeaders = new UpnpHeaders();
         extraHeaders.add(UpnpHeader.Type.USER_AGENT.getHttpName(), "MyCustom/Agent");
         extraHeaders.add("X-Custom-Header", "foo");
 
-        ActionInvocation actionInvocation =
-            new ActionInvocation(
+        ActionInvocation<?> actionInvocation =
+            new ActionInvocation<>(
                 action,
                 new ClientInfo(extraHeaders)
             );
@@ -240,12 +240,12 @@ public class ActionInvokeOutgoingTest {
         final boolean[] assertions = new boolean[1];
         ActionCallback callback = new ActionCallback(actionInvocation) {
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 assertions[0] = true;
             }
 
             @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+            public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                 assertions[0] = false;
             }
         };

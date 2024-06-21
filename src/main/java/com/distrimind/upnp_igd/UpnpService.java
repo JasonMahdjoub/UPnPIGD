@@ -35,15 +35,15 @@ import com.distrimind.upnp_igd.transport.Router;
  */
 public interface UpnpService {
 
-    public UpnpServiceConfiguration getConfiguration();
+    UpnpServiceConfiguration getConfiguration();
 
-    public ControlPoint getControlPoint();
+    ControlPoint getControlPoint();
 
-    public ProtocolFactory getProtocolFactory();
+    ProtocolFactory getProtocolFactory();
 
-    public Registry getRegistry();
+    Registry getRegistry();
 
-    public Router getRouter();
+    Router getRouter();
 
     /**
      * Stopping the UPnP stack.
@@ -52,13 +52,13 @@ public interface UpnpService {
      * disappearing devices will be multicast'ed, existing event subscriptions cancelled.
      * </p>
      */
-    public void shutdown();
+	void shutdown();
 
-    static public class Start {
+    class Start {
 
     }
 
-    static public class Shutdown {
+    class Shutdown {
 
     }
 

@@ -63,10 +63,8 @@ public class DeviceIdentity implements Validatable {
 
         DeviceIdentity that = (DeviceIdentity) o;
 
-        if (!udn.equals(that.udn)) return false;
-
-        return true;
-    }
+		return udn.equals(that.udn);
+	}
 
     @Override
     public int hashCode() {

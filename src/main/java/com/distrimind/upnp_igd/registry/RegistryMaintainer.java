@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class RegistryMaintainer implements Runnable {
 
-    private static Logger log = Logger.getLogger(RegistryMaintainer.class.getName());
+    private static final Logger log = Logger.getLogger(RegistryMaintainer.class.getName());
 
     final private RegistryImpl registry;
     final private int sleepIntervalMillis;

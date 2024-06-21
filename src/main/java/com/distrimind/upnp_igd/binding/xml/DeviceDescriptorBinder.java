@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.binding.xml;
 import com.distrimind.upnp_igd.model.Namespace;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.Device;
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import org.w3c.dom.Document;
 
@@ -28,14 +29,14 @@ import org.w3c.dom.Document;
  */
 public interface DeviceDescriptorBinder {
 
-    public <T extends Device> T describe(T undescribedDevice, String descriptorXml)
+    <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml)
             throws DescriptorBindingException, ValidationException;
 
-    public <T extends Device> T describe(T undescribedDevice, Document dom)
+    <T extends Device<?, T, ?>> T describe(T undescribedDevice, Document dom)
             throws DescriptorBindingException, ValidationException;
 
-    public String generate(Device device, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException;
+    String generate(Device<?, ?, ?> device, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException;
 
-    public Document buildDOM(Device device, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException;
+    Document buildDOM(Device<?, ?, ?> device, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException;
 
 }

@@ -23,10 +23,9 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.state.StateVariableAccessor;
 import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,30 +36,30 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractActionExecutor implements ActionExecutor {
 
-    private static Logger log = Logger.getLogger(AbstractActionExecutor.class.getName());
+    private static final Logger log = Logger.getLogger(AbstractActionExecutor.class.getName());
 
-    protected Map<ActionArgument<LocalService>, StateVariableAccessor> outputArgumentAccessors =
+    protected Map<? extends ActionArgument<? extends LocalService<?>>, StateVariableAccessor> outputArgumentAccessors =
         new HashMap<>();
 
     protected AbstractActionExecutor() {
     }
 
-    protected AbstractActionExecutor(Map<ActionArgument<LocalService>, StateVariableAccessor> outputArgumentAccessors) {
+    protected AbstractActionExecutor(Map<? extends ActionArgument<? extends LocalService<?>>, StateVariableAccessor> outputArgumentAccessors) {
         this.outputArgumentAccessors = outputArgumentAccessors;
     }
 
-    public Map<ActionArgument<LocalService>, StateVariableAccessor> getOutputArgumentAccessors() {
+    public Map<? extends ActionArgument<? extends LocalService<?>>, StateVariableAccessor> getOutputArgumentAccessors() {
         return outputArgumentAccessors;
     }
 
     /**
      * Obtains the service implementation instance from the {@link ServiceManager}, handles exceptions.
      */
-    public void execute(final ActionInvocation<LocalService> actionInvocation) {
+    public void execute(final ActionInvocation<LocalService<?>> actionInvocation) {
 
         log.fine("Invoking on local service: " + actionInvocation);
 
-        final LocalService service = actionInvocation.getAction().getService();
+        final LocalService<?> service = actionInvocation.getAction().getService();
 
         try {
 
@@ -110,7 +109,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
         }
     }
 
-    protected abstract void execute(ActionInvocation<LocalService> actionInvocation, Object serviceImpl) throws Exception;
+    protected abstract void execute(ActionInvocation<LocalService<?>> actionInvocation, Object serviceImpl) throws Exception;
 
     /**
      * Reads the output arguments after an action execution using accessors.
@@ -119,47 +118,46 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
      * @param instance The instance on which the accessors will be invoked.
      * @return <code>null</code> if the action has no output arguments, a single instance if it has one, an
      *         <code>Object[]</code> otherwise.
-     * @throws Exception
+     * @throws Exception if a problem occurs
      */
-    protected Object readOutputArgumentValues(Action<LocalService> action, Object instance) throws Exception {
-        Object[] results = new Object[action.getOutputArguments().length];
-        log.fine("Attempting to retrieve output argument values using accessor: " + results.length);
+    protected Object readOutputArgumentValues(Action<LocalService<?>> action, Object instance) throws Exception {
+        List<Object> results = new ArrayList<>(action.getOutputArguments().size());
+        log.fine("Attempting to retrieve output argument values using accessor: " + action.getOutputArguments().size());
 
-        int i = 0;
-        for (ActionArgument outputArgument : action.getOutputArguments()) {
+        for (ActionArgument<LocalService<?>> outputArgument : action.getOutputArguments()) {
             log.finer("Calling acccessor method for: " + outputArgument);
 
             StateVariableAccessor accessor = getOutputArgumentAccessors().get(outputArgument);
             if (accessor != null) {
                 log.fine("Calling accessor to read output argument value: " + accessor);
-                results[i++] = accessor.read(instance);
+                results.add(accessor.read(instance));
             } else {
                 throw new IllegalStateException("No accessor bound for: " + outputArgument);
             }
         }
 
-        if (results.length == 1) {
-            return results[0];
+        if (results.size() == 1) {
+            return results.iterator().next();
         }
-        return results.length > 0 ? results : null;
+        return !results.isEmpty() ? results : null;
     }
 
     /**
      * Sets the output argument value on the {@link ActionInvocation}, considers string conversion.
      */
-    protected void setOutputArgumentValue(ActionInvocation<LocalService> actionInvocation, ActionArgument<LocalService> argument, Object result)
+    protected void setOutputArgumentValue(ActionInvocation<LocalService<?>> actionInvocation, ActionArgument<LocalService<?>> argument, Object result)
             throws ActionException {
 
-        LocalService service = actionInvocation.getAction().getService();
+        LocalService<?> service = actionInvocation.getAction().getService();
 
         if (result != null) {
             try {
                 if (service.isStringConvertibleType(result)) {
                     log.fine("Result of invocation matches convertible type, setting toString() single output argument value");
-                    actionInvocation.setOutput(new ActionArgumentValue(argument, result.toString()));
+                    actionInvocation.setOutput(new ActionArgumentValue<>(argument, result.toString()));
                 } else {
                     log.fine("Result of invocation is Object, setting single output argument value");
-                    actionInvocation.setOutput(new ActionArgumentValue(argument, result));
+                    actionInvocation.setOutput(new ActionArgumentValue<>(argument, result));
                 }
             } catch (InvalidValueException ex) {
                 throw new ActionException(

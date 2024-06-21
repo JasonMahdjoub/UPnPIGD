@@ -34,7 +34,7 @@ import com.distrimind.upnp_igd.model.meta.Service;
  *
  * @author Christian Bauer
  */
-public abstract class GENASubscription<S extends Service> {
+public abstract class GENASubscription<S extends Service<?, ?, ?>> {
 
     protected S service;
     protected String subscriptionId;

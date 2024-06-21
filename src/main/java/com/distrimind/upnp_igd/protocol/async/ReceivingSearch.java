@@ -88,7 +88,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             return;
         }
 
-        UpnpHeader searchTarget = getInputMessage().getSearchTarget();
+        UpnpHeader<?> searchTarget = getInputMessage().getSearchTarget();
 
         if (searchTarget == null) {
             log.fine("Invalid search request, did not contain ST header: " + getInputMessage());
@@ -97,7 +97,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
         List<NetworkAddress> activeStreamServers =
             getUpnpService().getRouter().getActiveStreamServers(getInputMessage().getLocalAddress());
-        if (activeStreamServers.size() == 0) {
+        if (activeStreamServers.isEmpty()) {
             log.fine("Aborting search response, no active stream servers found (network disabled?)");
             return;
         }
@@ -123,7 +123,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         if (mx > 120 || mx <= 0) mx = MXHeader.DEFAULT_VALUE;
 
         // Only wait if there is something to wait for
-        if (getUpnpService().getRegistry().getLocalDevices().size() > 0) {
+        if (!getUpnpService().getRegistry().getLocalDevices().isEmpty()) {
             int sleepTime = randomGenerator.nextInt(mx * 1000);
             log.fine("Sleeping " + sleepTime + " milliseconds to avoid flooding with search responses");
             Thread.sleep(sleepTime);
@@ -132,7 +132,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         return true;
     }
     
-    protected void sendResponses(UpnpHeader searchTarget, NetworkAddress activeStreamServer) throws RouterException {
+    protected void sendResponses(UpnpHeader<?> searchTarget, NetworkAddress activeStreamServer) throws RouterException {
         if (searchTarget instanceof STAllHeader) {
 
             sendSearchResponseAll(activeStreamServer);
@@ -192,7 +192,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
             List<OutgoingSearchResponse> serviceTypeMsgs =
                     createServiceTypeMessages(localDevice, activeStreamServer);
-            if (serviceTypeMsgs.size() > 0) {
+            if (!serviceTypeMsgs.isEmpty()) {
                 if (LOG_ENABLED) {
                     log.finer("Sending service type messages");
                 }
@@ -279,7 +279,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
     }
 
     protected void sendSearchResponseUDN(UDN udn, NetworkAddress activeStreamServer) throws RouterException {
-        Device device = getUpnpService().getRegistry().getDevice(udn, false);
+        Device<?, ?, ?> device = getUpnpService().getRegistry().getDevice(udn, false);
         if (device != null && device instanceof LocalDevice) {
 
             if (isAdvertisementDisabled((LocalDevice)device))
@@ -299,8 +299,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
     protected void sendSearchResponseDeviceType(DeviceType deviceType, NetworkAddress activeStreamServer) throws RouterException{
         log.fine("Responding to device type search: " + deviceType);
-        Collection<Device> devices = getUpnpService().getRegistry().getDevices(deviceType);
-        for (Device device : devices) {
+        Collection<Device<?, ?, ?>> devices = getUpnpService().getRegistry().getDevices(deviceType);
+        for (Device<?, ?, ?> device : devices) {
             if (device instanceof LocalDevice) {
 
                 if (isAdvertisementDisabled((LocalDevice)device))
@@ -321,8 +321,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
     protected void sendSearchResponseServiceType(ServiceType serviceType, NetworkAddress activeStreamServer) throws RouterException {
         log.fine("Responding to service type search: " + serviceType);
-        Collection<Device> devices = getUpnpService().getRegistry().getDevices(serviceType);
-        for (Device device : devices) {
+        Collection<Device<?, ?, ?>> devices = getUpnpService().getRegistry().getDevices(serviceType);
+        for (Device<?, ?, ?> device : devices) {
             if (device instanceof LocalDevice) {
 
                 if (isAdvertisementDisabled((LocalDevice)device))

@@ -23,13 +23,7 @@ import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.model.types.UDN;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +34,7 @@ import java.util.logging.Logger;
  */
 class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
 
-    private static Logger log = Logger.getLogger(Registry.class.getName());
+    private static final Logger log = Logger.getLogger(Registry.class.getName());
 
     RemoteItems(RegistryImpl registry) {
         super(registry);
@@ -64,23 +58,21 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
             log.fine("Ignoring addition, device already registered: " + device);
             return;
         }
-
-        Resource[] resources = getResources(device);
-
-        for (Resource deviceResource : resources) {
+        Collection<Resource<?>> r=getResources(device);
+        for (Resource<?> deviceResource : r) {
             log.fine("Validating remote device resource; " + deviceResource);
             if (registry.getResource(deviceResource.getPathQuery()) != null) {
                 throw new RegistrationException("URI namespace conflict with already registered resource: " + deviceResource);
             }
         }
 
-        for (Resource validatedResource : resources) {
+        for (Resource<?> validatedResource : r) {
             registry.addResource(validatedResource);
             log.fine("Added remote device resource: " + validatedResource);
         }
 
         // Override the device's maximum age if configured (systems without multicast support)
-        RegistryItem item = new RegistryItem(
+        RegistryItem<UDN, RemoteDevice> item = new RegistryItem<>(
                 device.getIdentity().getUdn(),
                 device,
                 registry.getConfiguration().getRemoteDeviceMaxAgeSeconds() != null
@@ -95,7 +87,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
             StringBuilder sb = new StringBuilder();
             sb.append("\n");
             sb.append("-------------------------- START Registry Namespace -----------------------------------\n");
-            for (Resource resource : registry.getResources()) {
+            for (Resource<?> resource : registry.getResources()) {
                 sb.append(resource).append("\n");
             }
             sb.append("-------------------------- END Registry Namespace -----------------------------------");
@@ -180,7 +172,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
             log.fine("Removing remote device from registry: " + remoteDevice);
 
             // Resources
-            for (Resource deviceResource : getResources(registeredDevice)) {
+            for (Resource<?> deviceResource : getResources(registeredDevice)) {
                 if (registry.removeResource(deviceResource)) {
                     log.fine("Unregistered resource: " + deviceResource);
                 }
@@ -223,7 +215,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
             }
 
             // Finally, remove the device from the registry
-            getDeviceItems().remove(new RegistryItem(registeredDevice.getIdentity().getUdn()));
+            getDeviceItems().remove(new RegistryItem<UDN, RemoteDevice>(registeredDevice.getIdentity().getUdn()));
 
             return true;
         }
@@ -236,8 +228,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
     }
 
     void removeAll(boolean shuttingDown) {
-        RemoteDevice[] allDevices = get().toArray(new RemoteDevice[get().size()]);
-        for (RemoteDevice device : allDevices) {
+        for (RemoteDevice device : get()) {
             remove(device, shuttingDown);
         }
     }

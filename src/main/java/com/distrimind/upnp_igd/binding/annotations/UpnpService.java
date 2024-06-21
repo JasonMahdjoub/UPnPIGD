@@ -31,5 +31,5 @@ public @interface UpnpService {
     UpnpServiceType serviceType();
 
     boolean supportsQueryStateVariables() default true;
-    Class[] stringConvertibleTypes() default {};
+    Class<?>[] stringConvertibleTypes() default {};
 }

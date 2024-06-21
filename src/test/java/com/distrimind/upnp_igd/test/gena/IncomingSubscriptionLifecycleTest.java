@@ -33,7 +33,7 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.protocol.sync.ReceivingSubscribe;
 import com.distrimind.upnp_igd.protocol.sync.ReceivingUnsubscribe;
 import com.distrimind.upnp_igd.test.data.SampleData;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.URIUtil;
 import org.testng.annotations.Test;
 
 import java.net.URL;

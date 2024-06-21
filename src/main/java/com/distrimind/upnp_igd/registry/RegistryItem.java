@@ -24,7 +24,7 @@ import com.distrimind.upnp_igd.model.ExpirationDetails;
  */
 class RegistryItem<K, I> {
 
-    private K key;
+    private final K key;
     private I item;
     private ExpirationDetails expirationDetails = new ExpirationDetails();
 

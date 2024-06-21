@@ -26,7 +26,7 @@ import com.distrimind.upnp_igd.model.message.UpnpResponse;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.test.data.SampleData;
-import org.seamless.util.Reflections;
+import com.distrimind.upnp_igd.util.Reflections;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;

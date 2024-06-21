@@ -15,16 +15,20 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
+import java.util.Collection;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.model.message.gena.IncomingEventRequestMessage;
+import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import org.seamless.xml.XmlPullParserUtils;
-import org.xmlpull.v1.XmlPullParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import jakarta.enterprise.inject.Alternative;
 
@@ -43,7 +47,7 @@ import jakarta.enterprise.inject.Alternative;
 @Alternative
 public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 
-	private static Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
+	private static final Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
 
 	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
         log.fine("Reading body of: " + requestMessage);
@@ -55,42 +59,36 @@ public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 
         String body = getMessageBody(requestMessage);
 		try {
-			XmlPullParser xpp = XmlPullParserUtils.createParser(body);
-			readProperties(xpp, requestMessage);
+			Document d=Objects.requireNonNull(DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance(false)).newDocumentBuilder().parse(body);
+			readProperties(d, requestMessage);
 		} catch (Exception ex) {
 			throw new UnsupportedDataException("Can't transform message payload: " + ex.getMessage(), ex, body);	
 		}
 	}
 
-	protected void readProperties(XmlPullParser xpp, IncomingEventRequestMessage message) throws Exception {
+	protected void readProperties(Document doc, IncomingEventRequestMessage message) throws Exception {
 		// We're inside the propertyset tag
-		StateVariable[] stateVariables = message.getService().getStateVariables();
-		int event;
-		while((event = xpp.next()) != XmlPullParser.END_DOCUMENT) {
-			if(event != XmlPullParser.START_TAG) continue;
-			if(xpp.getName().equals("property")) {
-				readProperty(xpp, message, stateVariables);
-			} 
+		Collection<StateVariable<RemoteService>> stateVariables = message.getService().getStateVariables();
+		for (int i = 0; i < doc.getChildNodes().getLength(); i++) {
+			Node n = doc.getChildNodes().item(i);
+			if (n.getNodeName().equals("property"))
+			{
+				readProperty(n, message, stateVariables);
+			}
+
 		}
+
 	}
 
-	protected void readProperty(XmlPullParser xpp, IncomingEventRequestMessage message, StateVariable[] stateVariables) throws Exception  {
-		// We're inside the property tag
-		int event ;
-		do {
-			event = xpp.next();
-			if(event == XmlPullParser.START_TAG) {
-
-				String stateVariableName = xpp.getName();
-				for (StateVariable stateVariable : stateVariables) {
-					if (stateVariable.getName().equals(stateVariableName)) {
-						log.fine("Reading state variable value: " + stateVariableName);
-						String value = xpp.nextText();
-						message.getStateVariableValues().add(new StateVariableValue(stateVariable, value));
-						break;
-					}
-				} 
+	protected void readProperty(Node node, IncomingEventRequestMessage message, Collection<StateVariable<RemoteService>> stateVariables) throws Exception  {
+		String stateVariableName = node.getNodeName();
+		for (StateVariable<RemoteService> stateVariable : stateVariables) {
+			if (stateVariable.getName().equals(stateVariableName)) {
+				log.fine("Reading state variable value: " + stateVariableName);
+				String value = node.getTextContent();
+				message.getStateVariableValues().add(new StateVariableValue<>(stateVariable, value));
+				break;
 			}
-		} while(event != XmlPullParser.END_DOCUMENT && (event != XmlPullParser.END_TAG || !xpp.getName().equals("property")));
+		}
 	}
 }

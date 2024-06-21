@@ -46,7 +46,7 @@ public abstract class SendingNotification extends SendingAsync {
 
     final private static Logger log = Logger.getLogger(SendingNotification.class.getName());
 
-    private LocalDevice device;
+    private final LocalDevice device;
 
     public SendingNotification(UpnpService upnpService, LocalDevice device) {
         super(upnpService);
@@ -61,7 +61,7 @@ public abstract class SendingNotification extends SendingAsync {
 
         List<NetworkAddress> activeStreamServers =
             getUpnpService().getRouter().getActiveStreamServers(null);
-        if (activeStreamServers.size() == 0) {
+        if (activeStreamServers.isEmpty()) {
             log.fine("Aborting notifications, no active stream servers found (network disabled?)");
             return;
         }
@@ -123,7 +123,7 @@ public abstract class SendingNotification extends SendingAsync {
 
         List<OutgoingNotificationRequest> serviceTypeMsgs =
                 createServiceTypeMessages(getDevice(), descriptorLocation);
-        if (serviceTypeMsgs.size() > 0) {
+        if (!serviceTypeMsgs.isEmpty()) {
             log.finer("Sending service type messages");
             for (OutgoingNotificationRequest upnpMessage : serviceTypeMsgs) {
                 getUpnpService().getRouter().send(upnpMessage);

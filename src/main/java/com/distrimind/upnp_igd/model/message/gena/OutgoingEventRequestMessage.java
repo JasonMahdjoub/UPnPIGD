@@ -36,12 +36,12 @@ import java.util.Collection;
  */
 public class OutgoingEventRequestMessage extends StreamRequestMessage {
 
-    final private Collection<StateVariableValue> stateVariableValues;
+    final private Collection<? extends StateVariableValue<?>> stateVariableValues;
 
-    public OutgoingEventRequestMessage(GENASubscription subscription,
+    public OutgoingEventRequestMessage(GENASubscription<?> subscription,
                                        URL callbackURL,
                                        UnsignedIntegerFourBytes sequence,
-                                       Collection<StateVariableValue> values) {
+                                       Collection<? extends StateVariableValue<?>> values) {
 
         super(new UpnpRequest(UpnpRequest.Method.NOTIFY, callbackURL));
 
@@ -56,11 +56,11 @@ public class OutgoingEventRequestMessage extends StreamRequestMessage {
         this.stateVariableValues = values;
     }
 
-    public OutgoingEventRequestMessage(GENASubscription subscription, URL callbackURL) {
+    public OutgoingEventRequestMessage(GENASubscription<?> subscription, URL callbackURL) {
         this(subscription, callbackURL, subscription.getCurrentSequence(), subscription.getCurrentValues().values());
     }
 
-    public Collection<StateVariableValue> getStateVariableValues() {
+    public Collection<? extends StateVariableValue<?>> getStateVariableValues() {
         return stateVariableValues;
     }
 }

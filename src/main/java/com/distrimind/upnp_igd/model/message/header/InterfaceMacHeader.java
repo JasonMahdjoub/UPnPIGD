@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.model.message.header;
 
-import org.seamless.util.io.HexBin;
+import com.distrimind.upnp_igd.util.io.HexBin;
 
 /**
  * Custom header for Cling, used to transfer the MAC ethernet address for Wake-on-LAN.

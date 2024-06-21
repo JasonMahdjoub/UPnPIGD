@@ -19,9 +19,9 @@ package com.distrimind.upnp_igd.model.meta;
 import com.distrimind.upnp_igd.model.Validatable;
 import com.distrimind.upnp_igd.model.ValidationError;
 import com.distrimind.upnp_igd.model.types.BinHexDatatype;
-import org.seamless.util.io.IO;
-import org.seamless.util.MimeType;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.io.IO;
+import com.distrimind.upnp_igd.util.MimeType;
+import com.distrimind.upnp_igd.util.URIUtil;
 
 import java.io.File;
 import java.io.IOException;

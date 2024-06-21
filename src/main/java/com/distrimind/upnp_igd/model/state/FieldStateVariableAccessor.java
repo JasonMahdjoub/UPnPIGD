@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.model.state;
 
-import org.seamless.util.Reflections;
+import com.distrimind.upnp_igd.util.Reflections;
 
 import java.lang.reflect.Field;
 

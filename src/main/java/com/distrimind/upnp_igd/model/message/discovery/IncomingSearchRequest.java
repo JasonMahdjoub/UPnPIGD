@@ -31,7 +31,7 @@ public class IncomingSearchRequest extends IncomingDatagramMessage<UpnpRequest> 
         super(source);
     }
 
-    public UpnpHeader getSearchTarget() {
+    public UpnpHeader<?> getSearchTarget() {
         return getHeaders().getFirstHeader(UpnpHeader.Type.ST);
     }
 

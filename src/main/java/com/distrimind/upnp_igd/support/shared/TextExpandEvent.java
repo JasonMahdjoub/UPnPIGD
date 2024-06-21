@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.support.shared;
 
-import org.seamless.swing.DefaultEvent;
+import com.distrimind.upnp_igd.swing.DefaultEvent;
 
 
 public class TextExpandEvent extends DefaultEvent<String> {

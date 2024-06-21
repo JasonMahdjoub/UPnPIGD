@@ -17,7 +17,7 @@ package com.distrimind.upnp_igd.model.message;
 
 import com.distrimind.upnp_igd.model.message.header.ContentTypeHeader;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
-import org.seamless.util.MimeType;
+import com.distrimind.upnp_igd.util.MimeType;
 
 /**
  * A TCP (HTTP) stream response message.

@@ -19,7 +19,7 @@ import com.distrimind.upnp_igd.transport.RouterException;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.model.message.UpnpMessage;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

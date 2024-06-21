@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.model.message.header;
 
-import org.seamless.util.MimeType;
+import com.distrimind.upnp_igd.util.MimeType;
 
 /**
  * @author Christian Bauer

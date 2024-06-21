@@ -15,6 +15,8 @@
 
 package com.distrimind.upnp_igd.protocol.sync;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.protocol.SendingSync;
@@ -44,22 +46,21 @@ public class SendingEvent extends SendingSync<OutgoingEventRequestMessage, Strea
     final private static Logger log = Logger.getLogger(SendingEvent.class.getName());
 
     final protected String subscriptionId;
-    final protected OutgoingEventRequestMessage[] requestMessages;
+    final protected Collection<OutgoingEventRequestMessage> requestMessages;
     final protected UnsignedIntegerFourBytes currentSequence;
 
-    public SendingEvent(UpnpService upnpService, LocalGENASubscription subscription) {
+    public SendingEvent(UpnpService upnpService, LocalGENASubscription<?> subscription) {
         super(upnpService, null); // Special case, we actually need to send several messages to each callback URL
 
         // TODO: Ugly design! It is critical (concurrency) that we prepare the event messages here, in the constructor thread!
 
         subscriptionId = subscription.getSubscriptionId();
 
-        requestMessages = new OutgoingEventRequestMessage[subscription.getCallbackURLs().size()];
-        int i = 0;
+        requestMessages = new ArrayList<>(subscription.getCallbackURLs().size());
         for (URL url : subscription.getCallbackURLs()) {
-            requestMessages[i] = new OutgoingEventRequestMessage(subscription, url);
-            getUpnpService().getConfiguration().getGenaEventProcessor().writeBody(requestMessages[i]);
-            i++;
+            OutgoingEventRequestMessage o = new OutgoingEventRequestMessage(subscription, url);
+            getUpnpService().getConfiguration().getGenaEventProcessor().writeBody(o);
+            requestMessages.add(o);
         }
 
         currentSequence = subscription.getCurrentSequence();

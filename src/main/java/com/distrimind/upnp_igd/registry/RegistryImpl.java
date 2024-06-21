@@ -54,7 +54,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class RegistryImpl implements Registry {
 
-    private static Logger log = Logger.getLogger(Registry.class.getName());
+    private static final Logger log = Logger.getLogger(Registry.class.getName());
 
     protected UpnpService upnpService;
     protected RegistryMaintainer registryMaintainer;
@@ -101,11 +101,11 @@ public class RegistryImpl implements Registry {
     // #################################################################################################
 
     protected final Set<RegistryListener> registryListeners = new HashSet<>();
-    protected final Set<RegistryItem<URI, Resource>> resourceItems = new HashSet<>();
+    final Set<RegistryItem<URI, Resource<?>>> resourceItems = new HashSet<>();
     protected final List<Runnable> pendingExecutions = new ArrayList<>();
 
-    protected final RemoteItems remoteItems = new RemoteItems(this);
-    protected final LocalItems localItems = new LocalItems(this);
+    final RemoteItems remoteItems = new RemoteItems(this);
+    final LocalItems localItems = new LocalItems(this);
 
     // #################################################################################################
 
@@ -193,8 +193,8 @@ public class RegistryImpl implements Registry {
         remoteItems.removeAll();
     }
 
-    synchronized public boolean removeDevice(UDN udn) {
-        Device device = getDevice(udn, true);
+	synchronized public boolean removeDevice(UDN udn) {
+        Device<?, ?, ?> device = getDevice(udn, true);
         if (device != null && device instanceof LocalDevice)
             return removeDevice((LocalDevice) device);
         if (device != null && device instanceof RemoteDevice)
@@ -202,8 +202,8 @@ public class RegistryImpl implements Registry {
         return false;
     }
 
-    synchronized public Device getDevice(UDN udn, boolean rootOnly) {
-        Device device;
+    synchronized public Device<?, ?, ?> getDevice(UDN udn, boolean rootOnly) {
+        Device<?, ?, ?> device;
         if ((device = localItems.get(udn, rootOnly)) != null) return device;
         if ((device = remoteItems.get(udn, rootOnly)) != null) return device;
         return null;
@@ -225,15 +225,15 @@ public class RegistryImpl implements Registry {
         return Collections.unmodifiableCollection(remoteItems.get());
     }
 
-    synchronized public Collection<Device> getDevices() {
-        Set all = new HashSet<>();
+    synchronized public Collection<Device<?, ?, ?>> getDevices() {
+        Set<Device<?, ?, ?>> all = new HashSet<>();
         all.addAll(localItems.get());
         all.addAll(remoteItems.get());
         return Collections.unmodifiableCollection(all);
     }
 
-    synchronized public Collection<Device> getDevices(DeviceType deviceType) {
-        Collection<Device> devices = new HashSet<>();
+    synchronized public Collection<Device<?, ?, ?>> getDevices(DeviceType deviceType) {
+        Collection<Device<?, ?, ?>> devices = new HashSet<>();
 
         devices.addAll(localItems.get(deviceType));
         devices.addAll(remoteItems.get(deviceType));
@@ -241,8 +241,8 @@ public class RegistryImpl implements Registry {
         return Collections.unmodifiableCollection(devices);
     }
 
-    synchronized public Collection<Device> getDevices(ServiceType serviceType) {
-        Collection<Device> devices = new HashSet<>();
+    synchronized public Collection<Device<?, ?, ?>> getDevices(ServiceType serviceType) {
+        Collection<Device<?, ?, ?>> devices = new HashSet<>();
 
         devices.addAll(localItems.get(serviceType));
         devices.addAll(remoteItems.get(serviceType));
@@ -250,8 +250,8 @@ public class RegistryImpl implements Registry {
         return Collections.unmodifiableCollection(devices);
     }
 
-    synchronized public Service getService(ServiceReference serviceReference) {
-        Device device;
+    synchronized public Service<?, ?, ?> getService(ServiceReference serviceReference) {
+        Device<?, ?, ?> device;
         if ((device = getDevice(serviceReference.getUdn(), false)) != null) {
             return device.findService(serviceReference.getServiceId());
         }
@@ -260,15 +260,15 @@ public class RegistryImpl implements Registry {
 
     // #################################################################################################
 
-    synchronized public Resource getResource(URI pathQuery) throws IllegalArgumentException {
+    synchronized public Resource<?> getResource(URI pathQuery) throws IllegalArgumentException {
         if (pathQuery.isAbsolute()) {
             throw new IllegalArgumentException("Resource URI can not be absolute, only path and query:" + pathQuery);
         }
 
         // Note: Uses field access on resourceItems for performance reasons
 
-		for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
-        	Resource resource = resourceItem.getItem();
+		for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
+        	Resource<?> resource = resourceItem.getItem();
         	if (resource.matches(pathQuery)) {
                 return resource;
             }
@@ -279,8 +279,8 @@ public class RegistryImpl implements Registry {
         if (pathQuery.getPath().endsWith("/")) {
             URI pathQueryWithoutSlash = URI.create(pathQuery.toString().substring(0, pathQuery.toString().length() - 1));
 
- 			for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
-            	Resource resource = resourceItem.getItem();
+ 			for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
+            	Resource<?> resource = resourceItem.getItem();
             	if (resource.matches(pathQueryWithoutSlash)) {
                     return resource;
                 }
@@ -290,43 +290,45 @@ public class RegistryImpl implements Registry {
         return null;
     }
 
-    synchronized public <T extends Resource> T getResource(Class<T> resourceType, URI pathQuery) throws IllegalArgumentException {
-        Resource resource = getResource(pathQuery);
+    @SuppressWarnings("unchecked")
+	synchronized public <T extends Resource<?>> T getResource(Class<T> resourceType, URI pathQuery) throws IllegalArgumentException {
+        Resource<?> resource = getResource(pathQuery);
         if (resource != null && resourceType.isAssignableFrom(resource.getClass())) {
             return (T) resource;
         }
         return null;
     }
 
-    synchronized public Collection<Resource> getResources() {
-        Collection<Resource> s = new HashSet<>();
-        for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
+    synchronized public Collection<Resource<?>> getResources() {
+        Collection<Resource<?>> s = new HashSet<>();
+        for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
             s.add(resourceItem.getItem());
         }
         return s;
     }
 
-    synchronized public <T extends Resource> Collection<T> getResources(Class<T> resourceType) {
+    @SuppressWarnings("unchecked")
+	synchronized public <T extends Resource<?>> Collection<T> getResources(Class<T> resourceType) {
         Collection<T> s = new HashSet<>();
-        for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
+        for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
             if (resourceType.isAssignableFrom(resourceItem.getItem().getClass()))
                 s.add((T) resourceItem.getItem());
         }
         return s;
     }
 
-    synchronized public void addResource(Resource resource) {
+    synchronized public void addResource(Resource<?> resource) {
         addResource(resource, ExpirationDetails.UNLIMITED_AGE);
     }
 
-    synchronized public void addResource(Resource resource, int maxAgeSeconds) {
-        RegistryItem resourceItem = new RegistryItem(resource.getPathQuery(), resource, maxAgeSeconds);
+    synchronized public void addResource(Resource<?> resource, int maxAgeSeconds) {
+        RegistryItem<URI, Resource<?>> resourceItem = new RegistryItem<>(resource.getPathQuery(), resource, maxAgeSeconds);
         resourceItems.remove(resourceItem);
         resourceItems.add(resourceItem);
     }
 
-    synchronized public boolean removeResource(Resource resource) {
-        return resourceItems.remove(new RegistryItem(resource.getPathQuery()));
+    synchronized public boolean removeResource(Resource<?> resource) {
+        return resourceItems.remove(new RegistryItem<URI, Resource<?>>(resource.getPathQuery()));
     }
 
     // #################################################################################################
@@ -387,8 +389,7 @@ public class RegistryImpl implements Registry {
             listener.beforeShutdown(this);
         }
 
-        RegistryItem<URI, Resource>[] resources = resourceItems.toArray(new RegistryItem[resourceItems.size()]);
-        for (RegistryItem<URI, Resource> resourceItem : resources) {
+        for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
             resourceItem.getItem().shutdown();
         }
 
@@ -432,9 +433,9 @@ public class RegistryImpl implements Registry {
             log.finest("Maintaining registry...");
 
         // Remove expired resources
-        Iterator<RegistryItem<URI, Resource>> it = resourceItems.iterator();
+        Iterator<RegistryItem<URI, Resource<?>>> it = resourceItems.iterator();
         while (it.hasNext()) {
-            RegistryItem<URI, Resource> item = it.next();
+            RegistryItem<URI, Resource<?>> item = it.next();
             if (item.getExpirationDetails().hasExpired()) {
                 if (log.isLoggable(Level.FINER))
                     log.finer("Removing expired resource: " + item);
@@ -443,7 +444,7 @@ public class RegistryImpl implements Registry {
         }
 
         // Let each resource do its own maintenance
-        for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
+        for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
             resourceItem.getItem().maintain(
                     pendingExecutions,
                     resourceItem.getExpirationDetails()
@@ -471,7 +472,7 @@ public class RegistryImpl implements Registry {
             else
                 pendingExecution.run();
         }
-        if (pendingExecutions.size() > 0) {
+        if (!pendingExecutions.isEmpty()) {
             pendingExecutions.clear();
         }
     }
@@ -494,7 +495,7 @@ public class RegistryImpl implements Registry {
 
             log.fine("====================================  RESOURCES  ================================================");
 
-            for (RegistryItem<URI, Resource> resourceItem : resourceItems) {
+            for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
                 log.fine(resourceItem.toString());
             }
 
@@ -528,7 +529,7 @@ public class RegistryImpl implements Registry {
                 try {
                     log.finest("Subscription not found, waiting for pending subscription procedure to terminate.");
                     pendingSubscriptionsLock.wait();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
                 subscription = getRemoteSubscription(subscriptionId);
             }

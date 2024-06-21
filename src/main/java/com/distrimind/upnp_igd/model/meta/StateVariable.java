@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public class StateVariable<S extends Service> implements Validatable {
+public class StateVariable<S extends Service<?, ?, ?>> implements Validatable {
 
     final private static Logger log = Logger.getLogger(StateVariable.class.getName());
 
@@ -76,7 +76,7 @@ public class StateVariable<S extends Service> implements Validatable {
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
-        if (getName() == null || getName().length() == 0) {
+        if (getName() == null || getName().isEmpty()) {
             errors.add(new ValidationError(
                     getClass(),
                     "name",
@@ -99,11 +99,11 @@ public class StateVariable<S extends Service> implements Validatable {
     }
 
     public StateVariable<S> deepCopy() {
-        return new StateVariable(
-                getName(),
-                getTypeDetails(),
-                getEventDetails()
-        );
+        return new StateVariable<>(
+				getName(),
+				getTypeDetails(),
+				getEventDetails()
+		);
     }
 
     @Override

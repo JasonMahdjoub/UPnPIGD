@@ -35,7 +35,7 @@ import com.distrimind.upnp_igd.test.data.SampleDeviceRoot;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.DefaultUpnpServiceConfiguration;
-import org.seamless.util.io.HexBin;
+import com.distrimind.upnp_igd.util.io.HexBin;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

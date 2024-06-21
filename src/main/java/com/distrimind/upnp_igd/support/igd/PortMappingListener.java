@@ -29,11 +29,7 @@ import com.distrimind.upnp_igd.registry.DefaultRegistryListener;
 import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.support.model.PortMapping;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -80,7 +76,7 @@ public class PortMappingListener extends DefaultRegistryListener {
     protected PortMapping[] portMappings;
 
     // The key of the map is Service and equality is object identity, this is by-design
-    protected Map<Service, List<PortMapping>> activePortMappings = new HashMap<>();
+    protected Map<Service<?, ?, ?>, List<PortMapping>> activePortMappings = new HashMap<>();
 
     public PortMappingListener(PortMapping portMapping) {
         this(new PortMapping[]{portMapping});
@@ -91,9 +87,9 @@ public class PortMappingListener extends DefaultRegistryListener {
     }
 
     @Override
-    synchronized public void deviceAdded(Registry registry, Device device) {
+    synchronized public void deviceAdded(Registry registry, Device<?, ?, ?> device) {
 
-        Service connectionService;
+        Service<?, ?, ?> connectionService;
         if ((connectionService = discoverConnectionService(device)) == null) return;
 
         log.fine("Activating port mappings on: " + connectionService);
@@ -103,13 +99,13 @@ public class PortMappingListener extends DefaultRegistryListener {
             new PortMappingAdd(connectionService, registry.getUpnpService().getControlPoint(), pm) {
 
                 @Override
-                public void success(ActionInvocation invocation) {
+                public void success(ActionInvocation<?> invocation) {
                     log.fine("Port mapping added: " + pm);
                     activeForService.add(pm);
                 }
 
                 @Override
-                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                     handleFailureMessage("Failed to add port mapping: " + pm);
                     handleFailureMessage("Reason: " + defaultMsg);
                 }
@@ -120,14 +116,14 @@ public class PortMappingListener extends DefaultRegistryListener {
     }
 
     @Override
-    synchronized public void deviceRemoved(Registry registry, Device device) {
-        for (Service service : device.findServices()) {
-            Iterator<Map.Entry<Service, List<PortMapping>>> it = activePortMappings.entrySet().iterator();
+    synchronized public void deviceRemoved(Registry registry, Device<?, ?, ?> device) {
+        for (Service<?, ?, ?> service : device.findServices()) {
+            Iterator<Map.Entry<Service<?, ?, ?>, List<PortMapping>>> it = activePortMappings.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<Service, List<PortMapping>> activeEntry = it.next();
+                Map.Entry<Service<?, ?, ?>, List<PortMapping>> activeEntry = it.next();
                 if (!activeEntry.getKey().equals(service)) continue;
 
-                if (activeEntry.getValue().size() > 0)
+                if (!activeEntry.getValue().isEmpty())
                     handleFailureMessage("Device disappeared, couldn't delete port mappings: " + activeEntry.getValue().size());
 
                 it.remove();
@@ -137,7 +133,7 @@ public class PortMappingListener extends DefaultRegistryListener {
 
     @Override
     synchronized public void beforeShutdown(Registry registry) {
-        for (Map.Entry<Service, List<PortMapping>> activeEntry : activePortMappings.entrySet()) {
+        for (Map.Entry<Service<?, ?, ?>, List<PortMapping>> activeEntry : activePortMappings.entrySet()) {
 
             final Iterator<PortMapping> it = activeEntry.getValue().iterator();
             while (it.hasNext()) {
@@ -146,13 +142,13 @@ public class PortMappingListener extends DefaultRegistryListener {
                 new PortMappingDelete(activeEntry.getKey(), registry.getUpnpService().getControlPoint(), pm) {
 
                     @Override
-                    public void success(ActionInvocation invocation) {
+                    public void success(ActionInvocation<?> invocation) {
                         log.fine("Port mapping deleted: " + pm);
                         it.remove();
                     }
 
                     @Override
-                    public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                    public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                         handleFailureMessage("Failed to delete port mapping: " + pm);
                         handleFailureMessage("Reason: " + defaultMsg);
                     }
@@ -162,22 +158,22 @@ public class PortMappingListener extends DefaultRegistryListener {
         }
     }
 
-    protected Service discoverConnectionService(Device device) {
+    protected Service<?, ?, ?> discoverConnectionService(Device<?, ?, ?> device) {
         if (!device.getType().equals(IGD_DEVICE_TYPE)) {
             return null;
         }
 
-        Device[] connectionDevices = device.findDevices(CONNECTION_DEVICE_TYPE);
-        if (connectionDevices.length == 0) {
+        Collection<? extends Device<?, ?, ?>> connectionDevices = device.findDevices(CONNECTION_DEVICE_TYPE);
+        if (connectionDevices.isEmpty()) {
             log.fine("IGD doesn't support '" + CONNECTION_DEVICE_TYPE + "': " + device);
             return null;
         }
 
-        Device connectionDevice = connectionDevices[0];
+        Device<?, ?, ?> connectionDevice = connectionDevices.iterator().next();
         log.fine("Using first discovered WAN connection device: " + connectionDevice);
 
-        Service ipConnectionService = connectionDevice.findService(IP_SERVICE_TYPE);
-        Service pppConnectionService = connectionDevice.findService(PPP_SERVICE_TYPE);
+        Service<?, ?, ?> ipConnectionService = connectionDevice.findService(IP_SERVICE_TYPE);
+        Service<?, ?, ?> pppConnectionService = connectionDevice.findService(PPP_SERVICE_TYPE);
 
         if (ipConnectionService == null && pppConnectionService == null) {
             log.fine("IGD doesn't support IP or PPP WAN connection service: " + device);

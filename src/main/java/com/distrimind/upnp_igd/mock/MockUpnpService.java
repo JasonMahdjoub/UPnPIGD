@@ -118,7 +118,7 @@ public class MockUpnpService implements UpnpService {
      */
     public static class MockProtocolFactory extends ProtocolFactoryImpl {
 
-        private boolean sendsAlive;
+        private final boolean sendsAlive;
 
         public MockProtocolFactory(UpnpService upnpService, boolean sendsAlive) {
             super(upnpService);
@@ -136,7 +136,7 @@ public class MockUpnpService implements UpnpService {
         }
 
         @Override
-        public SendingSearch createSendingSearch(UpnpHeader searchTarget, int mxSeconds) {
+        public SendingSearch createSendingSearch(UpnpHeader<?> searchTarget, int mxSeconds) {
             return new SendingSearch(getUpnpService(), searchTarget, mxSeconds) {
                 @Override
                 public int getBulkIntervalMilliseconds() {

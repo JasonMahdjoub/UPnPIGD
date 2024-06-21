@@ -12,20 +12,20 @@ import java.util.Map;
 
 public abstract class PortMappingEntryGet extends ActionCallback {
 
-    public PortMappingEntryGet(Service service, long index) {
+    public PortMappingEntryGet(Service<?, ?, ?> service, long index) {
         this(service, null, index);
     }
 
-    protected PortMappingEntryGet(Service service, ControlPoint controlPoint, long index) {
-        super(new ActionInvocation(service.getAction("GetGenericPortMappingEntry")), controlPoint);
+    protected PortMappingEntryGet(Service<?, ?, ?> service, ControlPoint controlPoint, long index) {
+        super(new ActionInvocation<>(service.getAction("GetGenericPortMappingEntry")), controlPoint);
 
         getActionInvocation().setInput("NewPortMappingIndex", new UnsignedIntegerTwoBytes(index));
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
 
-        Map<String, ActionArgumentValue<Service>> outputMap = invocation.getOutputMap();
+        Map<String, ? extends ActionArgumentValue<? extends Service<?, ?, ?>>> outputMap = invocation.getOutputMap();
         success(new PortMapping(outputMap));
     }
 

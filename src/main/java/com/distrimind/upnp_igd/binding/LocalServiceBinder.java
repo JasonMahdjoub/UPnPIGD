@@ -19,19 +19,21 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.types.ServiceId;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 
+import java.util.Set;
+
 /**
  * Reads {@link LocalService} metadata given a Java class.
  *
  * @author Christian Bauer
  */
-public interface LocalServiceBinder {
+public interface LocalServiceBinder<T> {
 
     /**
      * @param clazz The Java class that is the source of the service metadata.
      * @return The produced metadata.
      * @throws LocalServiceBindingException If binding failed.
      */
-    public LocalService read(Class<?> clazz) throws LocalServiceBindingException;
+    LocalService<T> read(Class<?> clazz) throws LocalServiceBindingException;
 
     /**
      *
@@ -45,6 +47,6 @@ public interface LocalServiceBinder {
      * @return The produced metadata.
      * @throws LocalServiceBindingException If binding failed.
      */
-    public LocalService read(Class<?> clazz, ServiceId id, ServiceType type,
-                              boolean supportsQueryStateVariables, Class[] stringConvertibleTypes) throws LocalServiceBindingException;
+    LocalService<T> read(Class<?> clazz, ServiceId id, ServiceType type,
+                              boolean supportsQueryStateVariables, Set<Class<?>> stringConvertibleTypes) throws LocalServiceBindingException;
 }

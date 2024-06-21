@@ -15,10 +15,7 @@
 
 package com.distrimind.upnp_igd.binding.staging;
 
-import com.distrimind.upnp_igd.model.meta.StateVariable;
-import com.distrimind.upnp_igd.model.meta.StateVariableAllowedValueRange;
-import com.distrimind.upnp_igd.model.meta.StateVariableEventDetails;
-import com.distrimind.upnp_igd.model.meta.StateVariableTypeDetails;
+import com.distrimind.upnp_igd.model.meta.*;
 import com.distrimind.upnp_igd.model.types.Datatype;
 
 import java.util.List;
@@ -26,24 +23,24 @@ import java.util.List;
 /**
  * @author Christian Bauer
  */
-public class MutableStateVariable {
+public class MutableStateVariable<S extends Service<?, ?, ?>> {
 
     public String name;
-    public Datatype dataType;
+    public Datatype<?> dataType;
     public String defaultValue;
     public List<String> allowedValues;
     public MutableAllowedValueRange allowedValueRange;
     public StateVariableEventDetails eventDetails;
 
-    public StateVariable build() {
-        return new StateVariable(
+    public StateVariable<S> build() {
+        return new StateVariable<>(
                 name,
                 new StateVariableTypeDetails(
                         dataType,
                         defaultValue,
-                        allowedValues == null || allowedValues.size() == 0
+                        allowedValues == null || allowedValues.isEmpty()
                                 ? null
-                                : allowedValues.toArray(new String[allowedValues.size()]),
+                                : allowedValues,
                         allowedValueRange == null
                                 ? null :
                                 new StateVariableAllowedValueRange(

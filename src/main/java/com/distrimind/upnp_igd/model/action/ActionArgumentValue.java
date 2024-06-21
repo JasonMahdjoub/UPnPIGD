@@ -25,7 +25,7 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
  *
  * @author Christian Bauer
  */
-public class ActionArgumentValue<S extends Service> extends VariableValue {
+public class ActionArgumentValue<S extends Service<?, ?, ?>> extends VariableValue {
 
     final private ActionArgument<S> argument;
 

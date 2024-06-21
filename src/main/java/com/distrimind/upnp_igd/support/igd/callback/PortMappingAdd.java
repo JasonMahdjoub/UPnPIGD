@@ -28,12 +28,12 @@ public abstract class PortMappingAdd extends ActionCallback {
 
     final protected PortMapping portMapping;
 
-    public PortMappingAdd(Service service, PortMapping portMapping) {
+    public PortMappingAdd(Service<?, ?, ?> service, PortMapping portMapping) {
         this(service, null, portMapping);
     }
 
-    protected PortMappingAdd(Service service, ControlPoint controlPoint, PortMapping portMapping) {
-        super(new ActionInvocation(service.getAction("AddPortMapping")), controlPoint);
+    protected PortMappingAdd(Service<?, ?, ?> service, ControlPoint controlPoint, PortMapping portMapping) {
+        super(new ActionInvocation<>(service.getAction("AddPortMapping")), controlPoint);
 
         this.portMapping = portMapping;
 

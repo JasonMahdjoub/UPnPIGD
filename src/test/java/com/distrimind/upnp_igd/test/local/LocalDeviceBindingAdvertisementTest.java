@@ -40,7 +40,7 @@ import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import com.distrimind.upnp_igd.model.types.NotificationSubtype;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.test.data.SampleData;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.URIUtil;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

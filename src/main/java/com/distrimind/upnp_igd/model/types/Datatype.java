@@ -39,7 +39,7 @@ public interface Datatype<V> {
      * Java type.
      * </p>
      */
-    public static enum Default {
+	enum Default {
 
         BOOLEAN(Boolean.class, Builtin.BOOLEAN),
         BOOLEAN_PRIMITIVE(Boolean.TYPE, Builtin.BOOLEAN),
@@ -61,15 +61,15 @@ public interface Datatype<V> {
         BYTES(byte[].class, Builtin.BIN_BASE64),
         URI(java.net.URI.class, Builtin.URI);
 
-        private Class javaType;
-        private Builtin builtinType;
+        private final Class<?> javaType;
+        private final Builtin builtinType;
 
-        Default(Class javaType, Builtin builtinType) {
+        Default(Class<?> javaType, Builtin builtinType) {
             this.javaType = javaType;
             this.builtinType = builtinType;
         }
 
-        public Class getJavaType() {
+        public Class<?> getJavaType() {
             return javaType;
         }
 
@@ -77,7 +77,7 @@ public interface Datatype<V> {
             return builtinType;
         }
 
-        public static Default getByJavaType(Class javaType) {
+        public static Default getByJavaType(Class<?> javaType) {
             for (Default d : Default.values()) {
                 if (d.getJavaType().equals(javaType)) {
                     return d;
@@ -95,7 +95,7 @@ public interface Datatype<V> {
     /**
      * Mapping from UPnP built-in standardized type to actual subtype of {@link Datatype}.
      */
-    public static enum Builtin {
+    enum Builtin {
 
         UI1("ui1", new UnsignedIntegerOneByteDatatype()),
         UI2("ui2", new UnsignedIntegerTwoBytesDatatype()),
@@ -138,7 +138,7 @@ public interface Datatype<V> {
         URI("uri", new URIDatatype()),
         UUID("uuid", new StringDatatype());
 
-        private static Map<String, Builtin> byName = new HashMap<String, Builtin>() {{
+        private final static Map<String, Builtin> byName = new HashMap<String, Builtin>() {{
             for (Builtin b : Builtin.values()) {
                 // Lowercase descriptor name!
                 if (containsKey(b.getDescriptorName().toLowerCase(Locale.ROOT)))
@@ -147,8 +147,8 @@ public interface Datatype<V> {
             }
         }};
 
-        private String descriptorName;
-        private Datatype datatype;
+        private final String descriptorName;
+        private final Datatype<?> datatype;
 
         <VT> Builtin(String descriptorName, AbstractDatatype<VT> datatype) {
             datatype.setBuiltin(this); // Protected, we actually want this to be immutable
@@ -160,7 +160,7 @@ public interface Datatype<V> {
             return descriptorName;
         }
 
-        public Datatype getDatatype() {
+        public Datatype<?> getDatatype() {
             return datatype;
         }
 
@@ -187,19 +187,24 @@ public interface Datatype<V> {
     /**
      * @return <code>true</code> if this datatype can handle values of the given Java type.
      */
-    public boolean isHandlingJavaType(Class type);
+    boolean isHandlingJavaType(Class<?> type);
 
     /**
      * @return The built-in UPnP standardized type this datatype is mapped to or
      *         <code>null</code> if this is a custom datatype.
      */
-    public Builtin getBuiltin();
+    Builtin getBuiltin();
 
     /**
      * @param value The value to validate or <code>null</code>.
      * @return Returns <code>true</code> if the value was <code>null</code>, validation result otherwise.
      */
-    public boolean isValid(V value);
+    boolean isValid(V value);
+    @SuppressWarnings("unchecked")
+	default boolean isValidObject(Object value)
+    {
+        return isValid((V)value);
+    }
 
     /**
      * Transforms a value supported by this datatype into a string representation.
@@ -210,9 +215,14 @@ public interface Datatype<V> {
      *
      * @param value The value to transform.
      * @return The transformed value as a string, or an empty string when the value is null, never returns <code>null</code>.
-     * @throws InvalidValueException
+     * @throws InvalidValueException if problem occurs
      */
-    public String getString(V value) throws InvalidValueException;
+    String getString(V value) throws InvalidValueException;
+    @SuppressWarnings("unchecked")
+	default String getObjectString(Object value) throws InvalidValueException
+    {
+        return getString((V)value);
+    }
 
     /**
      * Transforms a string representation into a value of the supported type.
@@ -221,13 +231,13 @@ public interface Datatype<V> {
      * @return The converted value or <code>null</code> if the string was <code>null</code> or empty.
      * @throws InvalidValueException If the string couldn't be parsed.
      */
-    public V valueOf(String s) throws InvalidValueException;
+    V valueOf(String s) throws InvalidValueException;
 
     /**
      * @return Metadata about this datatype, a nice string for display that describes
      *         this datatype (e.g. concrete class name).
      */
-    public String getDisplayString();
+    String getDisplayString();
 
 
 }

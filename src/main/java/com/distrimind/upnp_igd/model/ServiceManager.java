@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.model;
 
 import com.distrimind.upnp_igd.model.action.ActionExecutor;
 import com.distrimind.upnp_igd.model.action.MethodActionExecutor;
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.state.FieldStateVariableAccessor;
 import com.distrimind.upnp_igd.model.state.StateVariableAccessor;
 import com.distrimind.upnp_igd.model.meta.LocalService;
@@ -79,19 +80,19 @@ public interface ServiceManager<T> {
      * Use this property name when propagating change events that affect any evented UPnP
      * state variable. This name is detected by the GENA subsystem.
      */
-    public static final String EVENTED_STATE_VARIABLES = "_EventedStateVariables";
+    String EVENTED_STATE_VARIABLES = "_EventedStateVariables";
 
     /**
      * @return The metadata of the service to which this manager is assigned.
      */
-    public LocalService<T> getService();
+    LocalService<T> getService();
 
     /**
      * @return An instance with the interface expected by the
      *         bound {@link ActionExecutor}s
     *          and {@link StateVariableAccessor}s.
      */
-    public T getImplementation();
+    T getImplementation();
 
     /**
      * Double-dispatch of arbitrary commands, used by action executors and state variable accessors.
@@ -103,7 +104,7 @@ public interface ServiceManager<T> {
      * @param cmd The command to execute.
      * @throws Exception Any exception, without wrapping, as thrown by {@link Command#execute(ServiceManager)}
      */
-    public void execute(Command<T> cmd) throws Exception;
+    void execute(Command<T> cmd) throws Exception;
 
     /**
      * Provides the capability to monitor the service for state changes.
@@ -126,7 +127,7 @@ public interface ServiceManager<T> {
      *
      * @return An adapter that will notify its listeners whenever any evented state variable changes.
      */
-    public PropertyChangeSupport getPropertyChangeSupport();
+    PropertyChangeSupport getPropertyChangeSupport();
 
     /**
      * Reading the state of a service manually.
@@ -135,6 +136,6 @@ public interface ServiceManager<T> {
      *         the current state of the service, that is, all evented state variable values.
      * @throws Exception Any error that occurred when the service's state was accessed.
      */
-    public Collection<StateVariableValue> getCurrentState() throws Exception;
+    Collection<StateVariableValue<LocalService<T>>> getCurrentState() throws Exception;
 
 }

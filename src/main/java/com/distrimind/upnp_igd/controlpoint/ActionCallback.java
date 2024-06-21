@@ -72,34 +72,34 @@ public abstract class ActionCallback implements Runnable {
      */
     public static final class Default extends ActionCallback {
 
-        public Default(ActionInvocation actionInvocation, ControlPoint controlPoint) {
+        public Default(ActionInvocation<?> actionInvocation, ControlPoint controlPoint) {
             super(actionInvocation, controlPoint);
         }
 
         @Override
-        public void success(ActionInvocation invocation) {
+        public void success(ActionInvocation<?> invocation) {
         }
 
         @Override
-        public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+        public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
 
         }
     }
 
-    protected final ActionInvocation actionInvocation;
+    protected final ActionInvocation<?> actionInvocation;
 
     protected ControlPoint controlPoint;
 
-    protected ActionCallback(ActionInvocation actionInvocation, ControlPoint controlPoint) {
+    protected ActionCallback(ActionInvocation<?> actionInvocation, ControlPoint controlPoint) {
         this.actionInvocation = actionInvocation;
         this.controlPoint = controlPoint;
     }
 
-    protected ActionCallback(ActionInvocation actionInvocation) {
+    protected ActionCallback(ActionInvocation<?> actionInvocation) {
         this.actionInvocation = actionInvocation;
     }
 
-    public ActionInvocation getActionInvocation() {
+    public ActionInvocation<?> getActionInvocation() {
         return actionInvocation;
     }
 
@@ -112,15 +112,16 @@ public abstract class ActionCallback implements Runnable {
         return this;
     }
 
-    public void run() {
-        Service service = actionInvocation.getAction().getService();
+    @SuppressWarnings("unchecked")
+	public void run() {
+        Service<?, ?, ?> service = actionInvocation.getAction().getService();
 
         // Local execution
         if (service instanceof LocalService) {
-            LocalService localService = (LocalService)service;
+            LocalService<?> localService = (LocalService<?>)service;
 
             // Executor validates input inside the execute() call immediately
-            localService.getExecutor(actionInvocation.getAction()).execute(actionInvocation);
+            localService.getExecutor(actionInvocation.getAction()).execute((ActionInvocation<LocalService<?>>) actionInvocation);
 
             if (actionInvocation.getFailure() != null) {
                 failure(actionInvocation, null);
@@ -162,7 +163,7 @@ public abstract class ActionCallback implements Runnable {
         }
     }
 
-    protected String createDefaultFailureMessage(ActionInvocation invocation, UpnpResponse operation) {
+    protected String createDefaultFailureMessage(ActionInvocation<?> invocation, UpnpResponse operation) {
         String message = "Error: ";
         final ActionException exception = invocation.getFailure();
         if (exception != null) {
@@ -174,7 +175,7 @@ public abstract class ActionCallback implements Runnable {
         return message;
     }
 
-    protected void failure(ActionInvocation invocation, UpnpResponse operation) {
+    protected void failure(ActionInvocation<?> invocation, UpnpResponse operation) {
         failure(invocation, operation, createDefaultFailureMessage(invocation, operation));
     }
 
@@ -183,7 +184,7 @@ public abstract class ActionCallback implements Runnable {
      *
      * @param invocation The successful invocation, call its <code>getOutput()</code> method for results.
      */
-    public abstract void success(ActionInvocation invocation);
+    public abstract void success(ActionInvocation<?> invocation);
 
     /**
      * Called when the action invocation failed.
@@ -193,7 +194,7 @@ public abstract class ActionCallback implements Runnable {
      * @param defaultMsg A user-friendly error message generated from the invocation exception and response.
      * @see #createDefaultFailureMessage
      */
-    public abstract void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg);
+    public abstract void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg);
 
     @Override
     public String toString() {

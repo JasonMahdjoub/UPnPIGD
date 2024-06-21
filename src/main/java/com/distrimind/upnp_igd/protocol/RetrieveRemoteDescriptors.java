@@ -16,11 +16,8 @@
 package com.distrimind.upnp_igd.protocol;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +40,7 @@ import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDN;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 /**
  * Retrieves all remote device XML descriptors, parses them, creates an immutable device and service metadata graph.
@@ -70,9 +67,9 @@ public class RetrieveRemoteDescriptors implements Runnable {
     final private static Logger log = Logger.getLogger(RetrieveRemoteDescriptors.class.getName());
 
     private final UpnpService upnpService;
-    private RemoteDevice rd;
+    private final RemoteDevice rd;
 
-    private static final Set<URL> activeRetrievals = new CopyOnWriteArraySet();
+    private static final List<URL> activeRetrievals = new CopyOnWriteArrayList<>();
     protected List<UDN> errorsAlreadyLogged = new ArrayList<>();
 
     public RetrieveRemoteDescriptors(UpnpService upnpService, RemoteDevice rd) {
@@ -180,7 +177,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
         }
 
         String descriptorContent = deviceDescMsg.getBodyString();
-        if (descriptorContent == null || descriptorContent.length() == 0) {
+        if (descriptorContent == null || descriptorContent.isEmpty()) {
             log.warning("Received empty device descriptor:" + rd.getIdentity().getDescriptorURL());
             return;
         }
@@ -283,10 +280,9 @@ public class RetrieveRemoteDescriptors implements Runnable {
             }
         }
 
-        Icon[] iconDupes = new Icon[currentDevice.getIcons().length];
-        for (int i = 0; i < currentDevice.getIcons().length; i++) {
-            Icon icon = currentDevice.getIcons()[i];
-            iconDupes[i] = icon.deepCopy();
+        List<Icon> iconDupes = new ArrayList<>(currentDevice.getIcons().size());
+        for (Icon icon : currentDevice.getIcons()) {
+            iconDupes.add(icon.deepCopy());
         }
 
         // Yes, we create a completely new immutable graph here
@@ -296,7 +292,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
                 currentDevice.getType(),
                 currentDevice.getDetails(),
                 iconDupes,
-                currentDevice.toServiceArray(describedServices),
+                describedServices,
                 describedEmbeddedDevices
         );
     }
@@ -342,7 +338,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
         }
 
         String descriptorContent = serviceDescMsg.getBodyString();
-        if (descriptorContent == null || descriptorContent.length() == 0) {
+        if (descriptorContent == null || descriptorContent.isEmpty()) {
             log.warning("Received empty service descriptor:" + descriptorURL);
             return null;
         }
@@ -354,11 +350,11 @@ public class RetrieveRemoteDescriptors implements Runnable {
         return serviceDescriptorBinder.describe(service, descriptorContent);
     }
 
-    protected List<RemoteService> filterExclusiveServices(RemoteService[] services) {
+    protected List<RemoteService> filterExclusiveServices(Collection<RemoteService> services) {
         ServiceType[] exclusiveTypes = getUpnpService().getConfiguration().getExclusiveServiceTypes();
 
         if (exclusiveTypes == null || exclusiveTypes.length == 0)
-            return Arrays.asList(services);
+            return new ArrayList<>(services);
 
         List<RemoteService> exclusiveServices = new ArrayList<>();
         for (RemoteService discoveredService : services) {

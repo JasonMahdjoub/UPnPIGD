@@ -42,6 +42,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.model.profile.DeviceDetailsProvider;
@@ -49,7 +50,7 @@ import com.distrimind.upnp_igd.model.profile.DeviceDetailsProvider;
 
 public class SampleData {
 
-    private static Logger log = Logger.getLogger(SampleData.class.getName());
+    private static final Logger log = Logger.getLogger(SampleData.class.getName());
 
     /* ###################################################################################### */
 
@@ -91,7 +92,7 @@ public class SampleData {
         try {
             return LocalDevice.class.getConstructor(
                     DeviceIdentity.class, DeviceType.class, DeviceDetails.class,
-                    Icon[].class, LocalService.class, LocalDevice.class
+                    Collection.class, LocalService.class, LocalDevice.class
             );
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -102,7 +103,7 @@ public class SampleData {
         try {
             return LocalDevice.class.getConstructor(
                     DeviceIdentity.class, DeviceType.class, DeviceDetailsProvider.class,
-                    Icon[].class, LocalService.class, LocalDevice.class
+                    Collection.class, LocalService.class, LocalDevice.class
             );
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -113,7 +114,7 @@ public class SampleData {
         try {
             return LocalService.class.getConstructor(
                     ServiceType.class, ServiceId.class,
-                    Action[].class, StateVariable[].class
+                    Collection.class, Collection.class
             );
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -181,7 +182,7 @@ public class SampleData {
         try {
             return RemoteDevice.class.getConstructor(
                     RemoteDeviceIdentity.class, DeviceType.class, DeviceDetails.class,
-                    Icon[].class, RemoteService.class, RemoteDevice.class
+                    Collection.class, RemoteService.class, RemoteDevice.class
             );
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -193,7 +194,7 @@ public class SampleData {
             return RemoteService.class.getConstructor(
                     ServiceType.class, ServiceId.class,
                     URI.class, URI.class, URI.class,
-                    Action[].class, StateVariable[].class
+                    Collection.class, Collection.class
             );
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -235,7 +236,7 @@ public class SampleData {
     }
 
     public static RemoteService getFirstService(RemoteDevice device) {
-        return device.getServices()[0];
+        return device.getServices().iterator().next();
     }
 
     public static RemoteService createUndescribedRemoteService() {
@@ -252,16 +253,16 @@ public class SampleData {
     /* ###################################################################################### */
 
     public static <T> LocalService<T> readService(Class<T> clazz) {
-        return readService(new AnnotationLocalServiceBinder().read(clazz), clazz);
+        return readService(new AnnotationLocalServiceBinder<T>().read(clazz), clazz);
     }
 
-    public static <T> LocalService<T> readService(LocalServiceBinder binder, Class<T> clazz) {
+    public static <T> LocalService<T> readService(LocalServiceBinder<T> binder, Class<T> clazz) {
         return readService(binder.read(clazz), clazz);
     }
 
     public static <T> LocalService<T> readService(LocalService<T> service, Class<T> clazz) {
         service.setManager(
-                new DefaultServiceManager(service, clazz)
+                new DefaultServiceManager<>(service, clazz)
         );
         return service;
     }

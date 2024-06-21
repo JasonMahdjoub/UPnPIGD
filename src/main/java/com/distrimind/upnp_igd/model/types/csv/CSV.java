@@ -18,7 +18,7 @@ package com.distrimind.upnp_igd.model.types.csv;
 import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
-import org.seamless.util.Reflections;
+import com.distrimind.upnp_igd.util.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,17 +52,18 @@ public abstract class CSV<T> extends ArrayList<T> {
         addAll(parseString(s));
     }
 
-    protected List parseString(String s) throws InvalidValueException {
+    @SuppressWarnings("unchecked")
+	protected List<T> parseString(String s) throws InvalidValueException {
         String[] strings = ModelUtil.fromCommaSeparatedList(s);
-        List values = new ArrayList<>();
+        List<T> values = new ArrayList<>();
         for (String string : strings) {
-            values.add(datatype.getDatatype().valueOf(string));
+            values.add((T)datatype.getDatatype().valueOf(string));
         }
         return values;
     }
 
     protected Datatype.Builtin getBuiltinDatatype() throws InvalidValueException {
-        Class csvType = Reflections.getTypeArguments(ArrayList.class, getClass()).get(0);
+        Class<?> csvType = Reflections.getTypeArguments(ArrayList.class, getClass()).get(0);
         Datatype.Default defaultType = Datatype.Default.getByJavaType(csvType);
         if (defaultType == null) {
             throw new InvalidValueException("No built-in UPnP datatype for Java type of CSV: " + csvType);
@@ -74,8 +75,8 @@ public abstract class CSV<T> extends ArrayList<T> {
     public String toString() {
         List<String> stringValues = new ArrayList<>();
         for (T t : this) {
-            stringValues.add(datatype.getDatatype().getString(t));
+            stringValues.add(datatype.getDatatype().getObjectString(t));
         }
-        return ModelUtil.toCommaSeparatedList(stringValues.toArray(new Object[stringValues.size()]));
+        return ModelUtil.toCommaSeparatedList(stringValues.toArray(new Object[0]));
     }
 }

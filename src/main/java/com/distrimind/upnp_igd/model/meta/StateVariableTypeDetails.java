@@ -21,9 +21,7 @@ import com.distrimind.upnp_igd.model.Validatable;
 import com.distrimind.upnp_igd.model.ValidationError;
 import com.distrimind.upnp_igd.model.types.Datatype;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -35,27 +33,27 @@ public class StateVariableTypeDetails implements Validatable {
 
     final private static Logger log = Logger.getLogger(StateVariableTypeDetails.class.getName());
 
-    final private Datatype datatype;
+    final private Datatype<?> datatype;
     final private String defaultValue;
-    final private String[] allowedValues;
+    final private Collection<String> allowedValues;
     final private StateVariableAllowedValueRange allowedValueRange;
 
-    public StateVariableTypeDetails(Datatype datatype) {
+    public StateVariableTypeDetails(Datatype<?> datatype) {
         this(datatype, null, null, null);
     }
 
-    public StateVariableTypeDetails(Datatype datatype, String defaultValue) {
+    public StateVariableTypeDetails(Datatype<?> datatype, String defaultValue) {
         this(datatype, defaultValue, null, null);
     }
 
-    public StateVariableTypeDetails(Datatype datatype, String defaultValue, String[] allowedValues, StateVariableAllowedValueRange allowedValueRange) {
+    public StateVariableTypeDetails(Datatype<?> datatype, String defaultValue, Collection<String> allowedValues, StateVariableAllowedValueRange allowedValueRange) {
         this.datatype = datatype;
         this.defaultValue = defaultValue;
-        this.allowedValues = allowedValues;
+        this.allowedValues = List.copyOf(allowedValues);
         this.allowedValueRange = allowedValueRange;
     }
 
-    public Datatype getDatatype() {
+    public Datatype<?> getDatatype() {
         return datatype;
     }
 
@@ -63,12 +61,12 @@ public class StateVariableTypeDetails implements Validatable {
         return defaultValue;
     }
 
-    public String[] getAllowedValues() {
+    public Collection<String> getAllowedValues() {
         // TODO: UPNP VIOLATION: DirecTV HR23/700 High Definition DVR Receiver has invalid default value
         if (!foundDefaultInAllowedValues(defaultValue, allowedValues)) {
-            List<String> list = new ArrayList<>(Arrays.asList(allowedValues));
+            List<String> list = new ArrayList<>(allowedValues);
             list.add(getDefaultValue());
-            return list.toArray(new String[list.size()]);
+            return list;
         }
         return allowedValues;
     }
@@ -77,7 +75,7 @@ public class StateVariableTypeDetails implements Validatable {
         return allowedValueRange;
     }
 
-    protected boolean foundDefaultInAllowedValues(String defaultValue, String[] allowedValues) {
+    protected boolean foundDefaultInAllowedValues(String defaultValue, Collection<String> allowedValues) {
         if (defaultValue == null || allowedValues == null) return true;
         for (String s : allowedValues) {
             if (s.equals(defaultValue)) return true;

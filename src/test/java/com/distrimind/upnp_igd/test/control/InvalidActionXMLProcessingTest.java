@@ -40,7 +40,7 @@ import com.distrimind.upnp_igd.test.data.SampleData;
 import com.distrimind.upnp_igd.transport.impl.PullSOAPActionProcessorImpl;
 import com.distrimind.upnp_igd.transport.impl.RecoveringSOAPActionProcessorImpl;
 import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
-import org.seamless.util.io.IO;
+import com.distrimind.upnp_igd.util.io.IO;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

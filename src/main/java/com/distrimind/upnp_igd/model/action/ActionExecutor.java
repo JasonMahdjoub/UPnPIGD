@@ -24,5 +24,5 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
  */
 public interface ActionExecutor {
 
-    public void execute(final ActionInvocation<LocalService> actionInvocation);
+    void execute(final ActionInvocation<LocalService<?>> actionInvocation);
 }

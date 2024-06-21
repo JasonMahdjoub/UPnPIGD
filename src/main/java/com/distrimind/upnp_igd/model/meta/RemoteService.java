@@ -22,6 +22,7 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ import java.util.List;
  * 
  * @author Christian Bauer
  */
-public class RemoteService extends Service<RemoteDevice, RemoteService> {
+public class RemoteService extends Service<RemoteDeviceIdentity, RemoteDevice, RemoteService> {
 
     final private URI descriptorURI;
     final private URI controlURI;
@@ -46,7 +47,7 @@ public class RemoteService extends Service<RemoteDevice, RemoteService> {
 
     public RemoteService(ServiceType serviceType, ServiceId serviceId,
                          URI descriptorURI, URI controlURI, URI eventSubscriptionURI,
-                         Action<RemoteService>[] actions, StateVariable<RemoteService>[] stateVariables) throws ValidationException {
+                         Collection<Action<RemoteService>> actions, Collection<StateVariable<RemoteService>> stateVariables) throws ValidationException {
         super(serviceType, serviceId, actions, stateVariables);
 
         this.descriptorURI = descriptorURI;
@@ -54,14 +55,14 @@ public class RemoteService extends Service<RemoteDevice, RemoteService> {
         this.eventSubscriptionURI = eventSubscriptionURI;
 
         List<ValidationError> errors = validateThis();
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
             throw new ValidationException("Validation of device graph failed, call getErrors() on exception", errors);
         }
     }
 
     @Override
-    public Action getQueryStateVariableAction() {
-        return new QueryStateVariableAction(this);
+    public Action<RemoteService> getQueryStateVariableAction() {
+        return new QueryStateVariableAction<>(this);
     }
 
     public URI getDescriptorURI() {

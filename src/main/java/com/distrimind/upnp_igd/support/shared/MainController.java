@@ -16,15 +16,13 @@
 package com.distrimind.upnp_igd.support.shared;
 
 import com.distrimind.upnp_igd.UpnpService;
-import com.distrimind.upnp_igd.support.shared.AWTExceptionHandler;
-import com.distrimind.upnp_igd.support.shared.TextExpandEvent;
-import org.seamless.util.logging.LoggingUtil;
-import org.seamless.swing.AbstractController;
-import org.seamless.swing.Application;
-import org.seamless.swing.logging.LogCategory;
-import org.seamless.swing.logging.LogController;
-import org.seamless.swing.logging.LogMessage;
-import org.seamless.swing.logging.LoggingHandler;
+import com.distrimind.upnp_igd.util.logging.LoggingUtil;
+import com.distrimind.upnp_igd.swing.AbstractController;
+import com.distrimind.upnp_igd.swing.Application;
+import com.distrimind.upnp_igd.swing.logging.LogCategory;
+import com.distrimind.upnp_igd.swing.logging.LogController;
+import com.distrimind.upnp_igd.swing.logging.LogMessage;
+import com.distrimind.upnp_igd.swing.logging.LoggingHandler;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;

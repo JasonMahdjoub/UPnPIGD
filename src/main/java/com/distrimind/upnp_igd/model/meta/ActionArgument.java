@@ -21,6 +21,8 @@ import com.distrimind.upnp_igd.model.ValidationError;
 import com.distrimind.upnp_igd.model.types.Datatype;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,7 +34,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public class ActionArgument<S extends Service> implements Validatable {
+public class ActionArgument<S extends Service<?, ?, ?>> implements Validatable {
 
     final private static Logger log = Logger.getLogger(ActionArgument.class.getName());
 
@@ -41,7 +43,7 @@ public class ActionArgument<S extends Service> implements Validatable {
     }
 
     final private String name;
-    final private String[] aliases;
+    final private Collection<String> aliases;
     final private String relatedStateVariableName;
     final private Direction direction;
     final private boolean returnValue;     // TODO: What is this stuff good for anyway?
@@ -50,20 +52,23 @@ public class ActionArgument<S extends Service> implements Validatable {
     private Action<S> action;
 
     public ActionArgument(String name, String relatedStateVariableName, Direction direction) {
-        this(name, new String[0], relatedStateVariableName, direction, false);
+        this(name, Collections.emptyList(), relatedStateVariableName, direction, false);
     }
 
-    public ActionArgument(String name, String[] aliases, String relatedStateVariableName, Direction direction) {
+    public ActionArgument(String name, Collection<String> aliases, String relatedStateVariableName, Direction direction) {
         this(name, aliases, relatedStateVariableName, direction, false);
     }
-    
-    public ActionArgument(String name, String relatedStateVariableName, Direction direction, boolean returnValue) {
-        this(name, new String[0], relatedStateVariableName, direction, returnValue);
+    public ActionArgument(String name, String[] aliases, String relatedStateVariableName, Direction direction) {
+        this(name, List.of(aliases), relatedStateVariableName, direction, false);
     }
 
-    public ActionArgument(String name, String[] aliases, String relatedStateVariableName, Direction direction, boolean returnValue) {
+    public ActionArgument(String name, String relatedStateVariableName, Direction direction, boolean returnValue) {
+        this(name, Collections.emptyList(), relatedStateVariableName, direction, returnValue);
+    }
+
+    public ActionArgument(String name, Collection<String> aliases, String relatedStateVariableName, Direction direction, boolean returnValue) {
         this.name = name;
-        this.aliases = aliases;
+        this.aliases = List.copyOf(aliases);
         this.relatedStateVariableName = relatedStateVariableName;
         this.direction = direction;
         this.returnValue = returnValue;
@@ -73,7 +78,7 @@ public class ActionArgument<S extends Service> implements Validatable {
         return name;
     }
 
-    public String[] getAliases() {
+    public Collection<String> getAliases() {
         return aliases;
     }
 
@@ -107,14 +112,14 @@ public class ActionArgument<S extends Service> implements Validatable {
         this.action = action;
     }
 
-    public Datatype getDatatype() {
+    public Datatype<?> getDatatype() {
         return getAction().getService().getDatatype(this);
     }
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
-        if (getName() == null || getName().length() == 0) {
+        if (getName() == null || getName().isEmpty()) {
             errors.add(new ValidationError(
                     getClass(),
                     "name",

@@ -25,12 +25,13 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author Christian Bauer
  */
-public class MutableService {
+public class MutableService<D extends Device<?, D, S>, S extends Service<?, D, S>> {
 
     public ServiceType serviceType;
     public ServiceId serviceId;
@@ -38,10 +39,10 @@ public class MutableService {
     public URI controlURI;
     public URI eventSubscriptionURI;
 
-    public List<MutableAction> actions = new ArrayList<>();
-    public List<MutableStateVariable> stateVariables = new ArrayList<>();
+    public List<MutableAction<S>> actions = new ArrayList<>();
+    public List<MutableStateVariable<S>> stateVariables = new ArrayList<>();
 
-    public Service build(Device prototype) throws ValidationException {
+    public S build(D prototype) throws ValidationException {
         return prototype.newInstance(
                 serviceType, serviceId,
                 descriptorURI, controlURI, eventSubscriptionURI,
@@ -50,20 +51,18 @@ public class MutableService {
         );
     }
 
-    public Action[] createActions() {
-        Action[] array = new Action[actions.size()];
-        int i = 0;
-        for (MutableAction action : actions) {
-            array[i++] = action.build();
+    public Collection<Action<S>> createActions() {
+        Collection<Action<S>> array = new ArrayList<>(actions.size());
+        for (MutableAction<S> action : actions) {
+            array.add(action.build());
         }
         return array;
     }
 
-    public StateVariable[] createStateVariables() {
-        StateVariable[] array = new StateVariable[stateVariables.size()];
-        int i = 0;
-        for (MutableStateVariable stateVariable : stateVariables) {
-            array[i++] = stateVariable.build();
+    public Collection<StateVariable<S>> createStateVariables() {
+        Collection<StateVariable<S>> array = new ArrayList<>(stateVariables.size());
+        for (MutableStateVariable<S> stateVariable : stateVariables) {
+            array.add(stateVariable.build());
         }
         return array;
     }

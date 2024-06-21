@@ -38,9 +38,9 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
+class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
 
-    private static Logger log = Logger.getLogger(Registry.class.getName());
+    private static final Logger log = Logger.getLogger(Registry.class.getName());
     
     protected Map<UDN, DiscoveryOptions> discoveryOptions = new HashMap<>();
     protected long lastAliveIntervalTimestamp = 0;
@@ -86,7 +86,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
 
         log.fine("Adding local device to registry: " + localDevice);
 
-        for (Resource deviceResource : getResources(localDevice)) {
+        for (Resource<?> deviceResource : getResources(localDevice)) {
 
             if (registry.getResource(deviceResource.getPathQuery()) != null) {
                 throw new RegistrationException("URI namespace conflict with already registered resource: " + deviceResource);
@@ -133,7 +133,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
         }
         return Collections.unmodifiableCollection(c);
     }
-
+    @Override
     boolean remove(final LocalDevice localDevice) throws RegistrationException {
         return remove(localDevice, false);
     }
@@ -146,18 +146,18 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
             log.fine("Removing local device from registry: " + localDevice);
 
             setDiscoveryOptions(localDevice.getIdentity().getUdn(), null);
-            getDeviceItems().remove(new RegistryItem(localDevice.getIdentity().getUdn()));
+            getDeviceItems().remove(new RegistryItem<UDN, LocalDevice>(localDevice.getIdentity().getUdn()));
 
-            for (Resource deviceResource : getResources(localDevice)) {
+            for (Resource<?> deviceResource : getResources(localDevice)) {
                 if (registry.removeResource(deviceResource)) {
                     log.fine("Unregistered resource: " + deviceResource);
                 }
             }
 
             // Active subscriptions
-            Iterator<RegistryItem<String, LocalGENASubscription>> it = getSubscriptionItems().iterator();
+            Iterator<RegistryItem<String, LocalGENASubscription<?>>> it = getSubscriptionItems().iterator();
             while (it.hasNext()) {
-                final RegistryItem<String, LocalGENASubscription> incomingSubscription = it.next();
+                final RegistryItem<String, LocalGENASubscription<?>> incomingSubscription = it.next();
 
                 UDN subscriptionForUDN =
                         incomingSubscription.getItem().getService().getDevice().getIdentity().getUdn();
@@ -203,8 +203,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
     }
 
     void removeAll(boolean shuttingDown) {
-        LocalDevice[] allDevices = get().toArray(new LocalDevice[get().size()]);
-        for (LocalDevice device : allDevices) {
+        for (LocalDevice device : get()) {
             remove(device, shuttingDown);
         }
     }
@@ -260,13 +259,13 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
         }
 
         // Expire incoming subscriptions
-        Set<RegistryItem<String, LocalGENASubscription>> expiredIncomingSubscriptions = new HashSet<>();
-        for (RegistryItem<String, LocalGENASubscription> item : getSubscriptionItems()) {
+        Set<RegistryItem<String, LocalGENASubscription<?>>> expiredIncomingSubscriptions = new HashSet<>();
+        for (RegistryItem<String, LocalGENASubscription<?>> item : getSubscriptionItems()) {
             if (item.getExpirationDetails().hasExpired(false)) {
                 expiredIncomingSubscriptions.add(item);
             }
         }
-        for (RegistryItem<String, LocalGENASubscription> subscription : expiredIncomingSubscriptions) {
+        for (RegistryItem<String, LocalGENASubscription<?>> subscription : expiredIncomingSubscriptions) {
             log.fine("Removing expired: " + subscription);
             removeSubscription(subscription.getItem());
             subscription.getItem().end(CancelReason.EXPIRED);

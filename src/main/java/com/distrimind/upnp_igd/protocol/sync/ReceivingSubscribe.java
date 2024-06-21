@@ -27,7 +27,7 @@ import com.distrimind.upnp_igd.model.message.gena.IncomingSubscribeRequestMessag
 import com.distrimind.upnp_igd.model.message.gena.OutgoingSubscribeResponseMessage;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.resource.ServiceEventSubscriptionResource;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.net.URL;
 import java.util.List;

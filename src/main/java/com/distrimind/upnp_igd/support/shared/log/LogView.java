@@ -15,8 +15,8 @@
 
 package com.distrimind.upnp_igd.support.shared.log;
 
-import org.seamless.swing.logging.LogCategory;
-import org.seamless.swing.logging.LogMessage;
+import com.distrimind.upnp_igd.swing.logging.LogCategory;
+import com.distrimind.upnp_igd.swing.logging.LogMessage;
 import com.distrimind.upnp_igd.support.shared.View;
 
 import java.util.List;

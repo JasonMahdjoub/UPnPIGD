@@ -17,7 +17,7 @@ package com.distrimind.upnp_igd.protocol;
 
 import com.distrimind.upnp_igd.transport.RouterException;
 import com.distrimind.upnp_igd.UpnpService;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

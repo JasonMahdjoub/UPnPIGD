@@ -29,7 +29,7 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
 public class QueryStateVariableExecutor extends AbstractActionExecutor {
     
     @Override
-    protected void execute(ActionInvocation<LocalService> actionInvocation, Object serviceImpl) throws Exception {
+    protected void execute(ActionInvocation<LocalService<?>> actionInvocation, Object serviceImpl) throws Exception {
 
         // Querying a state variable doesn't mean an actual "action" method on this instance gets invoked
         if (actionInvocation.getAction() instanceof QueryStateVariableAction) {
@@ -47,9 +47,9 @@ public class QueryStateVariableExecutor extends AbstractActionExecutor {
         }
     }
 
-    protected void executeQueryStateVariable(ActionInvocation<LocalService> actionInvocation, Object serviceImpl) throws Exception {
+    protected void executeQueryStateVariable(ActionInvocation<LocalService<?>> actionInvocation, Object serviceImpl) throws Exception {
 
-        LocalService service = actionInvocation.getAction().getService();
+        LocalService<?> service = actionInvocation.getAction().getService();
 
         String stateVariableName = actionInvocation.getInput("varName").toString();
         StateVariable stateVariable = service.getStateVariable(stateVariableName);

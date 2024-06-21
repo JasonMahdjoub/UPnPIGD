@@ -31,8 +31,8 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.state.StateVariableAccessor;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
-import org.seamless.util.Exceptions;
-import org.seamless.util.Reflections;
+import com.distrimind.upnp_igd.util.Exceptions;
+import com.distrimind.upnp_igd.util.Reflections;
 
 /**
  * Default implementation, creates and manages a single instance of a plain Java bean.
@@ -50,7 +50,7 @@ import org.seamless.util.Reflections;
  */
 public class DefaultServiceManager<T> implements ServiceManager<T> {
 
-    private static Logger log = Logger.getLogger(DefaultServiceManager.class.getName());
+    private static final Logger log = Logger.getLogger(DefaultServiceManager.class.getName());
 
     final protected LocalService<T> service;
     final protected Class<T> serviceClass;
@@ -132,16 +132,16 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
     }
 
     @Override
-    public Collection<StateVariableValue> getCurrentState() throws Exception {
+    public Collection<StateVariableValue<LocalService<T>>> getCurrentState() throws Exception {
         lock();
         try {
-            Collection<StateVariableValue> values = readInitialEventedStateVariableValues();
+            Collection<StateVariableValue<LocalService<T>>> values = readInitialEventedStateVariableValues();
             if (values != null) {
                 log.fine("Obtained initial state variable values for event, skipping individual state variable accessors");
                 return values;
             }
             values = new ArrayList<>();
-            for (StateVariable stateVariable : getService().getStateVariables()) {
+            for (StateVariable<LocalService<T>> stateVariable : getService().getStateVariables()) {
                 if (stateVariable.getEventDetails().isSendEvents()) {
                     StateVariableAccessor accessor = getService().getAccessor(stateVariable);
                     if (accessor == null)
@@ -155,14 +155,14 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
         }
     }
 
-    protected Collection<StateVariableValue> getCurrentState(String[] variableNames) throws Exception {
+    protected Collection<StateVariableValue<LocalService<T>>> getCurrentState(String[] variableNames) throws Exception {
         lock();
         try {
-            Collection<StateVariableValue> values = new ArrayList<>();
+            Collection<StateVariableValue<LocalService<T>>> values = new ArrayList<>();
             for (String variableName : variableNames) {
                 variableName = variableName.trim();
 
-                StateVariable stateVariable = getService().getStateVariable(variableName);
+                StateVariable<LocalService<T>> stateVariable = getService().getStateVariable(variableName);
                 if (stateVariable == null || !stateVariable.getEventDetails().isSendEvents()) {
                     log.fine("Ignoring unknown or non-evented state variable: " + variableName);
                     continue;
@@ -205,7 +205,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
             return serviceClass.getConstructor(LocalService.class).newInstance(getService());
         } catch (NoSuchMethodException ex) {
             log.fine("Creating new service implementation instance with no-arg constructor: " + serviceClass.getName());
-            return serviceClass.newInstance();
+            return serviceClass.getConstructor().newInstance();
         }
     }
 
@@ -224,7 +224,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
         return new DefaultPropertyChangeListener();
     }
 
-    protected Collection<StateVariableValue> readInitialEventedStateVariableValues() throws Exception {
+    protected Collection<StateVariableValue<LocalService<T>>> readInitialEventedStateVariableValues() throws Exception {
         return null;
     }
 
@@ -245,7 +245,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
             log.fine("Changed variable names: " + Arrays.toString(variableNames));
 
             try {
-                Collection<StateVariableValue> currentValues = getCurrentState(variableNames);
+                Collection<StateVariableValue<LocalService<T>>> currentValues = getCurrentState(variableNames);
 
                 if (!currentValues.isEmpty()) {
                     getPropertyChangeSupport().firePropertyChange(

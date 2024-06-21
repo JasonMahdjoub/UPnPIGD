@@ -22,7 +22,7 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -53,9 +53,9 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public abstract class LocalGENASubscription extends GENASubscription<LocalService> implements PropertyChangeListener {
+public abstract class LocalGENASubscription<T> extends GENASubscription<LocalService<T>> implements PropertyChangeListener {
 
-    private static Logger log = Logger.getLogger(LocalGENASubscription.class.getName());
+    private static final Logger log = Logger.getLogger(LocalGENASubscription.class.getName());
 
     final List<URL> callbackURLs;
 
@@ -63,12 +63,12 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
     final Map<String, Long> lastSentTimestamp = new HashMap<>();
     final Map<String, Long> lastSentNumericValue = new HashMap<>();
 
-    protected LocalGENASubscription(LocalService service, List<URL> callbackURLs) throws Exception {
+    protected LocalGENASubscription(LocalService<T> service, List<URL> callbackURLs) throws Exception {
         super(service);
         this.callbackURLs = callbackURLs;
     }
 
-    public LocalGENASubscription(LocalService service,
+    public LocalGENASubscription(LocalService<T> service,
                                  Integer requestedDurationSeconds, List<URL> callbackURLs) throws Exception {
         super(service);
 
@@ -78,11 +78,11 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
         long currentTime = new Date().getTime();
         this.currentValues.clear();
 
-        Collection<StateVariableValue> values = getService().getManager().getCurrentState();
+        Collection<StateVariableValue<LocalService<T>>> values = getService().getManager().getCurrentState();
 
         log.finer("Got evented state variable values: " + values.size());
 
-        for (StateVariableValue value : values) {
+        for (StateVariableValue<LocalService<T>> value : values) {
             this.currentValues.put(value.getStateVariable().getName(), value);
 
             if (log.isLoggable(Level.FINEST)) {
@@ -132,22 +132,23 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
      * Moderates {@link ServiceManager#EVENTED_STATE_VARIABLES} events and state variable
      * values, calls {@link #eventReceived()}.
      */
-    synchronized public void propertyChange(PropertyChangeEvent e) {
+    @SuppressWarnings("unchecked")
+	synchronized public void propertyChange(PropertyChangeEvent e) {
         if (!e.getPropertyName().equals(ServiceManager.EVENTED_STATE_VARIABLES)) return;
 
         log.fine("Eventing triggered, getting state for subscription: " + getSubscriptionId());
 
         long currentTime = new Date().getTime();
 
-        Collection<StateVariableValue> newValues = (Collection) e.getNewValue();
+        @SuppressWarnings("unchecked") Collection<StateVariableValue<?>> newValues = (Collection<StateVariableValue<?>>) e.getNewValue();
         Set<String> excludedVariables = moderateStateVariables(currentTime, newValues);
 
         currentValues.clear();
-        for (StateVariableValue newValue : newValues) {
+        for (StateVariableValue<?> newValue : newValues) {
             String name = newValue.getStateVariable().getName();
             if (!excludedVariables.contains(name)) {
                 log.fine("Adding state variable value to current values of event: " + newValue.getStateVariable() + " = " + newValue);
-                currentValues.put(newValue.getStateVariable().getName(), newValue);
+                currentValues.put(newValue.getStateVariable().getName(), (StateVariableValue<LocalService<T>>) newValue);
 
                 // Preserve "last sent" state for future moderation
                 lastSentTimestamp.put(name, currentTime);
@@ -157,7 +158,7 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
             }
         }
 
-        if (currentValues.size() > 0) {
+        if (!currentValues.isEmpty()) {
             log.fine("Propagating new state variable values to subscription: " + this);
             // TODO: I'm not happy with this design, this dispatches to a separate thread which _then_
             // is supposed to lock and read the values off this instance. That obviously doesn't work
@@ -175,14 +176,14 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
      * @param values The state variable values to moderate.
      * @return A collection of state variable values that although they might have changed, are excluded from the event.
      */
-    synchronized protected Set<String> moderateStateVariables(long currentTime, Collection<StateVariableValue> values) {
+    synchronized protected Set<String> moderateStateVariables(long currentTime, Collection<StateVariableValue<?>> values) {
 
         Set<String> excludedVariables = new HashSet<>();
 
         // Moderate event variables that have a maximum rate or minimum delta
-        for (StateVariableValue stateVariableValue : values) {
+        for (StateVariableValue<?> stateVariableValue : values) {
 
-            StateVariable stateVariable = stateVariableValue.getStateVariable();
+            StateVariable<?> stateVariable = stateVariableValue.getStateVariable();
             String stateVariableName = stateVariableValue.getStateVariable().getName();
 
             if (stateVariable.getEventDetails().getEventMaximumRateMilliseconds() == 0 &&
@@ -209,8 +210,8 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
 
             if (stateVariable.isModeratedNumericType() && lastSentNumericValue.get(stateVariableName) != null) {
 
-                long oldValue = Long.valueOf(lastSentNumericValue.get(stateVariableName));
-                long newValue = Long.valueOf(stateVariableValue.toString());
+                long oldValue = lastSentNumericValue.get(stateVariableName);
+                long newValue = Long.parseLong(stateVariableValue.toString());
                 long minDelta = stateVariable.getEventDetails().getEventMinimumDelta();
 
                 if (newValue > oldValue && newValue - oldValue < minDelta) {

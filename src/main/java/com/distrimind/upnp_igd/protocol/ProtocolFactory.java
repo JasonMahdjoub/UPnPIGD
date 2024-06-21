@@ -49,7 +49,7 @@ import java.net.URL;
  */
 public interface ProtocolFactory {
 
-    public UpnpService getUpnpService();
+    UpnpService getUpnpService();
 
     /**
      * Creates a {@link ReceivingNotification},
@@ -61,7 +61,7 @@ public interface ProtocolFactory {
      * @return        The appropriate protocol that handles the messages or <code>null</code> if the message should be dropped.
      * @throws ProtocolCreationException If no protocol could be found for the message.
      */
-    public ReceivingAsync createReceivingAsync(IncomingDatagramMessage message) throws ProtocolCreationException;
+	ReceivingAsync<?> createReceivingAsync(IncomingDatagramMessage<?> message) throws ProtocolCreationException;
 
     /**
      * Creates a {@link ReceivingRetrieval},
@@ -75,45 +75,45 @@ public interface ProtocolFactory {
      * @return        The appropriate protocol that handles the messages.
      * @throws ProtocolCreationException If no protocol could be found for the message.
      */
-    public ReceivingSync createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException;
+	ReceivingSync<?, ?> createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException;
 
     /**
      * Called by the {@link Registry}, creates a protocol for announcing local devices.
      */
-    public SendingNotificationAlive createSendingNotificationAlive(LocalDevice localDevice);
+	SendingNotificationAlive createSendingNotificationAlive(LocalDevice localDevice);
 
     /**
      * Called by the {@link Registry}, creates a protocol for announcing local devices.
      */
-    public SendingNotificationByebye createSendingNotificationByebye(LocalDevice localDevice);
+	SendingNotificationByebye createSendingNotificationByebye(LocalDevice localDevice);
 
     /**
      * Called by the {@link ControlPoint}, creates a protocol for a multicast search.
      */
-    public SendingSearch createSendingSearch(UpnpHeader searchTarget, int mxSeconds);
+	SendingSearch createSendingSearch(UpnpHeader<?> searchTarget, int mxSeconds);
 
     /**
      * Called by the {@link ControlPoint}, creates a protocol for executing an action.
      */
-    public SendingAction createSendingAction(ActionInvocation actionInvocation, URL controlURL);
+	SendingAction createSendingAction(ActionInvocation<?> actionInvocation, URL controlURL);
 
     /**
      * Called by the {@link ControlPoint}, creates a protocol for GENA subscription.
      */
-    public SendingSubscribe createSendingSubscribe(RemoteGENASubscription subscription) throws ProtocolCreationException;
+	SendingSubscribe createSendingSubscribe(RemoteGENASubscription subscription) throws ProtocolCreationException;
 
     /**
      * Called by the {@link ControlPoint}, creates a protocol for GENA renewal.
      */
-    public SendingRenewal createSendingRenewal(RemoteGENASubscription subscription);
+	SendingRenewal createSendingRenewal(RemoteGENASubscription subscription);
 
     /**
      * Called by the {@link ControlPoint}, creates a protocol for GENA unsubscription.
      */
-    public SendingUnsubscribe createSendingUnsubscribe(RemoteGENASubscription subscription);
+	SendingUnsubscribe createSendingUnsubscribe(RemoteGENASubscription subscription);
 
     /**
      * Called by the {@link GENASubscription}, creates a protocol for sending GENA events.
      */
-    public SendingEvent createSendingEvent(LocalGENASubscription subscription);
+	SendingEvent createSendingEvent(LocalGENASubscription<?> subscription);
 }

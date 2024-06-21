@@ -33,7 +33,7 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.model.types.BooleanDatatype;
 import com.distrimind.upnp_igd.model.types.Datatype;
-import org.seamless.util.Reflections;
+import com.distrimind.upnp_igd.util.Reflections;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;

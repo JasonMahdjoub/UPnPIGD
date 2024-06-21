@@ -40,7 +40,7 @@ import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.types.SoapActionType;
 import com.distrimind.upnp_igd.protocol.sync.ReceivingAction;
-import org.seamless.util.MimeType;
+import com.distrimind.upnp_igd.util.MimeType;
 import org.testng.annotations.Test;
 
 import java.net.InetAddress;

@@ -16,6 +16,7 @@
 package com.distrimind.upnp_igd.binding.xml;
 
 import com.distrimind.upnp_igd.model.ValidationException;
+import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.Service;
 import org.w3c.dom.Document;
 
@@ -26,13 +27,13 @@ import org.w3c.dom.Document;
  */
 public interface ServiceDescriptorBinder {
 
-    public <T extends Service> T describe(T undescribedService, String descriptorXml)
+    <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, String descriptorXml)
             throws DescriptorBindingException, ValidationException;
 
-    public <T extends Service> T describe(T undescribedService, Document dom)
+    <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, Document dom)
             throws DescriptorBindingException, ValidationException;
 
-    public String generate(Service service) throws DescriptorBindingException;
+    String generate(Service<?, ?, ?> service) throws DescriptorBindingException;
 
-    public Document buildDOM(Service service) throws DescriptorBindingException;
+    Document buildDOM(Service<?, ?, ?> service) throws DescriptorBindingException;
 }

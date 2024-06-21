@@ -23,10 +23,7 @@ import com.distrimind.upnp_igd.model.state.StateVariableAccessor;
 import com.distrimind.upnp_igd.model.types.ServiceId;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The metadata of a service created on this host, by application code.
@@ -37,17 +34,17 @@ import java.util.Set;
  *
  * @author Christian Bauer
  */
-public class LocalService<T> extends Service<LocalDevice, LocalService> {
+public class LocalService<T> extends Service<DeviceIdentity, LocalDevice, LocalService<T>> {
 
-    final protected Map<Action, ActionExecutor> actionExecutors;
-    final protected Map<StateVariable, StateVariableAccessor> stateVariableAccessors;
-    final protected Set<Class> stringConvertibleTypes;
+    final protected Map<Action<LocalService<T>>, ActionExecutor> actionExecutors;
+    final protected Map<StateVariable<LocalService<T>>, StateVariableAccessor> stateVariableAccessors;
+    final protected Set<Class<?>> stringConvertibleTypes;
     final protected boolean supportsQueryStateVariables;
 
-    protected ServiceManager manager;
+    protected ServiceManager<T> manager;
 
     public LocalService(ServiceType serviceType, ServiceId serviceId,
-						Action[] actions, StateVariable[] stateVariables) throws ValidationException {
+                        Collection<Action<LocalService<T>>> actions, Collection<StateVariable<LocalService<T>>> stateVariables) throws ValidationException {
         super(serviceType, serviceId, actions, stateVariables);
         this.manager = null;
         this.actionExecutors = new HashMap<>();
@@ -57,14 +54,14 @@ public class LocalService<T> extends Service<LocalDevice, LocalService> {
     }
 
     public LocalService(ServiceType serviceType, ServiceId serviceId,
-                        Map<Action, ActionExecutor> actionExecutors,
-                        Map<StateVariable, StateVariableAccessor> stateVariableAccessors,
-                        Set<Class> stringConvertibleTypes,
+                        Map<Action<LocalService<T>>, ActionExecutor> actionExecutors,
+                        Map<StateVariable<LocalService<T>>, StateVariableAccessor> stateVariableAccessors,
+                        Set<Class<?>> stringConvertibleTypes,
                         boolean supportsQueryStateVariables) throws ValidationException {
 
         super(serviceType, serviceId,
-                actionExecutors.keySet().toArray(new Action[actionExecutors.size()]),
-                stateVariableAccessors.keySet().toArray(new StateVariable[stateVariableAccessors.size()])
+                actionExecutors.keySet(),
+                stateVariableAccessors.keySet()
         );
 
         this.supportsQueryStateVariables = supportsQueryStateVariables;
@@ -91,7 +88,7 @@ public class LocalService<T> extends Service<LocalDevice, LocalService> {
         return supportsQueryStateVariables;
     }
 
-    public Set<Class> getStringConvertibleTypes() {
+    public Set<Class<?>> getStringConvertibleTypes() {
         return stringConvertibleTypes;
     }
 
@@ -99,30 +96,30 @@ public class LocalService<T> extends Service<LocalDevice, LocalService> {
         return o != null && isStringConvertibleType(o.getClass());
     }
 
-    public boolean isStringConvertibleType(Class clazz) {
+    public boolean isStringConvertibleType(Class<?> clazz) {
         return ModelUtil.isStringConvertibleType(getStringConvertibleTypes(), clazz);
     }
 
     public StateVariableAccessor getAccessor(String stateVariableName) {
-        StateVariable sv;
+        StateVariable<LocalService<T>> sv;
         return (sv = getStateVariable(stateVariableName)) != null ? getAccessor(sv) : null;
     }
 
-    public StateVariableAccessor getAccessor(StateVariable stateVariable) {
+    public StateVariableAccessor getAccessor(StateVariable<LocalService<T>> stateVariable) {
         return stateVariableAccessors.get(stateVariable);
     }
 
     public ActionExecutor getExecutor(String actionName) {
-        Action action;
+        Action<LocalService<T>> action;
         return (action = getAction(actionName)) != null ? getExecutor(action) : null;
     }
 
-    public ActionExecutor getExecutor(Action action) {
+    public ActionExecutor getExecutor(Action<?> action) {
         return actionExecutors.get(action);
     }
 
     @Override
-    public Action getQueryStateVariableAction() {
+    public Action<LocalService<T>> getQueryStateVariableAction() {
         return getAction(QueryStateVariableAction.ACTION_NAME);
     }
 

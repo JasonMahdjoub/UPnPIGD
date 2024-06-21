@@ -28,30 +28,26 @@ import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import com.distrimind.upnp_igd.model.state.GetterStateVariableAccessor;
 import com.distrimind.upnp_igd.model.state.StateVariableAccessor;
 import com.distrimind.upnp_igd.model.types.Datatype;
-import org.seamless.util.Reflections;
+import com.distrimind.upnp_igd.util.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
  * @author Christian Bauer
  */
-public class AnnotationActionBinder {
+public class AnnotationActionBinder<T> {
 
-    private static Logger log = Logger.getLogger(AnnotationLocalServiceBinder.class.getName());
+    private static final Logger log = Logger.getLogger(AnnotationLocalServiceBinder.class.getName());
 
     protected UpnpAction annotation;
     protected Method method;
-    protected Map<StateVariable, StateVariableAccessor> stateVariables;
-    protected Set<Class> stringConvertibleTypes;
+    protected Map<StateVariable<LocalService<T>>, StateVariableAccessor> stateVariables;
+    protected Set<Class<?>> stringConvertibleTypes;
 
-    public AnnotationActionBinder(Method method, Map<StateVariable, StateVariableAccessor> stateVariables, Set<Class> stringConvertibleTypes) {
+    public AnnotationActionBinder(Method method, Map<StateVariable<LocalService<T>>, StateVariableAccessor> stateVariables, Set<Class<?>> stringConvertibleTypes) {
         this.annotation = method.getAnnotation(UpnpAction.class);
         this.stateVariables = stateVariables;
         this.method = method;
@@ -62,7 +58,7 @@ public class AnnotationActionBinder {
         return annotation;
     }
 
-    public Map<StateVariable, StateVariableAccessor> getStateVariables() {
+    public Map<StateVariable<LocalService<T>>, StateVariableAccessor> getStateVariables() {
         return stateVariables;
     }
 
@@ -70,14 +66,14 @@ public class AnnotationActionBinder {
         return method;
     }
 
-    public Set<Class> getStringConvertibleTypes() {
+    public Set<Class<?>> getStringConvertibleTypes() {
         return stringConvertibleTypes;
     }
 
-    public Action appendAction(Map<Action, ActionExecutor> actions) throws LocalServiceBindingException {
+    public Action<?> appendAction(Map<Action<LocalService<T>>, ActionExecutor> actions) throws LocalServiceBindingException {
 
         String name;
-        if (getAnnotation().name().length() != 0) {
+        if (!getAnnotation().name().isEmpty()) {
             name = getAnnotation().name();
         } else {
             name = AnnotationLocalServiceBinder.toUpnpActionName(getMethod().getName());
@@ -85,28 +81,27 @@ public class AnnotationActionBinder {
 
         log.fine("Creating action and executor: " + name);
 
-        List<ActionArgument> inputArguments = createInputArguments();
-        Map<ActionArgument<LocalService>, StateVariableAccessor> outputArguments = createOutputArguments();
+        List<ActionArgument<LocalService<T>>> inputArguments = createInputArguments();
+        Map<ActionArgument<LocalService<T>>, StateVariableAccessor> outputArguments = createOutputArguments();
 
         inputArguments.addAll(outputArguments.keySet());
-        ActionArgument<LocalService>[] actionArguments =
-                inputArguments.toArray(new ActionArgument[inputArguments.size()]);
 
-        Action action = new Action(name, actionArguments);
+
+        Action<LocalService<T>> action = new Action<>(name, inputArguments);
         ActionExecutor executor = createExecutor(outputArguments);
 
         actions.put(action, executor);
         return action;
     }
 
-    protected ActionExecutor createExecutor(Map<ActionArgument<LocalService>, StateVariableAccessor> outputArguments) {
+    protected ActionExecutor createExecutor(Map<ActionArgument<LocalService<T>>, StateVariableAccessor> outputArguments) {
         // TODO: Invent an annotation for this configuration
         return new MethodActionExecutor(outputArguments, getMethod());
     }
 
-    protected List<ActionArgument> createInputArguments() throws LocalServiceBindingException {
+    protected List<ActionArgument<LocalService<T>>> createInputArguments() throws LocalServiceBindingException {
 
-        List<ActionArgument> list = new ArrayList<>();
+        List<ActionArgument<LocalService<T>>> list = new ArrayList<>();
 
         // Input arguments are always method parameters
         int annotatedParams = 0;
@@ -121,7 +116,7 @@ public class AnnotationActionBinder {
                     String argumentName =
                             inputArgumentAnnotation.name();
 
-                    StateVariable stateVariable =
+                    StateVariable<LocalService<T>> stateVariable =
                             findRelatedStateVariable(
                                     inputArgumentAnnotation.stateVariable(),
                                     argumentName,
@@ -136,7 +131,7 @@ public class AnnotationActionBinder {
 
                     validateType(stateVariable, getMethod().getParameterTypes()[i]);
 
-                    ActionArgument inputArgument = new ActionArgument(
+                    ActionArgument<LocalService<T>> inputArgument = new ActionArgument<>(
                             argumentName,
                             inputArgumentAnnotation.aliases(),
                             stateVariable.getName(),
@@ -157,9 +152,9 @@ public class AnnotationActionBinder {
         return list;
     }
 
-    protected Map<ActionArgument<LocalService>, StateVariableAccessor> createOutputArguments() throws LocalServiceBindingException {
+    protected Map<ActionArgument<LocalService<T>>, StateVariableAccessor> createOutputArguments() throws LocalServiceBindingException {
 
-        Map<ActionArgument<LocalService>, StateVariableAccessor> map = new LinkedHashMap<>(); // !!! Insertion order!
+        Map<ActionArgument<LocalService<T>>, StateVariableAccessor> map = new LinkedHashMap<>(); // !!! Insertion order!
 
         UpnpAction actionAnnotation = getMethod().getAnnotation(UpnpAction.class);
         if (actionAnnotation.out().length == 0) return map;
@@ -170,14 +165,14 @@ public class AnnotationActionBinder {
 
             String argumentName = outputArgumentAnnotation.name();
 
-            StateVariable stateVariable = findRelatedStateVariable(
+            StateVariable<LocalService<T>> stateVariable = findRelatedStateVariable(
                     outputArgumentAnnotation.stateVariable(),
                     argumentName,
                     getMethod().getName()
             );
 
             // Might-just-work attempt, try the name of the getter
-            if (stateVariable == null && outputArgumentAnnotation.getterName().length() > 0) {
+            if (stateVariable == null && !outputArgumentAnnotation.getterName().isEmpty()) {
                 stateVariable = findRelatedStateVariable(null, null, outputArgumentAnnotation.getterName());
             }
 
@@ -195,7 +190,7 @@ public class AnnotationActionBinder {
 
             log.finer("Found related state variable for output argument '" + argumentName + "': " + stateVariable);
 
-            ActionArgument outputArgument = new ActionArgument(
+            ActionArgument<LocalService<T>> outputArgument = new ActionArgument<>(
                     argumentName,
                     stateVariable.getName(),
                     ActionArgument.Direction.OUT,
@@ -208,14 +203,14 @@ public class AnnotationActionBinder {
         return map;
     }
 
-    protected StateVariableAccessor findOutputArgumentAccessor(StateVariable stateVariable, String getterName, boolean multipleArguments)
+    protected StateVariableAccessor findOutputArgumentAccessor(StateVariable<LocalService<T>> stateVariable, String getterName, boolean multipleArguments)
             throws LocalServiceBindingException {
 
         boolean isVoid = getMethod().getReturnType().equals(Void.TYPE);
 
         if (isVoid) {
 
-            if (getterName != null && getterName.length() > 0) {
+            if (getterName != null && !getterName.isEmpty()) {
                 log.finer("Action method is void, will use getter method named: " + getterName);
 
                 // Use the same class as the action method
@@ -235,7 +230,7 @@ public class AnnotationActionBinder {
             }
 
 
-        } else if (getterName != null && getterName.length() > 0) {
+        } else if (getterName != null && !getterName.isEmpty()) {
             log.finer("Action method is not void, will use getter method on returned instance: " + getterName);
 
             // Use the returned class
@@ -257,22 +252,22 @@ public class AnnotationActionBinder {
         return null;
     }
 
-    protected StateVariable findRelatedStateVariable(String declaredName, String argumentName, String methodName)
+    protected StateVariable<LocalService<T>> findRelatedStateVariable(String declaredName, String argumentName, String methodName)
             throws LocalServiceBindingException {
 
-        StateVariable relatedStateVariable = null;
+        StateVariable<LocalService<T>> relatedStateVariable = null;
 
-        if (declaredName != null && declaredName.length() > 0) {
+        if (declaredName != null && !declaredName.isEmpty()) {
             relatedStateVariable = getStateVariable(declaredName);
         }
 
-        if (relatedStateVariable == null && argumentName != null && argumentName.length() > 0) {
+        if (relatedStateVariable == null && argumentName != null && !argumentName.isEmpty()) {
             String actualName = AnnotationLocalServiceBinder.toUpnpStateVariableName(argumentName);
             log.finer("Finding related state variable with argument name (converted to UPnP name): " + actualName);
             relatedStateVariable = getStateVariable(argumentName);
         }
 
-        if (relatedStateVariable == null && argumentName != null && argumentName.length() > 0) {
+        if (relatedStateVariable == null && argumentName != null && !argumentName.isEmpty()) {
             // Try with A_ARG_TYPE prefix
             String actualName = AnnotationLocalServiceBinder.toUpnpStateVariableName(argumentName);
             actualName = Constants.ARG_TYPE_PREFIX + actualName;
@@ -280,7 +275,7 @@ public class AnnotationActionBinder {
             relatedStateVariable = getStateVariable(actualName);
         }
 
-        if (relatedStateVariable == null && methodName != null && methodName.length() > 0) {
+        if (relatedStateVariable == null && methodName != null && !methodName.isEmpty()) {
             // TODO: Well, this is often a nice shortcut but sometimes might have false positives
             String methodPropertyName = Reflections.getMethodPropertyName(methodName);
             if (methodPropertyName != null) {
@@ -295,7 +290,7 @@ public class AnnotationActionBinder {
         return relatedStateVariable;
     }
 
-    protected void validateType(StateVariable stateVariable, Class type) throws LocalServiceBindingException {
+    protected void validateType(StateVariable<LocalService<T>> stateVariable, Class<?> type) throws LocalServiceBindingException {
 
         // Validate datatype as good as we can
         // (for enums and other convertible types, the state variable type should be STRING)
@@ -326,8 +321,8 @@ public class AnnotationActionBinder {
         log.finer("State variable matches required argument datatype (or can't be validated because it is custom)");
     }
 
-    protected StateVariable getStateVariable(String name) {
-        for (StateVariable stateVariable : getStateVariables().keySet()) {
+    protected StateVariable<LocalService<T>> getStateVariable(String name) {
+        for (StateVariable<LocalService<T>> stateVariable : getStateVariables().keySet()) {
             if (stateVariable.getName().equals(name)) {
                 return stateVariable;
             }

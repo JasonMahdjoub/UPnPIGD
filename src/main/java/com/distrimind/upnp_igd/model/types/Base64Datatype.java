@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.model.types;
 
-import org.seamless.util.io.Base64Coder;
+import com.distrimind.upnp_igd.util.io.Base64Coder;
 
 /**
  * @author Christian Bauer

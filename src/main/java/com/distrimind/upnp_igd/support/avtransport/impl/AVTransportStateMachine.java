@@ -17,20 +17,20 @@ package com.distrimind.upnp_igd.support.avtransport.impl;
 
 import com.distrimind.upnp_igd.support.avtransport.impl.state.AbstractState;
 import com.distrimind.upnp_igd.support.model.SeekMode;
-import org.seamless.statemachine.StateMachine;
+import com.distrimind.upnp_igd.statemachine.StateMachine;
 
 import java.net.URI;
 
-public interface AVTransportStateMachine extends StateMachine<AbstractState> {
+public interface AVTransportStateMachine extends StateMachine<AbstractState<?>> {
 
-    public abstract void setTransportURI(URI uri, String uriMetaData);
-    public abstract void setNextTransportURI(URI uri, String uriMetaData);
-    public abstract void stop();
-    public abstract void play(String speed);
-    public abstract void pause();
-    public abstract void record();
-    public abstract void seek(SeekMode unit, String target);
-    public abstract void next();
-    public abstract void previous();
+    void setTransportURI(URI uri, String uriMetaData);
+    void setNextTransportURI(URI uri, String uriMetaData);
+    void stop();
+    void play(String speed);
+    void pause();
+    void record();
+    void seek(SeekMode unit, String target);
+    void next();
+    void previous();
 
 }

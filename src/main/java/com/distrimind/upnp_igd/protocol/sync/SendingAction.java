@@ -29,7 +29,7 @@ import com.distrimind.upnp_igd.model.message.control.OutgoingActionRequestMessag
 import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.net.URL;
 import java.util.logging.Level;

@@ -15,11 +15,10 @@
 
 package com.distrimind.upnp_igd.model.message.header;
 
-import org.seamless.util.Exceptions;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Locale;
+import com.distrimind.upnp_igd.util.Exceptions;
+
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +38,7 @@ public abstract class UpnpHeader<T> {
     /**
      * Maps a standardized UPnP header to potential header subtypes.
      */
-    public static enum Type {
+    public enum Type {
 
         USN("USN",
                 USNRootDeviceHeader.class,
@@ -87,31 +86,32 @@ public abstract class UpnpHeader<T> {
         EXT_IFACE_MAC("X-CLING-IFACE-MAC", InterfaceMacHeader.class),
         EXT_AV_CLIENT_INFO("X-AV-CLIENT-INFO", AVClientInfoHeader.class);
 
-        private static Map<String, Type> byName = new HashMap<String, Type>() {{
-            for (Type t : Type.values()) {
-                put(t.getHttpName(), t);
-            }
-        }};
+        private static final Map<String, Type> byName = new HashMap<>() {{
+			for (Type t : Type.values()) {
+				put(t.getHttpName(), t);
+			}
+		}};
 
-        private String httpName;
-        private Class<? extends UpnpHeader>[] headerTypes;
+        private final String httpName;
+        private final Set<Class<? extends UpnpHeader<?>>> headerTypes;
 
         @SafeVarargs
-        private Type(String httpName, Class<? extends UpnpHeader>... headerClass) {
+        Type(String httpName, Class<? extends UpnpHeader<?>>... headerClass) {
             this.httpName = httpName;
-            this.headerTypes = headerClass;
+            this.headerTypes = Set.copyOf(List.of(headerClass));
         }
 
         public String getHttpName() {
             return httpName;
         }
 
-        public Class<? extends UpnpHeader>[] getHeaderTypes() {
+        public Set<Class<? extends UpnpHeader<?>>> getHeaderTypes() {
             return headerTypes;
         }
 
-        public boolean isValidHeaderType(Class<? extends UpnpHeader> clazz) {
-            for (Class<? extends UpnpHeader> permissibleType : getHeaderTypes()) {
+        @SuppressWarnings("rawtypes")
+		public boolean isValidHeaderType(Class<? extends UpnpHeader> clazz) {
+            for (Class<? extends UpnpHeader<?>> permissibleType : getHeaderTypes()) {
                 if (permissibleType.isAssignableFrom(clazz)) {
                     return true;
                 }
@@ -162,21 +162,21 @@ public abstract class UpnpHeader<T> {
      * @param headerValue The value of the header.
      * @return The best matching header subtype instance, or <code>null</code> if no subtype can be found.
      */
-    public static UpnpHeader newInstance(UpnpHeader.Type type, String headerValue) {
+    public static UpnpHeader<?> newInstance(UpnpHeader.Type type, String headerValue) {
 
         // Try all the UPnP headers and see if one matches our value parsers
-        UpnpHeader upnpHeader = null;
-        for (int i = 0; i < type.getHeaderTypes().length && upnpHeader == null; i++) {
-            Class<? extends UpnpHeader> headerClass = type.getHeaderTypes()[i];
+        UpnpHeader<?> upnpHeader = null;
+        for (Class<? extends UpnpHeader<?>> headerClass : type.getHeaderTypes()) {
             try {
                 log.finest("Trying to parse '" + type + "' with class: " + headerClass.getSimpleName());
-                upnpHeader = headerClass.newInstance();
+                upnpHeader = headerClass.getConstructor().newInstance();
                 if (headerValue != null) {
                     upnpHeader.setString(headerValue);
                 }
             } catch (InvalidHeaderException ex) {
                 log.finest("Invalid header value for tested type: " + headerClass.getSimpleName() + " - " + ex.getMessage());
                 upnpHeader = null;
+                break;
             } catch (Exception ex) {
                 log.severe("Error instantiating header of type '" + type + "' with value: " + headerValue);
                 log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));

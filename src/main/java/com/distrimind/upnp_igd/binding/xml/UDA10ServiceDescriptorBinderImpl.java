@@ -23,13 +23,7 @@ import com.distrimind.upnp_igd.binding.staging.MutableService;
 import com.distrimind.upnp_igd.binding.staging.MutableStateVariable;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.XMLUtil;
-import com.distrimind.upnp_igd.model.meta.Action;
-import com.distrimind.upnp_igd.model.meta.ActionArgument;
-import com.distrimind.upnp_igd.model.meta.QueryStateVariableAction;
-import com.distrimind.upnp_igd.model.meta.RemoteService;
-import com.distrimind.upnp_igd.model.meta.Service;
-import com.distrimind.upnp_igd.model.meta.StateVariable;
-import com.distrimind.upnp_igd.model.meta.StateVariableEventDetails;
+import com.distrimind.upnp_igd.model.meta.*;
 import com.distrimind.upnp_igd.model.types.CustomDatatype;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
@@ -62,14 +56,14 @@ import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
  */
 public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder, ErrorHandler {
 
-    private static Logger log = Logger.getLogger(ServiceDescriptorBinder.class.getName());
-    private NetworkAddressFactory networkAddressFactory;
+    private static final Logger log = Logger.getLogger(ServiceDescriptorBinder.class.getName());
+    private final NetworkAddressFactory networkAddressFactory;
     public UDA10ServiceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory)
     {
         this.networkAddressFactory=networkAddressFactory;
     }
-    public <S extends Service> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {
-        if (descriptorXml == null || descriptorXml.length() == 0) {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {
+        if (descriptorXml == null || descriptorXml.isEmpty()) {
             throw new DescriptorBindingException("Null or empty descriptor");
         }
 
@@ -97,12 +91,13 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    public <S extends Service> S describe(S undescribedService, Document dom) throws DescriptorBindingException, ValidationException {
+    @Override
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, Document dom) throws DescriptorBindingException, ValidationException {
         try {
             log.fine("Populating service from DOM: " + undescribedService);
 
             // Read the XML into a mutable descriptor graph
-            MutableService descriptor = new MutableService();
+            MutableService<D, S> descriptor = new MutableService<D, S>();
 
             hydrateBasic(descriptor, undescribedService);
 
@@ -119,14 +114,14 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    protected <S extends Service> S buildInstance(S undescribedService, MutableService descriptor) throws ValidationException {
-        S res= (S)descriptor.build(undescribedService.getDevice());
+    protected <D extends Device<?, D, S>, S extends Service<?, D, S>> S buildInstance(S undescribedService, MutableService<D, S> descriptor) throws ValidationException {
+        S res= descriptor.build(undescribedService.getDevice());
         if (res.getDevice()!=null && res.getDevice().getDetails()!=null && UDA10DeviceDescriptorBinderImpl.isNotValidRemoteAddress(res.getDevice().getDetails().getBaseURL(), networkAddressFactory))
             return null;
         return res;
     }
 
-    protected void hydrateBasic(MutableService descriptor, Service undescribedService) {
+    protected void hydrateBasic(MutableService<?, ?> descriptor, Service<?, ?, ?> undescribedService) {
         descriptor.serviceId = undescribedService.getServiceId();
         descriptor.serviceType = undescribedService.getServiceType();
         if (undescribedService instanceof RemoteService) {
@@ -137,7 +132,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    protected void hydrateRoot(MutableService descriptor, Element rootElement)
+    protected void hydrateRoot(MutableService<?, ?> descriptor, Element rootElement)
             throws DescriptorBindingException {
 
         // We don't check the XMLNS, nobody bothers anyway...
@@ -191,7 +186,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     }
     */
 
-    public void hydrateActionList(MutableService descriptor, Node actionListNode) throws DescriptorBindingException {
+    public <S extends Service<?, ?, S>> void hydrateActionList(MutableService<?, S> descriptor, Node actionListNode) throws DescriptorBindingException {
 
         NodeList actionListChildren = actionListNode.getChildNodes();
         for (int i = 0; i < actionListChildren.getLength(); i++) {
@@ -201,14 +196,14 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
                 continue;
 
             if (ELEMENT.action.equals(actionListChild)) {
-                MutableAction action = new MutableAction();
+                MutableAction<S> action = new MutableAction<>();
                 hydrateAction(action, actionListChild);
                 descriptor.actions.add(action);
             }
         }
     }
 
-    public void hydrateAction(MutableAction action, Node actionNode) {
+    public <S extends Service<?, ?, S>> void hydrateAction(MutableAction<S> action, Node actionNode) {
 
         NodeList actionNodeChildren = actionNode.getChildNodes();
         for (int i = 0; i < actionNodeChildren.getLength(); i++) {
@@ -229,7 +224,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
                     if (argumentChild.getNodeType() != Node.ELEMENT_NODE)
                         continue;
 
-                    MutableActionArgument actionArgument = new MutableActionArgument();
+                    MutableActionArgument<S> actionArgument = new MutableActionArgument<>();
                     hydrateActionArgument(actionArgument, argumentChild);
                     action.arguments.add(actionArgument);
                 }
@@ -238,7 +233,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
 
     }
 
-    public void hydrateActionArgument(MutableActionArgument actionArgument, Node actionArgumentNode) {
+    public void hydrateActionArgument(MutableActionArgument<?> actionArgument, Node actionArgumentNode) {
 
         NodeList argumentNodeChildren = actionArgumentNode.getChildNodes();
         for (int i = 0; i < argumentNodeChildren.getLength(); i++) {
@@ -266,7 +261,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    public void hydrateServiceStateTableList(MutableService descriptor, Node serviceStateTableNode) {
+    public <S extends Service<?, ?, S>> void hydrateServiceStateTableList(MutableService<?, S> descriptor, Node serviceStateTableNode) {
 
         NodeList serviceStateTableChildren = serviceStateTableNode.getChildNodes();
         for (int i = 0; i < serviceStateTableChildren.getLength(); i++) {
@@ -276,14 +271,14 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
                 continue;
 
             if (ELEMENT.stateVariable.equals(serviceStateTableChild)) {
-                MutableStateVariable stateVariable = new MutableStateVariable();
+                MutableStateVariable<S> stateVariable = new MutableStateVariable<>();
                 hydrateStateVariable(stateVariable, (Element) serviceStateTableChild);
                 descriptor.stateVariables.add(stateVariable);
             }
         }
     }
 
-    public void hydrateStateVariable(MutableStateVariable stateVariable, Element stateVariableElement) {
+    public void hydrateStateVariable(MutableStateVariable<?> stateVariable, Element stateVariableElement) {
 
         stateVariable.eventDetails = new StateVariableEventDetails(
                 stateVariableElement.getAttribute("sendEvents") != null &&
@@ -336,17 +331,17 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
                     if (ELEMENT.minimum.equals(allowedValueRangeChild)) {
                         try {
                             range.minimum = Long.valueOf(XMLUtil.getTextContent(allowedValueRangeChild));
-                        } catch (Exception ex) {
+                        } catch (Exception ignored) {
                         }
                     } else if (ELEMENT.maximum.equals(allowedValueRangeChild)) {
                         try {
                             range.maximum = Long.valueOf(XMLUtil.getTextContent(allowedValueRangeChild));
-                        } catch (Exception ex) {
+                        } catch (Exception ignored) {
                         }
                     } else if (ELEMENT.step.equals(allowedValueRangeChild)) {
                         try {
                             range.step = Long.valueOf(XMLUtil.getTextContent(allowedValueRangeChild));
-                        } catch (Exception ex) {
+                        } catch (Exception ignored) {
                         }
                     }
                 }
@@ -356,7 +351,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    public String generate(Service service) throws DescriptorBindingException {
+    public String generate(Service<?, ?, ?> service) throws DescriptorBindingException {
         try {
             log.fine("Generating XML descriptor from service model: " + service);
 
@@ -367,7 +362,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    public Document buildDOM(Service service) throws DescriptorBindingException {
+    public Document buildDOM(Service<?, ?, ?> service) throws DescriptorBindingException {
 
         try {
             log.fine("Generating XML descriptor from service model: " + service);
@@ -385,7 +380,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    private void generateScpd(Service serviceModel, Document descriptor) {
+    private void generateScpd(Service<?, ?, ?> serviceModel, Document descriptor) {
 
         Element scpdElement = descriptor.createElementNS(Descriptor.Service.NAMESPACE_URI, ELEMENT.scpd.toString());
         descriptor.appendChild(scpdElement);
@@ -397,23 +392,23 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         generateServiceStateTable(serviceModel, descriptor, scpdElement);
     }
 
-    private void generateSpecVersion(Service serviceModel, Document descriptor, Element rootElement) {
+    private void generateSpecVersion(Service<?, ?, ?> serviceModel, Document descriptor, Element rootElement) {
         Element specVersionElement = appendNewElement(descriptor, rootElement, ELEMENT.specVersion);
         appendNewElementIfNotNull(descriptor, specVersionElement, ELEMENT.major, serviceModel.getDevice().getVersion().getMajor());
         appendNewElementIfNotNull(descriptor, specVersionElement, ELEMENT.minor, serviceModel.getDevice().getVersion().getMinor());
     }
 
-    private void generateActionList(Service serviceModel, Document descriptor, Element scpdElement) {
+    private void generateActionList(Service<?, ?, ?> serviceModel, Document descriptor, Element scpdElement) {
 
         Element actionListElement = appendNewElement(descriptor, scpdElement, ELEMENT.actionList);
 
-        for (Action action : serviceModel.getActions()) {
+        for (Action<?> action : serviceModel.getActions()) {
             if (!action.getName().equals(QueryStateVariableAction.ACTION_NAME))
                 generateAction(action, descriptor, actionListElement);
         }
     }
 
-    private void generateAction(Action action, Document descriptor, Element actionListElement) {
+    private void generateAction(Action<?> action, Document descriptor, Element actionListElement) {
 
         Element actionElement = appendNewElement(descriptor, actionListElement, ELEMENT.action);
 
@@ -421,13 +416,13 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
 
         if (action.hasArguments()) {
             Element argumentListElement = appendNewElement(descriptor, actionElement, ELEMENT.argumentList);
-            for (ActionArgument actionArgument : action.getArguments()) {
+            for (ActionArgument<?> actionArgument : action.getArguments()) {
                 generateActionArgument(actionArgument, descriptor, argumentListElement);
             }
         }
     }
 
-    private void generateActionArgument(ActionArgument actionArgument, Document descriptor, Element actionElement) {
+    private void generateActionArgument(ActionArgument<?> actionArgument, Document descriptor, Element actionElement) {
 
         Element actionArgumentElement = appendNewElement(descriptor, actionElement, ELEMENT.argument);
 
@@ -441,16 +436,16 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         appendNewElementIfNotNull(descriptor, actionArgumentElement, ELEMENT.relatedStateVariable, actionArgument.getRelatedStateVariableName());
     }
 
-    private void generateServiceStateTable(Service serviceModel, Document descriptor, Element scpdElement) {
+    private void generateServiceStateTable(Service<?, ?, ?> serviceModel, Document descriptor, Element scpdElement) {
 
         Element serviceStateTableElement = appendNewElement(descriptor, scpdElement, ELEMENT.serviceStateTable);
 
-        for (StateVariable stateVariable : serviceModel.getStateVariables()) {
+        for (StateVariable<?> stateVariable : serviceModel.getStateVariables()) {
             generateStateVariable(stateVariable, descriptor, serviceStateTableElement);
         }
     }
 
-    private void generateStateVariable(StateVariable stateVariable, Document descriptor, Element serviveStateTableElement) {
+    private void generateStateVariable(StateVariable<?> stateVariable, Document descriptor, Element serviveStateTableElement) {
 
         Element stateVariableElement = appendNewElement(descriptor, serviveStateTableElement, ELEMENT.stateVariable);
 
@@ -489,7 +484,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
             appendNewElementIfNotNull(
                     descriptor, allowedValueRangeElement, ELEMENT.maximum, stateVariable.getTypeDetails().getAllowedValueRange().getMaximum()
             );
-            if (stateVariable.getTypeDetails().getAllowedValueRange().getStep() >= 1l) {
+            if (stateVariable.getTypeDetails().getAllowedValueRange().getStep() >= 1L) {
                 appendNewElementIfNotNull(
                         descriptor, allowedValueRangeElement, ELEMENT.step, stateVariable.getTypeDetails().getAllowedValueRange().getStep()
                 );

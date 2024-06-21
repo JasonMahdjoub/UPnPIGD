@@ -27,11 +27,7 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDN;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +36,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public abstract class Device<DI extends DeviceIdentity, D extends Device, S extends Service> implements Validatable {
+public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, S>, S extends Service<DI, D, ?>> implements Validatable {
 
     final private static Logger log = Logger.getLogger(Device.class.getName());
 
@@ -49,9 +45,9 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
     final private UDAVersion version;
     final private DeviceType type;
     final private DeviceDetails details;
-    final private Icon[] icons;
-    final protected S[] services;
-    final protected D[] embeddedDevices;
+    final private Collection<Icon> icons;
+    final protected Collection<S> services;
+    final protected Collection<D> embeddedDevices;
 
     // Package mutable state
     private D parentDevice;
@@ -61,17 +57,17 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
     }
 
     public Device(DI identity, DeviceType type, DeviceDetails details,
-                  Icon[] icons, S[] services) throws ValidationException {
+                  Collection<Icon> icons, Collection<S> services) throws ValidationException {
         this(identity, null, type, details, icons, services, null);
     }
 
     public Device(DI identity, DeviceType type, DeviceDetails details,
-                  Icon[] icons, S[] services, D[] embeddedDevices) throws ValidationException {
+                  Collection<Icon> icons, Collection<S> services, Collection<D> embeddedDevices) throws ValidationException {
         this(identity, null, type, details, icons, services, embeddedDevices);
     }
 
     public Device(DI identity, UDAVersion version, DeviceType type, DeviceDetails details,
-                  Icon[] icons, S[] services, D[] embeddedDevices) throws ValidationException {
+                  Collection<Icon> icons, Collection<S> services, Collection<D> embeddedDevices) throws ValidationException {
 
         this.identity = identity;
         this.version = version == null ? new UDAVersion() : version;
@@ -95,32 +91,34 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
                 }
             }
         }
-        this.icons = validIcons.toArray(new Icon[validIcons.size()]);
+        this.icons = Collections.unmodifiableList(validIcons);
 
         boolean allNullServices = true;
         if (services != null) {
             for (S service : services) {
                 if (service != null) {
                     allNullServices = false;
-                    service.setDevice(this);
+					//noinspection unchecked
+					service.setDevice((D)this);
                 }
             }
         }
-        this.services = services == null || allNullServices ? null : services;
+        this.services = services == null || allNullServices ? null : List.copyOf(services);
 
         boolean allNullEmbedded = true;
         if (embeddedDevices != null) {
             for (D embeddedDevice : embeddedDevices) {
                 if (embeddedDevice != null) {
                     allNullEmbedded = false;
-                    embeddedDevice.setParentDevice(this);
+					//noinspection unchecked
+					embeddedDevice.setParentDevice((D)this);
                 }
             }
         }
         this.embeddedDevices = embeddedDevices == null || allNullEmbedded  ? null : embeddedDevices;
 
         List<ValidationError> errors = validate();
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
             if (log.isLoggable(Level.FINEST)) {
                 for (ValidationError error : errors) {
                     log.finest(error.toString());
@@ -150,21 +148,21 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
         return this.getDetails();
     }
 
-    public Icon[] getIcons() {
+    public Collection<Icon> getIcons() {
         return icons;
     }
 
     public boolean hasIcons() {
-        return getIcons() != null && getIcons().length > 0;
+        return getIcons() != null && !getIcons().isEmpty();
     }
 
     public boolean hasServices() {
-        return getServices() != null && getServices().length > 0;
+        return getServices() != null && !getServices().isEmpty();
     }
 
 
     public boolean hasEmbeddedDevices() {
-        return getEmbeddedDevices() != null && getEmbeddedDevices().length > 0;
+        return getEmbeddedDevices() != null && !getEmbeddedDevices().isEmpty();
     }
 
     public D getParentDevice() {
@@ -181,46 +179,56 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
         return getParentDevice() == null;
     }
 
-    public abstract S[] getServices();
+    public Collection<S> getServices() {
+        return this.services != null ? this.services : Collections.emptyList();
+    }
 
-    public abstract D[] getEmbeddedDevices();
+    public Collection<D> getEmbeddedDevices() {
+        return this.embeddedDevices != null ? this.embeddedDevices : Collections.emptyList();
+    }
+
 
     public abstract D getRoot();
 
     public abstract D findDevice(UDN udn);
 
-    public D[] findEmbeddedDevices() {
-        return toDeviceArray(findEmbeddedDevices((D) this));
+    @SuppressWarnings("unchecked")
+	public Collection<D> findEmbeddedDevices() {
+        return findEmbeddedDevices((D)this);
     }
 
-    public D[] findDevices(DeviceType deviceType) {
-        return toDeviceArray(find(deviceType, (D) this));
+    @SuppressWarnings("unchecked")
+	public Collection<D> findDevices(DeviceType deviceType) {
+        return find(deviceType, (D)this);
     }
 
-    public D[] findDevices(ServiceType serviceType) {
-        return toDeviceArray(find(serviceType, (D) this));
+    @SuppressWarnings("unchecked")
+	public Collection<D> findDevices(ServiceType serviceType) {
+        return find(serviceType, (D)this);
     }
 
-    public Icon[] findIcons() {
-        List<Icon> icons = new ArrayList<>();
+    public Collection<Icon> findIcons() {
+        Collection<Icon> icons = new ArrayList<>();
         if (hasIcons()) {
-            icons.addAll(Arrays.asList(getIcons()));
+            icons.addAll(getIcons());
         }
-        D[] embeddedDevices = findEmbeddedDevices();
-        for (D embeddedDevice : embeddedDevices) {
+        Collection<D> embeddedDevices = findEmbeddedDevices();
+        for (Device<DI, D, S> embeddedDevice : embeddedDevices) {
             if (embeddedDevice.hasIcons()) {
-                icons.addAll(Arrays.asList(embeddedDevice.getIcons()));
+                icons.addAll(embeddedDevice.getIcons());
             }
         }
-        return icons.toArray(new Icon[icons.size()]);
+        return Collections.unmodifiableCollection(icons);
     }
 
-    public S[] findServices() {
-        return toServiceArray(findServices(null, null, (D) this));
+    @SuppressWarnings("unchecked")
+	public Collection<S> findServices() {
+        return findServices(null, null, (D)this);
     }
 
-    public S[] findServices(ServiceType serviceType) {
-        return toServiceArray(findServices(serviceType, null, (D) this));
+    @SuppressWarnings("unchecked")
+	public Collection<S> findServices(ServiceType serviceType) {
+        return findServices(serviceType, null, (D)this);
     }
 
     protected D find(UDN udn, D current) {
@@ -228,7 +236,7 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
             if (current.getIdentity().getUdn().equals(udn)) return current;
         }
         if (current.hasEmbeddedDevices()) {
-            for (D embeddedDevice : (D[]) current.getEmbeddedDevices()) {
+            for (D embeddedDevice : current.getEmbeddedDevices()) {
                 D match;
                 if ((match = find(udn, embeddedDevice)) != null) return match;
             }
@@ -242,11 +250,11 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
             devices.add(current);
 
         if (current.hasEmbeddedDevices()) {
-            for (D embeddedDevice : (D[]) current.getEmbeddedDevices()) {
+            for (D embeddedDevice : current.getEmbeddedDevices()) {
                 devices.addAll(findEmbeddedDevices(embeddedDevice));
             }
         }
-        return devices;
+        return Collections.unmodifiableCollection(devices);
     }
 
     protected Collection<D> find(DeviceType deviceType, D current) {
@@ -256,71 +264,74 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
             devices.add(current);
         }
         if (current.hasEmbeddedDevices()) {
-            for (D embeddedDevice : (D[]) current.getEmbeddedDevices()) {
+            for (D embeddedDevice : current.getEmbeddedDevices()) {
                 devices.addAll(find(deviceType, embeddedDevice));
             }
         }
-        return devices;
+        return Collections.unmodifiableCollection(devices);
     }
 
     protected Collection<D> find(ServiceType serviceType, D current) {
         Collection<S> services = findServices(serviceType, null, current);
         Collection<D> devices = new HashSet<>();
-        for (Service service : services) {
-            devices.add((D) service.getDevice());
+        for (S service : services) {
+            devices.add(service.getDevice());
         }
-        return devices;
+        return Collections.unmodifiableCollection(devices);
     }
 
     protected Collection<S> findServices(ServiceType serviceType, ServiceId serviceId, D current) {
-        Collection services = new HashSet<>();
+        Collection<S> services = new HashSet<>();
         if (current.hasServices()) {
-            for (Service service : current.getServices()) {
+            for (S service : current.getServices()) {
                 if (isMatch(service, serviceType, serviceId))
                     services.add(service);
             }
         }
         Collection<D> embeddedDevices = findEmbeddedDevices(current);
         if (embeddedDevices != null) {
-            for (D embeddedDevice : embeddedDevices) {
+            for (Device<DI, D, S> embeddedDevice : embeddedDevices) {
                 if (embeddedDevice.hasServices()) {
-                    for (Service service : embeddedDevice.getServices()) {
+                    for (S service : embeddedDevice.getServices()) {
                         if (isMatch(service, serviceType, serviceId))
                             services.add(service);
                     }
                 }
             }
         }
-        return services;
+        return Collections.unmodifiableCollection(services);
     }
 
-    public S findService(ServiceId serviceId) {
-        Collection<S> services = findServices(null, serviceId, (D) this);
+    @SuppressWarnings("unchecked")
+	public S findService(ServiceId serviceId) {
+        Collection<S> services = findServices(null, serviceId, (D)this);
         return services.size() == 1 ? services.iterator().next() : null;
     }
 
-    public S findService(ServiceType serviceType) {
-        Collection<S> services = findServices(serviceType, null, (D) this);
-        return services.size() > 0 ? services.iterator().next() : null;
+    @SuppressWarnings("unchecked")
+	public S findService(ServiceType serviceType) {
+        Collection<S> services = findServices(serviceType, null, (D)this);
+        return !services.isEmpty() ? services.iterator().next() : null;
     }
 
-    public ServiceType[] findServiceTypes() {
-        Collection<S> services = findServices(null, null, (D) this);
+    @SuppressWarnings("unchecked")
+	public Collection<ServiceType> findServiceTypes() {
+        Collection<S> services = findServices(null, null, (D)this);
         Collection<ServiceType> col = new HashSet<>();
         for (S service : services) {
             col.add(service.getServiceType());
         }
-        return col.toArray(new ServiceType[col.size()]);
+        return Collections.unmodifiableCollection(col);
     }
 
-    private boolean isMatch(Service s, ServiceType serviceType, ServiceId serviceId) {
+    private boolean isMatch(S s, ServiceType serviceType, ServiceId serviceId) {
         boolean matchesType = serviceType == null || s.getServiceType().implementsVersion(serviceType);
         boolean matchesId = serviceId == null || s.getServiceId().equals(serviceId);
         return matchesType && matchesId;
     }
 
     public boolean isFullyHydrated() {
-        S[] services = findServices();
+        Collection<S> services = findServices();
         for (S service : services) {
             if (service.hasStateVariables()) return true;
         }
@@ -370,8 +381,8 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
             }
         }
 
-        sb.append((cleanModelName != null && cleanModelName.length() > 0 ? " " + cleanModelName : ""));
-        sb.append((cleanModelNumber != null && cleanModelNumber.length() > 0 ? " " + cleanModelNumber.trim() : ""));
+        sb.append((cleanModelName != null && !cleanModelName.isEmpty() ? " " + cleanModelName : ""));
+        sb.append((cleanModelNumber != null && !cleanModelNumber.isEmpty() ? " " + cleanModelNumber.trim() : ""));
         return sb.toString();
     }
 
@@ -396,14 +407,14 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
             }
 
             if (hasServices()) {
-                for (Service service : getServices()) {
+                for (S service : getServices()) {
                     if (service != null)
                         errors.addAll(service.validate());
                 }
             }
 
             if (hasEmbeddedDevices()) {
-                for (Device embeddedDevice : getEmbeddedDevices()) {
+                for (D embeddedDevice : getEmbeddedDevices()) {
                     if (embeddedDevice != null)
                         errors.addAll(embeddedDevice.validate());
                 }
@@ -418,12 +429,10 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Device device = (Device) o;
+        Device<?, ?, ?> device = (Device<?, ?, ?>) o;
 
-        if (!identity.equals(device.identity)) return false;
-
-        return true;
-    }
+		return identity.equals(device.identity);
+	}
 
     @Override
     public int hashCode() {
@@ -431,19 +440,14 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
     }
 
     public abstract D newInstance(UDN udn, UDAVersion version, DeviceType type, DeviceDetails details,
-                                  Icon[] icons, S[] services, List<D> embeddedDevices) throws ValidationException;
+                                  Collection<Icon> icons, Collection<S> services, Collection<D> embeddedDevices) throws ValidationException;
 
     public abstract S newInstance(ServiceType serviceType, ServiceId serviceId,
                                   URI descriptorURI, URI controlURI, URI eventSubscriptionURI,
-                                  Action<S>[] actions, StateVariable<S>[] stateVariables) throws ValidationException;
+                                  Collection<Action<S>> actions, Collection<StateVariable<S>> stateVariables) throws ValidationException;
 
-    public abstract D[] toDeviceArray(Collection<D> col);
 
-    public abstract S[] newServiceArray(int size);
-
-    public abstract S[] toServiceArray(Collection<S> col);
-
-    public abstract Resource[] discoverResources(Namespace namespace);
+    public abstract Collection<Resource<?>> discoverResources(Namespace namespace);
 
     @Override
     public String toString() {

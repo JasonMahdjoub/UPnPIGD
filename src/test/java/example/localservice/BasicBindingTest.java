@@ -77,7 +77,7 @@ import static org.testng.Assert.assertEquals;
  */
 public class BasicBindingTest {
 
-    public LocalDevice createTestDevice(Class serviceClass) throws Exception {
+    public LocalDevice createTestDevice(Class<?> serviceClass) throws Exception {
 
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
         LocalService svc = binder.read(serviceClass);

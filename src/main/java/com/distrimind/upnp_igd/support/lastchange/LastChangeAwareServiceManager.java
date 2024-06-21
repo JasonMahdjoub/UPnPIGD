@@ -78,7 +78,7 @@ public class LastChangeAwareServiceManager<T extends LastChangeDelegator> extend
     }
 
     @Override
-    protected Collection<StateVariableValue> readInitialEventedStateVariableValues() throws Exception {
+    protected Collection<StateVariableValue<LocalService<T>>> readInitialEventedStateVariableValues() throws Exception {
 
         // We don't use the service's internal LastChange but a fresh new one just for
         // this initial event. Modifying the internal one would trigger event notification's
@@ -98,9 +98,9 @@ public class LastChangeAwareServiceManager<T extends LastChangeDelegator> extend
         }
 
         // Sum it all up and return it in the initial event to the GENA subscriber
-        StateVariable variable = getService().getStateVariable("LastChange");
-        Collection<StateVariableValue> values = new ArrayList<>();
-        values.add(new StateVariableValue(variable, lc.toString()));
+        StateVariable<LocalService<T>> variable = getService().getStateVariable("LastChange");
+        Collection<StateVariableValue<LocalService<T>>> values = new ArrayList<>();
+        values.add(new StateVariableValue<>(variable, lc.toString()));
         return values;
     }
 

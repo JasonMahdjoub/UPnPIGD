@@ -17,7 +17,7 @@ package com.distrimind.upnp_igd.support.model.dlna;
 import com.distrimind.upnp_igd.support.model.Protocol;
 import com.distrimind.upnp_igd.support.model.ProtocolInfo;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
-import org.seamless.util.MimeType;
+import com.distrimind.upnp_igd.util.MimeType;
 
 import java.util.EnumMap;
 import java.util.Map;

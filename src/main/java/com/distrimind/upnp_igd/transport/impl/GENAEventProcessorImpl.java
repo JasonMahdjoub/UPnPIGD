@@ -21,6 +21,7 @@ import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.message.UpnpMessage;
 import com.distrimind.upnp_igd.model.message.gena.IncomingEventRequestMessage;
 import com.distrimind.upnp_igd.model.message.gena.OutgoingEventRequestMessage;
+import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
@@ -39,6 +40,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,7 +147,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     protected void readProperties(Element propertysetElement, IncomingEventRequestMessage message) {
         NodeList propertysetElementChildren = propertysetElement.getChildNodes();
 
-        StateVariable[] stateVariables = message.getService().getStateVariables();
+        Collection<StateVariable<RemoteService>> stateVariables = message.getService().getStateVariables();
 
         for (int i = 0; i < propertysetElementChildren.getLength(); i++) {
             Node propertysetChild = propertysetElementChildren.item(i);

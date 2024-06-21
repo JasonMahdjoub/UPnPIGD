@@ -19,6 +19,7 @@ import com.distrimind.upnp_igd.model.message.header.ContentTypeHeader;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A non-streaming message, the interface between the transport layer and the protocols.
@@ -45,7 +46,7 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
     private int udaMajorVersion = 1;
     private int udaMinorVersion = 0;
 
-    private O operation;
+    private final O operation;
     private UpnpHeaders headers = new UpnpHeaders();
     private Object body;
     private BodyType bodyType = BodyType.STRING;
@@ -143,7 +144,7 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
                     }
                     return body;
                 } else {
-                    return new String((byte[]) getBody(), "UTF-8");
+                    return new String((byte[]) getBody(), StandardCharsets.UTF_8);
                 }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -176,10 +177,9 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
         // UPnP spec and do not send any content type at all, we need to assume no content type
         // means a textual entity body is available.
         if (contentTypeHeader == null) return true;
-        if (contentTypeHeader.isText()) return true;
+		return contentTypeHeader.isText();
         // Only if there was any content-type header and none was text
-        return false;
-    }
+	}
 
     public ContentTypeHeader getContentTypeHeader() {
         return getHeaders().getFirstHeader(UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class);
@@ -207,7 +207,7 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
     public boolean isBodyNonEmptyString() {
         return hasBody()
             && getBodyType().equals(UpnpMessage.BodyType.STRING)
-            && getBodyString().length() > 0;
+            && !getBodyString().isEmpty();
     }
 
     @Override

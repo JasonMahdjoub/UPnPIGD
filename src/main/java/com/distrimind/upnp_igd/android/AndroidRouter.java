@@ -29,7 +29,7 @@ import com.distrimind.upnp_igd.transport.Router;
 import com.distrimind.upnp_igd.transport.RouterException;
 import com.distrimind.upnp_igd.transport.RouterImpl;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

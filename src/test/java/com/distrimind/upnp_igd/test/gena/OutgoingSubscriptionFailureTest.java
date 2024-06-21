@@ -38,7 +38,7 @@ import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.protocol.ReceivingSync;
 import com.distrimind.upnp_igd.test.data.SampleData;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.URIUtil;
 import org.testng.annotations.Test;
 
 import java.net.InetAddress;
@@ -63,7 +63,7 @@ public class OutgoingSubscriptionFailureTest {
                     @Override
                     public List<NetworkAddress> getActiveStreamServers(InetAddress preferredAddress) {
                         // Simulate network switched off
-                        return Collections.EMPTY_LIST;
+                        return Collections.emptyList();
                     }
                     @Override
                     public StreamResponseMessage[] getStreamResponseMessages() {
@@ -88,7 +88,7 @@ public class OutgoingSubscriptionFailureTest {
         SubscriptionCallback callback = new SubscriptionCallback(service) {
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -99,20 +99,20 @@ public class OutgoingSubscriptionFailureTest {
             }
 
             @Override
-            public void established(GENASubscription subscription) {
+            public void established(GENASubscription<?> subscription) {
                 testAssertions.add(false);
             }
 
             @Override
-            public void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+            public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
                 testAssertions.add(false);
             }
 
-            public void eventReceived(GENASubscription subscription) {
+            public void eventReceived(GENASubscription<?> subscription) {
                 testAssertions.add(false);
             }
 
-            public void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -155,7 +155,7 @@ public class OutgoingSubscriptionFailureTest {
         SubscriptionCallback callback = new SubscriptionCallback(service) {
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -163,26 +163,26 @@ public class OutgoingSubscriptionFailureTest {
             }
 
             @Override
-            public void established(GENASubscription subscription) {
+            public void established(GENASubscription<?> subscription) {
                 assertEquals(subscription.getSubscriptionId(), "uuid:1234");
                 assertEquals(subscription.getActualDurationSeconds(), 180);
                 testAssertions.add(true);
             }
 
             @Override
-            public void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+            public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
                 assert reason == null;
                 assertEquals(responseStatus.getStatusCode(), UpnpResponse.Status.OK.getStatusCode());
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription subscription) {
+            public void eventReceived(GENASubscription<?> subscription) {
                 assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
                 assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
                 testAssertions.add(true);
             }
 
-            public void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 assertEquals(numberOfMissedEvents, 2);
                 testAssertions.add(true);
             }
@@ -191,7 +191,7 @@ public class OutgoingSubscriptionFailureTest {
 
         upnpService.getControlPoint().execute(callback);
 
-        ReceivingSync prot = upnpService.getProtocolFactory().createReceivingSync(
+        ReceivingSync<?, ?> prot = upnpService.getProtocolFactory().createReceivingSync(
                 createEventRequestMessage(upnpService, callback, 0)
         );
         prot.run();
@@ -248,12 +248,12 @@ public class OutgoingSubscriptionFailureTest {
 
     protected IncomingEventRequestMessage createEventRequestMessage(UpnpService upnpService, SubscriptionCallback callback, int sequence) {
 
-        List<StateVariableValue> values = new ArrayList<>();
+        List<StateVariableValue<?>> values = new ArrayList<>();
         values.add(
-                new StateVariableValue(callback.getService().getStateVariable("Status"), false)
+                new StateVariableValue<>(callback.getService().getStateVariable("Status"), false)
         );
         values.add(
-                new StateVariableValue(callback.getService().getStateVariable("Target"), true)
+                new StateVariableValue<>(callback.getService().getStateVariable("Target"), true)
         );
 
         OutgoingEventRequestMessage outgoing = new OutgoingEventRequestMessage(

@@ -33,8 +33,8 @@ import com.distrimind.upnp_igd.support.model.StorageMedium;
 import com.distrimind.upnp_igd.support.model.TransportAction;
 import com.distrimind.upnp_igd.support.model.TransportInfo;
 import com.distrimind.upnp_igd.support.model.TransportSettings;
-import org.seamless.statemachine.StateMachineBuilder;
-import org.seamless.statemachine.TransitionException;
+import com.distrimind.upnp_igd.statemachine.StateMachineBuilder;
+import com.distrimind.upnp_igd.statemachine.TransitionException;
 
 import java.net.URI;
 import java.util.Map;
@@ -80,19 +80,20 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
 
     final private static Logger log = Logger.getLogger(AVTransportService.class.getName());
 
-    final private Map<Long, AVTransportStateMachine> stateMachines = new ConcurrentHashMap();
+    final private Map<Long, AVTransportStateMachine> stateMachines = new ConcurrentHashMap<>();
 
     final Class<? extends AVTransportStateMachine> stateMachineDefinition;
-    final Class<? extends AbstractState> initialState;
+    final Class<? extends AbstractState<?>> initialState;
     final Class<? extends AVTransport> transportClass;
 
-    public AVTransportService(Class<? extends AVTransportStateMachine> stateMachineDefinition,
-                              Class<? extends AbstractState> initialState) {
+    @SuppressWarnings("unchecked")
+	public AVTransportService(Class<? extends AVTransportStateMachine> stateMachineDefinition,
+							  Class<? extends AbstractState<?>> initialState) {
         this(stateMachineDefinition, initialState, (Class<T>)AVTransport.class);
     }
 
     public AVTransportService(Class<? extends AVTransportStateMachine> stateMachineDefinition,
-                              Class<? extends AbstractState> initialState,
+                              Class<? extends AbstractState<?>> initialState,
                               Class<T> transportClass) {
         this.stateMachineDefinition = stateMachineDefinition;
         this.initialState = initialState;

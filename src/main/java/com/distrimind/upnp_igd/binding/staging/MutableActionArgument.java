@@ -16,19 +16,20 @@
 package com.distrimind.upnp_igd.binding.staging;
 
 import com.distrimind.upnp_igd.model.meta.ActionArgument;
+import com.distrimind.upnp_igd.model.meta.Service;
 
 /**
  * @author Christian Bauer
  */
-public class MutableActionArgument {
+public class MutableActionArgument<S extends Service<?, ?, ?>> {
 
     public String name;
     public String relatedStateVariable;
     public ActionArgument.Direction direction;
     public boolean retval;
 
-    public ActionArgument build() {
-        return new ActionArgument(name, relatedStateVariable, direction, retval);
+    public ActionArgument<S> build() {
+        return new ActionArgument<>(name, relatedStateVariable, direction, retval);
     }
 
 }

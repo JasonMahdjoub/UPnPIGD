@@ -39,7 +39,7 @@ import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.protocol.ProtocolCreationException;
 import com.distrimind.upnp_igd.test.data.SampleData;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.URIUtil;
 import org.testng.annotations.Test;
 
 import java.net.URI;

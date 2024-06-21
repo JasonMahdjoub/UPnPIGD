@@ -17,11 +17,11 @@ package com.distrimind.upnp_igd.support.shared;
 
 import com.distrimind.upnp_igd.support.shared.log.LogView;
 import jakarta.inject.Inject;
-import org.seamless.swing.Application;
-import org.seamless.swing.logging.LogMessage;
-import org.seamless.swing.logging.LoggingHandler;
-import org.seamless.util.OS;
-import org.seamless.util.logging.LoggingUtil;
+import com.distrimind.upnp_igd.swing.Application;
+import com.distrimind.upnp_igd.swing.logging.LogMessage;
+import com.distrimind.upnp_igd.swing.logging.LoggingHandler;
+import com.distrimind.upnp_igd.util.OS;
+import com.distrimind.upnp_igd.util.logging.LoggingUtil;
 
 import javax.swing.*;
 import java.awt.*;

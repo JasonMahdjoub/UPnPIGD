@@ -38,15 +38,8 @@ import com.distrimind.upnp_igd.transport.impl.StreamClientConfigurationImpl;
 import com.distrimind.upnp_igd.transport.impl.StreamClientImpl;
 import com.distrimind.upnp_igd.transport.impl.StreamServerConfigurationImpl;
 import com.distrimind.upnp_igd.transport.impl.StreamServerImpl;
-import com.distrimind.upnp_igd.transport.spi.DatagramIO;
-import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
-import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
-import com.distrimind.upnp_igd.transport.spi.MulticastReceiver;
-import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
-import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
-import com.distrimind.upnp_igd.transport.spi.StreamClient;
-import com.distrimind.upnp_igd.transport.spi.StreamServer;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.transport.spi.*;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import jakarta.enterprise.inject.Alternative;
 import java.util.concurrent.Executor;
@@ -87,7 +80,7 @@ import java.util.logging.Logger;
 @Alternative
 public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration {
 
-    private static Logger log = Logger.getLogger(DefaultUpnpServiceConfiguration.class.getName());
+    private static final Logger log = Logger.getLogger(DefaultUpnpServiceConfiguration.class.getName());
 
     final private int streamListenPort;
 
@@ -155,7 +148,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         return multicastPort;
     }
 
-    public StreamClient createStreamClient() {
+    public StreamClient<?> createStreamClient() {
         return new StreamClientImpl(
             new StreamClientConfigurationImpl(
                 getSyncProtocolExecutorService()
@@ -163,7 +156,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         );
     }
 
-    public MulticastReceiver createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
+    public MulticastReceiver<?> createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
         return new MulticastReceiverImpl(
                 new MulticastReceiverConfigurationImpl(
                         networkAddressFactory.getMulticastGroup(),
@@ -172,11 +165,11 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         );
     }
 
-    public DatagramIO createDatagramIO(NetworkAddressFactory networkAddressFactory) {
+    public DatagramIO<?> createDatagramIO(NetworkAddressFactory networkAddressFactory) {
         return new DatagramIOImpl(new DatagramIOConfigurationImpl());
     }
 
-    public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
+    public StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory) {
         return new StreamServerImpl(
                 new StreamServerConfigurationImpl(
                         networkAddressFactory.getStreamListenPort()

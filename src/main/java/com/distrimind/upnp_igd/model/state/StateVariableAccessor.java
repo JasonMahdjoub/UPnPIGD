@@ -23,18 +23,17 @@ import com.distrimind.upnp_igd.model.meta.StateVariable;
 
 /**
  * Reads the value of a state variable, given an instance that implements the service.
- *
  * TODO: The design of this is not final, not happy with the relationship between ActionExecutor and this.
  *
  * @author Christian Bauer
  */
 public abstract class StateVariableAccessor {
 
-    public StateVariableValue read(final StateVariable<LocalService> stateVariable, final Object serviceImpl) throws Exception {
+    public <T> StateVariableValue<LocalService<T>> read(final StateVariable<LocalService<T>> stateVariable, final Object serviceImpl) throws Exception {
 
-        class AccessCommand implements Command {
+        class AccessCommand implements Command<T> {
             Object result;
-            public void execute(ServiceManager serviceManager) throws Exception {
+            public void execute(ServiceManager<T> serviceManager) throws Exception {
                 result = read(serviceImpl);
                 if (stateVariable.getService().isStringConvertibleType(result)) {
                     result = result.toString();
@@ -44,7 +43,7 @@ public abstract class StateVariableAccessor {
 
         AccessCommand cmd = new AccessCommand();
         stateVariable.getService().getManager().execute(cmd);
-        return new StateVariableValue(stateVariable, cmd.result);
+        return new StateVariableValue<>(stateVariable, cmd.result);
     }
 
     public abstract Class<?> getReturnType();

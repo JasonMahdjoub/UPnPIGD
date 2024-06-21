@@ -15,7 +15,7 @@
 
 package com.distrimind.upnp_igd.model.types;
 
-import org.seamless.util.io.HexBin;
+import com.distrimind.upnp_igd.util.io.HexBin;
 
 /**
  * @author Christian Bauer
@@ -30,7 +30,7 @@ public class BinHexDatatype extends AbstractDatatype<byte[]> {
     }
 
     public byte[] valueOf(String s) throws InvalidValueException {
-        if (s.equals("")) return null;
+        if (s.isEmpty()) return null;
         try {
             return HexBin.stringToBytes(s);
         } catch (Exception ex) {

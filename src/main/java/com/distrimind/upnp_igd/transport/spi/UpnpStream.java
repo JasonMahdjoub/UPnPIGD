@@ -22,7 +22,7 @@ import com.distrimind.upnp_igd.model.message.UpnpResponse;
 import com.distrimind.upnp_igd.protocol.ProtocolCreationException;
 import com.distrimind.upnp_igd.protocol.ProtocolFactory;
 import com.distrimind.upnp_igd.protocol.ReceivingSync;
-import org.seamless.util.Exceptions;
+import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.logging.Logger;
 
@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public abstract class UpnpStream implements Runnable {
 
-    private static Logger log = Logger.getLogger(UpnpStream.class.getName());
+    private static final Logger log = Logger.getLogger(UpnpStream.class.getName());
 
     protected final ProtocolFactory protocolFactory;
     protected ReceivingSync syncProtocol;

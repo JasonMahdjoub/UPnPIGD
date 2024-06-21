@@ -20,9 +20,10 @@ import java.util.logging.Logger;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.message.control.ActionRequestMessage;
 import com.distrimind.upnp_igd.model.message.control.ActionResponseMessage;
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import org.seamless.xml.XmlPullParserUtils;
+import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 
 import jakarta.enterprise.inject.Alternative;
 
@@ -52,9 +53,10 @@ import jakarta.enterprise.inject.Alternative;
 @Alternative
 public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorImpl {
 
-    private static Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
+    private static final Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
 
-    public void readBody(ActionRequestMessage requestMessage, ActionInvocation actionInvocation) throws UnsupportedDataException {
+    @Override
+    public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
         try {
             super.readBody(requestMessage, actionInvocation);
         } catch (UnsupportedDataException ex) {
@@ -80,7 +82,8 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
         }
     }
 
-    public void readBody(ActionResponseMessage responseMsg, ActionInvocation actionInvocation) throws UnsupportedDataException {
+    @Override
+    public <S extends Service<?, ?, ?>> void readBody(ActionResponseMessage responseMsg, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
         try {
             super.readBody(responseMsg, actionInvocation);
         } catch (UnsupportedDataException ex) {
@@ -127,7 +130,7 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
      * @param originalException   The original exception throw by the first parsing attempt
      * @param recoveringException The exception thrown after trying to fix the XML.
      */
-    protected void handleInvalidMessage(ActionInvocation actionInvocation,
+    protected <S extends Service<?, ?, ?>> void handleInvalidMessage(ActionInvocation<S> actionInvocation,
                                         UnsupportedDataException originalException,
                                         UnsupportedDataException recoveringException) throws UnsupportedDataException {
         throw originalException;

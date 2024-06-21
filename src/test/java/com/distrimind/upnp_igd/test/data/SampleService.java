@@ -23,6 +23,7 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
 
 import java.lang.reflect.Constructor;
 import java.net.URI;
+import java.util.Collection;
 
 /**
  * @author Christian Bauer
@@ -34,10 +35,10 @@ public abstract class SampleService {
     public abstract URI getDescriptorURI();
     public abstract URI getControlURI();
     public abstract URI getEventSubscriptionURI();
-    public abstract Action[] getActions();
-    public abstract StateVariable[] getStateVariables();
+    public abstract Collection<Action> getActions();
+    public abstract Collection<StateVariable> getStateVariables();
 
-    public <S extends Service> S newInstanceLocal(Constructor<S> ctor) {
+    public Service<?, ?, ?> newInstanceLocal(Constructor<? extends Service<?, ?, ?>> ctor) {
         try {
             return ctor.newInstance(
                     getServiceType(), getServiceId(),
@@ -48,7 +49,7 @@ public abstract class SampleService {
         }
     }
 
-    public <S extends Service> S newInstanceRemote(Constructor<S> ctor) {
+    public Service<?, ?, ?> newInstanceRemote(Constructor<? extends Service<?, ?, ?>> ctor) {
         try {
             return ctor.newInstance(
                     getServiceType(), getServiceId(),

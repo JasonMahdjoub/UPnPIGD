@@ -15,27 +15,30 @@
 
 package com.distrimind.upnp_igd.model.action;
 
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import com.distrimind.upnp_igd.model.meta.Action;
+
+import java.util.List;
 
 /**
  * An action invocation by a remote control point.
  *
  * @author Christian Bauer
  */
-public class RemoteActionInvocation extends ActionInvocation {
+public class RemoteActionInvocation<S extends Service<?, ?, ?>> extends ActionInvocation<S> {
 
     final protected RemoteClientInfo remoteClientInfo;
 
-    public RemoteActionInvocation(Action action,
-                                  ActionArgumentValue[] input,
-                                  ActionArgumentValue[] output,
+    public RemoteActionInvocation(Action<S> action,
+                                  List<ActionArgumentValue<S>> input,
+                                  List<ActionArgumentValue<S>> output,
                                   RemoteClientInfo remoteClientInfo) {
         super(action, input, output, null);
         this.remoteClientInfo = remoteClientInfo;
     }
 
-    public RemoteActionInvocation(Action action,
+    public RemoteActionInvocation(Action<S> action,
                                   RemoteClientInfo remoteClientInfo) {
         super(action);
         this.remoteClientInfo = remoteClientInfo;

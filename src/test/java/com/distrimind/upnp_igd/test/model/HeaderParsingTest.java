@@ -24,7 +24,7 @@ import com.distrimind.upnp_igd.model.types.NamedServiceType;
 import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UDAServiceType;
-import org.seamless.util.MimeType;
+import com.distrimind.upnp_igd.util.MimeType;
 import org.testng.annotations.Test;
 
 import java.net.URI;

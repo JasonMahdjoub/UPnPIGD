@@ -15,11 +15,13 @@
 
 package com.distrimind.upnp_igd.binding;
 
+import java.util.Collection;
+
 /**
  * @author Christian Bauer
  */
 public interface AllowedValueProvider {
 
-    public String[] getValues();
+    Collection<String> getValues();
 
 }

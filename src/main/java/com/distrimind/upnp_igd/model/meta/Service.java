@@ -15,10 +15,7 @@
 
 package com.distrimind.upnp_igd.model.meta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.model.ServiceReference;
@@ -33,7 +30,7 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
  *
  * @author Christian Bauer
  */
-public abstract class Service<D extends Device, S extends Service> {
+public abstract class Service<DI extends DeviceIdentity, D extends Device<DI, D, ?>, S extends Service<DI, D, ?>> {
 
 	final private static Logger log = Logger.getLogger(Service.class.getName());
 
@@ -41,8 +38,8 @@ public abstract class Service<D extends Device, S extends Service> {
     final private ServiceId serviceId;
 
 
-    final private Map<String, Action> actions = new HashMap<>();
-    final private Map<String, StateVariable> stateVariables = new HashMap<>();
+    final private Map<String, Action<S>> actions = new HashMap<>();
+    final private Map<String, StateVariable<S>> stateVariables = new HashMap<>();
 
     // Package mutable state
     private D device;
@@ -51,23 +48,24 @@ public abstract class Service<D extends Device, S extends Service> {
         this(serviceType, serviceId, null, null);
     }
 
-    public Service(ServiceType serviceType, ServiceId serviceId,
-                   Action<S>[] actions, StateVariable<S>[] stateVariables) throws ValidationException {
+    @SuppressWarnings("unchecked")
+	public Service(ServiceType serviceType, ServiceId serviceId,
+				   Collection<Action<S>> actions, Collection<StateVariable<S>> stateVariables) throws ValidationException {
 
         this.serviceType = serviceType;
         this.serviceId = serviceId;
 
         if (actions != null) {
-            for (Action action : actions) {
+            for (Action<S> action : actions) {
                 this.actions.put(action.getName(), action);
-                action.setService(this);
+                action.setService((S)this);
             }
         }
 
         if (stateVariables != null) {
-            for (StateVariable stateVariable : stateVariables) {
+            for (StateVariable<S> stateVariable : stateVariables) {
                 this.stateVariables.put(stateVariable.getName(), stateVariable);
-                stateVariable.setService(this);
+                stateVariable.setService((S)this);
             }
         }
 
@@ -82,20 +80,20 @@ public abstract class Service<D extends Device, S extends Service> {
     }
 
     public boolean hasActions() {
-        return getActions() != null && getActions().length > 0;
+        return getActions() != null && !getActions().isEmpty();
     }
 
-    public Action<S>[] getActions() {
-        return actions == null ? null : actions.values().toArray(new Action[actions.values().size()]);
+    public Collection<Action<S>> getActions() {
+        return Collections.unmodifiableCollection(new ArrayList<>(actions.values()));
     }
 
     public boolean hasStateVariables() {
         // TODO: Spec says always has to have at least one...
-        return getStateVariables() != null && getStateVariables().length > 0;
+        return getStateVariables() != null && !getStateVariables().isEmpty();
     }
 
-    public StateVariable<S>[] getStateVariables() {
-        return stateVariables == null ? null : stateVariables.values().toArray(new StateVariable[stateVariables.values().size()]);
+    public Collection<StateVariable<S>> getStateVariables() {
+        return Collections.unmodifiableCollection(new ArrayList<>(stateVariables.values()));
     }
 
     public D getDevice() {
@@ -109,31 +107,32 @@ public abstract class Service<D extends Device, S extends Service> {
     }
 
     public Action<S> getAction(String name) {
-        return actions == null ? null : actions.get(name);
+        return actions.get(name);
     }
 
-    public StateVariable<S> getStateVariable(String name) {
+	public StateVariable<S> getStateVariable(String name) {
         // Some magic necessary for the deprecated 'query state variable' action stuff
         if (QueryStateVariableAction.VIRTUAL_STATEVARIABLE_INPUT.equals(name)) {
-            return new StateVariable(
-                    QueryStateVariableAction.VIRTUAL_STATEVARIABLE_INPUT,
-                    new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype())
-            );
+            return new StateVariable<>(
+					QueryStateVariableAction.VIRTUAL_STATEVARIABLE_INPUT,
+					new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype())
+			);
         }
         if (QueryStateVariableAction.VIRTUAL_STATEVARIABLE_OUTPUT.equals(name)) {
-            return new StateVariable(
+            return new StateVariable<>(
                     QueryStateVariableAction.VIRTUAL_STATEVARIABLE_OUTPUT,
                     new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype())
             );
         }
-        return stateVariables == null ? null : stateVariables.get(name);
+
+        return stateVariables.get(name);
     }
 
-    public StateVariable<S> getRelatedStateVariable(ActionArgument argument) {
+    public StateVariable<S> getRelatedStateVariable(ActionArgument<?> argument) {
         return getStateVariable(argument.getRelatedStateVariableName());
     }
 
-    public Datatype<S> getDatatype(ActionArgument argument) {
+    public Datatype<?> getDatatype(ActionArgument<?> argument) {
         return getRelatedStateVariable(argument).getTypeDetails().getDatatype();
     }
 
@@ -174,19 +173,19 @@ public abstract class Service<D extends Device, S extends Service> {
         }
         */
         if (hasStateVariables()) {
-            for (StateVariable stateVariable : getStateVariables()) {
+            for (StateVariable<S> stateVariable : getStateVariables()) {
                 errors.addAll(stateVariable.validate());
             }
         }
 
         if (hasActions()) {
-            for (Action action : getActions()) {
+            for (Action<S> action : getActions()) {
 
                 // Instead of bailing out here, we try to continue if an action is invalid
                 // errors.addAll(action.validate());
 
                 List<ValidationError> actionErrors = action.validate();
-            	if(actionErrors.size() > 0) {
+            	if(!actionErrors.isEmpty()) {
                     actions.remove(action.getName()); // Remove it
                     log.warning("Discarding invalid action of service '" + getServiceId() + "': " + action.getName());
                     for (ValidationError actionError : actionErrors) {
@@ -199,7 +198,7 @@ public abstract class Service<D extends Device, S extends Service> {
         return errors;
     }
 
-    public abstract Action getQueryStateVariableAction();
+    public abstract Action<S> getQueryStateVariableAction();
 
     @Override
     public String toString() {

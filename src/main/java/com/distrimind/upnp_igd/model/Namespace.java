@@ -17,10 +17,7 @@ package com.distrimind.upnp_igd.model;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.registry.Registry;
@@ -28,7 +25,7 @@ import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.Icon;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.resource.Resource;
-import org.seamless.util.URIUtil;
+import com.distrimind.upnp_igd.util.URIUtil;
 
 /**
  * Enforces path conventions for all locally offered resources (descriptors, icons, etc.)
@@ -88,30 +85,30 @@ public class Namespace {
         return basePath;
     }
 
-    public URI getPath(Device device) {
+    public URI getPath(Device<?, ?, ?> device) {
         return appendPathToBaseURI(getDevicePath(device));
     }
 
-    public URI getPath(Service service) {
+    public URI getPath(Service<?, ?, ?> service) {
         return appendPathToBaseURI(getServicePath(service));
     }
 
-    public URI getDescriptorPath(Device device) {
+    public URI getDescriptorPath(Device<?, ?, ?> device) {
         return appendPathToBaseURI(getDevicePath(device.getRoot()) + DESCRIPTOR_FILE);
     }
 
     /**
      * Performance optimization, avoids URI manipulation.
      */
-    public String getDescriptorPathString(Device device) {
+    public String getDescriptorPathString(Device<?, ?, ?> device) {
         return decodedPath + getDevicePath(device.getRoot()) + DESCRIPTOR_FILE;
     }
 
-    public URI getDescriptorPath(Service service) {
+    public URI getDescriptorPath(Service<?, ?, ?> service) {
         return appendPathToBaseURI(getServicePath(service) + DESCRIPTOR_FILE);
     }
 
-    public URI getControlPath(Service service) {
+    public URI getControlPath(Service<?, ?, ?> service) {
         return appendPathToBaseURI(getServicePath(service) + CONTROL);
     }
 
@@ -119,22 +116,22 @@ public class Namespace {
         return appendPathToBaseURI(getDevicePath(icon.getDevice()) + "/" + icon.getUri().toString());
     }
 
-    public URI getEventSubscriptionPath(Service service) {
+    public URI getEventSubscriptionPath(Service<?, ?, ?> service) {
         return appendPathToBaseURI(getServicePath(service) + EVENTS);
     }
 
-    public URI getEventCallbackPath(Service service) {
+    public URI getEventCallbackPath(Service<?, ?, ?> service) {
         return appendPathToBaseURI(getServicePath(service) + EVENTS + CALLBACK_FILE);
     }
 
     /**
      * Performance optimization, avoids URI manipulation.
      */
-    public String getEventCallbackPathString(Service service) {
+    public String getEventCallbackPathString(Service<?, ?, ?> service) {
         return decodedPath + getServicePath(service) + EVENTS + CALLBACK_FILE;
     }
 
-    public URI prefixIfRelative(Device device, URI uri) {
+    public URI prefixIfRelative(Device<?, ?, ?> device, URI uri) {
         if (!uri.isAbsolute() && !uri.getPath().startsWith("/")) {
             return appendPathToBaseURI(getDevicePath(device) + "/" + uri);
         }
@@ -153,15 +150,15 @@ public class Namespace {
         return uri.toString().endsWith(Namespace.CALLBACK_FILE);
     }
 
-    public Resource[] getResources(Device device) throws ValidationException {
+    public Collection<Resource<?>> getResources(Device<?, ?, ?> device) throws ValidationException {
         if (!device.isRoot()) return null;
 
-        Set<Resource> resources = new HashSet<>();
+        Set<Resource<?>> resources = new HashSet<>();
         List<ValidationError> errors = new ArrayList<>();
 
         log.fine("Discovering local resources of device graph");
-        Resource[] discoveredResources = device.discoverResources(this);
-        for (Resource resource : discoveredResources) {
+        Collection<Resource<?>> discoveredResources = device.discoverResources(this);
+        for (Resource<?> resource : discoveredResources) {
             log.finer("Discovered: " + resource);
             if (!resources.add(resource)) {
                 log.finer("Local resource already exists, queueing validation error");
@@ -172,10 +169,10 @@ public class Namespace {
                 ));
             }
         }
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
             throw new ValidationException("Validation of device graph failed, call getErrors() on exception", errors);
         }
-        return resources.toArray(new Resource[resources.size()]);
+        return resources;
     }
 
     protected URI appendPathToBaseURI(String path) {
@@ -196,27 +193,24 @@ public class Namespace {
         }
     }
 
-    protected String getDevicePath(Device device) {
+    protected String getDevicePath(Device<?, ?, ?> device) {
         if (device.getIdentity().getUdn() == null) {
             throw new IllegalStateException("Can't generate local URI prefix without UDN");
         }
-        StringBuilder s = new StringBuilder();
-        s.append(DEVICE).append("/");
 
-        s.append(URIUtil.encodePathSegment(device.getIdentity().getUdn().getIdentifierString()));
-        return s.toString();
+		return DEVICE + "/" +
+				URIUtil.encodePathSegment(device.getIdentity().getUdn().getIdentifierString());
     }
 
-    protected String getServicePath(Service service) {
+    protected String getServicePath(Service<?, ?, ?> service) {
         if (service.getServiceId() == null) {
             throw new IllegalStateException("Can't generate local URI prefix without service ID");
         }
-        StringBuilder s = new StringBuilder();
-        s.append(SERVICE);
-        s.append("/");
-        s.append(service.getServiceId().getNamespace());
-        s.append("/");
-        s.append(service.getServiceId().getId());
-        return getDevicePath(service.getDevice()) + s.toString();
+		String s = SERVICE +
+				"/" +
+				service.getServiceId().getNamespace() +
+				"/" +
+				service.getServiceId().getId();
+        return getDevicePath(service.getDevice()) + s;
     }
 }
