@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  */
 public abstract class SetAVTransportURI extends ActionCallback {
 
-    private static Logger log = Logger.getLogger(SetAVTransportURI.class.getName());
+    private static final Logger log = Logger.getLogger(SetAVTransportURI.class.getName());
 
     public SetAVTransportURI(Service service, String uri) {
         this(new UnsignedIntegerFourBytes(0), service, uri, null);

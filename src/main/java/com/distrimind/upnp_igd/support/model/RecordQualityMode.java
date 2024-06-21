@@ -33,7 +33,7 @@ public enum RecordQualityMode {
     HIGH("2:HIGH"),
     NOT_IMPLEMENTED("NOT_IMPLEMENTED");
 
-    private String protocolString;
+    private final String protocolString;
 
     RecordQualityMode(String protocolString) {
         this.protocolString = protocolString;

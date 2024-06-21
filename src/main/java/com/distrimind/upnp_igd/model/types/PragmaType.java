@@ -20,9 +20,9 @@ package com.distrimind.upnp_igd.model.types;
  */
 public class PragmaType {
 
-    private String token;
+    private final String token;
     private boolean quote;
-    private String value;
+    private final String value;
 
     public PragmaType(String token, String value, boolean quote) {
         this.token = token;

@@ -17,6 +17,8 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.util.io.Base64Coder;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * @author Christian Bauer
  */
@@ -42,7 +44,7 @@ public class Base64Datatype extends AbstractDatatype<byte[]> {
     public String getString(byte[] value) throws InvalidValueException {
         if (value == null) return "";
         try {
-            return new String(Base64Coder.encode(value), "UTF-8");
+            return new String(Base64Coder.encode(value), StandardCharsets.UTF_8);
         } catch (Exception ex) {
             throw new InvalidValueException(ex.getMessage(), ex);
         }

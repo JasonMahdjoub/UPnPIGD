@@ -57,12 +57,12 @@ public interface Router {
     /**
      * @return The configuration used by this router.
      */
-    public UpnpServiceConfiguration getConfiguration();
+	UpnpServiceConfiguration getConfiguration();
 
     /**
      * @return The protocol factory used by this router.
      */
-    public ProtocolFactory getProtocolFactory();
+	ProtocolFactory getProtocolFactory();
 
     /**
      * Starts all sockets and listening threads for datagrams and streams.
@@ -103,7 +103,7 @@ public interface Router {
      *         address if the preferred address is active, or a list of all active bound
      *         stream servers.
      */
-    public List<NetworkAddress> getActiveStreamServers(InetAddress preferredAddress) throws RouterException;
+	List<NetworkAddress> getActiveStreamServers(InetAddress preferredAddress) throws RouterException;
 
     /**
      * <p>
@@ -115,7 +115,7 @@ public interface Router {
      * </p>
      * @param msg The received datagram message.
      */
-    public void received(IncomingDatagramMessage msg);
+	void received(IncomingDatagramMessage msg);
 
     /**
      * <p>
@@ -128,7 +128,7 @@ public interface Router {
      * </p>
      * @param stream
      */
-    public void received(UpnpStream stream);
+	void received(UpnpStream stream);
 
     /**
      * <p>
@@ -137,7 +137,7 @@ public interface Router {
      * @param msg The UDP datagram message to send.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
      */
-    public void send(OutgoingDatagramMessage msg) throws RouterException;
+	void send(OutgoingDatagramMessage msg) throws RouterException;
 
     /**
      * <p>
@@ -147,7 +147,7 @@ public interface Router {
      * @return The response received from the server.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
      */
-    public StreamResponseMessage send(StreamRequestMessage msg) throws RouterException;
+	StreamResponseMessage send(StreamRequestMessage msg) throws RouterException;
 
     /**
      * <p>
@@ -156,6 +156,6 @@ public interface Router {
      * @param bytes The byte payload of the UDP datagram.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
      */
-    public void broadcast(byte[] bytes) throws RouterException;
+	void broadcast(byte[] bytes) throws RouterException;
 
 }

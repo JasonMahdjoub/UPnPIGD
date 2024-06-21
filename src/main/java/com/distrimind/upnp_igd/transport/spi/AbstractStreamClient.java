@@ -69,7 +69,7 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
             if (log.isLoggable(Level.FINEST))
                 log.finest("Got HTTP response in " + elapsed + "ms: " + requestMessage);
             if (getConfiguration().getLogWarningSeconds() > 0
-                && elapsed > getConfiguration().getLogWarningSeconds()*1000) {
+                && elapsed > getConfiguration().getLogWarningSeconds()* 1000L) {
                 log.warning("HTTP request took a long time (" + elapsed + "ms): " + requestMessage);
             }
 

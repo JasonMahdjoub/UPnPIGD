@@ -31,6 +31,7 @@ import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 /**
  * @author Christian Bauer
@@ -56,7 +57,7 @@ public class LocalActionInvocationNullTest {
         invocation.setInput("Two", "bar");
         invocation.setInput("Three", "baz");
         svc.getExecutor(invocation.getAction()).execute(invocation);
-        assertEquals(invocation.getFailure(), null);
+		assertNull(invocation.getFailure());
         assertEquals(svc.getManager().getImplementation().one, "foo");
         assertEquals(svc.getManager().getImplementation().two, "bar");
         assertEquals(svc.getManager().getImplementation().three.toString(), "baz");
@@ -67,10 +68,10 @@ public class LocalActionInvocationNullTest {
         invocation.setInput("Two", "");
         invocation.setInput("Three", null);
         svc.getExecutor(invocation.getAction()).execute(invocation);
-        assertEquals(invocation.getFailure(), null);
+		assertNull(invocation.getFailure());
         assertEquals(svc.getManager().getImplementation().one, "foo");
-        assertEquals(svc.getManager().getImplementation().two, null);
-        assertEquals(svc.getManager().getImplementation().three, null);
+		assertNull(svc.getManager().getImplementation().two);
+		assertNull(svc.getManager().getImplementation().three);
 
         // Null is not fine for primitive input arguments
         invocation = new ActionInvocation(svc.getAction("SetPrimitive"));
@@ -88,10 +89,10 @@ public class LocalActionInvocationNullTest {
         // OOPS! invocation.setInput("Two", null);
         invocation.setInput("Three", null);
         svc.getExecutor(invocation.getAction()).execute(invocation);
-        assertEquals(invocation.getFailure(), null);
-        assertEquals(svc.getManager().getImplementation().one, null);
-        assertEquals(svc.getManager().getImplementation().two, null);
-        assertEquals(svc.getManager().getImplementation().three, null);
+		assertNull(invocation.getFailure());
+		assertNull(svc.getManager().getImplementation().one);
+		assertNull(svc.getManager().getImplementation().two);
+		assertNull(svc.getManager().getImplementation().three);
 
     }
 
@@ -131,7 +132,7 @@ public class LocalActionInvocationNullTest {
     }
 
     public static class MyString {
-        private String s;
+        private final String s;
 
         public MyString(String s) {
             this.s = s;

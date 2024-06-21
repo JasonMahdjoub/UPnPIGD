@@ -50,7 +50,7 @@ import java.util.logging.Logger;
 @Alternative
 public class UpnpServiceImpl implements UpnpService {
 
-    private static Logger log = Logger.getLogger(UpnpServiceImpl.class.getName());
+    private static final Logger log = Logger.getLogger(UpnpServiceImpl.class.getName());
 
     protected final UpnpServiceConfiguration configuration;
     protected final ControlPoint controlPoint;

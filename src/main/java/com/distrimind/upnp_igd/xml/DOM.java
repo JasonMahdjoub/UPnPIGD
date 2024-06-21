@@ -35,7 +35,7 @@ public abstract class DOM {
 	public static final String CDATA_BEGIN = "<![CDATA[";
 	public static final String CDATA_END = "]]>";
 
-	private Document dom;
+	private final Document dom;
 
 	public DOM(Document dom) {
 		this.dom = dom;

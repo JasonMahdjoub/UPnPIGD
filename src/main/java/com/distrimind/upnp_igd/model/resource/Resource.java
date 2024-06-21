@@ -31,8 +31,8 @@ import java.util.List;
  */
 public class Resource<M> {
 
-    private URI pathQuery;
-    private M model;
+    private final URI pathQuery;
+    private final M model;
 
     /**
      * @param pathQuery The path and (optional) query URI parts of this resource.
@@ -98,10 +98,8 @@ public class Resource<M> {
 
         Resource resource = (Resource) o;
 
-        if (!getPathQuery().equals(resource.getPathQuery())) return false;
-
-        return true;
-    }
+		return getPathQuery().equals(resource.getPathQuery());
+	}
 
     @Override
     public int hashCode() {

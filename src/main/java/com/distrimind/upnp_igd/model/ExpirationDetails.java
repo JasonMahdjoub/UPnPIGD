@@ -76,7 +76,7 @@ public class ExpirationDetails {
     }
 
     // Performance optimization on Android
-    private static  String simpleName = ExpirationDetails.class.getSimpleName();
+    private static final String simpleName = ExpirationDetails.class.getSimpleName();
 	@Override
     public String toString() {
         return "(" + simpleName + ")" + " MAX AGE: " + maxAgeSeconds;

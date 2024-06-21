@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public abstract class SetPlayMode extends ActionCallback {
 
-    private static Logger log = Logger.getLogger(SetPlayMode.class.getName());
+    private static final Logger log = Logger.getLogger(SetPlayMode.class.getName());
 
     public SetPlayMode(Service service, PlayMode playMode) {
         this(new UnsignedIntegerFourBytes(0), service, playMode);

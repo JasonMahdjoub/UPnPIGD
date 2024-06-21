@@ -38,7 +38,7 @@ import com.distrimind.upnp_igd.model.types.UDAServiceType;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 /**
  * Invoking an action
@@ -218,7 +218,7 @@ public class ActionInvocationTest {
         }
 
         for (boolean test : tests) {
-            assertEquals(test, true);
+			assertTrue(test);
         }
 
 
@@ -226,19 +226,19 @@ public class ActionInvocationTest {
 
         ActionInvocation getTargetInvocation = new ActionInvocation(svc.getAction("GetTarget"));
         svc.getExecutor(getTargetInvocation.getAction()).execute(getTargetInvocation);
-        assertEquals(getTargetInvocation.getFailure(), null);
+		assertNull(getTargetInvocation.getFailure());
         assertEquals(getTargetInvocation.getOutput().length, 1);
         assertEquals(getTargetInvocation.getOutput()[0].toString(), "1");
 
         ActionInvocation setMyStringInvocation = new ActionInvocation(svc.getAction("SetMyString"));
         setMyStringInvocation.setInput("MyString", "foo");
         svc.getExecutor(setMyStringInvocation.getAction()).execute(setMyStringInvocation);
-        assertEquals(setMyStringInvocation.getFailure(), null);
+		assertNull(setMyStringInvocation.getFailure());
         assertEquals(setMyStringInvocation.getOutput().length, 0);
 
         ActionInvocation getMyStringInvocation = new ActionInvocation(svc.getAction("GetMyString"));
         svc.getExecutor(getMyStringInvocation.getAction()).execute(getMyStringInvocation);
-        assertEquals(getTargetInvocation.getFailure(), null);
+		assertNull(getTargetInvocation.getFailure());
         assertEquals(getMyStringInvocation.getOutput().length, 1);
         assertEquals(getMyStringInvocation.getOutput()[0].toString(), "foo");
 
@@ -276,26 +276,26 @@ public class ActionInvocationTest {
         upnpService.getControlPoint().execute(setTargetCallback);
 
         for (boolean test : tests) {
-            assertEquals(test, true);
+			assertTrue(test);
         }
 
         LocalService svc = (LocalService) service;
 
         ActionInvocation getTargetInvocation = new ActionInvocation(svc.getAction("GetTarget"));
         svc.getExecutor(getTargetInvocation.getAction()).execute(getTargetInvocation);
-        assertEquals(getTargetInvocation.getFailure(), null);
+		assertNull(getTargetInvocation.getFailure());
         assertEquals(getTargetInvocation.getOutput().length, 1);
         assertEquals(getTargetInvocation.getOutput()[0].toString(), "1");
 
         ActionInvocation setMyStringInvocation = new ActionInvocation(svc.getAction("SetMyString"));
         setMyStringInvocation.setInput("MyString1", "foo");
         svc.getExecutor(setMyStringInvocation.getAction()).execute(setMyStringInvocation);
-        assertEquals(setMyStringInvocation.getFailure(), null);
+		assertNull(setMyStringInvocation.getFailure());
         assertEquals(setMyStringInvocation.getOutput().length, 0);
 
         ActionInvocation getMyStringInvocation = new ActionInvocation(svc.getAction("GetMyString"));
         svc.getExecutor(getMyStringInvocation.getAction()).execute(getMyStringInvocation);
-        assertEquals(getTargetInvocation.getFailure(), null);
+		assertNull(getTargetInvocation.getFailure());
         assertEquals(getMyStringInvocation.getOutput().length, 1);
         assertEquals(getMyStringInvocation.getOutput()[0].toString(), "foo");
 
@@ -450,7 +450,7 @@ public class ActionInvocationTest {
     }
 
     public static class MyString {
-        private String s;
+        private final String s;
 
         public MyString(String s) {
             this.s = s;

@@ -133,7 +133,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
 
         } catch (UnsupportedDataException ex) {
-        	log.log(Level.WARNING, "Error reading action request XML body: " + ex.toString(), Exceptions.unwrap(ex));
+        	log.log(Level.WARNING, "Error reading action request XML body: " + ex, Exceptions.unwrap(ex));
 
             invocation =
                     new RemoteActionInvocation(

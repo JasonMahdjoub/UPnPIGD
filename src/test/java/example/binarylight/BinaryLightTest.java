@@ -6,6 +6,7 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Christian Bauer
@@ -30,7 +31,7 @@ public class BinaryLightTest {
         LocalService<SwitchPower> service = binaryLight.getServices()[0];
         client.executeAction(upnpService, binaryLight.getServices()[0]);
         Thread.sleep(100);
-        assertEquals(service.getManager().getImplementation().getStatus(), true);
+		assertTrue(service.getManager().getImplementation().getStatus());
     }
 
 }

@@ -58,10 +58,8 @@ public class Location {
         Location location = (Location) o;
 
         if (!networkAddress.equals(location.networkAddress)) return false;
-        if (!path.equals(location.path)) return false;
-
-        return true;
-    }
+		return path.equals(location.path);
+	}
 
     @Override
     public int hashCode() {

@@ -27,16 +27,16 @@ public interface MulticastReceiverConfiguration {
     /**
      * @return The multicast group to join.
      */
-    public InetAddress getGroup();
+	InetAddress getGroup();
 
     /**
      * @return The port to listen on.
      */
-    public int getPort();
+	int getPort();
 
     /**
      * @return The maximum buffer size of received UDP datagrams.
      */
-    public int getMaxDatagramBytes();
+	int getMaxDatagramBytes();
     
 }

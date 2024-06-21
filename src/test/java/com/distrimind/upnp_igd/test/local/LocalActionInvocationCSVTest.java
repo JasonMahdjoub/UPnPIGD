@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 public class LocalActionInvocationCSVTest {
 
@@ -87,9 +88,9 @@ public class LocalActionInvocationCSVTest {
         result = executeActions(svc, "SetIntVar", "GetIntVar", testIntegers);
         List<Integer> csvInteger = new CSVInteger(result);
         assert csvInteger.size() == 3;
-        assertEquals(csvInteger.get(0), new Integer(123));
-        assertEquals(csvInteger.get(1), new Integer(-456));
-        assertEquals(csvInteger.get(2), new Integer(789));
+        assertEquals(csvInteger.get(0), Integer.valueOf(123));
+        assertEquals(csvInteger.get(1), Integer.valueOf(-456));
+        assertEquals(csvInteger.get(2), Integer.valueOf(789));
 
         List<Boolean> testBooleans = new CSVBoolean();
         testBooleans.add(true);
@@ -98,9 +99,9 @@ public class LocalActionInvocationCSVTest {
         result = executeActions(svc, "SetBooleanVar", "GetBooleanVar", testBooleans);
         List<Boolean> csvBoolean = new CSVBoolean(result);
         assert csvBoolean.size() == 3;
-        assertEquals(csvBoolean.get(0), new Boolean(true));
-        assertEquals(csvBoolean.get(1), new Boolean(true));
-        assertEquals(csvBoolean.get(2), new Boolean(false));
+        assertEquals(csvBoolean.get(0), Boolean.TRUE);
+        assertEquals(csvBoolean.get(1), Boolean.TRUE);
+        assertEquals(csvBoolean.get(2), Boolean.FALSE);
 
         List<UnsignedIntegerFourBytes> testUifour = new CSVUnsignedIntegerFourBytes();
         testUifour.add(new UnsignedIntegerFourBytes(123));
@@ -118,12 +119,12 @@ public class LocalActionInvocationCSVTest {
         ActionInvocation setActionInvocation = new ActionInvocation(svc.getAction(setAction));
         setActionInvocation.setInput(svc.getAction(setAction).getFirstInputArgument().getName(), input.toString());
         svc.getExecutor(setActionInvocation.getAction()).execute(setActionInvocation);
-        assertEquals(setActionInvocation.getFailure(), null);
+		assertNull(setActionInvocation.getFailure());
         assertEquals(setActionInvocation.getOutput().length, 0);
 
         ActionInvocation getActionInvocation = new ActionInvocation(svc.getAction(getAction));
         svc.getExecutor(getActionInvocation.getAction()).execute(getActionInvocation);
-        assertEquals(getActionInvocation.getFailure(), null);
+		assertNull(getActionInvocation.getFailure());
         assertEquals(getActionInvocation.getOutput().length, 1);
         return getActionInvocation.getOutput(svc.getAction(getAction).getFirstOutputArgument()).toString();
     }
@@ -168,9 +169,9 @@ public class LocalActionInvocationCSVTest {
         public void setIntVar(@UpnpInputArgument(name = "IntVar") CSVInteger intVar) {
             this.intVar = intVar;
             assertEquals(intVar.size(), 3);
-            assertEquals(intVar.get(0), new Integer(123));
-            assertEquals(intVar.get(1), new Integer(-456));
-            assertEquals(intVar.get(2), new Integer(789));
+            assertEquals(intVar.get(0), Integer.valueOf(123));
+            assertEquals(intVar.get(1), Integer.valueOf(-456));
+            assertEquals(intVar.get(2), Integer.valueOf(789));
         }
 
         @UpnpAction(out = @UpnpOutputArgument(name = "IntVar"))
@@ -182,9 +183,9 @@ public class LocalActionInvocationCSVTest {
         public void setBooleanVar(@UpnpInputArgument(name = "BooleanVar") CSVBoolean booleanVar) {
             this.booleanVar = booleanVar;
             assertEquals(booleanVar.size(), 3);
-            assertEquals(booleanVar.get(0), new Boolean(true));
-            assertEquals(booleanVar.get(1), new Boolean(true));
-            assertEquals(booleanVar.get(2), new Boolean(false));
+            assertEquals(booleanVar.get(0), Boolean.TRUE);
+            assertEquals(booleanVar.get(1), Boolean.TRUE);
+            assertEquals(booleanVar.get(2), Boolean.FALSE);
         }
 
         @UpnpAction(out = @UpnpOutputArgument(name = "BooleanVar"))

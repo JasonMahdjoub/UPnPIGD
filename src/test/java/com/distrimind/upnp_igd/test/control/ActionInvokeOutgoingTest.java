@@ -51,7 +51,7 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 
 public class ActionInvokeOutgoingTest {
@@ -137,7 +137,7 @@ public class ActionInvokeOutgoingTest {
 
         assert actionInvocation.getFailure() == null;
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 0);
-        assertEquals(assertions[0], true);
+		assertTrue(assertions[0]);
         assertEquals(actionInvocation.getOutput().length, 1);
         assertEquals(actionInvocation.getOutput()[0].toString(), "0");
 
@@ -153,7 +153,7 @@ public class ActionInvokeOutgoingTest {
         LocalService service = ld.getServices()[0];
         upnpService.getRegistry().addDevice(ld);
 
-        assertEquals(service.getAction("NonExistentAction"), null);
+		assertNull(service.getAction("NonExistentAction"));
     }
 
     @Test
@@ -188,7 +188,7 @@ public class ActionInvokeOutgoingTest {
 
         assert actionInvocation.getFailure() != null;
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 0);
-        assertEquals(assertions[0], true);
+		assertTrue(assertions[0]);
 
         assertEquals(actionInvocation.getFailure().getErrorCode(), ErrorCode.ACTION_FAILED.getCode());
         assertEquals(
@@ -254,7 +254,7 @@ public class ActionInvokeOutgoingTest {
 
         assert actionInvocation.getFailure() == null;
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 1);
-        assertEquals(assertions[0], true);
+		assertTrue(assertions[0]);
 
         StreamRequestMessage request = upnpService.getRouter().getSentStreamRequestMessages().get(0);
 
@@ -265,7 +265,7 @@ public class ActionInvokeOutgoingTest {
         );
         assertEquals(
             request.getHeaders().getFirstHeaderString(UpnpHeader.Type.SOAPACTION),
-            "\"" + SampleServiceOne.getThisServiceType().toString() + "#GetTarget\""
+            "\"" + SampleServiceOne.getThisServiceType() + "#GetTarget\""
         );
 
         // The extra headers
@@ -326,7 +326,7 @@ public class ActionInvokeOutgoingTest {
 
         assert actionInvocation.getFailure() != null;
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 1);
-        assertEquals(assertions[0], true);
+		assertTrue(assertions[0]);
         assertEquals(actionInvocation.getFailure().getErrorCode(), ErrorCode.INVALID_CONTROL_URL.getCode());
         assertEquals(
             actionInvocation.getFailure().getMessage(),
@@ -378,7 +378,7 @@ public class ActionInvokeOutgoingTest {
 
         assert actionInvocation.getFailure() != null;
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 1);
-        assertEquals(assertions[0], true);
+		assertTrue(assertions[0]);
         assertEquals(actionInvocation.getFailure().getErrorCode(), ErrorCode.ACTION_FAILED.getCode());
         assertEquals(
             actionInvocation.getFailure().getMessage(),
@@ -418,7 +418,7 @@ public class ActionInvokeOutgoingTest {
 
         assert actionInvocation.getFailure() != null;
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 1);
-        assertEquals(assertions[0], true);
+		assertTrue(assertions[0]);
         assertEquals(actionInvocation.getFailure().getErrorCode(), ErrorCode.ACTION_FAILED.getCode());
         assertEquals(
             actionInvocation.getFailure().getMessage(),
@@ -670,7 +670,7 @@ public class ActionInvokeOutgoingTest {
 
         assert actionInvocation.getFailure() == null;
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 1);
-        assertEquals(assertions[0], true);
+		assertTrue(assertions[0]);
         assertEquals(
             upnpService.getRouter().getSentStreamRequestMessages().get(0).getHeaders().getFirstHeader(UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class).getString(),
             ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8.toString()

@@ -39,8 +39,8 @@ public class ServiceId {
     public static final Pattern BROKEN_PATTERN =
                Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_ID+ ")");
 
-    private String namespace;
-    private String id;
+    private final String namespace;
+    private final String id;
 
     public ServiceId(String namespace, String id) {
         if (namespace != null && !namespace.matches(Constants.REGEX_NAMESPACE)) {
@@ -96,7 +96,7 @@ public class ServiceId {
         }
 
         // TODO: UPNP VIOLATION: PS Audio Bridge has invalid service IDs
-        String tokens[] = s.split("[:]");
+        String[] tokens = s.split("[:]");
         if (tokens.length == 4) {
             log.warning("UPnP specification violation, trying a simple colon-split of: " + s);
             return new ServiceId(tokens[1], tokens[3]);
@@ -118,10 +118,8 @@ public class ServiceId {
         ServiceId serviceId = (ServiceId) o;
 
         if (!id.equals(serviceId.id)) return false;
-        if (!namespace.equals(serviceId.namespace)) return false;
-
-        return true;
-    }
+		return namespace.equals(serviceId.namespace);
+	}
 
     @Override
     public int hashCode() {

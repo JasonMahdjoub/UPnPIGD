@@ -23,8 +23,8 @@ package com.distrimind.upnp_igd.model.types;
  */
 public class NamedDeviceType {
 
-    private UDN udn;
-    private DeviceType deviceType;
+    private final UDN udn;
+    private final DeviceType deviceType;
 
     public NamedDeviceType(UDN udn, DeviceType deviceType) {
         this.udn = udn;
@@ -69,10 +69,8 @@ public class NamedDeviceType {
         NamedDeviceType that = (NamedDeviceType) o;
 
         if (!deviceType.equals(that.deviceType)) return false;
-        if (!udn.equals(that.udn)) return false;
-
-        return true;
-    }
+		return udn.equals(that.udn);
+	}
 
     @Override
     public int hashCode() {

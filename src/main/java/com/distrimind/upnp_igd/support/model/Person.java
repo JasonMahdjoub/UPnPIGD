@@ -20,7 +20,7 @@ package com.distrimind.upnp_igd.support.model;
  */
 public class Person {
 
-    private String name;
+    private final String name;
 
     public Person(String name) {
         this.name = name;
@@ -37,10 +37,8 @@ public class Person {
 
         Person person = (Person) o;
 
-        if (!name.equals(person.name)) return false;
-
-        return true;
-    }
+		return name.equals(person.name);
+	}
 
     @Override
     public int hashCode() {

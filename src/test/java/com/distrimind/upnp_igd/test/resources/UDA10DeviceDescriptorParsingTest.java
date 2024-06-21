@@ -137,11 +137,11 @@ public class UDA10DeviceDescriptorParsingTest {
 
         assertEquals(
                 device.normalizeURI(device.getDetails().getManufacturerDetails().getManufacturerURI()).toString(),
-                SampleData.getLocalBaseURL().toString() + "mfc.html"
+                SampleData.getLocalBaseURL() + "mfc.html"
         );
         assertEquals(
                 device.normalizeURI(device.getDetails().getModelDetails().getModelURI()).toString(),
-                SampleData.getLocalBaseURL().toString() + "someotherbase/MY-DEVICE-123/model.html"
+                SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/model.html"
         );
         assertEquals(
                 device.normalizeURI(device.getDetails().getPresentationURI()).toString(),
@@ -150,20 +150,20 @@ public class UDA10DeviceDescriptorParsingTest {
 
         assertEquals(
                 device.normalizeURI(device.getIcons()[0].getUri()).toString(),
-                SampleData.getLocalBaseURL().toString() + "someotherbase/MY-DEVICE-123/icon.png"
+                SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/icon.png"
         );
 
         assertEquals(device.normalizeURI(
                 device.getServices()[0].getDescriptorURI()).toString(),
-                     SampleData.getLocalBaseURL().toString() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/desc.xml"
+                     SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/desc.xml"
         );
         assertEquals(
                 device.normalizeURI(device.getServices()[0].getControlURI()).toString(),
-                SampleData.getLocalBaseURL().toString() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/control"
+                SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/control"
         );
         assertEquals(
                 device.normalizeURI(device.getServices()[0].getEventSubscriptionURI()).toString(),
-                SampleData.getLocalBaseURL().toString() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/events"
+                SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/events"
         );
 
         assertTrue(device.isRoot());
@@ -182,12 +182,12 @@ public class UDA10DeviceDescriptorParsingTest {
 
         assertEquals(
                 device.normalizeURI(device.getDetails().getManufacturerDetails().getManufacturerURI()).toString(),
-                SampleData.getLocalBaseURL().toString() + "mfc.html"
+                SampleData.getLocalBaseURL() + "mfc.html"
         );
 
         assertEquals(
                 device.normalizeURI(device.getDetails().getModelDetails().getModelURI()).toString(),
-                SampleData.getLocalBaseURL().toString() + "model.html"
+                SampleData.getLocalBaseURL() + "model.html"
         );
         assertEquals(
                 device.normalizeURI(device.getDetails().getPresentationURI()).toString(),
@@ -196,20 +196,20 @@ public class UDA10DeviceDescriptorParsingTest {
 
         assertEquals(
                 device.normalizeURI(device.getIcons()[0].getUri()).toString(),
-                SampleData.getLocalBaseURL().toString() + "icon.png"
+                SampleData.getLocalBaseURL() + "icon.png"
         );
 
         assertEquals(device.normalizeURI(
                 device.getServices()[0].getDescriptorURI()).toString(),
-                     SampleData.getLocalBaseURL().toString() + "svc.xml"
+                     SampleData.getLocalBaseURL() + "svc.xml"
         );
         assertEquals(
                 device.normalizeURI(device.getServices()[0].getControlURI()).toString(),
-                SampleData.getLocalBaseURL().toString() + "control"
+                SampleData.getLocalBaseURL() + "control"
         );
         assertEquals(
                 device.normalizeURI(device.getServices()[0].getEventSubscriptionURI()).toString(),
-                SampleData.getLocalBaseURL().toString() + "events"
+                SampleData.getLocalBaseURL() + "events"
         );
 
         assertTrue(device.isRoot());

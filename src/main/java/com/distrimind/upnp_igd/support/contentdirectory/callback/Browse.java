@@ -43,7 +43,7 @@ public abstract class Browse extends ActionCallback {
         LOADING("Loading..."),
         OK("OK");
 
-        private String defaultMessage;
+        private final String defaultMessage;
 
         Status(String defaultMessage) {
             this.defaultMessage = defaultMessage;
@@ -54,7 +54,7 @@ public abstract class Browse extends ActionCallback {
         }
     }
 
-    private static Logger log = Logger.getLogger(Browse.class.getName());
+    private static final Logger log = Logger.getLogger(Browse.class.getName());
 
     /**
      * Browse with first result 0 and {@link #getDefaultMaxResults()}, filters with {@link #CAPS_WILDCARD}.

@@ -16,7 +16,7 @@ package example.localservice;
 
 public class MyStringConvertible {
 
-    private String msg;
+    private final String msg;
 
     public MyStringConvertible(String msg) {
         this.msg = msg;

@@ -149,9 +149,8 @@ public class DLNAHeaders extends UpnpHeaders {
 
     public <H extends UpnpHeader> H getFirstHeader(DLNAHeader.Type type, Class<H> subtype) {
         UpnpHeader[] headers = getAsArray(type);
-        if (headers.length == 0) return null;
 
-        for (UpnpHeader header : headers) {
+		for (UpnpHeader header : headers) {
             if (subtype.isAssignableFrom(header.getClass())) {
                 return (H) header;
             }

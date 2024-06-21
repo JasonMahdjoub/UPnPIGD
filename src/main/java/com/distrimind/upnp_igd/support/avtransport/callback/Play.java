@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public abstract class Play extends ActionCallback {
 
-    private static Logger log = Logger.getLogger(Play.class.getName());
+    private static final Logger log = Logger.getLogger(Play.class.getName());
 
     public Play(Service service) {
         this(new UnsignedIntegerFourBytes(0), service, "1");

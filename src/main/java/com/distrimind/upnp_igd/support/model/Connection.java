@@ -24,9 +24,9 @@ public class Connection {
 
     static public class StatusInfo {
 
-        private Status status;
-        private long uptimeSeconds;
-        private Error lastError;
+        private final Status status;
+        private final long uptimeSeconds;
+        private final Error lastError;
 
         public StatusInfo(Status status, UnsignedIntegerFourBytes uptime, Error lastError) {
             this(status, uptime.getValue(), lastError);
@@ -63,10 +63,8 @@ public class Connection {
 
             if (uptimeSeconds != that.uptimeSeconds) return false;
             if (lastError != that.lastError) return false;
-            if (status != that.status) return false;
-
-            return true;
-        }
+			return status == that.status;
+		}
 
         @Override
         public int hashCode() {

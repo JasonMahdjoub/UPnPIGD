@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class RegistryExpirationTest {
 
@@ -155,7 +156,7 @@ public class RegistryExpirationTest {
 
         Thread.sleep(2000);
 
-        assertEquals(testRunnable.wasExecuted, true);
+		assertTrue(testRunnable.wasExecuted);
 
         upnpService.shutdown();
     }

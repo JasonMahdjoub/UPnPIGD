@@ -29,15 +29,15 @@ import java.util.concurrent.Future;
  */
 public interface ControlPoint {
 
-    public UpnpServiceConfiguration getConfiguration();
-    public ProtocolFactory getProtocolFactory();
-    public Registry getRegistry();
+    UpnpServiceConfiguration getConfiguration();
+    ProtocolFactory getProtocolFactory();
+    Registry getRegistry();
 
-    public void search();
-    public void search(UpnpHeader searchType);
-    public void search(int mxSeconds);
-    public void search(UpnpHeader searchType, int mxSeconds);
-    public Future execute(ActionCallback callback);
-    public void execute(SubscriptionCallback callback);
+    void search();
+    void search(UpnpHeader searchType);
+    void search(int mxSeconds);
+    void search(UpnpHeader searchType, int mxSeconds);
+    Future execute(ActionCallback callback);
+    void execute(SubscriptionCallback callback);
 
 }

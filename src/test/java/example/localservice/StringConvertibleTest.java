@@ -30,6 +30,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 /**
  * String value converters
@@ -126,48 +127,48 @@ public class StringConvertibleTest {
         ActionInvocation setMyURL = new ActionInvocation(svc.getAction("SetMyURL"));
         setMyURL.setInput("In", "http://foo/bar");
         svc.getExecutor(setMyURL.getAction()).execute(setMyURL);
-        assertEquals(setMyURL.getFailure(), null);
+		assertNull(setMyURL.getFailure());
         assertEquals(setMyURL.getOutput().length, 0);
 
         ActionInvocation getMyURL = new ActionInvocation(svc.getAction("GetMyURL"));
         svc.getExecutor(getMyURL.getAction()).execute(getMyURL);
-        assertEquals(getMyURL.getFailure(), null);
+		assertNull(getMyURL.getFailure());
         assertEquals(getMyURL.getOutput().length, 1);
         assertEquals(getMyURL.getOutput()[0].toString(), "http://foo/bar");
 
         ActionInvocation setMyURI = new ActionInvocation(svc.getAction("SetMyURI"));
         setMyURI.setInput("In", "http://foo/bar");
         svc.getExecutor(setMyURI.getAction()).execute(setMyURI);
-        assertEquals(setMyURI.getFailure(), null);
+		assertNull(setMyURI.getFailure());
         assertEquals(setMyURI.getOutput().length, 0);
 
         ActionInvocation getMyURI = new ActionInvocation(svc.getAction("GetMyURI"));
         svc.getExecutor(getMyURI.getAction()).execute(getMyURI);
-        assertEquals(getMyURI.getFailure(), null);
+		assertNull(getMyURI.getFailure());
         assertEquals(getMyURI.getOutput().length, 1);
         assertEquals(getMyURI.getOutput()[0].toString(), "http://foo/bar");
 
         ActionInvocation setMyNumbers = new ActionInvocation(svc.getAction("SetMyNumbers"));
         setMyNumbers.setInput("In", "1,2,3");
         svc.getExecutor(setMyNumbers.getAction()).execute(setMyNumbers);
-        assertEquals(setMyNumbers.getFailure(), null);
+		assertNull(setMyNumbers.getFailure());
         assertEquals(setMyNumbers.getOutput().length, 0);
 
         ActionInvocation getMyNumbers = new ActionInvocation(svc.getAction("GetMyNumbers"));
         svc.getExecutor(getMyNumbers.getAction()).execute(getMyNumbers);
-        assertEquals(getMyNumbers.getFailure(), null);
+		assertNull(getMyNumbers.getFailure());
         assertEquals(getMyNumbers.getOutput().length, 1);
         assertEquals(getMyNumbers.getOutput()[0].toString(), "1,2,3");
 
         ActionInvocation setMyStringConvertible = new ActionInvocation(svc.getAction("SetMyStringConvertible"));
         setMyStringConvertible.setInput("In", "foobar");
         svc.getExecutor(setMyStringConvertible.getAction()).execute(setMyStringConvertible);
-        assertEquals(setMyStringConvertible.getFailure(), null);
+		assertNull(setMyStringConvertible.getFailure());
         assertEquals(setMyStringConvertible.getOutput().length, 0);
 
         ActionInvocation getMyStringConvertible = new ActionInvocation(svc.getAction("GetMyStringConvertible"));
         svc.getExecutor(getMyStringConvertible.getAction()).execute(getMyStringConvertible);
-        assertEquals(getMyStringConvertible.getFailure(), null);
+		assertNull(getMyStringConvertible.getFailure());
         assertEquals(getMyStringConvertible.getOutput().length, 1);
         assertEquals(getMyStringConvertible.getOutput()[0].toString(), "foobar");
 

@@ -41,8 +41,8 @@ public class ServiceType {
     public static final Pattern BROKEN_PATTERN =
         Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):serviceId:(" + Constants.REGEX_TYPE + "):([0-9]+).*");
 
-    private String namespace;
-    private String type;
+    private final String namespace;
+    private final String type;
     private int version = 1;
 
     public ServiceType(String namespace, String type) {
@@ -140,7 +140,7 @@ public class ServiceType {
             }
         } catch (RuntimeException e) {
             throw new InvalidValueException(String.format(
-                "Can't parse service type string (namespace/type/version) '%s': %s", s, e.toString()
+                "Can't parse service type string (namespace/type/version) '%s': %s", s, e
             ));
         }
 
@@ -155,9 +155,8 @@ public class ServiceType {
         if (that == null) return false;
         if (!namespace.equals(that.namespace)) return false;
         if (!type.equals(that.type)) return false;
-        if (version < that.version) return false;
-        return true;
-    }
+		return version >= that.version;
+	}
 
     public String toFriendlyString() {
         return getNamespace() + ":" + getType() + ":" + getVersion();
@@ -177,10 +176,8 @@ public class ServiceType {
 
         if (version != that.version) return false;
         if (!namespace.equals(that.namespace)) return false;
-        if (!type.equals(that.type)) return false;
-
-        return true;
-    }
+		return type.equals(that.type);
+	}
 
     @Override
     public int hashCode() {

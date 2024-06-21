@@ -23,11 +23,11 @@ public class CodedDataBuffer {
     public enum TransferMechanism {
         IMMEDIATELY,
         TIMESTAMP,
-        OTHER;
-    }
+        OTHER
+	}
     
-    private Long size;
-    private TransferMechanism tranfer;
+    private final Long size;
+    private final TransferMechanism tranfer;
 
     public CodedDataBuffer(Long size, TransferMechanism transfer) {
         this.size = size;

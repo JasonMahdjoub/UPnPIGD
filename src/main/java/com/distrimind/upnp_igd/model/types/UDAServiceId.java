@@ -31,7 +31,7 @@ import java.util.regex.Matcher;
  */
 public class UDAServiceId extends ServiceId {
 	
-	private static Logger log = Logger.getLogger(UDAServiceId.class.getName());
+	private static final Logger log = Logger.getLogger(UDAServiceId.class.getName());
 
     public static final String DEFAULT_NAMESPACE = "upnp-org";
     public static final String BROKEN_DEFAULT_NAMESPACE = "schemas-upnp-org"; // TODO: UPNP VIOLATION: Intel UPnP tools!

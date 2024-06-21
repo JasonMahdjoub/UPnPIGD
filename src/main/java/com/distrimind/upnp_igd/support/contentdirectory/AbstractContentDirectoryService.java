@@ -109,7 +109,7 @@ public abstract class AbstractContentDirectoryService {
             defaultValue = "0",
             eventMaximumRateMilliseconds = 200
     )
-    private UnsignedIntegerFourBytes systemUpdateID = new UnsignedIntegerFourBytes(0);
+    private final UnsignedIntegerFourBytes systemUpdateID = new UnsignedIntegerFourBytes(0);
 
     final protected PropertyChangeSupport propertyChangeSupport;
 

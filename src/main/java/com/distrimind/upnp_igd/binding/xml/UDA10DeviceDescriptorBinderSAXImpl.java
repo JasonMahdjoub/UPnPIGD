@@ -87,7 +87,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         } catch (ValidationException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new DescriptorBindingException("Could not parse device descriptor: " + ex.toString(), ex);
+            throw new DescriptorBindingException("Could not parse device descriptor: " + ex, ex);
         }
     }
 
@@ -122,7 +122,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
 						getInstance().baseURL = new URL(urlString);
 					}
 				} catch (Exception ex) {
-					throw new SAXException("Invalid URLBase: " + ex.toString());
+					throw new SAXException("Invalid URLBase: " + ex);
 				}
 			}
         }

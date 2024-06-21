@@ -64,7 +64,7 @@ public class DiscoveryOptions {
     }
 
     // Performance optimization on Android
-    private static String simpleName = DiscoveryOptions.class.getSimpleName();
+    private static final String simpleName = DiscoveryOptions.class.getSimpleName();
 	@Override
     public String toString() {
         return "(" + simpleName + ")" + " advertised: " + isAdvertised() + " byebyeBeforeFirstAlive: " + isByeByeBeforeFirstAlive();

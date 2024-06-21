@@ -74,7 +74,7 @@ import java.util.regex.Pattern;
  */
 public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityResolver {
 
-	private static Logger log = Logger.getLogger(DOMParser.class.getName());
+	private static final Logger log = Logger.getLogger(DOMParser.class.getName());
 
 	public static final URL XML_SCHEMA_RESOURCE =
 			Thread.currentThread().getContextClassLoader().getResource("org/seamless/schemas/xml.xsd");
@@ -499,7 +499,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 				for (int i = 0; i < group.length(); i++) {
 					spaces.append("&#160;");
 				}
-				matcher.appendReplacement(temp, "$1" + spaces.toString() + "$3");
+				matcher.appendReplacement(temp, "$1" + spaces + "$3");
 			}
 			matcher.appendTail(temp);
 			result = temp.toString();
@@ -531,7 +531,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 	}
 
 	public static abstract class NodeVisitor {
-		private short nodeType;
+		private final short nodeType;
 
 		protected NodeVisitor(short nodeType) {
 			assert nodeType < Node.NOTATION_NODE; // All other node types are below

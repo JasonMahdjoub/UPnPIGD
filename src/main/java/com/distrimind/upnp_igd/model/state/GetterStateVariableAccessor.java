@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
  */
 public class GetterStateVariableAccessor extends StateVariableAccessor {
 
-    private Method getter;
+    private final Method getter;
 
     public GetterStateVariableAccessor(Method getter) {
         this.getter = getter;

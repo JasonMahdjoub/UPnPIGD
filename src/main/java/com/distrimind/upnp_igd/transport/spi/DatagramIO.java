@@ -59,24 +59,24 @@ public interface DatagramIO<C extends DatagramIOConfiguration> extends Runnable 
      * @param datagramProcessor Reads and writes datagrams.
      * @throws InitializationException If the service could not be initialized or started.
      */
-    public void init(NetworkAddressFactory networkAddressFactory, InetAddress bindAddress, Router router, DatagramProcessor datagramProcessor) throws InitializationException;
+	void init(NetworkAddressFactory networkAddressFactory, InetAddress bindAddress, Router router, DatagramProcessor datagramProcessor) throws InitializationException;
 
     /**
      * Stops the service, closes any listening sockets.
      */
-    public void stop();
+	void stop();
 
     /**
      * @return This service's configuration.
      */
-    public C getConfiguration();
+	C getConfiguration();
 
     /**
      * Sends a datagram after conversion with {@link DatagramProcessor#write(OutgoingDatagramMessage)}.
      *
      * @param message The message to send.
      */
-    public void send(OutgoingDatagramMessage message);
+	void send(OutgoingDatagramMessage message);
 
     /**
      * The actual sending of a UDP datagram.
@@ -87,5 +87,5 @@ public interface DatagramIO<C extends DatagramIOConfiguration> extends Runnable 
      *
      * @param datagram The UDP datagram to send.
      */
-    public void send(DatagramPacket datagram);
+	void send(DatagramPacket datagram);
 }

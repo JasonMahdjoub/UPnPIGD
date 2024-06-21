@@ -49,7 +49,7 @@ import java.util.logging.Logger;
  */
 public class StreamServerImpl implements StreamServer<StreamServerConfigurationImpl> {
 
-    private static Logger log = Logger.getLogger(StreamServer.class.getName());
+    private static final Logger log = Logger.getLogger(StreamServer.class.getName());
 
     final protected StreamServerConfigurationImpl configuration;
     protected HttpServer server;
@@ -68,7 +68,7 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
             log.info("Created server (for receiving TCP streams) on: " + server.getAddress());
 
         } catch (Exception ex) {
-            throw new InitializationException("Could not initialize " + getClass().getSimpleName() + ": " + ex.toString(), ex);
+            throw new InitializationException("Could not initialize " + getClass().getSimpleName() + ": " + ex, ex);
         }
     }
 

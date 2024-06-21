@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public abstract class GetDeviceCapabilities extends ActionCallback {
 
-    private static Logger log = Logger.getLogger(GetDeviceCapabilities.class.getName());
+    private static final Logger log = Logger.getLogger(GetDeviceCapabilities.class.getName());
 
     public GetDeviceCapabilities(Service service) {
         this(new UnsignedIntegerFourBytes(0), service);

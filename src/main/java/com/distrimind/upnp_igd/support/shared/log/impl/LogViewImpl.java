@@ -137,11 +137,7 @@ public class LogViewImpl extends JPanel implements LogView {
                                 copyButton.setEnabled(true);
                                 LogMessage msg = (LogMessage) logTableModel.getValueAt(rows[0], 0);
                                 // TODO: This setting should be injected
-                                if (msg.getMessage().length() > getExpandMessageCharacterLimit()) {
-                                    expandButton.setEnabled(true);
-                                } else {
-                                    expandButton.setEnabled(false);
-                                }
+								expandButton.setEnabled(msg.getMessage().length() > getExpandMessageCharacterLimit());
                             } else {
                                 copyButton.setEnabled(true);
                                 expandButton.setEnabled(false);

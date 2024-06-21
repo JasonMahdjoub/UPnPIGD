@@ -87,7 +87,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         } catch (ValidationException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new DescriptorBindingException("Could not parse service descriptor: " + ex.toString(), ex);
+            throw new DescriptorBindingException("Could not parse service descriptor: " + ex, ex);
         }
     }
 
@@ -110,7 +110,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         } catch (ValidationException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new DescriptorBindingException("Could not parse service DOM: " + ex.toString(), ex);
+            throw new DescriptorBindingException("Could not parse service DOM: " + ex, ex);
         }
     }
 

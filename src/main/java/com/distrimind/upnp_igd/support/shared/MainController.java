@@ -55,7 +55,7 @@ public abstract class MainController extends AbstractController<JFrame> {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-            System.out.println("Unable to load native look and feel: " + ex.toString());
+            System.out.println("Unable to load native look and feel: " + ex);
         }
 
         // Exception handler

@@ -37,6 +37,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 /**
  * Accessing remote client information
@@ -141,7 +142,7 @@ public class RemoteClientInfoTest {
 
         setTargetInvocation.setInput("NewTargetValue", true);
         svc.getExecutor(setTargetInvocation.getAction()).execute(setTargetInvocation);
-        assertEquals(setTargetInvocation.getFailure(), null);
+		assertNull(setTargetInvocation.getFailure());
         assertEquals(setTargetInvocation.getOutput().length, 0);
 
         assertEquals(clientInfo.getExtraResponseHeaders().getFirstHeader("X-MY-HEADER"), "foobar");

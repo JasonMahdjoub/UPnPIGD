@@ -87,10 +87,8 @@ public class ProtocolInfo {
         if (!additionalInfo.equals(that.additionalInfo)) return false;
         if (!contentFormat.equals(that.contentFormat)) return false;
         if (!network.equals(that.network)) return false;
-        if (protocol != that.protocol) return false;
-
-        return true;
-    }
+		return protocol == that.protocol;
+	}
 
     @Override
     public int hashCode() {

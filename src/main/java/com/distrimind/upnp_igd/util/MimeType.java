@@ -14,11 +14,7 @@
  */
 package com.distrimind.upnp_igd.util;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author Christian Bauer
@@ -27,9 +23,9 @@ public class MimeType {
 
 	public static final String WILDCARD = "*";
 
-	private String type;
-	private String subtype;
-	private Map<String, String> parameters;
+	private final String type;
+	private final String subtype;
+	private final Map<String, String> parameters;
 
 	public MimeType() {
 		this(WILDCARD, WILDCARD);
@@ -199,11 +195,9 @@ public class MimeType {
 
 		MimeType mimeType = (MimeType) o;
 
-		if (parameters != null ? !parameters.equals(mimeType.parameters) : mimeType.parameters != null) return false;
+		if (!Objects.equals(parameters, mimeType.parameters)) return false;
 		if (!subtype.equalsIgnoreCase(mimeType.subtype)) return false;
-		if (!type.equalsIgnoreCase(mimeType.type)) return false;
-
-		return true;
+		return type.equalsIgnoreCase(mimeType.type);
 	}
 
 	@Override

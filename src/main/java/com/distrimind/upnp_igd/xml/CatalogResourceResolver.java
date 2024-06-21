@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  */
 public class CatalogResourceResolver implements LSResourceResolver {
 
-	private static Logger log = Logger.getLogger(CatalogResourceResolver.class.getName());
+	private static final Logger log = Logger.getLogger(CatalogResourceResolver.class.getName());
 
 	private final Map<URI, URL> catalog;
 

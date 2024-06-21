@@ -53,10 +53,8 @@ public class DLNACaps {
 
         DLNACaps dlnaCaps = (DLNACaps) o;
 
-        if (!Arrays.equals(caps, dlnaCaps.caps)) return false;
-
-        return true;
-    }
+		return Arrays.equals(caps, dlnaCaps.caps);
+	}
 
     @Override
     public int hashCode() {

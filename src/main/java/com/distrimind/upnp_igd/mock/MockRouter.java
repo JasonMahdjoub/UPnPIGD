@@ -102,12 +102,12 @@ public class MockRouter implements Router {
         // Simulate an active stream server, otherwise the notification/search response
         // protocols won't even run
         try {
-            return Arrays.asList(
-                new NetworkAddress(
-                    InetAddress.getByName("127.0.0.1"),
-                    NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT
-                )
-            );
+            return List.of(
+					new NetworkAddress(
+							InetAddress.getByName("127.0.0.1"),
+							NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT
+					)
+			);
         } catch (UnknownHostException ex) {
             throw new RuntimeException(ex);
         }

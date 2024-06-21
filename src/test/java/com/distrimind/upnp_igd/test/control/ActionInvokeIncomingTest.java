@@ -180,8 +180,8 @@ public class ActionInvokeIncomingTest {
     }
 
     static class ConcurrentGetTest implements Runnable {
-        private UpnpService upnpService;
-        private LocalService service;
+        private final UpnpService upnpService;
+        private final LocalService service;
 
         ConcurrentGetTest(UpnpService upnpService, LocalService service) {
             this.upnpService = upnpService;

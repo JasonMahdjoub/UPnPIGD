@@ -43,7 +43,7 @@ import java.util.List;
  */
 public abstract class ContentBrowseActionCallback extends Browse {
 
-    private static Logger log = Logger.getLogger(ContentBrowseActionCallback.class.getName());
+    private static final Logger log = Logger.getLogger(ContentBrowseActionCallback.class.getName());
 
     final protected DefaultTreeModel treeModel;
     final protected DefaultMutableTreeNode treeNode;

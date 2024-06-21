@@ -30,7 +30,7 @@ import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 /**
  * Annotating a service implementation
@@ -131,11 +131,11 @@ public class BasicBindingTest {
         assertEquals(svc.getStateVariables().length, 2);
         assertEquals(svc.getStateVariable("Target").getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.BOOLEAN);
         assertEquals(svc.getStateVariable("Target").getTypeDetails().getDefaultValue(), "0");
-        assertEquals(svc.getStateVariable("Target").getEventDetails().isSendEvents(), false);
+		assertFalse(svc.getStateVariable("Target").getEventDetails().isSendEvents());
 
         assertEquals(svc.getStateVariable("Status").getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.BOOLEAN);
         assertEquals(svc.getStateVariable("Status").getTypeDetails().getDefaultValue(), "0");
-        assertEquals(svc.getStateVariable("Status").getEventDetails().isSendEvents(), true);
+		assertTrue(svc.getStateVariable("Status").getEventDetails().isSendEvents());
 
         assertEquals(svc.getActions().length, 4); // Has 3 actions plus QueryStateVariableAction!
 
@@ -169,25 +169,25 @@ public class BasicBindingTest {
         ActionInvocation setTargetInvocation = new ActionInvocation(svc.getAction("SetTarget"));
         setTargetInvocation.setInput("NewTargetValue", true);
         svc.getExecutor(setTargetInvocation.getAction()).execute(setTargetInvocation);
-        assertEquals(setTargetInvocation.getFailure(), null);
+		assertNull(setTargetInvocation.getFailure());
         assertEquals(setTargetInvocation.getOutput().length, 0);
 
         ActionInvocation getStatusInvocation = new ActionInvocation(svc.getAction("GetStatus"));
         svc.getExecutor(getStatusInvocation.getAction()).execute(getStatusInvocation);
-        assertEquals(getStatusInvocation.getFailure(), null);
+		assertNull(getStatusInvocation.getFailure());
         assertEquals(getStatusInvocation.getOutput().length, 1);
         assertEquals(getStatusInvocation.getOutput()[0].toString(), "1");
 
         setTargetInvocation = new ActionInvocation(svc.getAction("SetTarget"));
         setTargetInvocation.setInput("NewTargetValue", false);
         svc.getExecutor(setTargetInvocation.getAction()).execute(setTargetInvocation);
-        assertEquals(setTargetInvocation.getFailure(), null);
+		assertNull(setTargetInvocation.getFailure());
         assertEquals(setTargetInvocation.getOutput().length, 0);
 
         ActionInvocation queryStateVariableInvocation = new ActionInvocation(svc.getAction("QueryStateVariable"));
         queryStateVariableInvocation.setInput("varName", "Status");
         svc.getExecutor(queryStateVariableInvocation.getAction()).execute(queryStateVariableInvocation);
-        assertEquals(queryStateVariableInvocation.getFailure(), null);
+		assertNull(queryStateVariableInvocation.getFailure());
         assertEquals(queryStateVariableInvocation.getOutput().length, 1);
         assertEquals(queryStateVariableInvocation.getOutput()[0].toString(), "0");
 

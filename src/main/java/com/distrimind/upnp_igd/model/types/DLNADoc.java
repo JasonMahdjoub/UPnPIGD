@@ -86,10 +86,8 @@ public class DLNADoc {
         DLNADoc dlnaDoc = (DLNADoc) o;
 
         if (!devClass.equals(dlnaDoc.devClass)) return false;
-        if (!version.equals(dlnaDoc.version)) return false;
-
-        return true;
-    }
+		return version.equals(dlnaDoc.version);
+	}
 
     @Override
     public int hashCode() {

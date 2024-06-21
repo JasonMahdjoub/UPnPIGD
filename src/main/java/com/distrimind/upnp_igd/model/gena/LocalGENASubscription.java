@@ -86,7 +86,7 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
             this.currentValues.put(value.getStateVariable().getName(), value);
 
             if (log.isLoggable(Level.FINEST)) {
-                log.finer("Read state variable value '" + value.getStateVariable().getName() + "': " + value.toString());
+                log.finer("Read state variable value '" + value.getStateVariable().getName() + "': " + value);
             }
 
             // Preserve "last sent" state for future moderation

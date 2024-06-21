@@ -22,9 +22,9 @@ public class BytesRange {
 
     public static final String PREFIX = "bytes=";
     
-    private Long firstByte;
-    private Long lastByte;
-    private Long byteLength;
+    private final Long firstByte;
+    private final Long lastByte;
+    private final Long byteLength;
 
     public BytesRange(Long firstByte, Long lastByte) {
         this.firstByte = firstByte;

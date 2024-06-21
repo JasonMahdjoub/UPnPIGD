@@ -50,7 +50,7 @@ public class BinaryLightClient implements Runnable {
     RegistryListener createRegistryListener(final UpnpService upnpService) {
         return new DefaultRegistryListener() {
 
-            ServiceId serviceId = new UDAServiceId("SwitchPower");
+            final ServiceId serviceId = new UDAServiceId("SwitchPower");
 
             @Override
             public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
@@ -88,7 +88,7 @@ public class BinaryLightClient implements Runnable {
 
                         @Override
                         public void success(ActionInvocation invocation) {
-                            assert invocation.getOutput().length == 0;
+                            assert invocation.getOutput().isEmpty();
                             System.out.println("Successfully called action!");
                         }
 

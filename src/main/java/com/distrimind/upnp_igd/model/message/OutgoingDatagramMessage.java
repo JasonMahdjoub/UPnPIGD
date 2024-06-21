@@ -24,10 +24,10 @@ import java.net.InetAddress;
  */
 public abstract class OutgoingDatagramMessage<O extends UpnpOperation> extends UpnpMessage<O> {
 
-    private InetAddress destinationAddress;
-    private int destinationPort;
+    private final InetAddress destinationAddress;
+    private final int destinationPort;
     // For performance reasons, headers of this message are not normalized
-    private UpnpHeaders headers = new UpnpHeaders(false);
+    private final UpnpHeaders headers = new UpnpHeaders(false);
 
     protected OutgoingDatagramMessage(O operation, InetAddress destinationAddress, int destinationPort) {
         super(operation);

@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.model.types;
 import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.ModelUtil;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -37,10 +38,10 @@ public class SoapActionType {
     public static final Pattern PATTERN =
             Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_TYPE + "):([0-9]+)#("+Constants.REGEX_UDA_NAME+")");
 
-    private String namespace;
-    private String type;
-    private String actionName;
-    private Integer version;
+    private final String namespace;
+    private final String type;
+    private final String actionName;
+    private final Integer version;
 
     public SoapActionType(ServiceType serviceType, String actionName) {
         this(serviceType.getNamespace(), serviceType.getType(), serviceType.getVersion(), actionName);
@@ -87,7 +88,7 @@ public class SoapActionType {
 
         } catch(RuntimeException e) {
         	throw new InvalidValueException(String.format(
-                "Can't parse action type string (namespace/type/version#actionName) '%s': %s", s, e.toString()
+                "Can't parse action type string (namespace/type/version#actionName) '%s': %s", s, e
             ));
         }
         throw new InvalidValueException("Can't parse action type string (namespace/type/version#actionName): " + s);
@@ -121,10 +122,8 @@ public class SoapActionType {
         if (!actionName.equals(that.actionName)) return false;
         if (!namespace.equals(that.namespace)) return false;
         if (!type.equals(that.type)) return false;
-        if (version != null ? !version.equals(that.version) : that.version != null) return false;
-
-        return true;
-    }
+		return Objects.equals(version, that.version);
+	}
 
     @Override
     public int hashCode() {

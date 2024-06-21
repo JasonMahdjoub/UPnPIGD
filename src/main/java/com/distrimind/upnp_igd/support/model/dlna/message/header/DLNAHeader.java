@@ -41,7 +41,7 @@ public abstract class DLNAHeader<T> extends UpnpHeader<T> {
     /**
      * Maps a standardized DLNA header to potential header subtypes.
      */
-    public static enum Type {
+    public enum Type {
 
         TimeSeekRange("TimeSeekRange.dlna.org", TimeSeekRangeHeader.class),
         XSeekRange("X-Seek-Range", TimeSeekRangeHeader.class),
@@ -68,17 +68,17 @@ public abstract class DLNAHeader<T> extends UpnpHeader<T> {
         RTPAMRWBPlusDeInterleaving("rtp-amrwbplus-deint-buf-cap.dlna.org", BufferBytesHeader.class),
         PRAGMA("PRAGMA", PragmaHeader.class);
             
-        private static Map<String, Type> byName = new HashMap<String, Type>() {{
+        private static final Map<String, Type> byName = new HashMap<String, Type>() {{
             for (Type t : Type.values()) {
                 put(t.getHttpName(), t);
             }
         }};
 
-        private String httpName;
-        private Class<? extends DLNAHeader>[] headerTypes;
+        private final String httpName;
+        private final Class<? extends DLNAHeader>[] headerTypes;
 
         @SafeVarargs
-        private Type(String httpName, Class<? extends DLNAHeader>... headerClass) {
+		Type(String httpName, Class<? extends DLNAHeader>... headerClass) {
             this.httpName = httpName;
             this.headerTypes = headerClass;
         }

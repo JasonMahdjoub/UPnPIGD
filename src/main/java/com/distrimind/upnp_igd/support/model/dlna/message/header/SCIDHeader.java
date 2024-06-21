@@ -36,6 +36,6 @@ public class SCIDHeader extends DLNAHeader<String> {
 
     @Override
     public String getString() {
-        return getValue().toString();
+        return getValue();
     }
 }

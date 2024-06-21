@@ -20,8 +20,8 @@ package com.distrimind.upnp_igd.support.model;
  */
 public class VolumeDBRange {
 
-    private Integer minValue;
-    private Integer maxValue;
+    private final Integer minValue;
+    private final Integer maxValue;
 
     public VolumeDBRange(Integer minValue, Integer maxValue) {
         this.minValue = minValue;

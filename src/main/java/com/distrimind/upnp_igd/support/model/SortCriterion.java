@@ -67,9 +67,8 @@ public class SortCriterion {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(ascending ? "+" : "-");
-        sb.append(propertyName);
-        return sb.toString();
+		String sb = (ascending ? "+" : "-") +
+				propertyName;
+        return sb;
     }
 }

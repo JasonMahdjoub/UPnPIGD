@@ -26,9 +26,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public interface ContentBrowseActionCallbackCreator {
 
-    public ActionCallback createContentBrowseActionCallback(Service service,
-                                                            DefaultTreeModel treeModel,
-                                                            DefaultMutableTreeNode treeNode);
+    ActionCallback createContentBrowseActionCallback(Service service,
+													 DefaultTreeModel treeModel,
+													 DefaultMutableTreeNode treeNode);
 
 
 }

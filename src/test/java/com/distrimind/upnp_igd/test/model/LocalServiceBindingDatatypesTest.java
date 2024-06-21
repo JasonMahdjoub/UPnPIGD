@@ -36,6 +36,7 @@ import org.testng.annotations.Test;
 import java.util.Random;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 /**
  * @author Christian Bauer
@@ -74,7 +75,7 @@ public class LocalServiceBindingDatatypesTest {
 
         assertEquals(svc.getStateVariables().length, 1);
         assertEquals(svc.getStateVariable("Data").getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.BIN_BASE64);
-        assertEquals(svc.getStateVariable("Data").getEventDetails().isSendEvents(), false);
+		assertFalse(svc.getStateVariable("Data").getEventDetails().isSendEvents());
 
         assertEquals(svc.getActions().length, 1);
 
@@ -102,7 +103,7 @@ public class LocalServiceBindingDatatypesTest {
         }
 
         @UpnpStateVariable(sendEvents = false)
-        private byte[] data;
+        private final byte[] data;
 
         @UpnpAction(out = @UpnpOutputArgument(name = "RandomData"))
         public byte[] getData() {

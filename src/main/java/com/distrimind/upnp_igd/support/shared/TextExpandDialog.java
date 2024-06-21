@@ -56,7 +56,7 @@ public class TextExpandDialog extends JDialog {
                     }
                 }.print(text, 2, false);
             } catch (Exception ex) {
-                log.severe("Error pretty printing XML: " + ex.toString());
+                log.severe("Error pretty printing XML: " + ex);
                 pretty = text;
             }
         } else if (text.startsWith("http-get")) {

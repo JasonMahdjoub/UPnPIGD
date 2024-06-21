@@ -23,8 +23,8 @@ package com.distrimind.upnp_igd.model.types;
  */
 public class NamedServiceType {
 
-    private UDN udn;
-    private ServiceType serviceType;
+    private final UDN udn;
+    private final ServiceType serviceType;
 
     public NamedServiceType(UDN udn, ServiceType serviceType) {
         this.udn = udn;
@@ -69,10 +69,8 @@ public class NamedServiceType {
         NamedServiceType that = (NamedServiceType) o;
 
         if (!serviceType.equals(that.serviceType)) return false;
-        if (!udn.equals(that.udn)) return false;
-
-        return true;
-    }
+		return udn.equals(that.udn);
+	}
 
     @Override
     public int hashCode() {

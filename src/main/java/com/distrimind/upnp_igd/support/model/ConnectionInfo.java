@@ -17,6 +17,8 @@ package com.distrimind.upnp_igd.support.model;
 
 import com.distrimind.upnp_igd.model.ServiceReference;
 
+import java.util.Objects;
+
 /**
  * Immutable type encapsulating the state of a single connection.
  *
@@ -146,12 +148,10 @@ public class ConnectionInfo {
         if (rcsID != that.rcsID) return false;
         if (connectionStatus != that.connectionStatus) return false;
         if (direction != that.direction) return false;
-        if (peerConnectionManager != null ? !peerConnectionManager.equals(that.peerConnectionManager) : that.peerConnectionManager != null)
+        if (!Objects.equals(peerConnectionManager, that.peerConnectionManager))
             return false;
-        if (protocolInfo != null ? !protocolInfo.equals(that.protocolInfo) : that.protocolInfo != null) return false;
-
-        return true;
-    }
+		return Objects.equals(protocolInfo, that.protocolInfo);
+	}
 
     @Override
     public int hashCode() {

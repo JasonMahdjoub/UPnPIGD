@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public abstract class Pause extends ActionCallback {
 
-    private static Logger log = Logger.getLogger(Pause.class.getName());
+    private static final Logger log = Logger.getLogger(Pause.class.getName());
 
     protected Pause(ActionInvocation actionInvocation, ControlPoint controlPoint) {
         super(actionInvocation, controlPoint);

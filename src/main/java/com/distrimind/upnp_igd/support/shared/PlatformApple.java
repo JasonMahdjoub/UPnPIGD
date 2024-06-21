@@ -47,8 +47,8 @@ public class PlatformApple {
 
     static class AppListenerProxy implements InvocationHandler {
 
-        private Controller<JFrame> appController;
-        private Object object;
+        private final Controller<JFrame> appController;
+        private final Object object;
 
         public static Object newInstance(Object obj, Controller<JFrame> appController) {
             return Proxy.newProxyInstance(

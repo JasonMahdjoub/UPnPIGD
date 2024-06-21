@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public abstract class Seek extends ActionCallback {
 
-    private static Logger log = Logger.getLogger(Seek.class.getName());
+    private static final Logger log = Logger.getLogger(Seek.class.getName());
 
     public Seek(Service service, String relativeTimeTarget) {
         this(new UnsignedIntegerFourBytes(0), service, SeekMode.REL_TIME, relativeTimeTarget);

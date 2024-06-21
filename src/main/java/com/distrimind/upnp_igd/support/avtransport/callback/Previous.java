@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public abstract class Previous extends ActionCallback {
 
-    private static Logger log = Logger.getLogger(Previous.class.getName());
+    private static final Logger log = Logger.getLogger(Previous.class.getName());
 
     protected Previous(ActionInvocation actionInvocation, ControlPoint controlPoint) {
         super(actionInvocation, controlPoint);

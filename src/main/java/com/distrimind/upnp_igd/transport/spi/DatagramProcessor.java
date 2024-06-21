@@ -47,7 +47,7 @@ public interface DatagramProcessor {
      * @return The populated instance.
      * @throws UnsupportedDataException If the datagram could not be read, or didn't contain required data.
      */
-    public IncomingDatagramMessage read(InetAddress receivedOnAddress, DatagramPacket datagram) throws UnsupportedDataException;
+	IncomingDatagramMessage read(InetAddress receivedOnAddress, DatagramPacket datagram) throws UnsupportedDataException;
 
     /**
      * Creates a UDP datagram with the content of a message.
@@ -60,7 +60,7 @@ public interface DatagramProcessor {
      * @return An actual UDP datagram.
      * @throws UnsupportedDataException If the datagram could not be created.
      */
-    public DatagramPacket write(OutgoingDatagramMessage message) throws UnsupportedDataException;
+	DatagramPacket write(OutgoingDatagramMessage message) throws UnsupportedDataException;
 
 }
 
