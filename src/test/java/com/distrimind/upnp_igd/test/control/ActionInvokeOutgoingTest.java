@@ -50,6 +50,7 @@ import com.distrimind.upnp_igd.transport.RouterException;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.testng.Assert.*;
 
@@ -111,23 +112,23 @@ public class ActionInvokeOutgoingTest {
     public void callLocalGet() throws Exception {
 
         // Registery local device and its service
-        MockUpnpService<?> upnpService = new MockUpnpService<>();
-        LocalDevice ld = ActionSampleData.createTestDevice();
-        LocalService service = ld.getServices()[0];
+        MockUpnpService upnpService = new MockUpnpService();
+        LocalDevice<?> ld = ActionSampleData.createTestDevice();
+        LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action action = service.getAction("GetTarget");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = service.getAction("GetTarget");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
 
         final boolean[] assertions = new boolean[1];
         ActionCallback callback = new ActionCallback(actionInvocation) {
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 assertions[0] = true;
             }
 
             @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+            public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                 assertions[0] = false;
             }
 
@@ -138,8 +139,8 @@ public class ActionInvokeOutgoingTest {
         assert actionInvocation.getFailure() == null;
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 0);
 		assertTrue(assertions[0]);
-        assertEquals(actionInvocation.getOutput().length, 1);
-        assertEquals(actionInvocation.getOutput()[0].toString(), "0");
+        assertEquals(actionInvocation.getOutput().size(), 1);
+        assertEquals(actionInvocation.getOutput().iterator().next().toString(), "0");
 
     }
 
@@ -149,8 +150,8 @@ public class ActionInvokeOutgoingTest {
 
         // Registery local device and its service
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice ld = ActionSampleData.createTestDevice();
-        LocalService service = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice();
+        LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
 		assertNull(service.getAction("NonExistentAction"));
@@ -161,24 +162,24 @@ public class ActionInvokeOutgoingTest {
 
         // Registery local device and its service
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceThrowsException.class);
-        LocalService service = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceThrowsException.class);
+        LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action action = service.getAction("SetTarget");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = service.getAction("SetTarget");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
 
         actionInvocation.setInput("NewTargetValue", true);
 
         final boolean[] assertions = new boolean[1];
         ActionCallback callback = new ActionCallback(actionInvocation) {
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 assertions[0] = false;
             }
 
             @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+            public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                 assert operation == null; // Local calls don't have an operation
                 assertions[0] = true;
             }
@@ -200,7 +201,7 @@ public class ActionInvokeOutgoingTest {
     @Test
     public void callRemoteGet() throws Exception {
 
-        MockUpnpService<?> upnpService = new MockUpnpService<>() {
+        MockUpnpService upnpService = new MockUpnpService() {
             @Override
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
@@ -278,8 +279,8 @@ public class ActionInvokeOutgoingTest {
             "foo"
         );
 
-        assertEquals(actionInvocation.getOutput().length, 1);
-        assertEquals(actionInvocation.getOutput()[0].toString(), "0");
+        assertEquals(actionInvocation.getOutput().size(), 1);
+        assertEquals(actionInvocation.getOutput().iterator().next().toString(), "0");
 
     }
 
@@ -302,21 +303,21 @@ public class ActionInvokeOutgoingTest {
 
         // Registery remote device and its service
         RemoteDevice device = SampleData.createRemoteDevice();
-        Service service = SampleData.getFirstService(device);
+        Service<?, ?, ?> service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action action = service.getAction("GetTarget");
+        Action<?> action = service.getAction("GetTarget");
 
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         final boolean[] assertions = new boolean[1];
         ActionCallback callback = new ActionCallback(actionInvocation) {
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 assertions[0] = false;
             }
 
             @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+            public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                 assertEquals(operation.getStatusCode(), UpnpResponse.Status.INTERNAL_SERVER_ERROR.getStatusCode());
                 assertions[0] = true;
             }
@@ -354,21 +355,21 @@ public class ActionInvokeOutgoingTest {
 
         // Registery remote device and its service
         RemoteDevice device = SampleData.createRemoteDevice();
-        Service service = SampleData.getFirstService(device);
+        Service<?, ?, ?> service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action action = service.getAction("GetTarget");
+        Action<?> action = service.getAction("GetTarget");
 
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         final boolean[] assertions = new boolean[1];
         ActionCallback callback = new ActionCallback(actionInvocation) {
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 assertions[0] = false;
             }
 
             @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+            public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                 assertEquals(operation.getStatusCode(), UpnpResponse.Status.NOT_FOUND.getStatusCode());
                 assertions[0] = true;
             }
@@ -394,21 +395,21 @@ public class ActionInvokeOutgoingTest {
 
         // Registery remote device and its service
         RemoteDevice device = SampleData.createRemoteDevice();
-        Service service = SampleData.getFirstService(device);
+        Service<?, ?, ?> service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action action = service.getAction("GetTarget");
+        Action<?> action = service.getAction("GetTarget");
 
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         final boolean[] assertions = new boolean[1];
         ActionCallback callback = new ActionCallback(actionInvocation) {
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 assertions[0] = false;
             }
 
             @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+            public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                 assert operation == null;
                 assertions[0] = true;
             }
@@ -454,38 +455,37 @@ public class ActionInvokeOutgoingTest {
                 URI.create("/scpd.xml"),
                 URI.create("/control"),
                 URI.create("/events"),
-                new Action[]{
-                    new Action(
+                List.of(
+                    new Action<>(
                         "GetNegativeValue",
-                        new ActionArgument[]{
-                            new ActionArgument("Result", "NegativeValue", ActionArgument.Direction.OUT)
-                        }
+                        List.of(new ActionArgument<>("Result", "NegativeValue", ActionArgument.Direction.OUT))
                     )
-                },
-                new StateVariable[]{
-                    new StateVariable(
+                ),
+                List.of(
+                    new StateVariable<>(
                         "NegativeValue",
                         new StateVariableTypeDetails(Datatype.Builtin.UI4.getDatatype()),
                         new StateVariableEventDetails(false)
                     )
-                }
+                )
             )
         );
 
         upnpService.getRegistry().addDevice(device);
 
-        Action action = device.getServices()[0].getAction("GetNegativeValue");
+        Action<?> action = device.getServices().iterator().next().getAction("GetNegativeValue");
 
-        ActionInvocation actionInvocation = new ActionInvocation(action);
-        final boolean[] assertions = new boolean[1];
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
+
         ActionCallback callback = new ActionCallback(actionInvocation) {
+            final boolean[] assertions = new boolean[1];
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 assertions[0] = true;
             }
 
             @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+            public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                 assertions[0] = false;
             }
         };
@@ -646,22 +646,22 @@ public class ActionInvokeOutgoingTest {
 
         // Registery remote device and its service
         RemoteDevice device = SampleData.createRemoteDevice();
-        Service service = SampleData.getFirstService(device);
+        Service<?, ?, ?> service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action action = service.getQueryStateVariableAction();
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = service.getQueryStateVariableAction();
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         actionInvocation.setInput("varName", "Target");
 
         final boolean[] assertions = new boolean[1];
         ActionCallback callback = new ActionCallback(actionInvocation) {
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 assertions[0] = true;
             }
 
             @Override
-            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+            public void failure(ActionInvocation<?> invocation, UpnpResponse operation, String defaultMsg) {
                 assertions[0] = false;
             }
         };
@@ -679,9 +679,9 @@ public class ActionInvokeOutgoingTest {
             upnpService.getRouter().getSentStreamRequestMessages().get(0).getHeaders().getFirstHeader(UpnpHeader.Type.SOAPACTION, SoapActionHeader.class).getString(),
             "\"urn:schemas-upnp-org:control-1-0#QueryStateVariable\""
         );
-        assertEquals(actionInvocation.getOutput().length, 1);
-        assertEquals(actionInvocation.getOutput()[0].getArgument().getName(), "return");
-        assertEquals(actionInvocation.getOutput()[0].toString(), "0");
+        assertEquals(actionInvocation.getOutput().size(), 1);
+        assertEquals(actionInvocation.getOutput().iterator().next().getArgument().getName(), "return");
+        assertEquals(actionInvocation.getOutput().iterator().next().toString(), "0");
     }
 
 

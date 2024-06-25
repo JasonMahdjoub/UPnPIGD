@@ -15,6 +15,7 @@
 package example.registry;
 
 import com.distrimind.upnp_igd.mock.MockUpnpService;
+import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.resource.DeviceDescriptorResource;
 import com.distrimind.upnp_igd.model.resource.Resource;
 import com.distrimind.upnp_igd.model.meta.Device;
@@ -54,28 +55,28 @@ public class RegistryBrowseTest {
      * only a root device and not any embedded device. Set the second parameter of
      * <code>registry.getDevice()</code> to <code>false</code> if the device you are
      * looking for might be an embedded device.
-     * </p>
+   
      * <a class="citation" href="javacode://this" style="include: FIND_ROOT_UDN"/>
      * <p>
      * If you know that the device you need is a <code>LocalDevice</code> - or a
      * <code>RemoteDevice</code> - you can use the following operation:
-     * </p>
+   
      * <a class="citation" href="javacode://this" style="include: FIND_LOCAL_DEVICE" id="javacode_find_device_local"/>
      */
     @Test
     public void findDevice() throws Exception {
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice device = SampleData.createLocalDevice();
+        LocalDevice<?> device = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(device);
 
         UDN udn = device.getIdentity().getUdn();
 
         Registry registry = upnpService.getRegistry();                          // DOC: FIND_ROOT_UDN
-        Device foundDevice = registry.getDevice(udn, true);
+        Device<?, ?, ?> foundDevice = registry.getDevice(udn, true);
 
         assertEquals(foundDevice.getIdentity().getUdn(), udn);                  // DOC: FIND_ROOT_UDN
 
-        LocalDevice localDevice = registry.getLocalDevice(udn, true);           // DOC: FIND_LOCAL_DEVICE
+        LocalDevice<?> localDevice = registry.getLocalDevice(udn, true);           // DOC: FIND_LOCAL_DEVICE
         assertEquals(localDevice.getIdentity().getUdn(), udn);
 
         SampleDeviceRootLocal.assertLocalResourcesMatch(
@@ -87,27 +88,27 @@ public class RegistryBrowseTest {
      * <p>
      * Most of the time you need a device that is of a particular type or that implements
      * a particular service type, because this is what your control point can handle:
-     * </p>
+   
      * <a class="citation" href="javacode://this" style="include: FIND_DEV_TYPE"/>
      * <a class="citation" href="javacode://this" style="include: FIND_SERV_TYPE" id="javacode_find_serv_type"/>
      */
     @Test
     public void findDeviceByType() throws Exception {
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice device = SampleData.createLocalDevice();
+        LocalDevice<? extends LocalService<?>> device = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(device);
 
         Registry registry = upnpService.getRegistry();
 
         try {
             DeviceType deviceType = new UDADeviceType("MY-DEVICE-TYPE", 1);         // DOC: FIND_DEV_TYPE
-            Collection<Device> devices = registry.getDevices(deviceType);           // DOC: FIND_DEV_TYPE
+            Collection<Device<?, ?, ?>> devices = registry.getDevices(deviceType);           // DOC: FIND_DEV_TYPE
             assertEquals(devices.size(), 1);
         } finally {}
 
         try {
             ServiceType serviceType = new UDAServiceType("MY-SERVICE-TYPE-ONE", 1); // DOC: FIND_SERV_TYPE
-            Collection<Device> devices = registry.getDevices(serviceType);          // DOC: FIND_SERV_TYPE
+            Collection<Device<?, ?, ?>> devices = registry.getDevices(serviceType);          // DOC: FIND_SERV_TYPE
             assertEquals(devices.size(), 1);
         } finally {}
     }
@@ -117,7 +118,7 @@ public class RegistryBrowseTest {
     public void findLocalDevice() throws Exception {
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice deviceOne = SampleData.createLocalDevice();
+        LocalDevice<?> deviceOne = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(deviceOne);
 
         DeviceDescriptorResource resource =
@@ -133,11 +134,10 @@ public class RegistryBrowseTest {
     public void findLocalDeviceInvalidRelativePath() throws Exception {
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice deviceOne = SampleData.createLocalDevice();
+        LocalDevice<?> deviceOne = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(deviceOne);
 
-        DeviceDescriptorResource resource =
-                upnpService.getRegistry().getResource(
+        upnpService.getRegistry().getResource(
                         DeviceDescriptorResource.class,
                         URI.create("http://host/invalid/absolute/URI")
         );
@@ -166,7 +166,7 @@ public class RegistryBrowseTest {
 
         assertEquals(upnpService.getRegistry().getRemoteDevices().size(), 1);
 
-        Resource resource = upnpService.getRegistry().getResource(
+        Resource<?> resource = upnpService.getRegistry().getResource(
                 URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/event/cb")
         );
         assertNotNull(resource);

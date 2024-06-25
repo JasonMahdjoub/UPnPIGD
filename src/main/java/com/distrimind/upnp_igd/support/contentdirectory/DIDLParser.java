@@ -268,7 +268,7 @@ public class DIDLParser extends SAXParser {
      * <p>
      * Items inside a container will <em>not</em> be represented in the XML, the containers
      * will be rendered flat without children.
-     * </p>
+   
      *
      * @param content The content model.
      * @return An XML representation.
@@ -285,7 +285,7 @@ public class DIDLParser extends SAXParser {
      * the container elements then have nested item elements. Although this
      * parser can read such a structure, it is unclear whether other DIDL
      * parsers should and actually do support this XML.
-     * </p>
+   
      *
      * @param content     The content model.
      * @param nestedItems <code>true</code> if nested item elements should be rendered for containers.
@@ -566,7 +566,7 @@ public class DIDLParser extends SAXParser {
      * This method will ignore the content and log a warning if it's of the wrong type. If you override
      * {@link #createDescMetaHandler(com.distrimind.upnp_igd.support.model.DescMeta, Handler)},
      * you most likely also want to override this method.
-     * </p>
+   
      *
      * @param descElement The DIDL content {@code <desc>} element wrapping the final metadata.
      * @param descMeta    The metadata with a <code>org.w3c.Document</code> payload.
@@ -1026,7 +1026,7 @@ public class DIDLParser extends SAXParser {
      * <p>
      * The root element of this document is a wrapper in the namespace
      * {@link com.distrimind.upnp_igd.support.model.DIDLContent#DESC_WRAPPER_NAMESPACE_URI}.
-     * </p>
+   
      */
     public class DescMetaHandler extends Handler<DescMeta> {
 

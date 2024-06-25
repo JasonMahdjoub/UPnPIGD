@@ -65,13 +65,13 @@ public class SearchExecuteTest {
      * <p>
      * Most of the time you'd like all devices to respond to your search, this is what the
      * dedicated <code>STAllHeader</code> is used for:
-     * </p>
+   
      * <a class="citation" href="javacode://this" style="include: SEARCH"/>
      * <p>
      * Notification messages will be received by your control point and you can listen to
      * the <code>Registry</code> and inspect the found devices and their services. (By the
      * way, if you call <code>search()</code> without any argument, that's the same.)
-     * </p>
+   
      */
     @Test
     public void searchAll() throws Exception {
@@ -89,13 +89,13 @@ public class SearchExecuteTest {
      * On the other hand, when you already know the unique device name (UDN) of the device you
      * are searching for - maybe because your control point remembered it while it was turned off - you
      * can send a message which will trigger a response from only a particular device:
-     * </p>
+   
      * <a class="citation" href="javacode://this" style="include: SEARCH"/>
      * <p>
      * This is mostly useful to avoid network congestion when dozens of devices might <em>all</em>
      * respond to a search request. Your <code>Registry</code> listener code however still has to
      * inspect each newly found device, as registrations might occur independently from searches.
-     * </p>
+   
      */
     @Test
     public void searchUDN() throws Exception {
@@ -113,11 +113,11 @@ public class SearchExecuteTest {
      * <p>
      * You can also search by device or service type. This search request will trigger responses
      * from all devices of type "<code>urn:schemas-upnp-org:device:BinaryLight:1</code>":
-     * </p>
+   
      * <a class="citation" href="javacode://this" style="include: SEARCH_UDA"/>
      * <p>
      * If the desired device type is of a custom namespace, use this variation:
-     * </p>
+   
      * <a class="citation" id="javacode_dt_search_custom" href="javacode://this" style="include: SEARCH_CUSTOM"/>
      */
     @Test
@@ -144,7 +144,7 @@ public class SearchExecuteTest {
     /**
      * <p>
      * Or, you can search for all devices which implement a particular service type:
-     * </p>
+   
      * <a class="citation" href="javacode://this" style="include: SEARCH_UDA"/>
      * <a class="citation" id="javacode_st_search_custom" href="javacode://this" style="include: SEARCH_CUSTOM"/>
      */

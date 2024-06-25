@@ -22,7 +22,6 @@ import com.distrimind.upnp_igd.model.message.header.ContentTypeHeader;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
-import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import com.distrimind.upnp_igd.model.types.UDAServiceId;
 import com.distrimind.upnp_igd.protocol.RetrieveRemoteDescriptors;
@@ -33,6 +32,7 @@ import org.testng.annotations.Test;
 import org.xml.sax.SAXParseException;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Listening to registry changes
@@ -60,19 +60,19 @@ public class RegistryListenerTest {
     // Just for documentation inclusion!
     public interface RegistryListener {
 
-        public void remoteDeviceDiscoveryStarted(Registry registry, RemoteDevice device);
+        void remoteDeviceDiscoveryStarted(Registry registry, RemoteDevice device);
 
-        public void remoteDeviceDiscoveryFailed(Registry registry, RemoteDevice device, Exception ex);
+        void remoteDeviceDiscoveryFailed(Registry registry, RemoteDevice device, Exception ex);
 
-        public void remoteDeviceAdded(Registry registry, RemoteDevice device);
+        void remoteDeviceAdded(Registry registry, RemoteDevice device);
 
-        public void remoteDeviceUpdated(Registry registry, RemoteDevice device);
+        void remoteDeviceUpdated(Registry registry, RemoteDevice device);
 
-        public void remoteDeviceRemoved(Registry registry, RemoteDevice device);
+        void remoteDeviceRemoved(Registry registry, RemoteDevice device);
 
-        public void localDeviceAdded(Registry registry, LocalDevice device);
+        void localDeviceAdded(Registry registry, LocalDevice<?> device);
 
-        public void localDeviceRemoved(Registry registry, LocalDevice device);
+        void localDeviceRemoved(Registry registry, LocalDevice<?> device);
 
     }
 
@@ -86,11 +86,11 @@ public class RegistryListenerTest {
      * and service model can take several seconds. These two methods allow you to access the device
      * as soon as possible, after the first descriptor has been retrieved and parsed. At this time
      * the services metadata is however not available:
-     * </p>
+   
      * <a class="citation" href="javacode://example.registry.RegistryListenerTest.QuickstartRegistryListener" style="exclude: EXC1, EXC2;"/>
      * <p>
      * This is how you register and activate a listener:
-     * </p>
+   
      * <a class="citation" href="javacode://this" style="include: INC1"/>
      */
     @Test
@@ -113,11 +113,11 @@ public class RegistryListenerTest {
                                     getConfiguration().getNamespace()
                                 );
                             String serviceOneXML =
-                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices()[0]);
+                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
                             String serviceTwoXML =
-                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices()[1]);
+                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
                             String serviceThreeXML =
-                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices()[2]);
+                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
                             return new StreamResponseMessage[]{
                                 new StreamResponseMessage(deviceDescriptorXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                                 new StreamResponseMessage(serviceOneXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
@@ -138,7 +138,7 @@ public class RegistryListenerTest {
         RetrieveRemoteDescriptors retrieveDescriptors = new RetrieveRemoteDescriptors(upnpService, discoveredDevice);
         retrieveDescriptors.run();
 
-        assertEquals(listener.valid, true);
+		assertTrue(listener.valid);
     }
 
     @Test
@@ -183,22 +183,22 @@ public class RegistryListenerTest {
         RetrieveRemoteDescriptors retrieveDescriptors = new RetrieveRemoteDescriptors(upnpService, discoveredDevice);
         retrieveDescriptors.run();
 
-        assertEquals(listener.valid, true);
+		assertTrue(listener.valid);
     }
 
-    public class QuickstartRegistryListener extends DefaultRegistryListener {
+    public static class QuickstartRegistryListener extends DefaultRegistryListener {
         public boolean valid = false; // DOC: EXC1
 
         @Override
         public void remoteDeviceDiscoveryStarted(Registry registry, RemoteDevice device) {
 
             // You can already use the device here and you can see which services it will have
-            assertEquals(device.findServices().length, 3);
+            assertEquals(device.findServices().size(), 3);
 
             // But you can't use the services
             for (RemoteService service : device.findServices()) {
-                assertEquals(service.getActions().length, 0);
-                assertEquals(service.getStateVariables().length, 0);
+                assertEquals(service.getActions().size(), 0);
+                assertEquals(service.getStateVariables().size(), 0);
             }
             valid = true; // DOC: EXC2
         }
@@ -209,7 +209,7 @@ public class RegistryListenerTest {
         }
     }
 
-    public class FailureQuickstartRegistryListener extends DefaultRegistryListener {
+    public static class FailureQuickstartRegistryListener extends DefaultRegistryListener {
         public boolean valid = false;
 
         @Override
@@ -223,14 +223,14 @@ public class RegistryListenerTest {
      * <p>
      * Most of the time, on any device that is faster than a cellphone, your listeners will look
      * like this:
-     * </p>
+   
      * <a class="citation" href="javacode://example.registry.RegistryListenerTest.MyListener" style="exclude: EXC1, EXC2, EXC3;"/>
      * <p>
      * The device metadata of the parameter to <code>remoteDeviceAdded()</code> is fully hydrated, all
      * of its services, actions, and state variables are available. You can continue with this metadata,
      * writing action invocations and event monitoring callbacks. You also might want to react accordingly
      * when the device disappears from the network.
-     * </p>
+   
      */
     @Test
     public void regularListener() throws Exception {
@@ -252,11 +252,11 @@ public class RegistryListenerTest {
                                     getConfiguration().getNamespace()
                                 );
                             String serviceOneXML =
-                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices()[0]);
+                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
                             String serviceTwoXML =
-                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices()[1]);
+                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
                             String serviceThreeXML =
-                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices()[2]);
+                                getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
                             return new StreamResponseMessage[]{
                                 new StreamResponseMessage(deviceDescriptorXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                                 new StreamResponseMessage(serviceOneXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
@@ -279,17 +279,17 @@ public class RegistryListenerTest {
 
         upnpService.getRegistry().removeAllRemoteDevices();
 
-        assertEquals(listener.added, true);
-        assertEquals(listener.removed, true);
+		assertTrue(listener.added);
+		assertTrue(listener.removed);
     }
 
-    public class MyListener extends DefaultRegistryListener {
+    public static class MyListener extends DefaultRegistryListener {
         public boolean added = false; // DOC: EXC1
         public boolean removed = false; // DOC: EXC1
 
         @Override
         public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
-            Service myService = device.findService(new UDAServiceId("MY-SERVICE-123"));
+            RemoteService myService = device.findService(new UDAServiceId("MY-SERVICE-123"));
             if (myService != null) {
                 // Do something with the discovered service
                 added = true; // DOC: EXC2

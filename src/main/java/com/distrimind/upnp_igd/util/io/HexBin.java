@@ -19,7 +19,6 @@ import java.util.Arrays;
 
  /**
  * format validation
- * <p/>
  * This class encodes/decodes hexadecimal data
  *
  * @author Jeffrey Rodriguez

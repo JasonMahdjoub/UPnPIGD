@@ -154,7 +154,7 @@ public abstract class AbstractContentDirectoryService {
      * <p>
      * This will notify clients that their view of the content directory is potentially
      * outdated and has to be refreshed.
-     * </p>
+   
      */
     synchronized protected void changeSystemUpdateID() {
         Long oldUpdateID = getSystemUpdateID().getValue();
@@ -215,11 +215,11 @@ public abstract class AbstractContentDirectoryService {
      * Implement this method to implement browsing of your content.
      * <p>
      * This is a required action defined by <em>ContentDirectory:1</em>.
-     * </p>
+   
      * <p>
      * You should wrap any exception into a {@link ContentDirectoryException}, so a propery
      * error message can be returned to control points.
-     * </p>
+   
      */
     public abstract BrowseResult browse(String objectID, BrowseFlag browseFlag,
                                         String filter,
@@ -276,7 +276,7 @@ public abstract class AbstractContentDirectoryService {
      * Override this method to implement searching of your content.
      * <p>
      * The default implementation returns an empty result.
-     * </p>
+   
      */
     public BrowseResult search(String containerId, String searchCriteria, String filter,
                                long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {

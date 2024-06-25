@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.test.data;
 
+import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.resource.DeviceDescriptorResource;
 import com.distrimind.upnp_igd.model.resource.IconResource;
 import com.distrimind.upnp_igd.model.resource.ServiceControlResource;
@@ -23,52 +24,53 @@ import com.distrimind.upnp_igd.model.resource.ServiceEventSubscriptionResource;
 import com.distrimind.upnp_igd.model.resource.Resource;
 import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.DeviceIdentity;
-import com.distrimind.upnp_igd.model.meta.LocalService;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.Objects;
 
 import static org.testng.Assert.assertEquals;
 
 /**
  * @author Christian Bauer
  */
-public class SampleDeviceRootLocal extends SampleDeviceRoot {
+public class SampleDeviceRootLocal<D extends Device<?, D, S>, S extends Service<?, D, S>> extends SampleDeviceRoot<D,S> {
 
-    public SampleDeviceRootLocal(DeviceIdentity identity, LocalService service, Device embeddedDevice) {
+    public SampleDeviceRootLocal(DeviceIdentity identity, S service, D embeddedDevice) {
         super(identity, service, embeddedDevice);
     }
 
-    public static void assertLocalResourcesMatch(Resource[] resources){
+    public static void assertLocalResourcesMatch(Collection<Resource<?>> resources){
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/desc")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/desc"))).getClass(),
                 DeviceDescriptorResource.class
         );
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/icon.png")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/icon.png"))).getClass(),
                 IconResource.class
         );
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/icon2.png")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/icon2.png"))).getClass(),
                 IconResource.class
         );
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/desc")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/desc"))).getClass(),
                 ServiceDescriptorResource.class
         );
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/action")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/action"))).getClass(),
                 ServiceControlResource.class
         );
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/event")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/event"))).getClass(),
                 ServiceEventSubscriptionResource.class
         );
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-456/icon3.png")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-456/icon3.png"))).getClass(),
                 IconResource.class
         );
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-456/svc/upnp-org/MY-SERVICE-456/desc")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-456/svc/upnp-org/MY-SERVICE-456/desc"))).getClass(),
                 ServiceDescriptorResource.class
         );
         assertEquals(

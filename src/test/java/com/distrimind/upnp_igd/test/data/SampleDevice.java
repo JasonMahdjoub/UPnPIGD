@@ -24,17 +24,18 @@ import com.distrimind.upnp_igd.model.profile.DeviceDetailsProvider;
 import com.distrimind.upnp_igd.model.types.DeviceType;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 
 /**
  * @author Christian Bauer
  */
-public abstract class SampleDevice {
+public abstract class SampleDevice<D extends Device<?, D, S>, S extends Service<?, D, S>> {
 
     public DeviceIdentity identity;
-    public Service service;
-    public Device embeddedDevice;
+    public S service;
+    public D embeddedDevice;
 
-    protected SampleDevice(DeviceIdentity identity, Service service, Device embeddedDevice) {
+    protected SampleDevice(DeviceIdentity identity, S service, D embeddedDevice) {
         this.identity = identity;
         this.service = service;
         this.embeddedDevice = embeddedDevice;
@@ -44,32 +45,33 @@ public abstract class SampleDevice {
         return identity;
     }
 
-    public Service getService() {
+    public S getService() {
         return service;
     }
 
-    public Device getEmbeddedDevice() {
+    public D getEmbeddedDevice() {
         return embeddedDevice;
     }
 
     public abstract DeviceType getDeviceType();
     public abstract DeviceDetails getDeviceDetails();
     public abstract DeviceDetailsProvider getDeviceDetailsProvider();
-    public abstract Icon[] getIcons();
+    public abstract List<Icon> getIcons();
 
-    public <D extends Device> D newInstance(Constructor<D> deviceConstructor) {
+    public D newInstance(Constructor<D> deviceConstructor) {
         return newInstance(deviceConstructor, false);
     }
 
-    public <D extends Device> D newInstance(Constructor<D> deviceConstructor, boolean useProvider) {
+    @SuppressWarnings("unchecked")
+	public D newInstance(Constructor<?> deviceConstructor, boolean useProvider) {
         try {
             if (useProvider) {
-                return deviceConstructor.newInstance(
+                return (D)deviceConstructor.newInstance(
                         getIdentity(), getDeviceType(), getDeviceDetailsProvider(),
                         getIcons(), getService(), getEmbeddedDevice()
                 );
             }
-            return deviceConstructor.newInstance(
+            return (D)deviceConstructor.newInstance(
                     getIdentity(), getDeviceType(), getDeviceDetails(),
                     getIcons(), getService(), getEmbeddedDevice()
             );

@@ -110,11 +110,11 @@ public class MockUpnpService implements UpnpService {
      * <p>
      * The {@link SendingNotificationAlive} protocol
      * only sends messages if this feature is enabled when instantiating the factory.
-     * </p>
+   
      * <p>
      * The {@link SendingSearch} protocol doesn't wait between
      * sending search message bulks, this speeds up testing.
-     * </p>
+   
      */
     public static class MockProtocolFactory extends ProtocolFactoryImpl {
 

@@ -71,7 +71,7 @@ public interface Registry {
      * Typically called internally when the UPnP stack is stopping.
      * <p>
      * Unsubscribe all local devices and GENA subscriptions.
-     * </p>
+   
      */
 	void shutdown();
 
@@ -84,14 +84,14 @@ public interface Registry {
      * GENA subscriptions from your local control point to remote services will not
      * be renewed automatically anymore, a remote service might drop your subscriptions
      * if you don't resume maintenance within the subscription's expiration timeout.
-     * </p>
+   
      * <p>
      * Local devices and services will not be announced periodically anymore to remote
      * control points, only when they are manually added are removed from the registry.
      * The registry will also no longer remove expired inbound GENA subscriptions to
      * local service from remote control points, if that control point for some reason
      * stops sending subscription renewal messages.
-     * </p>
+   
      */
 	void pause();
 
@@ -110,7 +110,7 @@ public interface Registry {
      * a device will finally be removed from the registry, if no further announcements
      * from the device are received, when the maximum age of the device has elapsed
      * after the registry resumed operation.
-     * </p>
+   
      * <p>
      * Secondly, a remote device registration might not have expired but some of your
      * outbound GENA subscriptions to its services have not been renewed within the expected renewal
@@ -122,25 +122,25 @@ public interface Registry {
      * you then might conclude that the remote device is no longer available, a GENA renewal
      * can also fail for other reasons. The remote device will be kept and maintained in the
      * registry until it announces itself or it expires, even after a failed GENA renewal.
-     * </p>
+   
      * <p>
      * If you are providing local devices and services, resuming registry maintenance has
      * the following effects:
-     * </p>
+   
      * <p>
      * Local devices and their services are announced again immediately if the registry
      * has been paused for longer than half of the device's maximum age. Remote control
      * points will either see this as a new device advertisement (if they have dropped
      * your device while you paused maintenance) or as a regular update if you didn't
      * pause longer than the device's maximum age/expiration timeout.
-     * </p>
+   
      * <p>
      * Inbound GENA subscriptions to your local services are active, even in
      * paused state - remote control points should continue renewing the subscription.
      * If a remote control point stopped renewing a subscription without unsubscribing
      * (hard power off), an outdated inbound subscription will be detected when you
      * resume maintenance. This subscription will be cleaned up immediately on resume.
-     * </p>
+   
      */
 	void resume();
 
@@ -163,7 +163,7 @@ public interface Registry {
      * <p>
      * The registry will notify all registered listeners of this event, unless the
      * given device was already in the registry.
-     * </p>
+   
      *
      * @param device The half-hydrated (without services) metadata of the discovered device.
      * @return <code>false</code> if the device was already registered.
@@ -174,7 +174,7 @@ public interface Registry {
      * Called internally by the UPnP stack when the discovery protocol stopped abnormally.
      * <p>
      * The registry will notify all registered listeners of this event.
-     * </p>
+   
      *
      * @param device The half-hydrated (without services) metadata of the discovered device.
      * @param ex The cause for the interruption of the discovery protocol.
@@ -189,7 +189,7 @@ public interface Registry {
      * @param localDevice The device to add and maintain.
      * @throws RegistrationException If a conflict with an already registered device was detected.
      */
-	void addDevice(LocalDevice localDevice) throws RegistrationException;
+	void addDevice(LocalDevice<?> localDevice) throws RegistrationException;
 
     /**
      * Call this method to add your local device metadata.
@@ -198,7 +198,7 @@ public interface Registry {
      * @param options Immediately effective when this device is registered.
      * @throws RegistrationException If a conflict with an already registered device was detected.
      */
-	void addDevice(LocalDevice localDevice, DiscoveryOptions options) throws RegistrationException;
+	void addDevice(LocalDevice<?> localDevice, DiscoveryOptions options) throws RegistrationException;
 
     /**
      * Change the active {@link DiscoveryOptions} for the given (local device) UDN.
@@ -231,7 +231,7 @@ public interface Registry {
      *
      * @return <code>true</code> if the device was registered and has been removed.
      */
-	boolean removeDevice(LocalDevice localDevice);
+	boolean removeDevice(LocalDevice<?> localDevice);
 
     /**
      * Called internally by the UPnP discovery protocol.
@@ -267,7 +267,7 @@ public interface Registry {
      * @param rootOnly If <code>true</code>, only matches of root devices are returned.
      * @return The registered root or embedded device metadata, or <code>null</code>.
      */
-	LocalDevice getLocalDevice(UDN udn, boolean rootOnly);
+	LocalDevice<?> getLocalDevice(UDN udn, boolean rootOnly);
 
     /**
      * @param udn The device name to lookup.
@@ -279,7 +279,7 @@ public interface Registry {
     /**
      * @return All locally registered device metadata, in no particular order, or an empty collection.
      */
-	Collection<LocalDevice> getLocalDevices();
+	Collection<LocalDevice<?>> getLocalDevices();
 
     /**
      * @return All discovered remote device metadata, in no particular order, or an empty collection.
@@ -322,7 +322,7 @@ public interface Registry {
      * Stores an arbitrary resource in the registry.
      * <p>
      * Call this method repeatedly to refresh and prevent expiration of the resource.
-     * </p>
+   
      *
      * @param resource The resource to maintain.
      * @param maxAgeSeconds The time after which the registry will automatically remove the resource.
@@ -372,22 +372,22 @@ public interface Registry {
     /**
      * Called internally by the UPnP stack, during GENA protocol execution.
      */
-	void addLocalSubscription(LocalGENASubscription subscription);
+	void addLocalSubscription(LocalGENASubscription<?> subscription);
 
     /**
      * Called internally by the UPnP stack, during GENA protocol execution.
      */
-	LocalGENASubscription getLocalSubscription(String subscriptionId);
+	LocalGENASubscription<?> getLocalSubscription(String subscriptionId);
 
     /**
      * Called internally by the UPnP stack, during GENA protocol execution.
      */
-	boolean updateLocalSubscription(LocalGENASubscription subscription);
+	boolean updateLocalSubscription(LocalGENASubscription<?> subscription);
 
     /**
      * Called internally by the UPnP stack, during GENA protocol execution.
      */
-	boolean removeLocalSubscription(LocalGENASubscription subscription);
+	boolean removeLocalSubscription(LocalGENASubscription<?> subscription);
 
     /**
      * Called internally by the UPnP stack, during GENA protocol execution.
@@ -416,7 +416,7 @@ public interface Registry {
      * initial event message faster than the response for the subscription
      * request. This method register that the subscription procedure is
      * executing.
-     * </p>
+   
      */
 	void registerPendingRemoteSubscription(RemoteGENASubscription subscription);
 
@@ -424,7 +424,7 @@ public interface Registry {
      * Called internally by the UPnP stack, during GENA protocol execution.
      * <p>
      * Notify that the subscription procedure has terminated.
-     * </p>
+   
      */
 	void unregisterPendingRemoteSubscription(RemoteGENASubscription subscription);
 
@@ -435,7 +435,7 @@ public interface Registry {
      * wait for one of the pending remote subscription procedures from the registry background
      * maintainer to terminate, until the subscription has been found or until there are no
      * more pending subscription procedures.
-     * </p>
+   
      */
 	RemoteGENASubscription getWaitRemoteSubscription(String subscriptionId);
 
@@ -446,7 +446,7 @@ public interface Registry {
      * <p>
      * No messages will be send for devices with disabled advertisements, see
      * {@link DiscoveryOptions}!
-     * </p>
+   
      */
 	void advertiseLocalDevices();
 

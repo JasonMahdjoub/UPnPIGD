@@ -47,7 +47,7 @@ public class BinaryLightServer implements Runnable {
     }
 
     // DOC: CREATEDEVICE
-    LocalDevice createDevice()
+    LocalDevice<SwitchPower> createDevice()
             throws ValidationException, LocalServiceBindingException, IOException {
 
         DeviceIdentity identity =
@@ -79,10 +79,10 @@ public class BinaryLightServer implements Runnable {
                 new AnnotationLocalServiceBinder().read(SwitchPower.class);
 
         switchPowerService.setManager(
-                new DefaultServiceManager(switchPowerService, SwitchPower.class)
+                new DefaultServiceManager<>(switchPowerService, SwitchPower.class)
         );
 
-        return new LocalDevice(identity, type, details, icon, switchPowerService);
+        return new LocalDevice<>(identity, type, details, icon, switchPowerService);
 
         /* Several services can be bound to the same device:
         return new LocalDevice(

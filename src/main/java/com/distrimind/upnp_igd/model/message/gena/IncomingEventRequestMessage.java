@@ -34,7 +34,7 @@ import java.util.ArrayList;
  */
 public class IncomingEventRequestMessage extends StreamRequestMessage {
 
-    final private List<StateVariableValue> stateVariableValues = new ArrayList<>();
+    final private List<StateVariableValue<RemoteService>> stateVariableValues = new ArrayList<>();
     final private RemoteService service;
 
     public IncomingEventRequestMessage(StreamRequestMessage source, RemoteService service) {
@@ -46,7 +46,7 @@ public class IncomingEventRequestMessage extends StreamRequestMessage {
         return service;
     }
 
-    public List<StateVariableValue> getStateVariableValues() {
+    public List<StateVariableValue<RemoteService>> getStateVariableValues() {
         return stateVariableValues;
     }
 
@@ -65,8 +65,8 @@ public class IncomingEventRequestMessage extends StreamRequestMessage {
      * @return <code>true</code> if this message as an NT and NTS header.
      */
     public boolean hasNotificationHeaders() {
-        UpnpHeader ntHeader = getHeaders().getFirstHeader(UpnpHeader.Type.NT);
-        UpnpHeader ntsHeader = getHeaders().getFirstHeader(UpnpHeader.Type.NTS);
+        UpnpHeader<?> ntHeader = getHeaders().getFirstHeader(UpnpHeader.Type.NT);
+        UpnpHeader<?> ntsHeader = getHeaders().getFirstHeader(UpnpHeader.Type.NTS);
         return ntHeader != null && ntHeader.getValue() != null
                 && ntsHeader != null && ntsHeader.getValue() != null;
     }

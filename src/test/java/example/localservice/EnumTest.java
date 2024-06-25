@@ -29,6 +29,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 /**
  * Working with enums
@@ -49,13 +50,13 @@ import static org.testng.Assert.assertEquals;
  */
 public class EnumTest {
 
-    public LocalDevice createTestDevice(Class serviceClass) throws Exception {
+    public <T> LocalDevice<T> createTestDevice(Class<T> serviceClass) throws Exception {
 
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
-        LocalService svc = binder.read(serviceClass);
-        svc.setManager(new DefaultServiceManager(svc, serviceClass));
+        LocalService<T> svc = binder.read(serviceClass);
+        svc.setManager(new DefaultServiceManager<>(svc, serviceClass));
 
-        return new LocalDevice(
+        return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new DeviceType("mydomain", "CustomDevice", 1),
                 new DeviceDetails("A Custom Device"),
@@ -79,42 +80,42 @@ public class EnumTest {
     }
 
     @Test(dataProvider = "devices")
-    public void validateBinding(LocalDevice device) {
+    public void validateBinding(LocalDevice<?> device) {
 
-        LocalService svc = device.getServices()[0];
+        LocalService<?> svc = device.getServices().iterator().next();
 
-        assertEquals(svc.getStateVariables().length, 1);
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.STRING);
+        assertEquals(svc.getStateVariables().size(), 1);
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.STRING);
 
-        assertEquals(svc.getActions().length, 3); // Has 2 actions plus QueryStateVariableAction!
+        assertEquals(svc.getActions().size(), 3); // Has 2 actions plus QueryStateVariableAction!
 
-        assertEquals(svc.getAction("GetColor").getArguments().length, 1);
-        assertEquals(svc.getAction("GetColor").getArguments()[0].getName(), "Out");
-        assertEquals(svc.getAction("GetColor").getArguments()[0].getDirection(), ActionArgument.Direction.OUT);
-        assertEquals(svc.getAction("GetColor").getArguments()[0].getRelatedStateVariableName(), "Color");
+        assertEquals(svc.getAction("GetColor").getArguments().size(), 1);
+        assertEquals(svc.getAction("GetColor").getArguments().iterator().next().getName(), "Out");
+        assertEquals(svc.getAction("GetColor").getArguments().iterator().next().getDirection(), ActionArgument.Direction.OUT);
+        assertEquals(svc.getAction("GetColor").getArguments().iterator().next().getRelatedStateVariableName(), "Color");
 
-        assertEquals(svc.getAction("SetColor").getArguments().length, 1);
-        assertEquals(svc.getAction("SetColor").getArguments()[0].getName(), "In");
-        assertEquals(svc.getAction("SetColor").getArguments()[0].getDirection(), ActionArgument.Direction.IN);
-        assertEquals(svc.getAction("SetColor").getArguments()[0].getRelatedStateVariableName(), "Color");
+        assertEquals(svc.getAction("SetColor").getArguments().size(), 1);
+        assertEquals(svc.getAction("SetColor").getArguments().iterator().next().getName(), "In");
+        assertEquals(svc.getAction("SetColor").getArguments().iterator().next().getDirection(), ActionArgument.Direction.IN);
+        assertEquals(svc.getAction("SetColor").getArguments().iterator().next().getRelatedStateVariableName(), "Color");
 
     }
 
     @Test(dataProvider = "devices")
-    public void invokeActions(LocalDevice device) {
-        LocalService svc = device.getServices()[0];
+    public void invokeActions(LocalDevice<?> device) {
+        LocalService<?> svc = device.getServices().iterator().next();
 
-        ActionInvocation setColor = new ActionInvocation(svc.getAction("SetColor"));
+        ActionInvocation<? extends LocalService<?>> setColor = new ActionInvocation<>(svc.getAction("SetColor"));
         setColor.setInput("In", MyServiceWithEnum.Color.Blue);
-        svc.getExecutor(setColor.getAction()).execute(setColor);
-        assertEquals(setColor.getFailure(), null);
-        assertEquals(setColor.getOutput().length, 0);
+        svc.getExecutor(setColor.getAction()).executeWithUntypedGeneric(setColor);
+		assertNull(setColor.getFailure());
+        assertEquals(setColor.getOutput().size(), 0);
 
-        ActionInvocation getColor = new ActionInvocation(svc.getAction("GetColor"));
-        svc.getExecutor(getColor.getAction()).execute(getColor);
-        assertEquals(getColor.getFailure(), null);
-        assertEquals(getColor.getOutput().length, 1);
-        assertEquals(getColor.getOutput()[0].toString(), MyServiceWithEnum.Color.Blue.name());
+        ActionInvocation<? extends LocalService<?>> getColor = new ActionInvocation<>(svc.getAction("GetColor"));
+        svc.getExecutor(getColor.getAction()).executeWithUntypedGeneric(getColor);
+		assertNull(getColor.getFailure());
+        assertEquals(getColor.getOutput().size(), 1);
+        assertEquals(getColor.getOutput().iterator().next().toString(), MyServiceWithEnum.Color.Blue.name());
 
     }
 }

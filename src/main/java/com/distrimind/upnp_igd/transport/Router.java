@@ -112,7 +112,7 @@ public interface Router {
      * message, e.g. selecting and executing a UPnP protocol. This method should not block until
      * the execution completes, the calling thread should be free to handle the next reception as
      * soon as possible.
-     * </p>
+   
      * @param msg The received datagram message.
      */
 	void received(IncomingDatagramMessage msg);
@@ -125,7 +125,7 @@ public interface Router {
      * a UPnP protocol. This method should not block until the execution completes, the calling thread
      * should be free to process the next reception as soon as possible. Typically this means starting
      * a new thread of execution in this method.
-     * </p>
+   
      * @param stream
      */
 	void received(UpnpStream stream);
@@ -133,7 +133,7 @@ public interface Router {
     /**
      * <p>
      * Call this method to send a UDP datagram message.
-     * </p>
+   
      * @param msg The UDP datagram message to send.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
      */
@@ -142,7 +142,7 @@ public interface Router {
     /**
      * <p>
      * Call this method to send a TCP (HTTP) stream message.
-     * </p>
+   
      * @param msg The TCP (HTTP) stream message to send.
      * @return The response received from the server.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
@@ -152,7 +152,7 @@ public interface Router {
     /**
      * <p>
      * Call this method to broadcast a UDP message to all hosts on the network.
-     * </p>
+   
      * @param bytes The byte payload of the UDP datagram.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
      */

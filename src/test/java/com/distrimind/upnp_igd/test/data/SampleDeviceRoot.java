@@ -37,6 +37,9 @@ import com.distrimind.upnp_igd.util.URIUtil;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -44,9 +47,9 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Christian Bauer
  */
-public class SampleDeviceRoot extends SampleDevice {
+public class SampleDeviceRoot<D extends Device<?, D, S>, S extends Service<?, D, S>> extends SampleDevice<D, S> {
 
-    public SampleDeviceRoot(DeviceIdentity identity, Service service, Device embeddedDevice) {
+    public SampleDeviceRoot(DeviceIdentity identity, S service, D embeddedDevice) {
         super(identity, service, embeddedDevice);
     }
 
@@ -64,10 +67,10 @@ public class SampleDeviceRoot extends SampleDevice {
                 "000da201238c",
                 "100000000001",
                 "http://www.4thline.org/some_user_interface/",
-                new DLNADoc[]{
+                List.of(
                         new DLNADoc("DMS", DLNADoc.Version.V1_5),
                         new DLNADoc("M-DMS", DLNADoc.Version.V1_5)
-                },
+                ),
                 new DLNACaps(new String[] {
                         "av-upload", "image-upload", "audio-upload"
                 })
@@ -83,11 +86,11 @@ public class SampleDeviceRoot extends SampleDevice {
     }
 
     @Override
-    public Icon[] getIcons() {
-        return new Icon[]{
+    public List<Icon> getIcons() {
+        return List.of(
                 new Icon("image/png", 32, 32, 8, URI.create("icon.png")),
                 new Icon("image/png", 32, 32, 8, URI.create("icon2.png"))
-        };
+        );
     }
 
     public static UDN getRootUDN() {
@@ -102,46 +105,46 @@ public class SampleDeviceRoot extends SampleDevice {
         return URIUtil.createAbsoluteURL(SampleData.getLocalBaseURL(), getDeviceDescriptorURI());
     }
 
-    public static void assertMatch(Device a, Device b) {
+    public static void assertMatch(Device<?, ?, ?> a, Device<?, ?, ?> b) {
         assertMatch(a, b, true);
     }
     
-    public static void assertMatch(Device a, Device b, boolean checkType) {
+    public static void assertMatch(Device<?, ?, ?> a, Device<?, ?, ?> b, boolean checkType) {
         assertTrue(a.isRoot());
         assertDeviceMatch(a, b, checkType);
     }
 
-    public static void assertLocalResourcesMatch(Resource[] resources){
+    public static void assertLocalResourcesMatch(Collection<Resource<?>> resources){
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/event/cb")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/event/cb"))).getClass(),
                 ServiceEventCallbackResource.class
         );
 
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-456/svc/upnp-org/MY-SERVICE-456/event/cb")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-456/svc/upnp-org/MY-SERVICE-456/event/cb"))).getClass(),
                 ServiceEventCallbackResource.class
         );
         assertEquals(
-                getLocalResource(resources, URI.create("/dev/MY-DEVICE-789/svc/upnp-org/MY-SERVICE-789/event/cb")).getClass(),
+                Objects.requireNonNull(getLocalResource(resources, URI.create("/dev/MY-DEVICE-789/svc/upnp-org/MY-SERVICE-789/event/cb"))).getClass(),
                 ServiceEventCallbackResource.class
         );
     }
 
-    protected static Resource getLocalResource(Resource[] resources, URI localPathQuery) {
-        for (Resource localResource : resources) {
+    protected static Resource<?> getLocalResource(Collection<Resource<?>> resources, URI localPathQuery) {
+        for (Resource<?> localResource : resources) {
             if (localResource.matches(localPathQuery))
                 return localResource;
         }
         return null;
     }
 
-    protected static void assertDeviceMatch(Device a, Device b) {
+    protected static void assertDeviceMatch(Device<?, ?, ?> a, Device<?, ?, ?> b) {
         assertDeviceMatch(a,b,true);
     }
-    protected static void assertDeviceMatch(Device a, Device b, boolean checkType) {
+    protected static void assertDeviceMatch(Device<?, ?, ?> a, Device<?, ?, ?> b, boolean checkType) {
 
-        assert (a.validate().size() == 0);
-        assert (b.validate().size() == 0);
+        assert (a.validate().isEmpty());
+        assert (b.validate().isEmpty());
 
         if (checkType)
             assertEquals(a, b); // Checking equals() method
@@ -160,38 +163,38 @@ public class SampleDeviceRoot extends SampleDevice {
         assertEquals(a.getDetails().getUpc(), b.getDetails().getUpc());
         assertEquals(a.getDetails().getPresentationURI(), b.getDetails().getPresentationURI());
 
-        assertEquals(a.getDetails().getDlnaDocs().length, b.getDetails().getDlnaDocs().length);
-        for (int i = 0; i < a.getDetails().getDlnaDocs().length; i++) {
-            DLNADoc aDoc = a.getDetails().getDlnaDocs()[i];
-            DLNADoc bDoc = b.getDetails().getDlnaDocs()[i];
+        assertEquals(a.getDetails().getDlnaDocs().size(), b.getDetails().getDlnaDocs().size());
+        for (int i = 0; i < a.getDetails().getDlnaDocs().size(); i++) {
+            DLNADoc aDoc = a.getDetails().getDlnaDocs().get(i);
+            DLNADoc bDoc = b.getDetails().getDlnaDocs().get(i);
             assertEquals(aDoc, bDoc);
         }
         assertEquals(a.getDetails().getDlnaCaps(), b.getDetails().getDlnaCaps());
 
         assertEquals(a.getIcons() != null, b.getIcons() != null);
         if (a.getIcons() != null) {
-            assertEquals(a.getIcons().length, b.getIcons().length);
-            for (int i = 0; i < a.getIcons().length; i++) {
-                assertEquals(a.getIcons()[i].getDevice(), a);
-                assertEquals(b.getIcons()[i].getDevice(), b);
-                assertEquals(a.getIcons()[i].getUri(), b.getIcons()[i].getUri());
-                assertEquals(a.getIcons()[i].getMimeType(), b.getIcons()[i].getMimeType());
-                assertEquals(a.getIcons()[i].getWidth(), b.getIcons()[i].getWidth());
-                assertEquals(a.getIcons()[i].getHeight(), b.getIcons()[i].getHeight());
-                assertEquals(a.getIcons()[i].getDepth(), b.getIcons()[i].getDepth());
+            assertEquals(a.getIcons().size(), b.getIcons().size());
+            for (int i = 0; i < a.getIcons().size(); i++) {
+                assertEquals(a.getIcons().get(i).getDevice(), a);
+                assertEquals(b.getIcons().get(i).getDevice(), b);
+                assertEquals(a.getIcons().get(i).getUri(), b.getIcons().get(i).getUri());
+                assertEquals(a.getIcons().get(i).getMimeType(), b.getIcons().get(i).getMimeType());
+                assertEquals(a.getIcons().get(i).getWidth(), b.getIcons().get(i).getWidth());
+                assertEquals(a.getIcons().get(i).getHeight(), b.getIcons().get(i).getHeight());
+                assertEquals(a.getIcons().get(i).getDepth(), b.getIcons().get(i).getDepth());
             }
         }
 
         assertEquals(a.hasServices(), b.hasServices());
         if (a.getServices() != null) {
-            assertEquals(a.getServices().length, b.getServices().length);
-            for (int i = 0; i < a.getServices().length; i++) {
-                Service service = a.getServices()[i];
-                assertEquals(service.getServiceType(), b.getServices()[i].getServiceType());
-                assertEquals(service.getServiceId(), b.getServices()[i].getServiceId());
+            assertEquals(a.getServices().size(), b.getServices().size());
+            for (int i = 0; i < a.getServices().size(); i++) {
+                Service<?, ?, ?> service = a.getServices().get(i);
+                assertEquals(service.getServiceType(), b.getServices().get(i).getServiceType());
+                assertEquals(service.getServiceId(), b.getServices().get(i).getServiceId());
                 if (a instanceof RemoteDevice && b instanceof RemoteDevice) {
                     RemoteService remoteServiceA = (RemoteService) service;
-                    RemoteService remoteServiceB = (RemoteService) b.getServices()[i];
+                    RemoteService remoteServiceB = (RemoteService) b.getServices().get(i);
 
                     assertEquals(
                             remoteServiceA.getEventSubscriptionURI(),
@@ -211,10 +214,10 @@ public class SampleDeviceRoot extends SampleDevice {
 
         assertEquals(a.hasEmbeddedDevices(), b.hasEmbeddedDevices());
         if (a.getEmbeddedDevices() != null) {
-            assertEquals(a.getEmbeddedDevices().length, b.getEmbeddedDevices().length);
-            for (int i = 0; i < a.getEmbeddedDevices().length; i++) {
-                Device aEmbedded = a.getEmbeddedDevices()[i];
-                assertDeviceMatch(aEmbedded, b.getEmbeddedDevices()[i],checkType);
+            assertEquals(a.getEmbeddedDevices().size(), b.getEmbeddedDevices().size());
+            for (int i = 0; i < a.getEmbeddedDevices().size(); i++) {
+                Device<?, ?, ?> aEmbedded = a.getEmbeddedDevices().get(i);
+                assertDeviceMatch(aEmbedded, b.getEmbeddedDevices().get(i),checkType);
 
             }
         }

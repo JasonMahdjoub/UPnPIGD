@@ -54,13 +54,13 @@ import static org.testng.Assert.assertEquals;
  */
 public class AllowedValueRangeTest {
 
-    public LocalDevice createTestDevice(Class serviceClass) throws Exception {
+    public <T> LocalDevice<T> createTestDevice(Class<T> serviceClass) throws Exception {
 
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
-        LocalService svc = binder.read(serviceClass);
-        svc.setManager(new DefaultServiceManager(svc, serviceClass));
+        LocalService<T> svc = binder.read(serviceClass);
+        svc.setManager(new DefaultServiceManager<>(svc, serviceClass));
 
-        return new LocalDevice(
+        return new LocalDevice<>(
             SampleData.createLocalDeviceIdentity(),
             new DeviceType("mydomain", "CustomDevice", 1),
             new DeviceDetails("A Custom Device"),
@@ -83,13 +83,13 @@ public class AllowedValueRangeTest {
     }
 
     @Test(dataProvider = "devices")
-    public void validateBinding(LocalDevice device) {
-        LocalService svc = device.getServices()[0];
-        assertEquals(svc.getStateVariables().length, 1);
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.I4);
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getAllowedValueRange().getMinimum(), 10);
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getAllowedValueRange().getMaximum(), 100);
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getAllowedValueRange().getStep(), 5);
+    public void validateBinding(LocalDevice<?> device) {
+        LocalService<?> svc = device.getServices().iterator().next();
+        assertEquals(svc.getStateVariables().size(), 1);
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.I4);
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValueRange().getMinimum(), 10);
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValueRange().getMaximum(), 100);
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValueRange().getStep(), 5);
     }
 
 }

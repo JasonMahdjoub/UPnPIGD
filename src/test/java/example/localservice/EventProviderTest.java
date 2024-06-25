@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.testng.Assert.*;
 
@@ -93,7 +94,7 @@ public class EventProviderTest extends EventSubscriptionTest {
         final List<Boolean> testAssertions = new ArrayList<>();
 
         // Register local device and its service
-        LocalDevice device = BinaryLightSampleData.createDevice(SwitchPowerWithPropertyChangeSupport.class);
+        LocalDevice<SwitchPowerWithPropertyChangeSupport> device = BinaryLightSampleData.createDevice(SwitchPowerWithPropertyChangeSupport.class);
         upnpService.getRegistry().addDevice(device);
 
         LocalService<SwitchPowerWithPropertyChangeSupport> service = SampleData.getFirstService(device);
@@ -101,7 +102,7 @@ public class EventProviderTest extends EventSubscriptionTest {
         SubscriptionCallback callback = new SubscriptionCallback(service, 180) {
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -109,19 +110,19 @@ public class EventProviderTest extends EventSubscriptionTest {
             }
 
             @Override
-            public void established(GENASubscription subscription) {
+            public void established(GENASubscription<?> subscription) {
                 testAssertions.add(true);
             }
 
             @Override
-            public void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+            public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
                 assertNotNull(subscription);
                 assertNull(reason);
                 assertNull(responseStatus);
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription subscription) {
+            public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
                     assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
                     testAssertions.add(true);
@@ -133,7 +134,7 @@ public class EventProviderTest extends EventSubscriptionTest {
                 }
             }
 
-            public void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -166,7 +167,7 @@ public class EventProviderTest extends EventSubscriptionTest {
         final List<Boolean> testAssertions = new ArrayList<>();
 
         // Register local device and its service
-        LocalDevice device = BinaryLightSampleData.createDevice(SwitchPowerWithBundledPropertyChange.class);
+        LocalDevice<SwitchPowerWithBundledPropertyChange> device = BinaryLightSampleData.createDevice(SwitchPowerWithBundledPropertyChange.class);
         upnpService.getRegistry().addDevice(device);
 
         LocalService<SwitchPowerWithBundledPropertyChange> service = SampleData.getFirstService(device);
@@ -174,7 +175,7 @@ public class EventProviderTest extends EventSubscriptionTest {
         SubscriptionCallback callback = new SubscriptionCallback(service, 180) {
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -182,19 +183,19 @@ public class EventProviderTest extends EventSubscriptionTest {
             }
 
             @Override
-            public void established(GENASubscription subscription) {
+            public void established(GENASubscription<?> subscription) {
                 testAssertions.add(true);
             }
 
             @Override
-            public void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+            public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
                 assertNotNull(subscription);
                 assertNull(reason);
                 assertNull(responseStatus);
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription subscription) {
+            public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
                     assertEquals(subscription.getCurrentValues().get("Target").toString(), "0");
                     assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
@@ -208,7 +209,7 @@ public class EventProviderTest extends EventSubscriptionTest {
                 }
             }
 
-            public void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -254,15 +255,15 @@ public class EventProviderTest extends EventSubscriptionTest {
         final List<Boolean> testAssertions = new ArrayList<>();
 
         // Register local device and its service
-        LocalDevice device = BinaryLightSampleData.createDevice(SwitchPowerModerated.class);
+        LocalDevice<SwitchPowerModerated> device = BinaryLightSampleData.createDevice(SwitchPowerModerated.class);
         upnpService.getRegistry().addDevice(device);
 
-        LocalService service = SampleData.getFirstService(device);
+        LocalService<SwitchPowerModerated> service = SampleData.getFirstService(device);
 
         SubscriptionCallback callback = new SubscriptionCallback(service) {
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -270,19 +271,19 @@ public class EventProviderTest extends EventSubscriptionTest {
             }
 
             @Override
-            public void established(GENASubscription subscription) {
+            public void established(GENASubscription<?> subscription) {
                 testAssertions.add(true);
             }
 
             @Override
-            public void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+            public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
                 assertNotNull(subscription);
                 assertNull(reason);
                 assertNull(responseStatus);
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription subscription) {
+            public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
 
                     // Initial event contains all evented variables, snapshot of the service state
@@ -308,7 +309,7 @@ public class EventProviderTest extends EventSubscriptionTest {
                 }
             }
 
-            public void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -320,17 +321,17 @@ public class EventProviderTest extends EventSubscriptionTest {
 
         Object serviceImpl = service.getManager().getImplementation();
 
-        Reflections.set(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar"), serviceImpl, "two");
+        Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar")), serviceImpl, "two");
         service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMaxRateVar", null, null);
 
         Thread.sleep(200);
 
-        Reflections.set(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar"), serviceImpl, "three");
+        Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar")), serviceImpl, "three");
         service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMaxRateVar", null, null);
 
         Thread.sleep(200);
 
-        Reflections.set(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar"), serviceImpl, "four");
+        Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar")), serviceImpl, "four");
         service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMaxRateVar", null, null);
 
         Thread.sleep(100);
@@ -368,15 +369,15 @@ public class EventProviderTest extends EventSubscriptionTest {
         final List<Boolean> testAssertions = new ArrayList<>();
 
         // Register local device and its service
-        LocalDevice device = BinaryLightSampleData.createDevice(SwitchPowerModerated.class);
+        LocalDevice<SwitchPowerModerated> device = BinaryLightSampleData.createDevice(SwitchPowerModerated.class);
         upnpService.getRegistry().addDevice(device);
 
-        LocalService service = SampleData.getFirstService(device);
+        LocalService<SwitchPowerModerated> service = SampleData.getFirstService(device);
 
         SubscriptionCallback callback = new SubscriptionCallback(service) {
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -384,19 +385,19 @@ public class EventProviderTest extends EventSubscriptionTest {
             }
 
             @Override
-            public void established(GENASubscription subscription) {
+            public void established(GENASubscription<?> subscription) {
                 testAssertions.add(true);
             }
 
             @Override
-            public void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+            public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
                 assertNotNull(subscription);
                 assertNull(reason);
                 assertNull(responseStatus);
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription subscription) {
+            public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
 
                     // Initial event contains all evented variables, snapshot of the service state
@@ -422,7 +423,7 @@ public class EventProviderTest extends EventSubscriptionTest {
                 }
             }
 
-            public void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -432,13 +433,13 @@ public class EventProviderTest extends EventSubscriptionTest {
 
         Object serviceImpl = service.getManager().getImplementation();
 
-        Reflections.set(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar"), serviceImpl, 2);
+        Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar")), serviceImpl, 2);
         service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMinDeltaVar", 1, 2);
 
-        Reflections.set(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar"), serviceImpl, 3);
+        Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar")), serviceImpl, 3);
         service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMinDeltaVar", 2, 3);
 
-        Reflections.set(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar"), serviceImpl, 4);
+        Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar")), serviceImpl, 4);
         service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMinDeltaVar", 3, 4);
 
         assertEquals(callback.getSubscription().getCurrentSequence().getValue(), Long.valueOf(2)); // It's the NEXT sequence!

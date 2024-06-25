@@ -34,7 +34,7 @@ import java.util.*;
  *
  * @author Christian Bauer
  */
-public class LocalService<T> extends Service<DeviceIdentity, LocalDevice, LocalService<T>> {
+public class LocalService<T> extends Service<DeviceIdentity, LocalDevice<T>, LocalService<T>> {
 
     final protected Map<Action<LocalService<T>>, ActionExecutor> actionExecutors;
     final protected Map<StateVariable<LocalService<T>>, StateVariableAccessor> stateVariableAccessors;
@@ -110,11 +110,11 @@ public class LocalService<T> extends Service<DeviceIdentity, LocalDevice, LocalS
     }
 
     public ActionExecutor getExecutor(String actionName) {
-        Action<LocalService<T>> action;
+        Action<? extends LocalService<?>> action;
         return (action = getAction(actionName)) != null ? getExecutor(action) : null;
     }
 
-    public ActionExecutor getExecutor(Action<?> action) {
+    public ActionExecutor getExecutor(Action<? extends LocalService<?>> action) {
         return actionExecutors.get(action);
     }
 

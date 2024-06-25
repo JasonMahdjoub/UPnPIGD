@@ -27,12 +27,12 @@ import java.util.Collections;
 public class SampleServiceOneUndescribed extends SampleServiceOne {
 
     @Override
-    public Collection<Action> getActions() {
+    public Collection<Action<?>> getActions() {
         return Collections.emptyList();
     }
 
     @Override
-    public Collection<StateVariable> getStateVariables() {
+    public Collection<StateVariable<?>> getStateVariables() {
         return Collections.emptyList();
     }
 }

@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 
 import java.util.concurrent.Future;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Cancelling an action invocation
@@ -111,11 +111,11 @@ import static org.testng.Assert.assertEquals;
  */
 public class ActionCancellationTest {
 
-    protected LocalService bindService(Class<?> clazz) throws Exception {
+    protected <T> LocalService<T> bindService(Class<T> clazz) throws Exception {
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
-        LocalService svc = binder.read(clazz);
+        LocalService<T> svc = binder.read(clazz);
         svc.setManager(
-            new DefaultServiceManager(svc, clazz)
+            new DefaultServiceManager<>(svc, clazz)
         );
         return svc;
     }
@@ -128,26 +128,26 @@ public class ActionCancellationTest {
     }
 
     @Test(dataProvider = "devices")
-    public void invokeActions(LocalDevice device) throws Exception {
+    public void invokeActions(LocalDevice<?> device) throws Exception {
         final boolean[] tests = new boolean[1];
 
         MockUpnpService upnpService = new MockUpnpService(false, false, true);
-        LocalService service = device.findService(new UDAServiceId("SwitchPower"));
-        Action action = service.getAction("SetTarget");
+        LocalService<?> service = device.findService(new UDAServiceId("SwitchPower"));
+        Action<?> action = service.getAction("SetTarget");
 
-        ActionInvocation setTargetInvocation = new ActionInvocation(action);
+        ActionInvocation<?> setTargetInvocation = new ActionInvocation<>(action);
         setTargetInvocation.setInput("NewTargetValue", true);
 
         // DOC:CALLBACK
         ActionCallback setTargetCallback = new ActionCallback(setTargetInvocation) {
 
             @Override
-            public void success(ActionInvocation invocation) {
+            public void success(ActionInvocation<?> invocation) {
                 // Will not be called if invocation has been cancelled
             }
 
             @Override
-            public void failure(ActionInvocation invocation,
+            public void failure(ActionInvocation<?> invocation,
                                 UpnpResponse operation,
                                 String defaultMsg) {
                 if (invocation.getFailure() instanceof ActionCancelledException) {
@@ -159,14 +159,14 @@ public class ActionCancellationTest {
         // DOC:CALLBACK
 
         // DOC:EXECUTE_CANCEL
-        Future future = upnpService.getControlPoint().execute(setTargetCallback);
+        Future<?> future = upnpService.getControlPoint().execute(setTargetCallback);
         Thread.sleep(500); // DOC:WAIT_FOR_THREAD
         future.cancel(true);
         // DOC:EXECUTE_CANCEL
 
         Thread.sleep(500);
         for (boolean test : tests) {
-            assertEquals(test, true);
+			assertTrue(test);
         }
     }
 }

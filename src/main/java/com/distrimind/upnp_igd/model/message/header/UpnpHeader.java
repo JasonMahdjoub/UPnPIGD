@@ -156,7 +156,7 @@ public abstract class UpnpHeader<T> {
      * It creates a new instance of the subtype class and calls its {@link #setString(String)} method.
      * If no {@link InvalidHeaderException} is thrown, the subtype
      * instance is returned.
-     * </p>
+   
      *
      * @param type The type (or name) of the header.
      * @param headerValue The value of the header.

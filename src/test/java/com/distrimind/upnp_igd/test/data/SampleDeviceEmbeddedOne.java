@@ -29,13 +29,15 @@ import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UDN;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Christian Bauer
  */
-public class SampleDeviceEmbeddedOne extends SampleDevice {
+public class SampleDeviceEmbeddedOne<D extends Device<?, D, S>, S extends Service<?, D, S>> extends SampleDevice<D, S> {
 
-    public SampleDeviceEmbeddedOne(DeviceIdentity identity, Service service, Device embeddedDevice) {
+    public SampleDeviceEmbeddedOne(DeviceIdentity identity, S service, D embeddedDevice) {
         super(identity, service, embeddedDevice);
     }
 
@@ -66,10 +68,8 @@ public class SampleDeviceEmbeddedOne extends SampleDevice {
     }
 
     @Override
-    public Icon[] getIcons() {
-        return new Icon[]{
-                new Icon("image/png", 32, 32, 8, URI.create("icon3.png"))
-        };
+    public List<Icon> getIcons() {
+        return Collections.singletonList(new Icon("image/png", 32, 32, 8, URI.create("icon3.png")));
     }
 
     public static UDN getEmbeddedOneUDN() {

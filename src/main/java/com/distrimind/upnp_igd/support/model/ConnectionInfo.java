@@ -62,12 +62,12 @@ public class ConnectionInfo {
      * Creates a default instance with values expected for the default connection ID "0".
      * <p>
      * The ConnectionManager 1.0 specification says:
-     * </p>
+   
      * <p>
      * If optional action PrepareForConnection is not implemented then (limited) connection
      * information can be retrieved for ConnectionID 0. The device should return all known
      * information:
-     * </p>
+   
      * <ul>
      * <li>RcsID should be 0 or -1</li>
      * <li>AVTransportID should be 0 or -1</li>

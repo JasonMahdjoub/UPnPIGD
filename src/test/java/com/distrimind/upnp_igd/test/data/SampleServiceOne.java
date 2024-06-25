@@ -31,7 +31,6 @@ import com.distrimind.upnp_igd.util.URIUtil;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -92,50 +91,50 @@ public class SampleServiceOne extends SampleService {
     }
 
     @Override
-    public Collection<Action> getActions() {
+    public Collection<Action<?>> getActions() {
         return List.of(
-                new Action(
+                new Action<>(
                         "SetTarget",
-						List.of(new ActionArgument("NewTargetValue", "Target", ActionArgument.Direction.IN))
+						List.of(new ActionArgument<>("NewTargetValue", "Target", ActionArgument.Direction.IN))
                 ),
-                new Action(
+                new Action<>(
                         "GetTarget",
-                        List.of(new ActionArgument("RetTargetValue", "Target", ActionArgument.Direction.OUT, true))
+                        List.of(new ActionArgument<>("RetTargetValue", "Target", ActionArgument.Direction.OUT, true))
                 ),
-                new Action(
+                new Action<>(
                         "GetStatus",
-                        List.of(new ActionArgument("ResultStatus", "Status", ActionArgument.Direction.OUT))
+                        List.of(new ActionArgument<>("ResultStatus", "Status", ActionArgument.Direction.OUT))
                 )
         );
     }
 
     @Override
-    public Collection<StateVariable> getStateVariables() {
+    public Collection<StateVariable<?>> getStateVariables() {
         return List.of(
-                new StateVariable(
+                new StateVariable<>(
                         "Target",
                         new StateVariableTypeDetails(Datatype.Builtin.BOOLEAN.getDatatype(), "0"),
                         new StateVariableEventDetails(false)
                 ),
-                new StateVariable(
+                new StateVariable<>(
                         "Status",
                         new StateVariableTypeDetails(Datatype.Builtin.BOOLEAN.getDatatype(), "0")
                 ),
-                new StateVariable(
+                new StateVariable<>(
                         "SomeVar",
                         new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype(), "foo", List.of("foo", "bar"), null)
                 ),
-                new StateVariable(
+                new StateVariable<>(
                         "AnotherVar",
                         new StateVariableTypeDetails(Datatype.Builtin.UI4.getDatatype(), null, null, new StateVariableAllowedValueRange(0, 10, 2)),
                         new StateVariableEventDetails(false)
                 ),
-                new StateVariable(
+                new StateVariable<>(
                         "ModeratedMaxRateVar",
                         new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()),
                         new StateVariableEventDetails(true, 500, 0)
                 ),
-                new StateVariable(
+                new StateVariable<>(
                         "ModeratedMinDeltaVar",
                         new StateVariableTypeDetails(Datatype.Builtin.I4.getDatatype()),
                         new StateVariableEventDetails(true, 0, 3)

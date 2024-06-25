@@ -30,11 +30,11 @@ import com.distrimind.upnp_igd.test.data.SampleData;
  */
 public class GenaSampleData {
 
-    public static LocalDevice createTestDevice() throws Exception {
+    public static LocalDevice<LocalTestService> createTestDevice() throws Exception {
         return createTestDevice(LocalTestService.class);
     }
 
-    public static LocalDevice createTestDevice(Class<?> clazz) throws Exception {
+    public static LocalDevice<LocalTestService> createTestDevice(Class<LocalTestService> clazz) throws Exception {
         return createTestDevice(
                 SampleData.readService(
                         new AnnotationLocalServiceBinder(),
@@ -43,8 +43,8 @@ public class GenaSampleData {
         );
     }
 
-    public static LocalDevice createTestDevice(LocalService service) throws Exception {
-        return new LocalDevice(
+    public static LocalDevice<LocalTestService> createTestDevice(LocalService<LocalTestService> service) throws Exception {
+        return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("BinaryLight", 1),
                 new DeviceDetails("Example Binary Light"),

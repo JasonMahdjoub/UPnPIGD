@@ -152,7 +152,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
 
     /**
      * Fire an event and pass it into the hierarchy of controllers.
-     * <p/>
+
      * The event is propagated only to the controller instance and its subcontrollers, not upwards in the hierarchy.
      *
      * @param event The event to be propagated.
@@ -164,7 +164,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
 
     /**
      * Fire an event and pass it into the hierarchy of controllers.
-     * <p/>
+
      * The event is propagated to the controller instance, its subcontrollers, and upwards into the controller
      * hierarchy. This operation effectively propagats the event to every controller in the whole hierarchy.
      *
@@ -203,8 +203,8 @@ public class AbstractController<V extends Container> implements Controller<V> {
 
     /**
      * Executes an action if it has been registered for this controller, otherwise passes it up the chain.
-     * <p/>
-     * This method extracts the source of the action (an <tt>AbstractButton</tt>) and gets the action
+
+     * This method extracts the source of the action (an <code>AbstractButton</code>) and gets the action
      * command. If the controller has this command registered, the registered action is executed. Otherwise
      * the action is passed upwards in the hierarchy of controllers.
      *

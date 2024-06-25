@@ -80,18 +80,18 @@ public class UDN {
      * globally unique identifier. In other words, every time you call this method with the same salt on the same
      * machine, you get the same identifier. If you use the same salt on a different machine, a different identifier
      * will be generated.
-     * </p>
+   
      * <p>
      * Note for Android users: This method does not generate unique identifiers on Android devices and will
      * throw an exception. We can't get details such as the hostname or MAC address on Android. Instead,
      * construct a UDN with <code>new UDN(UUID)</code>. When your application is first started, generate all
      * UUIDs needed for your UPnP devices and store them in your Android preferences. Then, use the stored
      * UUID to create a UDN every time your application starts.
-     * </p>
+   
      * <p>
      * Control points can remember your device's identifier, it will and should be the same every time
      * your device is powered up.
-     * </p>
+   
      *
      * @param salt An arbitrary string that uniquely identifies the device on the current system, e.g. "MyMediaServer".
      * @return A global unique identifier, stable for the current system and salt.

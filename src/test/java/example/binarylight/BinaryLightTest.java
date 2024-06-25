@@ -15,8 +15,8 @@ public class BinaryLightTest {
 
     @Test
     public void testServer() throws Exception {
-        LocalDevice binaryLight = new BinaryLightServer().createDevice();
-        assertEquals(binaryLight.getServices()[0].getAction("SetTarget").getName(), "SetTarget");
+        LocalDevice<SwitchPower> binaryLight = new BinaryLightServer().createDevice();
+        assertEquals(binaryLight.getServices().iterator().next().getAction("SetTarget").getName(), "SetTarget");
     }
 
     @Test
@@ -26,10 +26,10 @@ public class BinaryLightTest {
         MockUpnpService upnpService = new MockUpnpService();
 
         BinaryLightClient client = new BinaryLightClient();
-        LocalDevice binaryLight = new BinaryLightServer().createDevice();
+        LocalDevice<SwitchPower> binaryLight = new BinaryLightServer().createDevice();
 
-        LocalService<SwitchPower> service = binaryLight.getServices()[0];
-        client.executeAction(upnpService, binaryLight.getServices()[0]);
+        LocalService<SwitchPower> service = binaryLight.getServices().iterator().next();
+        client.executeAction(upnpService, binaryLight.getServices().iterator().next());
         Thread.sleep(100);
 		assertTrue(service.getManager().getImplementation().getStatus());
     }

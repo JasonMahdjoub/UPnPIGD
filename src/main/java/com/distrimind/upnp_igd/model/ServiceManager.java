@@ -100,7 +100,7 @@ public interface ServiceManager<T> {
      * The service manager will execute the given {@link Command} and it
      * might decorate the execution, for example, by locking/unlocking access to a shared service
      * implementation before and after the execution.
-     * </p>
+   
      * @param cmd The command to execute.
      * @throws Exception Any exception, without wrapping, as thrown by {@link Command#execute(ServiceManager)}
      */
@@ -112,7 +112,7 @@ public interface ServiceManager<T> {
      * The GENA subsystem expects that this adapter will notify its listeners whenever
      * <em>any</em> evented UPnP state variable of the service has changed its state. The
      * following change event is expected:
-     * </p>
+   
      * <ul>
      * <li>The property name is the constant {@link #EVENTED_STATE_VARIABLES}.</li>
      * <li>The "old value" can be <code>null</code>, only the current state has to be included.</li>
@@ -123,7 +123,7 @@ public interface ServiceManager<T> {
      * The collection has to include values for <em>all</em> state variables, no
      * matter what state variable was updated. Any other event is ignored (e.g. individual property
      * changes).
-     * </p>
+   
      *
      * @return An adapter that will notify its listeners whenever any evented state variable changes.
      */

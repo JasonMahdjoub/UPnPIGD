@@ -35,7 +35,7 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
     final private static Logger log = Logger.getLogger(Action.class.getName());
 
     final private String name;
-    final private Collection<ActionArgument<S>> arguments;
+    final private List<ActionArgument<S>> arguments;
     final private List<ActionArgument<S>> inputArguments;
     final private List<ActionArgument<S>> outputArguments;
 
@@ -57,7 +57,7 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
                     outputList.add(argument);
             }
 
-            this.arguments = arguments;
+            this.arguments = new ArrayList<>(arguments);
             this.inputArguments = Collections.unmodifiableList(inputList);
             this.outputArguments = Collections.unmodifiableList(outputList);
         } else {
@@ -75,7 +75,7 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
         return getArguments() != null && !getArguments().isEmpty();
     }
 
-    public Collection<ActionArgument<S>> getArguments() {
+    public List<ActionArgument<S>> getArguments() {
         return arguments;
     }
 

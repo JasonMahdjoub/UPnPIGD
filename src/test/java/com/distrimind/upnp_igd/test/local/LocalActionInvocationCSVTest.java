@@ -66,9 +66,9 @@ public class LocalActionInvocationCSVTest {
     }
 
     @Test(dataProvider = "devices")
-    public void invokeActions(LocalDevice device) throws Exception {
+    public void invokeActions(LocalDevice<?> device) throws Exception {
 
-        LocalService svc = SampleData.getFirstService(device);
+        LocalService<?> svc = SampleData.getFirstService(device);
 
         List<String> testStrings = new CSVString();
         testStrings.add("f\\oo");
@@ -115,17 +115,17 @@ public class LocalActionInvocationCSVTest {
         assertEquals(csvUifour.get(2), new UnsignedIntegerFourBytes(789));
     }
 
-    protected String executeActions(LocalService svc, String setAction, String getAction, List input) throws Exception {
-        ActionInvocation setActionInvocation = new ActionInvocation(svc.getAction(setAction));
+    protected <T> String executeActions(LocalService<T> svc, String setAction, String getAction, List<?> input) throws Exception {
+        ActionInvocation<LocalService<T>> setActionInvocation = new ActionInvocation<>(svc.getAction(setAction));
         setActionInvocation.setInput(svc.getAction(setAction).getFirstInputArgument().getName(), input.toString());
         svc.getExecutor(setActionInvocation.getAction()).execute(setActionInvocation);
 		assertNull(setActionInvocation.getFailure());
-        assertEquals(setActionInvocation.getOutput().length, 0);
+        assertEquals(setActionInvocation.getOutput().size(), 0);
 
-        ActionInvocation getActionInvocation = new ActionInvocation(svc.getAction(getAction));
+        ActionInvocation<LocalService<T>> getActionInvocation = new ActionInvocation<>(svc.getAction(getAction));
         svc.getExecutor(getActionInvocation.getAction()).execute(getActionInvocation);
 		assertNull(getActionInvocation.getFailure());
-        assertEquals(getActionInvocation.getOutput().length, 1);
+        assertEquals(getActionInvocation.getOutput().size(), 1);
         return getActionInvocation.getOutput(svc.getAction(getAction).getFirstOutputArgument()).toString();
     }
 

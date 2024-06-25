@@ -90,18 +90,15 @@ public class EventXMLProcessingTest {
 
     public void writeReadRequest(MockUpnpService upnpService) throws Exception {
 
-        LocalDevice localDevice = GenaSampleData.createTestDevice(GenaSampleData.LocalTestService.class);
-        LocalService localService = localDevice.getServices()[0];
+        LocalDevice<GenaSampleData.LocalTestService> localDevice = GenaSampleData.createTestDevice(GenaSampleData.LocalTestService.class);
+        LocalService<GenaSampleData.LocalTestService> localService = localDevice.getServices().iterator().next();
 
         List<URL> urls = new ArrayList<URL>() {{
             add(SampleData.getLocalBaseURL());
         }};
         
-        LocalGENASubscription subscription =
-                new LocalGENASubscription(localService, 1800, urls) {
-                    public void failed(Exception ex) {
-                        throw new RuntimeException("TEST SUBSCRIPTION FAILED: " + ex);
-                    }
+        LocalGENASubscription<GenaSampleData.LocalTestService> subscription =
+                new LocalGENASubscription<>(localService, 1800, urls) {
 
                     public void ended(CancelReason reason) {
 
@@ -136,7 +133,7 @@ public class EventXMLProcessingTest {
 
         boolean gotValueOne = false;
         boolean gotValueTwo = false;
-        for (StateVariableValue stateVariableValue : incomingCall.getStateVariableValues()) {
+        for (StateVariableValue<?> stateVariableValue : incomingCall.getStateVariableValues()) {
             if (stateVariableValue.getStateVariable().getName().equals("Status")) {
                 gotValueOne = (!(Boolean) stateVariableValue.getValue());
             }

@@ -37,7 +37,7 @@ public interface Datatype<V> {
      * This is just a list of default mappings between Java and UPnP types. There
      * might be more than this/more than one UPnP type that can handle a given
      * Java type.
-     * </p>
+   
      */
 	enum Default {
 
@@ -211,7 +211,7 @@ public interface Datatype<V> {
      * <p>
      * This method calls {@link #isValid(Object)} before converting the value, it throws
      * an exception if validation fails.
-     * </p>
+   
      *
      * @param value The value to transform.
      * @return The transformed value as a string, or an empty string when the value is null, never returns <code>null</code>.

@@ -305,7 +305,7 @@ public class IO {
 
 	/**
 	 * Unconditionally close an <code>Reader</code>.
-	 * <p/>
+
 	 * Equivalent to {@link java.io.Reader#close()}, except any exceptions will be ignored.
 	 * This is typically used in finally blocks.
 	 *
@@ -323,7 +323,7 @@ public class IO {
 
 	/**
 	 * Unconditionally close a <code>Writer</code>.
-	 * <p/>
+
 	 * Equivalent to {@link java.io.Writer#close()}, except any exceptions will be ignored.
 	 * This is typically used in finally blocks.
 	 *
@@ -341,7 +341,7 @@ public class IO {
 
 	/**
 	 * Unconditionally close an <code>InputStream</code>.
-	 * <p/>
+
 	 * Equivalent to {@link java.io.InputStream#close()}, except any exceptions will be ignored.
 	 * This is typically used in finally blocks.
 	 *
@@ -359,7 +359,7 @@ public class IO {
 
 	/**
 	 * Unconditionally close an <code>OutputStream</code>.
-	 * <p/>
+
 	 * Equivalent to {@link java.io.OutputStream#close()}, except any exceptions will be ignored.
 	 * This is typically used in finally blocks.
 	 *
@@ -380,7 +380,7 @@ public class IO {
 
 	/**
 	 * Get the contents of an <code>InputStream</code> as a <code>byte[]</code>.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
 	 *
@@ -398,7 +398,7 @@ public class IO {
 	/**
 	 * Get the contents of a <code>Reader</code> as a <code>byte[]</code>
 	 * using the default character encoding of the platform.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
 	 *
@@ -416,10 +416,10 @@ public class IO {
 	/**
 	 * Get the contents of a <code>Reader</code> as a <code>byte[]</code>
 	 * using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
 	 *
@@ -440,7 +440,7 @@ public class IO {
 	/**
 	 * Get the contents of a <code>String</code> as a <code>byte[]</code>
 	 * using the default character encoding of the platform.
-	 * <p/>
+
 	 * This is the same as {@link String#getBytes()}.
 	 *
 	 * @param input the <code>String</code> to convert
@@ -459,7 +459,7 @@ public class IO {
 	/**
 	 * Get the contents of an <code>InputStream</code> as a character array
 	 * using the default character encoding of the platform.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
 	 *
@@ -478,10 +478,10 @@ public class IO {
 	/**
 	 * Get the contents of an <code>InputStream</code> as a character array
 	 * using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
 	 *
@@ -501,7 +501,7 @@ public class IO {
 
 	/**
 	 * Get the contents of a <code>Reader</code> as a character array.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
 	 *
@@ -523,7 +523,7 @@ public class IO {
 	/**
 	 * Get the contents of an <code>InputStream</code> as a String
 	 * using the default character encoding of the platform.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
 	 *
@@ -541,10 +541,10 @@ public class IO {
 	/**
 	 * Get the contents of an <code>InputStream</code> as a String
 	 * using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
 	 *
@@ -563,7 +563,7 @@ public class IO {
 
 	/**
 	 * Get the contents of a <code>Reader</code> as a String.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
 	 *
@@ -595,7 +595,7 @@ public class IO {
 	/**
 	 * Get the contents of a <code>byte[]</code> as a String
 	 * using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
 	 *
@@ -636,7 +636,7 @@ public class IO {
 	/**
 	 * Convert the specified string to an input stream, encoded as bytes
 	 * using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
 	 *
@@ -674,7 +674,7 @@ public class IO {
 	/**
 	 * Writes bytes from a <code>byte[]</code> to chars on a <code>Writer</code>
 	 * using the default character encoding of the platform.
-	 * <p/>
+
 	 * This method uses {@link String#String(byte[])}.
 	 *
 	 * @param data   the byte array to write, do not modify during output,
@@ -693,10 +693,10 @@ public class IO {
 	/**
 	 * Writes bytes from a <code>byte[]</code> to chars on a <code>Writer</code>
 	 * using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * This method uses {@link String#String(byte[], String)}.
 	 *
 	 * @param data     the byte array to write, do not modify during output,
@@ -741,7 +741,7 @@ public class IO {
 	/**
 	 * Writes chars from a <code>char[]</code> to bytes on an
 	 * <code>OutputStream</code>.
-	 * <p/>
+
 	 * This method uses {@link String#String(char[])} and
 	 * {@link String#getBytes()}.
 	 *
@@ -762,10 +762,10 @@ public class IO {
 	/**
 	 * Writes chars from a <code>char[]</code> to bytes on an
 	 * <code>OutputStream</code> using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * This method uses {@link String#String(char[])} and
 	 * {@link String#getBytes(String)}.
 	 *
@@ -810,7 +810,7 @@ public class IO {
 	 * Writes chars from a <code>String</code> to bytes on an
 	 * <code>OutputStream</code> using the default character encoding of the
 	 * platform.
-	 * <p/>
+
 	 * This method uses {@link String#getBytes()}.
 	 *
 	 * @param data   the <code>String</code> to write, null ignored
@@ -829,10 +829,10 @@ public class IO {
 	/**
 	 * Writes chars from a <code>String</code> to bytes on an
 	 * <code>OutputStream</code> using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * This method uses {@link String#getBytes(String)}.
 	 *
 	 * @param data     the <code>String</code> to write, null ignored
@@ -876,7 +876,7 @@ public class IO {
 	 * Writes chars from a <code>StringBuffer</code> to bytes on an
 	 * <code>OutputStream</code> using the default character encoding of the
 	 * platform.
-	 * <p/>
+
 	 * This method uses {@link String#getBytes()}.
 	 *
 	 * @param data   the <code>StringBuffer</code> to write, null ignored
@@ -895,10 +895,10 @@ public class IO {
 	/**
 	 * Writes chars from a <code>StringBuffer</code> to bytes on an
 	 * <code>OutputStream</code> using the specified character encoding.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * This method uses {@link String#getBytes(String)}.
 	 *
 	 * @param data     the <code>StringBuffer</code> to write, null ignored
@@ -925,10 +925,10 @@ public class IO {
 	/**
 	 * Copy bytes from an <code>InputStream</code> to an
 	 * <code>OutputStream</code>.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
-	 * <p/>
+
 	 * Large streams (over 2GB) will return a bytes copied value of
 	 * <code>-1</code> after the copy has completed since the correct
 	 * number of bytes cannot be returned as an int. For large streams
@@ -953,7 +953,7 @@ public class IO {
 	/**
 	 * Copy bytes from a large (over 2GB) <code>InputStream</code> to an
 	 * <code>OutputStream</code>.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
 	 *
@@ -979,10 +979,10 @@ public class IO {
 	/**
 	 * Copy bytes from an <code>InputStream</code> to chars on a
 	 * <code>Writer</code> using the default character encoding of the platform.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
-	 * <p/>
+
 	 * This method uses {@link java.io.InputStreamReader}.
 	 *
 	 * @param input  the <code>InputStream</code> to read from
@@ -1000,13 +1000,13 @@ public class IO {
 	/**
 	 * Copy bytes from an <code>InputStream</code> to chars on a
 	 * <code>Writer</code> using the specified character encoding.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedInputStream</code>.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * This method uses {@link java.io.InputStreamReader}.
 	 *
 	 * @param input    the <code>InputStream</code> to read from
@@ -1031,10 +1031,10 @@ public class IO {
 
 	/**
 	 * Copy chars from a <code>Reader</code> to a <code>Writer</code>.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
-	 * <p/>
+
 	 * Large streams (over 2GB) will return a chars copied value of
 	 * <code>-1</code> after the copy has completed since the correct
 	 * number of chars cannot be returned as an int. For large streams
@@ -1058,7 +1058,7 @@ public class IO {
 
 	/**
 	 * Copy chars from a large (over 2GB) <code>Reader</code> to a <code>Writer</code>.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
 	 *
@@ -1084,13 +1084,13 @@ public class IO {
 	 * Copy chars from a <code>Reader</code> to bytes on an
 	 * <code>OutputStream</code> using the default character encoding of the
 	 * platform, and calling flush.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
-	 * <p/>
+
 	 * Due to the implementation of OutputStreamWriter, this method performs a
 	 * flush.
-	 * <p/>
+
 	 * This method uses {@link java.io.OutputStreamWriter}.
 	 *
 	 * @param input  the <code>Reader</code> to read from
@@ -1112,16 +1112,16 @@ public class IO {
 	 * Copy chars from a <code>Reader</code> to bytes on an
 	 * <code>OutputStream</code> using the specified character encoding, and
 	 * calling flush.
-	 * <p/>
+
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
-	 * <p/>
+
 	 * Character encoding names can be found at
 	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
-	 * <p/>
+
 	 * Due to the implementation of OutputStreamWriter, this method performs a
 	 * flush.
-	 * <p/>
+
 	 * This method uses {@link java.io.OutputStreamWriter}.
 	 *
 	 * @param input    the <code>Reader</code> to read from
@@ -1150,7 +1150,7 @@ public class IO {
 	/**
 	 * Compare the contents of two Streams to determine if they are equal or
 	 * not.
-	 * <p/>
+
 	 * This method buffers the input internally using
 	 * <code>BufferedInputStream</code> if they are not already buffered.
 	 *
@@ -1186,7 +1186,7 @@ public class IO {
 	/**
 	 * Compare the contents of two Readers to determine if they are equal or
 	 * not.
-	 * <p/>
+
 	 * This method buffers the input internally using
 	 * <code>BufferedReader</code> if they are not already buffered.
 	 *

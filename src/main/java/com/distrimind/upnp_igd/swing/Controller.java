@@ -21,18 +21,15 @@ import java.awt.event.WindowListener;
 
 /**
  * Interface for building a hierarchical controller structure (HMVC).
- * <p/>
  * HMVC works with a tree of triads, these triads are a Model (usually several
  * JavaBeans and their binding models for the UI), a View (usually several Swing
  * UI components), and a Controller. This is a basic interface of a controller
  * that has a pointer to a parent controller (can be null if its the root of the
  * tree) and a collection of subcontrollers (can be empty, usually isn't empty).
- * <p/>
  * The hierarchy of controller supports propagation of action execution and
  * propagation of events.
- * <p/>
- * If a controllers view is a <tt>Frame</tt>, you should also register it as a
- * <tt>WindowListener</tt>, so that it can properly clean up its state when the
+ * If a controllers view is a {@link java.awt.Frame}, you should also register it as a
+ * {@link WindowListener}, so that it can properly clean up its state when the
  * window is closed.
  *
  * @author Christian Bauer

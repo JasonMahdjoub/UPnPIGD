@@ -50,7 +50,7 @@ public interface UpnpService {
      * <p>
      * Clients are required to stop the UPnP stack properly. Notifications for
      * disappearing devices will be multicast'ed, existing event subscriptions cancelled.
-     * </p>
+   
      */
 	void shutdown();
 

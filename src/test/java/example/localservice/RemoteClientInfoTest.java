@@ -24,6 +24,7 @@ import com.distrimind.upnp_igd.model.message.Connection;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.model.message.header.UserAgentHeader;
+import com.distrimind.upnp_igd.model.meta.Action;
 import com.distrimind.upnp_igd.model.meta.DeviceDetails;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
@@ -101,8 +102,8 @@ public class RemoteClientInfoTest {
 
 
     @Test(dataProvider = "devices")
-    public void invokeActions(LocalDevice device) throws Exception {
-        LocalService svc = device.getServices()[0];
+    public <T> void invokeActions(LocalDevice<T> device) throws Exception {
+        LocalService<T> svc = device.getServices().iterator().next();
 
         UpnpHeaders requestHeaders = new UpnpHeaders();
         requestHeaders.add(UpnpHeader.Type.USER_AGENT, new UserAgentHeader("foo/bar"));
@@ -136,14 +137,14 @@ public class RemoteClientInfoTest {
             requestHeaders
         );
 
-        ActionInvocation setTargetInvocation = new RemoteActionInvocation(
-            svc.getAction("SetTarget"), clientInfo
+        RemoteActionInvocation<LocalService<T>> setTargetInvocation = new RemoteActionInvocation<>(
+                svc.getAction("SetTarget"), clientInfo
         );
 
         setTargetInvocation.setInput("NewTargetValue", true);
         svc.getExecutor(setTargetInvocation.getAction()).execute(setTargetInvocation);
 		assertNull(setTargetInvocation.getFailure());
-        assertEquals(setTargetInvocation.getOutput().length, 0);
+        assertEquals(setTargetInvocation.getOutput().size(), 0);
 
         assertEquals(clientInfo.getExtraResponseHeaders().getFirstHeader("X-MY-HEADER"), "foobar");
     }

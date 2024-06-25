@@ -39,6 +39,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.testng.Assert.*;
 
@@ -101,21 +102,21 @@ public class EventSubscriptionTest {
         final List<Boolean> testAssertions = new ArrayList<>();
 
         // Register local device and its service
-        LocalDevice device = BinaryLightSampleData.createDevice(SwitchPower.class);
+        LocalDevice<SwitchPower> device = BinaryLightSampleData.createDevice(SwitchPower.class);
         upnpService.getRegistry().addDevice(device);
 
-        LocalService service = device.getServices()[0];
+        LocalService<SwitchPower> service = device.getServices().iterator().next();
 
         SubscriptionCallback callback = new SubscriptionCallback(service, 600) {            // DOC: SUBSCRIBE
 
             @Override
-            public void established(GENASubscription sub) {
+            public void established(GENASubscription<?> sub) {
                 System.out.println("Established: " + sub.getSubscriptionId());
                 testAssertions.add(true); // DOC: EXC2
             }
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -124,7 +125,7 @@ public class EventSubscriptionTest {
             }
 
             @Override
-            public void ended(GENASubscription sub,
+            public void ended(GENASubscription<?> sub,
                               CancelReason reason,
                               UpnpResponse response) {
                 assertNull(reason);
@@ -134,17 +135,17 @@ public class EventSubscriptionTest {
             }
 
             @Override
-            public void eventReceived(GENASubscription sub) {
+            public void eventReceived(GENASubscription<?> sub) {
 
                 System.out.println("Event: " + sub.getCurrentSequence().getValue());
 
-                Map<String, StateVariableValue> values = sub.getCurrentValues();
-                StateVariableValue status = values.get("Status");
+                Map<String, ? extends StateVariableValue<?>> values = sub.getCurrentValues();
+                StateVariableValue<?> status = values.get("Status");
 
                 assertEquals(status.getDatatype().getClass(), BooleanDatatype.class);
                 assertEquals(status.getDatatype().getBuiltin(), Datatype.Builtin.BOOLEAN);
 
-                System.out.println("Status is: " + status.toString());
+                System.out.println("Status is: " + status);
 
                 if (sub.getCurrentSequence().getValue() == 0) {                             // DOC: EXC4
                     assertEquals(sub.getCurrentValues().get("Status").toString(), "0");
@@ -158,7 +159,7 @@ public class EventSubscriptionTest {
             }
 
             @Override
-            public void eventsMissed(GENASubscription sub, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> sub, int numberOfMissedEvents) {
                 System.out.println("Missed events: " + numberOfMissedEvents);
                 testAssertions.add(false);                                                  // DOC: EXC5
             }
@@ -174,7 +175,7 @@ public class EventSubscriptionTest {
 
         // Modify the state of the service and trigger event
         Object serviceImpl = service.getManager().getImplementation();
-        Reflections.set(Reflections.getField(serviceImpl.getClass(), "status"), serviceImpl, true);
+        Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "status")), serviceImpl, true);
         service.getManager().getPropertyChangeSupport().firePropertyChange("Status", false, true);
 
         assertEquals(callback.getSubscription().getCurrentSequence().getValue(), Long.valueOf(2)); // It's the NEXT sequence!

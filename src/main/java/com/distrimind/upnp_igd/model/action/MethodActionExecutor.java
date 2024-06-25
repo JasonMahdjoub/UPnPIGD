@@ -61,7 +61,7 @@ public class MethodActionExecutor extends AbstractActionExecutor {
     }
 
     @Override
-    protected void execute(ActionInvocation<LocalService<?>> actionInvocation, Object serviceImpl) throws Exception {
+    protected <T> void execute(ActionInvocation<LocalService<T>> actionInvocation, Object serviceImpl) throws Exception {
 
         // Find the "real" parameters of the method we want to call, and create arguments
         Object[] inputArgumentValues = createInputArgumentValues(actionInvocation, method);
@@ -97,7 +97,7 @@ public class MethodActionExecutor extends AbstractActionExecutor {
             isArrayResultProcessed = false; // We never want to process e.g. byte[] as individual variable values
         }
 
-        List<ActionArgument<LocalService<?>>> outputArgs = actionInvocation.getAction().getOutputArguments();
+        List<ActionArgument<LocalService<T>>> outputArgs = actionInvocation.getAction().getOutputArguments();
 
         if (isArrayResultProcessed && result instanceof List) {
             @SuppressWarnings("unchecked") List<Object> results = (List<Object>) result;
@@ -116,8 +116,8 @@ public class MethodActionExecutor extends AbstractActionExecutor {
 
     }
 
-    protected boolean isUseOutputArgumentAccessors(ActionInvocation<LocalService<?>> actionInvocation) {
-        for (ActionArgument<LocalService<?>> argument : actionInvocation.getAction().getOutputArguments()) {
+    protected <T> boolean isUseOutputArgumentAccessors(ActionInvocation<LocalService<T>> actionInvocation) {
+        for (ActionArgument<LocalService<T>> argument : actionInvocation.getAction().getOutputArguments()) {
             // If there is one output argument for which we have an accessor, all arguments need accessors
             if (getOutputArgumentAccessors().get(argument) != null) {
                 return true;
@@ -126,17 +126,17 @@ public class MethodActionExecutor extends AbstractActionExecutor {
         return false;
     }
 
-    protected Object[] createInputArgumentValues(ActionInvocation<LocalService<?>> actionInvocation, Method method) throws ActionException {
+    protected <T> Object[] createInputArgumentValues(ActionInvocation<LocalService<T>> actionInvocation, Method method) throws ActionException {
 
-        LocalService<?> service = actionInvocation.getAction().getService();
+        LocalService<T> service = actionInvocation.getAction().getService();
 
         List<Object> values = new ArrayList<>();
         int i = 0;
-        for (ActionArgument<LocalService<?>> argument : actionInvocation.getAction().getInputArguments()) {
+        for (ActionArgument<LocalService<T>> argument : actionInvocation.getAction().getInputArguments()) {
 
             Class<?> methodParameterType = method.getParameterTypes()[i];
 
-            ActionArgumentValue<LocalService<?>> inputValue = actionInvocation.getInput(argument);
+            ActionArgumentValue<LocalService<T>> inputValue = actionInvocation.getInput(argument);
 
             // If it's a primitive argument, we need a value
             if (methodParameterType.isPrimitive() && (inputValue == null || inputValue.toString().isEmpty()))
@@ -176,9 +176,9 @@ public class MethodActionExecutor extends AbstractActionExecutor {
         if (method.getParameterTypes().length > 0
             && RemoteClientInfo.class.isAssignableFrom(method.getParameterTypes()[method.getParameterTypes().length-1])) {
             if (actionInvocation instanceof RemoteActionInvocation &&
-                ((RemoteActionInvocation)actionInvocation).getRemoteClientInfo() != null) {
+                ((RemoteActionInvocation<?>)actionInvocation).getRemoteClientInfo() != null) {
                 log.finer("Providing remote client info as last action method input argument: " + method);
-                values.add(i, ((RemoteActionInvocation)actionInvocation).getRemoteClientInfo());
+                values.add(i, ((RemoteActionInvocation<?>)actionInvocation).getRemoteClientInfo());
             } else {
                 // Local call, no client info available
                 values.add(i, null);

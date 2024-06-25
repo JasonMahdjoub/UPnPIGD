@@ -308,7 +308,7 @@ public abstract class SubscriptionCallback implements Runnable {
      * <p>
      * Use the {@link GENASubscription#getCurrentValues()} method to obtain
      * the evented state variable values.
-     * </p>
+   
      *
      * @param subscription The established subscription with fresh state variable values.
      */
@@ -318,7 +318,7 @@ public abstract class SubscriptionCallback implements Runnable {
      * Called when a received event was out of sequence, indicating that events have been missed.
      * <p>
      * It's up to you if you want to react to missed events or if you (can) silently ignore them.
-     * </p>
+   
      * @param subscription The established subscription.
      * @param numberOfMissedEvents The number of missed events.
      */
@@ -347,11 +347,11 @@ public abstract class SubscriptionCallback implements Runnable {
      * This typically indicates a broken device which is not UPnP compliant. You can
      * react to this failure in any way you like, for example, you could terminate
      * the subscription or simply create an error report/log.
-     * </p>
+   
      * <p>
      * The default implementation will log the exception at <code>INFO</code> level, and
      * the invalid XML at <code>FINE</code> level.
-     * </p>
+   
      *
      * @param remoteGENASubscription The established subscription.
      * @param ex Call {@link UnsupportedDataException#getData()} to access the invalid XML.

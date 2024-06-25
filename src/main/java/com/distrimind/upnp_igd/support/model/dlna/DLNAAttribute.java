@@ -113,7 +113,7 @@ public abstract class DLNAAttribute<T> {
      * It creates a new instance of the subtype class and calls its {@link #setString(String, String)} method.
      * If no {@link InvalidDLNAProtocolAttributeException} is thrown,
      * the subtype instance is returned.
-     * </p>
+   
      *
      * @param type           The type of the attribute.
      * @param attributeValue The value of the attribute.

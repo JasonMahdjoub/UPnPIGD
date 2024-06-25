@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.test.gena;
 
+import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderImpl;
@@ -37,11 +38,15 @@ import com.distrimind.upnp_igd.transport.impl.PullGENAEventProcessorImpl;
 import com.distrimind.upnp_igd.transport.impl.RecoveringGENAEventProcessorImpl;
 import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.util.io.IO;
-import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.xmlpull.v1.XmlPullParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -163,7 +168,7 @@ public class InvalidEventXMLProcessingTest {
             public void invalidMessage(UnsupportedDataException ex) {
             }
         };
-        subscription.receive(new UnsignedIntegerFourBytes(0), new ArrayList<StateVariableValue>());
+        subscription.receive(new UnsignedIntegerFourBytes(0), new ArrayList<>());
 
         OutgoingEventRequestMessage outgoingCall =
             new OutgoingEventRequestMessage(subscription, SampleData.getLocalBaseURL());
@@ -180,12 +185,12 @@ public class InvalidEventXMLProcessingTest {
         // All of the messages must have a LastChange state variable, and we should be able to parse
         // the XML value of that state variable
         boolean found = false;
-        for (StateVariableValue stateVariableValue : message.getStateVariableValues()) {
+        for (StateVariableValue<RemoteService> stateVariableValue : message.getStateVariableValues()) {
             if (stateVariableValue.getStateVariable().getName().equals("LastChange")
                 && stateVariableValue.getValue() != null) {
                 found = true;
                 String lastChange = (String) stateVariableValue.getValue();
-                Map<String, Object> lastChangeValues = parseLastChangeXML(lastChange);
+                Map<String, String> lastChangeValues = parseLastChangeXML(lastChange);
                 assertFalse(lastChangeValues.isEmpty());
                 break;
             }
@@ -194,20 +199,25 @@ public class InvalidEventXMLProcessingTest {
         assertTrue(found);
     }
 
-    protected Map<String, Object> parseLastChangeXML(String lastChange) throws Exception {
-        // All we do here is trying to parse some XML looking for any element with a 'val' attribute
-        Map<String, Object> values = new HashMap<>();
-        XmlPullParser xpp = XmlPullParserUtils.createParser(lastChange);
-        xpp.nextTag();
-        int event;
-        while ((event = xpp.next()) != XmlPullParser.END_DOCUMENT) {
-            if (event != XmlPullParser.START_TAG) continue;
-            String tag = xpp.getName();
-            String value = xpp.getAttributeValue(null, "val");
-            if (value == null)
-                continue;
-            values.put(tag, value);
+
+
+    public static void parseLastChangeXML(Node e, Map<String, String> m) throws ParserConfigurationException {
+        NodeList nl=e.getChildNodes();
+        if (nl.getLength()>0)
+        {
+            for (int i=0;i<nl.getLength();i++)
+                parseLastChangeXML(nl.item(i), m);
         }
-        return values;
+        else {
+            Node n=e.getAttributes().getNamedItem("val");
+            if (n!=null)
+                m.put(e.getNodeName(), n.getTextContent());
+        }
+    }
+    public static Map<String, String> parseLastChangeXML(String text) throws ParserConfigurationException, IOException, SAXException {
+        Document d= DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance(false).newDocumentBuilder().parse(text);
+        Map<String, String> r=new HashMap<>();
+        parseLastChangeXML(d, r);
+        return r;
     }
 }

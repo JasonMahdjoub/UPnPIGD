@@ -144,9 +144,9 @@ public class InvalidActionXMLProcessingTest {
                IO.readLines(getClass().getResourceAsStream("/descriptors/service/uda10_connectionmanager.xml"))
            );
 
-   		Action action = service.getAction("GetProtocolInfo");
+   		Action<?> action = service.getAction("GetProtocolInfo");
 
-   		ActionInvocation actionInvocation = new ActionInvocation(action);
+   		ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
    		StreamResponseMessage response = new StreamResponseMessage(
                IO.readLines(getClass().getResourceAsStream("/invalidxml/control/response_uppercase_args.xml"))
            );
@@ -155,21 +155,21 @@ public class InvalidActionXMLProcessingTest {
    	}
 
     protected void readRequest(String invalidXMLFile, UpnpService upnpService) throws Exception {
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
-        LocalService svc = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
+        LocalService<?> svc = ld.getServices().iterator().next();
 
-        Action action = svc.getAction("SetSomeValue");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = svc.getAction("SetSomeValue");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
 
         StreamRequestMessage message = createRequestMessage(action, invalidXMLFile);
         IncomingActionRequestMessage request = new IncomingActionRequestMessage(message, svc);
 
         upnpService.getConfiguration().getSoapActionProcessor().readBody(request, actionInvocation);
 
-        assertEquals(actionInvocation.getInput()[0].toString(), "foo&bar");
+        assertEquals(actionInvocation.getInput().iterator().next().toString(), "foo&bar");
     }
 
-    public StreamRequestMessage createRequestMessage(Action action, String xmlFile) throws Exception {
+    public StreamRequestMessage createRequestMessage(Action<?> action, String xmlFile) throws Exception {
         StreamRequestMessage message =
             new StreamRequestMessage(UpnpRequest.Method.POST, URI.create("http://some.uri"));
 

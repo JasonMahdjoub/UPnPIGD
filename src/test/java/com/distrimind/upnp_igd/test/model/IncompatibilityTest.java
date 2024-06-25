@@ -19,7 +19,6 @@ import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.UDA10DeviceDescriptorBinderImpl;
 import com.distrimind.upnp_igd.mock.MockUpnpService;
-import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
@@ -40,6 +39,9 @@ import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import com.distrimind.upnp_igd.test.data.SampleDeviceRoot;
 import org.testng.annotations.Test;
+
+import java.util.Collection;
+import java.util.List;
 
 import static org.testng.Assert.*;
 
@@ -153,14 +155,14 @@ public class IncompatibilityTest {
         DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
         RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
         device = binder.describe(device, descriptor);
-        assertEquals(device.findServices().length, 2);
+        assertEquals(device.findServices().size(), 2);
     }
 
     // TODO: UPNP VIOLATION: Roku Soundbridge cuts off callback URI path after 100 characters.
     @Test
     public void validateCallbackURILength() throws Exception {
         UpnpService upnpService = new MockUpnpService();
-        Device dev = SampleData.createRemoteDevice(
+        RemoteDevice dev = SampleData.createRemoteDevice(
                 new RemoteDeviceIdentity(
                 UDN.uniqueSystemIdentifier("I'mARokuSoundbridge"),
                 1800,
@@ -168,13 +170,16 @@ public class IncompatibilityTest {
                 null,
                 SampleData.getLocalBaseAddress()
         ));
-        Resource[] resources = upnpService.getConfiguration().getNamespace().getResources(dev);
+        Collection<? extends Resource<?>> resources = upnpService.getConfiguration().getNamespace().getResources(dev);
         boolean test = false;
-        for (Resource resource : resources) {
+        for (Resource<?> resource : resources) {
             if (!(resource instanceof ServiceEventCallbackResource)) {
                 continue;
             }
-            if (resource.getPathQuery().toString().length() < 100) test = true;
+			if (resource.getPathQuery().toString().length() < 100) {
+				test = true;
+				break;
+			}
         }
         assertTrue(test);
     }
@@ -202,29 +207,32 @@ public class IncompatibilityTest {
     // TODO: UPNP VIOLATION: DirecTV HR23/700 High Definition DVR Receiver has invalid default value for statevar
     @Test
     public void invalidStateVarDefaultValue() {
-        StateVariable stateVariable = new StateVariable(
+        StateVariable<?> stateVariable = new StateVariable<>(
                 "Test",
                 new StateVariableTypeDetails(
                         Datatype.Builtin.STRING.getDatatype(),
                         "A",
-                        new String[] {"B", "C"},
+                        List.of("B", "C"),
                         null
                 )
         );
 
         boolean foundA = false;
         for (String s : stateVariable.getTypeDetails().getAllowedValues()) {
-            if (s.equals("A")) foundA = true;
+			if (s.equals("A")) {
+				foundA = true;
+				break;
+			}
         }
-        assertEquals(foundA, true);
-        assertEquals(stateVariable.getTypeDetails().getAllowedValues().length, 3);
+		assertTrue(foundA);
+        assertEquals(stateVariable.getTypeDetails().getAllowedValues().size(), 3);
         assertEquals(stateVariable.validate().size(), 0);
     }
 
     // TODO: UPNP VIOLATION: Onkyo NR-TX808 has a bug in RenderingControl service, switching maximum/minimum value range
     @Test
     public void switchedMinimumMaximumValueRange() {
-        StateVariable stateVariable = new StateVariable(
+        StateVariable<?> stateVariable = new StateVariable<>(
                 "Test",
                 new StateVariableTypeDetails(
                         Datatype.Builtin.I2.getDatatype(),

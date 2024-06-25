@@ -46,14 +46,14 @@ public abstract class SendingNotification extends SendingAsync {
 
     final private static Logger log = Logger.getLogger(SendingNotification.class.getName());
 
-    private final LocalDevice device;
+    private final LocalDevice<?> device;
 
-    public SendingNotification(UpnpService upnpService, LocalDevice device) {
+    public SendingNotification(UpnpService upnpService, LocalDevice<?> device) {
         super(upnpService);
         this.device = device;
     }
 
-    public LocalDevice getDevice() {
+    public LocalDevice<?> getDevice() {
         return device;
     }
 
@@ -111,7 +111,7 @@ public abstract class SendingNotification extends SendingAsync {
         }
 
         if (getDevice().hasEmbeddedDevices()) {
-            for (LocalDevice embeddedDevice : getDevice().findEmbeddedDevices()) {
+            for (LocalDevice<?> embeddedDevice : getDevice().findEmbeddedDevices()) {
                 log.finer("Sending embedded device messages: " + embeddedDevice);
                 List<OutgoingNotificationRequest> embeddedDeviceMsgs =
                         createDeviceMessages(embeddedDevice, descriptorLocation);
@@ -131,7 +131,7 @@ public abstract class SendingNotification extends SendingAsync {
         }
     }
 
-    protected List<OutgoingNotificationRequest> createDeviceMessages(LocalDevice device,
+    protected List<OutgoingNotificationRequest> createDeviceMessages(LocalDevice<?> device,
                                                                      Location descriptorLocation) {
         List<OutgoingNotificationRequest> msgs = new ArrayList<>();
 
@@ -161,7 +161,7 @@ public abstract class SendingNotification extends SendingAsync {
         return msgs;
     }
 
-    protected List<OutgoingNotificationRequest> createServiceTypeMessages(LocalDevice device,
+    protected List<OutgoingNotificationRequest> createServiceTypeMessages(LocalDevice<?> device,
                                                                           Location descriptorLocation) {
         List<OutgoingNotificationRequest> msgs = new ArrayList<>();
 

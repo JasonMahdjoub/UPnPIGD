@@ -32,7 +32,7 @@ import java.util.Set;
  *
  * @author Christian Bauer
  */
-abstract class RegistryItems<D extends Device<?, D, ?>, S extends GENASubscription<?>> {
+abstract class RegistryItems<D extends Device<?, ?, ?>, S extends GENASubscription<?>> {
 
     protected final RegistryImpl registry;
 
@@ -63,7 +63,7 @@ abstract class RegistryItems<D extends Device<?, D, ?>, S extends GENASubscripti
      *
      * @param udn A unique device name.
      * @param rootOnly Set to true if only root devices (no embedded) should be searched
-     * @return Any registered root or embedded device under the given UDN, <tt>null</tt> if
+     * @return Any registered root or embedded device under the given UDN, <code>null</code> if
      *         no device with the given UDN has been registered.
      */
     D get(UDN udn, boolean rootOnly) {
@@ -73,7 +73,7 @@ abstract class RegistryItems<D extends Device<?, D, ?>, S extends GENASubscripti
                 return device;
             }
             if (!rootOnly) {
-                D foundDevice = (D)item.getItem().findDevice(udn);
+                @SuppressWarnings("unchecked") D foundDevice = (D)item.getItem().findDevice(udn);
                 if (foundDevice != null) return foundDevice;
             }
         }
@@ -84,7 +84,7 @@ abstract class RegistryItems<D extends Device<?, D, ?>, S extends GENASubscripti
      * Returns all devices (root or embedded) with a compatible type.
      * <p>
      * This routine will check compatible versions, as described by the UDA.
-     * </p>
+   
      *
      * @param deviceType The minimum device type required.
      * @return Any registered root or embedded device with a compatible type.
@@ -92,7 +92,7 @@ abstract class RegistryItems<D extends Device<?, D, ?>, S extends GENASubscripti
     Collection<D> get(DeviceType deviceType) {
         Collection<D> devices = new HashSet<>();
         for (RegistryItem<UDN, D> item : deviceItems) {
-            Collection<D> d = item.getItem().findDevices(deviceType);
+            @SuppressWarnings("unchecked") Collection<D> d = (Collection<D>) item.getItem().findDevices(deviceType);
             if (d != null) {
                 devices.addAll(d);
             }
@@ -109,7 +109,7 @@ abstract class RegistryItems<D extends Device<?, D, ?>, S extends GENASubscripti
     Collection<D> get(ServiceType serviceType) {
         Collection<D> devices = new HashSet<>();
         for (RegistryItem<UDN, D> item : deviceItems) {
-            Collection<D> d = item.getItem().findDevices(serviceType);
+            @SuppressWarnings("unchecked") Collection<D> d = (Collection<D>) item.getItem().findDevices(serviceType);
             if (d != null) {
                 devices.addAll(d);
             }

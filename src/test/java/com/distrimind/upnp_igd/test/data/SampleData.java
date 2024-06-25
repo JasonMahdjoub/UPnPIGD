@@ -20,16 +20,7 @@ import com.distrimind.upnp_igd.binding.LocalServiceBinder;
 import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
 import com.distrimind.upnp_igd.model.DefaultServiceManager;
 import com.distrimind.upnp_igd.model.message.OutgoingDatagramMessage;
-import com.distrimind.upnp_igd.model.meta.Action;
-import com.distrimind.upnp_igd.model.meta.DeviceDetails;
-import com.distrimind.upnp_igd.model.meta.DeviceIdentity;
-import com.distrimind.upnp_igd.model.meta.Icon;
-import com.distrimind.upnp_igd.model.meta.LocalDevice;
-import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.meta.RemoteDevice;
-import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
-import com.distrimind.upnp_igd.model.meta.RemoteService;
-import com.distrimind.upnp_igd.model.meta.StateVariable;
+import com.distrimind.upnp_igd.model.meta.*;
 import com.distrimind.upnp_igd.model.types.DeviceType;
 import com.distrimind.upnp_igd.model.types.ServiceId;
 import com.distrimind.upnp_igd.model.types.ServiceType;
@@ -80,17 +71,18 @@ public class SampleData {
         return new DeviceIdentity(SampleDeviceRoot.getRootUDN(), maxAgeSeconds);
     }
 
-    public static LocalDevice createLocalDevice() {
+    public static <T> LocalDevice<T> createLocalDevice() {
         return createLocalDevice(false);
     }
 
-    public static LocalDevice createLocalDevice(boolean useProvider) {
+    public static <T> LocalDevice<T> createLocalDevice(boolean useProvider) {
         return createLocalDevice(createLocalDeviceIdentity(), useProvider);
     }
 
-    public static Constructor<LocalDevice> getLocalDeviceConstructor() {
+    @SuppressWarnings("unchecked")
+	public static <T> Constructor<T> getLocalDeviceConstructor() {
         try {
-            return LocalDevice.class.getConstructor(
+            return (Constructor<T>) LocalDevice.class.getConstructor(
                     DeviceIdentity.class, DeviceType.class, DeviceDetails.class,
                     Collection.class, LocalService.class, LocalDevice.class
             );
@@ -99,9 +91,10 @@ public class SampleData {
         }
     }
 
-    public static Constructor<LocalDevice> getLocalDeviceWithProviderConstructor() {
+    @SuppressWarnings("unchecked")
+	public static <T> Constructor<T> getLocalDeviceWithProviderConstructor() {
         try {
-            return LocalDevice.class.getConstructor(
+            return (Constructor<T>) LocalDevice.class.getConstructor(
                     DeviceIdentity.class, DeviceType.class, DeviceDetailsProvider.class,
                     Collection.class, LocalService.class, LocalDevice.class
             );
@@ -110,7 +103,8 @@ public class SampleData {
         }
     }
 
-    public static Constructor<LocalService> getLocalServiceConstructor() {
+	@SuppressWarnings("rawtypes")
+	public static Constructor<LocalService> getLocalServiceConstructor() {
         try {
             return LocalService.class.getConstructor(
                     ServiceType.class, ServiceId.class,
@@ -121,31 +115,32 @@ public class SampleData {
         }
     }
 
-    public static LocalDevice createLocalDevice(DeviceIdentity identity) {
+    public static LocalDevice<? extends LocalService<?>> createLocalDevice(DeviceIdentity identity) {
         return createLocalDevice(identity, false);
     }
 
-    public static LocalDevice createLocalDevice(DeviceIdentity identity, boolean useProvider) {
+	@SuppressWarnings("unchecked")
+	public static <T> LocalDevice<T> createLocalDevice(DeviceIdentity identity, boolean useProvider) {
         try {
 
-            Constructor<LocalDevice> ctor =
+            Constructor<T> ctor =
                     useProvider
                             ? getLocalDeviceWithProviderConstructor()
                             : getLocalDeviceConstructor();
 
-            Constructor<LocalService> serviceConstructor = getLocalServiceConstructor();
+            @SuppressWarnings("rawtypes") Constructor<LocalService> serviceConstructor = getLocalServiceConstructor();
 
-            return new SampleDeviceRootLocal(
+            return new SampleDeviceRootLocal<>(
                     identity,
-                    new SampleServiceOne().newInstanceLocal(serviceConstructor),
-                    new SampleDeviceEmbeddedOne(
+                    (LocalService<T>)new SampleServiceOne().newInstanceLocal(serviceConstructor),
+                    new SampleDeviceEmbeddedOne<>(
                             new DeviceIdentity(SampleDeviceEmbeddedOne.getEmbeddedOneUDN(), identity),
-                            new SampleServiceTwo().newInstanceLocal(serviceConstructor),
-                            new SampleDeviceEmbeddedTwo(
-                                    new DeviceIdentity(SampleDeviceEmbeddedTwo.getEmbeddedTwoUDN(), identity),
-                                    new SampleServiceThree().newInstanceLocal(serviceConstructor),
-                                    null
-                            ).newInstance(ctor, useProvider)
+                            (LocalService<T>)new SampleServiceTwo().newInstanceLocal(serviceConstructor),
+							new SampleDeviceEmbeddedTwo<>(
+									new DeviceIdentity(SampleDeviceEmbeddedTwo.getEmbeddedTwoUDN(), identity),
+                                    (LocalService<T>)new SampleServiceThree().newInstanceLocal(serviceConstructor),
+									null
+							).newInstance(ctor, useProvider)
                     ).newInstance(ctor, useProvider)
             ).newInstance(ctor, useProvider);
 
@@ -154,8 +149,8 @@ public class SampleData {
         }
     }
 
-    public static LocalService getFirstService(LocalDevice device) {
-        return device.getServices()[0];
+    public static <T> LocalService<T> getFirstService(LocalDevice<T> device) {
+        return device.getServices().iterator().next();
     }
 
     /* ###################################################################################### */
@@ -207,19 +202,19 @@ public class SampleData {
             Constructor<RemoteDevice> ctor = getRemoteDeviceConstructor();
             Constructor<RemoteService> serviceConstructor = getRemoteServiceConstructor();
 
-            return new SampleDeviceRoot(
-                    identity,
-                    new SampleServiceOne().newInstanceRemote(serviceConstructor),
-                    new SampleDeviceEmbeddedOne(
-                            new RemoteDeviceIdentity(SampleDeviceEmbeddedOne.getEmbeddedOneUDN(), identity),
-                            new SampleServiceTwo().newInstanceRemote(serviceConstructor),
-                            new SampleDeviceEmbeddedTwo(
-                                    new RemoteDeviceIdentity(SampleDeviceEmbeddedTwo.getEmbeddedTwoUDN(), identity),
-                                    new SampleServiceThree().newInstanceRemote(serviceConstructor),
-                                    null
-                            ).newInstance(ctor)
-                    ).newInstance(ctor)
-            ).newInstance(ctor);
+            return new SampleDeviceRoot<>(
+					identity,
+					new SampleServiceOne().newInstanceRemote(serviceConstructor),
+					new SampleDeviceEmbeddedOne<>(
+							new RemoteDeviceIdentity(SampleDeviceEmbeddedOne.getEmbeddedOneUDN(), identity),
+							new SampleServiceTwo().newInstanceRemote(serviceConstructor),
+							new SampleDeviceEmbeddedTwo<>(
+									new RemoteDeviceIdentity(SampleDeviceEmbeddedTwo.getEmbeddedTwoUDN(), identity),
+									new SampleServiceThree().newInstanceRemote(serviceConstructor),
+									null
+							).newInstance(ctor)
+					).newInstance(ctor)
+			).newInstance(ctor);
 
         } catch (Exception e) {
 /*
@@ -242,21 +237,21 @@ public class SampleData {
     public static RemoteService createUndescribedRemoteService() {
         RemoteService service =
                 new SampleServiceOneUndescribed().newInstanceRemote(SampleData.getRemoteServiceConstructor());
-        new SampleDeviceRoot(
-                SampleData.createRemoteDeviceIdentity(),
-                service,
-                null
-        ).newInstance(SampleData.getRemoteDeviceConstructor());
+		new SampleDeviceRoot<>(
+				SampleData.createRemoteDeviceIdentity(),
+				service,
+				null
+		).newInstance(SampleData.getRemoteDeviceConstructor());
         return service;
     }
 
     /* ###################################################################################### */
 
     public static <T> LocalService<T> readService(Class<T> clazz) {
-        return readService(new AnnotationLocalServiceBinder<T>().read(clazz), clazz);
+        return readService(new AnnotationLocalServiceBinder().read(clazz), clazz);
     }
 
-    public static <T> LocalService<T> readService(LocalServiceBinder<T> binder, Class<T> clazz) {
+    public static <T> LocalService<T> readService(LocalServiceBinder binder, Class<T> clazz) {
         return readService(binder.read(clazz), clazz);
     }
 
@@ -298,7 +293,7 @@ public class SampleData {
         }
     */
 
-    public static void debugMsg(OutgoingDatagramMessage msg) {
+    public static void debugMsg(OutgoingDatagramMessage<?> msg) {
         DatagramProcessor proc = new DefaultUpnpServiceConfiguration().getDatagramProcessor();
         proc.write(msg);
     }

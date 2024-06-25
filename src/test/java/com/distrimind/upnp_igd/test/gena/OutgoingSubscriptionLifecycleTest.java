@@ -83,7 +83,7 @@ public class OutgoingSubscriptionLifecycleTest {
         SubscriptionCallback callback = new SubscriptionCallback(service) {
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -91,24 +91,24 @@ public class OutgoingSubscriptionLifecycleTest {
             }
 
             @Override
-            public void established(GENASubscription subscription) {
+            public void established(GENASubscription<?> subscription) {
                 testAssertions.add(true);
             }
 
             @Override
-            public void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+            public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
                 assertNull(reason);
                 assertEquals(responseStatus.getStatusCode(), UpnpResponse.Status.OK.getStatusCode());
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription subscription) {
+            public void eventReceived(GENASubscription<?> subscription) {
                 assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
                 assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
                 testAssertions.add(true);
             }
 
-            public void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -206,7 +206,7 @@ public class OutgoingSubscriptionLifecycleTest {
         final SubscriptionCallback callback = new SubscriptionCallback(service) {
 
             @Override
-            protected void failed(GENASubscription subscription,
+            protected void failed(GENASubscription<?> subscription,
                                   UpnpResponse responseStatus,
                                   Exception exception,
                                   String defaultMsg) {
@@ -214,22 +214,22 @@ public class OutgoingSubscriptionLifecycleTest {
             }
 
             @Override
-            public void established(GENASubscription subscription) {
+            public void established(GENASubscription<?> subscription) {
                 testAssertions.add(true);
             }
 
             @Override
-            public void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+            public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
             }
 
-            public void eventReceived(GENASubscription subscription) {
+            public void eventReceived(GENASubscription<?> subscription) {
                 assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
                 assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
                 testAssertions.add(true);
                 notificationCalled.add(true);
             }
 
-            public void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
+            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -246,7 +246,7 @@ public class OutgoingSubscriptionLifecycleTest {
 
         // generate notification in a separate thread
         // use a dummy GENASubscription for that to have a valid subscriptionId
-       final GENASubscription subscription = new RemoteGENASubscription(service, 180) {
+       final GENASubscription<?> subscription = new RemoteGENASubscription(service, 180) {
             @Override
             public void established() {
             }
@@ -324,12 +324,12 @@ public class OutgoingSubscriptionLifecycleTest {
 
     protected IncomingEventRequestMessage createEventRequestMessage(final UpnpService upnpService, final SubscriptionCallback callback) {
 
-        List<StateVariableValue> values = new ArrayList<>();
+        List<StateVariableValue<?>> values = new ArrayList<>();
         values.add(
-                new StateVariableValue(callback.getService().getStateVariable("Status"), false)
+                new StateVariableValue<>(callback.getService().getStateVariable("Status"), false)
         );
         values.add(
-                new StateVariableValue(callback.getService().getStateVariable("Target"), true)
+                new StateVariableValue<>(callback.getService().getStateVariable("Target"), true)
         );
 
         OutgoingEventRequestMessage outgoing = new OutgoingEventRequestMessage(
@@ -348,14 +348,14 @@ public class OutgoingSubscriptionLifecycleTest {
     }
 
 
-    protected IncomingEventRequestMessage createEventRequestMessage(final UpnpService upnpService, final RemoteService service, final GENASubscription subscription) {
+    protected IncomingEventRequestMessage createEventRequestMessage(final UpnpService upnpService, final RemoteService service, final GENASubscription<?> subscription) {
 
-        List<StateVariableValue> values = new ArrayList<>();
+        List<StateVariableValue<?>> values = new ArrayList<>();
         values.add(
-                new StateVariableValue(service.getStateVariable("Status"), false)
+                new StateVariableValue<>(service.getStateVariable("Status"), false)
         );
         values.add(
-                new StateVariableValue(service.getStateVariable("Target"), true)
+                new StateVariableValue<>(service.getStateVariable("Target"), true)
         );
 
         OutgoingEventRequestMessage outgoing = new OutgoingEventRequestMessage(

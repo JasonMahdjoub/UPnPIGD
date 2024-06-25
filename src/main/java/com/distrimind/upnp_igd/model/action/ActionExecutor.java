@@ -24,5 +24,10 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
  */
 public interface ActionExecutor {
 
-    void execute(final ActionInvocation<LocalService<?>> actionInvocation);
+    <T> void execute(final ActionInvocation<LocalService<T>> actionInvocation);
+    @SuppressWarnings("unchecked")
+	default <T> void executeWithUntypedGeneric(final ActionInvocation<? extends LocalService<?>> actionInvocation)
+    {
+        execute((ActionInvocation<LocalService<T>>)actionInvocation);
+    }
 }

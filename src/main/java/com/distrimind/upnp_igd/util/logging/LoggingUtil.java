@@ -53,7 +53,7 @@ public class LoggingUtil {
      * Loads the default logging configuration properties from the classpath.
      * <p>
      * This method will do nothing if the 'java.util.logging.config.file' property is set.
-     * </p>
+   
      *
      * @throws IOException If reading the properties or instantiating handlers failed.
      */
@@ -66,7 +66,7 @@ public class LoggingUtil {
      * <p>
      * If the given input stream is null, the default properties will be loaded. This method
      * will do nothing if the 'java.util.logging.config.file' property is set.
-     * </p>
+   
      *
      * @param is An optional input stream that overrides the default logging properties.
      * @throws IOException If reading the properties or instantiating handlers failed.
@@ -97,7 +97,7 @@ public class LoggingUtil {
      * The JUL manager will load handler classes with the system classloader, causing deployment problems. This
      * method will load a handler class through the curren thread's context classloader and instantiate it with
      * the default constructor.
-     * </p>
+   
      *
      * @param handlerNames A list of handler class names.
      * @return An array of instantiated handlers.
@@ -118,7 +118,7 @@ public class LoggingUtil {
      * <p>
      * All handler (class) names are added to the supplied list and an input stream with the same
      * properties, except for the 'handler' properties, is returned.
-     * </p>
+   
      *
      * @param is       The properties input stream
      * @param handlers All handler (class) names are added to this list.
@@ -162,7 +162,7 @@ public class LoggingUtil {
      * <p>
      * This method removes all loggers which might have been configured on the JUL root logger
      * handlers (such as the broken default two-line-system-err handler) and adds the given handlers.
-     * </p>
+   
      *
      * @param h An array of handlers to use with the root logger.
      */

@@ -190,7 +190,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
      * This space character might confuse the HTTP client. The Cling transports for Jetty Client and
      * Apache HttpClient have been tested to work with space characters. Unfortunately, Sun JDK's
      * HttpURLConnection does not gracefully handle any garbage in the HTTP request!
-     * </p>
+   
      */
     public static boolean isConnectionOpen(HttpServletRequest request) {
         return isConnectionOpen(request, " ".getBytes());

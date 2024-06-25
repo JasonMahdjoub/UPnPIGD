@@ -63,7 +63,7 @@ public abstract class UpnpStream implements Runnable {
      * The HTTP response in this case is always <em>404 NOT FOUND</em>. Any other (HTTP) error
      * condition will be encapsulated in the returned response message and has to be
      * passed to the HTTP client as it is.
-     * </p>
+   
      * @param requestMsg The TCP (HTTP) stream request message.
      * @return The TCP (HTTP) stream response message, or <code>null</code> if a 404 should be send to the client.
      */

@@ -33,11 +33,11 @@ import static org.testng.Assert.*;
  */
 public class ActionSampleData {
 
-    public static LocalDevice createTestDevice() throws Exception {
+    public static LocalDevice<LocalTestService> createTestDevice() throws Exception {
         return createTestDevice(LocalTestService.class);
     }
 
-    public static LocalDevice createTestDevice(Class<?> clazz) throws Exception {
+    public static <T> LocalDevice<T> createTestDevice(Class<T> clazz) throws Exception {
         return createTestDevice(
                 SampleData.readService(
                         new AnnotationLocalServiceBinder(),
@@ -46,8 +46,8 @@ public class ActionSampleData {
         );
     }
 
-    public static LocalDevice createTestDevice(LocalService service) throws Exception {
-        return new LocalDevice(
+    public static <T> LocalDevice<T> createTestDevice(LocalService<T> service) throws Exception {
+        return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("BinaryLight", 1),
                 new DeviceDetails("Example Binary Light"),
@@ -100,7 +100,7 @@ public class ActionSampleData {
         public boolean getTarget() {
             try {
                 Thread.sleep(50); // A small delay so they are really concurrent
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException ignored) {}
             return super.getTarget();
         }
     }

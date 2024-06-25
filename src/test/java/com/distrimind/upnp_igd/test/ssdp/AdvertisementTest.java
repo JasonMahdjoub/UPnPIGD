@@ -39,13 +39,13 @@ public class AdvertisementTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice rootDevice = SampleData.createLocalDevice();
-        LocalDevice embeddedDevice = rootDevice.getEmbeddedDevices()[0];
+        LocalDevice<?> rootDevice = SampleData.createLocalDevice();
+        LocalDevice<?> embeddedDevice = rootDevice.getEmbeddedDevices().iterator().next();
 
         SendingNotificationAlive prot = new SendingNotificationAlive(upnpService, rootDevice);
         prot.run();
 
-        for (OutgoingDatagramMessage msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
+        for (OutgoingDatagramMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
             assertAliveMsgBasics(msg);
             //SampleData.debugMsg(msg);
         }
@@ -60,13 +60,13 @@ public class AdvertisementTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice rootDevice = SampleData.createLocalDevice();
-        LocalDevice embeddedDevice = rootDevice.getEmbeddedDevices()[0];
+        LocalDevice<?> rootDevice = SampleData.createLocalDevice();
+        LocalDevice<?> embeddedDevice = rootDevice.getEmbeddedDevices().iterator().next();
 
         SendingNotificationByebye prot = new SendingNotificationByebye(upnpService, rootDevice);
         prot.run();
 
-        for (OutgoingDatagramMessage msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
+        for (OutgoingDatagramMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
             assertByebyeMsgBasics(msg);
             //SampleData.debugMsg(msg);
         }
@@ -76,14 +76,14 @@ public class AdvertisementTest {
             rootDevice, embeddedDevice, UpnpHeader.Type.NT);
     }
 
-    protected void assertAliveMsgBasics(UpnpMessage msg) {
+    protected void assertAliveMsgBasics(UpnpMessage<?> msg) {
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.NTS).getValue(), NotificationSubtype.ALIVE);
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.LOCATION).getValue().toString(), SampleDeviceRoot.getDeviceDescriptorURL().toString());
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.MAX_AGE).getValue(), 1800);
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.SERVER).getValue(), new ServerClientTokens());
     }
 
-    protected void assertByebyeMsgBasics(UpnpMessage msg) {
+    protected void assertByebyeMsgBasics(UpnpMessage<?> msg) {
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.NTS).getValue(), NotificationSubtype.BYEBYE);
     }
 

@@ -84,11 +84,11 @@ public class ActionXMLProcessingTest {
     @Test(dataProvider = "processors")
     public void writeReadRequest(final SOAPActionProcessor processor) throws Exception {
 
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
-        LocalService svc = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
+        LocalService<?> svc = ld.getServices().iterator().next();
 
-        Action action = svc.getAction("SetTarget");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = svc.getAction("SetTarget");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         actionInvocation.setInput("NewTargetValue", true);
 
         // The control URL doesn't matter
@@ -106,22 +106,22 @@ public class ActionXMLProcessingTest {
         StreamRequestMessage incomingStream = new StreamRequestMessage(outgoingCall);
         IncomingActionRequestMessage incomingCall = new IncomingActionRequestMessage(incomingStream, svc);
 
-        actionInvocation = new ActionInvocation(incomingCall.getAction());
+        actionInvocation = new ActionInvocation<>(incomingCall.getAction());
 
         upnpService.getConfiguration().getSoapActionProcessor().readBody(incomingCall, actionInvocation);
 
-        assertEquals(actionInvocation.getInput().length, 1);
-        assertEquals(actionInvocation.getInput()[0].getArgument().getName(), "NewTargetValue");
+        assertEquals(actionInvocation.getInput().size(), 1);
+        assertEquals(actionInvocation.getInput().iterator().next().getArgument().getName(), "NewTargetValue");
     }
 
     @Test(dataProvider = "processors")
     public void writeReadResponse(final SOAPActionProcessor processor) throws Exception {
 
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
-        LocalService svc = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
+        LocalService<?> svc = ld.getServices().iterator().next();
 
-        Action action = svc.getAction("GetTarget");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = svc.getAction("GetTarget");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
 
         OutgoingActionResponseMessage outgoingCall = new OutgoingActionResponseMessage(action);
         actionInvocation.setOutput("RetTargetValue", true);
@@ -138,20 +138,20 @@ public class ActionXMLProcessingTest {
         StreamResponseMessage incomingStream = new StreamResponseMessage(outgoingCall);
         IncomingActionResponseMessage incomingCall = new IncomingActionResponseMessage(incomingStream);
 
-        actionInvocation = new ActionInvocation(action);
+        actionInvocation = new ActionInvocation<>(action);
         upnpService.getConfiguration().getSoapActionProcessor().readBody(incomingCall, actionInvocation);
 
-        assertEquals(actionInvocation.getOutput()[0].getArgument().getName(), "RetTargetValue");
+        assertEquals(actionInvocation.getOutput().iterator().next().getArgument().getName(), "RetTargetValue");
     }
 
     @Test(dataProvider = "processors")
     public void writeFailureReadFailure(final SOAPActionProcessor processor) throws Exception {
 
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
-        LocalService svc = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
+        LocalService<?> svc = ld.getServices().iterator().next();
 
-        Action action = svc.getAction("GetTarget");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = svc.getAction("GetTarget");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         actionInvocation.setFailure(new ActionException(ErrorCode.ACTION_FAILED, "A test string"));
 
         OutgoingActionResponseMessage outgoingCall = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
@@ -168,7 +168,7 @@ public class ActionXMLProcessingTest {
         StreamResponseMessage incomingStream = new StreamResponseMessage(outgoingCall);
         IncomingActionResponseMessage incomingCall = new IncomingActionResponseMessage(incomingStream);
 
-        actionInvocation = new ActionInvocation(action);
+        actionInvocation = new ActionInvocation<>(action);
         upnpService.getConfiguration().getSoapActionProcessor().readBody(incomingCall, actionInvocation);
 
         assertEquals(actionInvocation.getFailure().getErrorCode(), ErrorCode.ACTION_FAILED.getCode());
@@ -179,11 +179,11 @@ public class ActionXMLProcessingTest {
     @Test(dataProvider = "processors")
     public void readEncodedRequest(final SOAPActionProcessor processor) throws Exception {
 
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
-        LocalService svc = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
+        LocalService<?> svc = ld.getServices().iterator().next();
 
-        Action action = svc.getAction("SetSomeValue");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = svc.getAction("SetSomeValue");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
 
         MockUpnpService upnpService = new MockUpnpService(new MockUpnpServiceConfiguration() {
             @Override
@@ -212,18 +212,18 @@ public class ActionXMLProcessingTest {
 
         upnpService.getConfiguration().getSoapActionProcessor().readBody(request, actionInvocation);
 
-        assertEquals(actionInvocation.getInput()[0].toString(), "This is encoded: <");
+        assertEquals(actionInvocation.getInput().iterator().next().toString(), "This is encoded: <");
 
     }
 
     @Test(dataProvider = "processors")
     public void readEncodedRequestWithAlias(final SOAPActionProcessor processor) throws Exception {
 
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
-        LocalService svc = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
+        LocalService<?> svc = ld.getServices().iterator().next();
 
-        Action action = svc.getAction("SetSomeValue");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = svc.getAction("SetSomeValue");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
 
         MockUpnpService upnpService = new MockUpnpService(new MockUpnpServiceConfiguration() {
             @Override
@@ -252,7 +252,7 @@ public class ActionXMLProcessingTest {
 
         upnpService.getConfiguration().getSoapActionProcessor().readBody(request, actionInvocation);
 
-        assertEquals(actionInvocation.getInput()[0].toString(), "This is encoded: <");
+        assertEquals(actionInvocation.getInput().iterator().next().toString(), "This is encoded: <");
         assertEquals(actionInvocation.getInput("SomeValue").toString(), "This is encoded: <");
 
     }
@@ -260,11 +260,11 @@ public class ActionXMLProcessingTest {
     @Test(dataProvider = "processors")
     public void writeDecodedResponse(final SOAPActionProcessor processor) throws Exception {
 
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
-        LocalService svc = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
+        LocalService<?> svc = ld.getServices().iterator().next();
 
-        Action action = svc.getAction("GetSomeValue");
-        ActionInvocation actionInvocation = new ActionInvocation(action);
+        Action<?> action = svc.getAction("GetSomeValue");
+        ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
 
         MockUpnpService upnpService = new MockUpnpService(new MockUpnpServiceConfiguration() {
             @Override

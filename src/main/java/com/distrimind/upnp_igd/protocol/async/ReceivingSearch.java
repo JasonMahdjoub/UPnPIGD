@@ -162,7 +162,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         if (LOG_ENABLED) {
             log.fine("Responding to 'all' search with advertisement messages for all local devices");
         }
-        for (LocalDevice localDevice : getUpnpService().getRegistry().getLocalDevices()) {
+        for (LocalDevice<?> localDevice : getUpnpService().getRegistry().getLocalDevices()) {
 
             if (isAdvertisementDisabled(localDevice))
                 continue;
@@ -178,7 +178,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             }
 
             if (localDevice.hasEmbeddedDevices()) {
-                for (LocalDevice embeddedDevice : localDevice.findEmbeddedDevices()) {
+                for (LocalDevice<?> embeddedDevice : localDevice.findEmbeddedDevices()) {
                     if (LOG_ENABLED) {
                         log.finer("Sending embedded device messages: " + embeddedDevice);
                     }
@@ -204,7 +204,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         }
     }
 
-    protected List<OutgoingSearchResponse> createDeviceMessages(LocalDevice device,
+    protected List<OutgoingSearchResponse> createDeviceMessages(LocalDevice<?> device,
                                                                 NetworkAddress activeStreamServer) {
         List<OutgoingSearchResponse> msgs = new ArrayList<>();
 
@@ -243,7 +243,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         return msgs;
     }
 
-    protected List<OutgoingSearchResponse> createServiceTypeMessages(LocalDevice device,
+    protected List<OutgoingSearchResponse> createServiceTypeMessages(LocalDevice<?> device,
                                                                      NetworkAddress activeStreamServer) {
         List<OutgoingSearchResponse> msgs = new ArrayList<>();
         for (ServiceType serviceType : device.findServiceTypes()) {
@@ -262,7 +262,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
     protected void sendSearchResponseRootDevices(NetworkAddress activeStreamServer) throws RouterException {
         log.fine("Responding to root device search with advertisement messages for all local root devices");
-        for (LocalDevice device : getUpnpService().getRegistry().getLocalDevices()) {
+        for (LocalDevice<?> device : getUpnpService().getRegistry().getLocalDevices()) {
 
             if (isAdvertisementDisabled(device))
                 continue;
@@ -282,15 +282,15 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         Device<?, ?, ?> device = getUpnpService().getRegistry().getDevice(udn, false);
         if (device != null && device instanceof LocalDevice) {
 
-            if (isAdvertisementDisabled((LocalDevice)device))
+            if (isAdvertisementDisabled((LocalDevice<?>)device))
                 return;
 
             log.fine("Responding to UDN device search: " + udn);
             OutgoingSearchResponse message =
                 new OutgoingSearchResponseUDN(
                         getInputMessage(),
-                        getDescriptorLocation(activeStreamServer, (LocalDevice) device),
-                        (LocalDevice) device
+                        getDescriptorLocation(activeStreamServer, (LocalDevice<?>) device),
+                        (LocalDevice<?>) device
                 );
             prepareOutgoingSearchResponse(message);
             getUpnpService().getRouter().send(message);
@@ -303,15 +303,15 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         for (Device<?, ?, ?> device : devices) {
             if (device instanceof LocalDevice) {
 
-                if (isAdvertisementDisabled((LocalDevice)device))
+                if (isAdvertisementDisabled((LocalDevice<?>)device))
                     continue;
 
                 log.finer("Sending matching device type search result for: " + device);
                 OutgoingSearchResponse message =
                     new OutgoingSearchResponseDeviceType(
                             getInputMessage(),
-                            getDescriptorLocation(activeStreamServer, (LocalDevice) device),
-                            (LocalDevice) device
+                            getDescriptorLocation(activeStreamServer, (LocalDevice<?>) device),
+                            (LocalDevice<?>) device
                     );
                 prepareOutgoingSearchResponse(message);
                 getUpnpService().getRouter().send(message);
@@ -325,15 +325,15 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         for (Device<?, ?, ?> device : devices) {
             if (device instanceof LocalDevice) {
 
-                if (isAdvertisementDisabled((LocalDevice)device))
+                if (isAdvertisementDisabled((LocalDevice<?>)device))
                     continue;
 
                 log.finer("Sending matching service type search result: " + device);
                 OutgoingSearchResponse message =
                     new OutgoingSearchResponseServiceType(
                             getInputMessage(),
-                            getDescriptorLocation(activeStreamServer, (LocalDevice) device),
-                            (LocalDevice) device,
+                            getDescriptorLocation(activeStreamServer, (LocalDevice<?>) device),
+                            (LocalDevice<?>) device,
                             serviceType
                     );
                 prepareOutgoingSearchResponse(message);
@@ -342,14 +342,14 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         }
     }
 
-    protected Location getDescriptorLocation(NetworkAddress activeStreamServer, LocalDevice device) {
+    protected Location getDescriptorLocation(NetworkAddress activeStreamServer, LocalDevice<?> device) {
         return new Location(
                 activeStreamServer,
                 getUpnpService().getConfiguration().getNamespace().getDescriptorPathString(device)
         );
     }
 
-    protected boolean isAdvertisementDisabled(LocalDevice device) {
+    protected boolean isAdvertisementDisabled(LocalDevice<?> device) {
         DiscoveryOptions options =
             getUpnpService().getRegistry().getDiscoveryOptions(device.getIdentity().getUdn());
         return options != null && !options.isAdvertised();

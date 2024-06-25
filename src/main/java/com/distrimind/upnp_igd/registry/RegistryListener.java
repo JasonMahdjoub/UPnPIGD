@@ -48,11 +48,11 @@ public interface RegistryListener {
      * is validated and partial {@link Service} metadata is available. The
      * services are unhydrated, they have no actions or state variable metadata because the
      * service descriptors of the device model have not been retrieved at this point.
-     * </p>
+   
      * <p>
      * You typically do not use this method on a regular machine, this is an optimization
      * for slower UPnP hosts (such as Android handsets).
-     * </p>
+   
      *
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   A validated and hydrated device metadata graph, with anemic service metadata.
@@ -64,7 +64,7 @@ public interface RegistryListener {
      * <p>
      * If you override the {@link #remoteDeviceDiscoveryStarted(Registry, RemoteDevice)}
      * method, you might want to override this method as well.
-     * </p>
+   
      *
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   A validated and hydrated device metadata graph, with anemic service metadata.
@@ -86,7 +86,7 @@ public interface RegistryListener {
      * <p>
      * This is a signal that a device is still alive and you typically don't have to react to this
      * event. You will be notified when a device disappears through timeout.
-     * </p>
+   
      *
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   A validated and hydrated device metadata graph, with complete service metadata.
@@ -99,7 +99,7 @@ public interface RegistryListener {
      * This method will also be called when a discovered device did not update its expiration timeout
      * and has been been removed automatically by the local registry. This method will not be called
      * when the UPnP stack is shutting down.
-     * </p>
+   
      *
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   A validated and hydrated device metadata graph, with complete service metadata.
@@ -118,7 +118,7 @@ public interface RegistryListener {
      * Called after you remove your own device from the {@link Registry}.
      * <p>
      * This method will not be called when the UPnP stack is shutting down.
-     * </p>
+   
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   The local device removed from the {@link Registry}.
      */
@@ -128,7 +128,7 @@ public interface RegistryListener {
      * Called after registry maintenance stops but before the registry is cleared.
      * <p>
      * This method should typically not block, it executes in the thread that shuts down the UPnP stack.
-     * </p>
+   
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      */
 	void beforeShutdown(Registry registry);
@@ -137,7 +137,7 @@ public interface RegistryListener {
      * Called after the registry has been cleared on shutdown.
      * <p>
      * This method should typically not block, it executes in the thread that shuts down the UPnP stack.
-     * </p>
+   
      */
 	void afterShutdown();
 

@@ -97,7 +97,7 @@ public class SearchResponseTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice localDevice = SampleData.createLocalDevice();
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(localDevice);
 
         RemoteDevice rd = SampleData.createRemoteDevice();
@@ -118,7 +118,7 @@ public class SearchResponseTest {
         UpnpService upnpService = new MockUpnpService(false, true);
 
         RemoteDevice rd = SampleData.createRemoteDevice();
-        RemoteDevice embedded = rd.getEmbeddedDevices()[0];
+        RemoteDevice embedded = rd.getEmbeddedDevices().iterator().next();
 
         upnpService.getRegistry().addDevice(rd);
 
@@ -141,7 +141,7 @@ public class SearchResponseTest {
         upnpService.shutdown();
     }
 
-    protected IncomingSearchResponse createResponseMessage(UpnpHeader stHeader) throws UnknownHostException {
+    protected IncomingSearchResponse createResponseMessage(UpnpHeader<?> stHeader) throws UnknownHostException {
         IncomingSearchResponse msg = new IncomingSearchResponse(
                 new IncomingDatagramMessage<>(
                         new UpnpResponse(UpnpResponse.Status.OK),

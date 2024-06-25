@@ -15,7 +15,6 @@
 package example.controlpoint;
 
 import example.binarylight.BinaryLightSampleData;
-import com.distrimind.upnp_igd.binding.LocalServiceBinder;
 import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
 import com.distrimind.upnp_igd.binding.annotations.UpnpAction;
 import com.distrimind.upnp_igd.binding.annotations.UpnpInputArgument;
@@ -30,13 +29,15 @@ import com.distrimind.upnp_igd.model.message.UpnpResponse;
 import com.distrimind.upnp_igd.model.meta.Action;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.BooleanDatatype;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.UDAServiceId;
 import com.distrimind.upnp_igd.model.types.UDAServiceType;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Collection;
+import java.util.List;
 
 import static org.testng.Assert.*;
 
@@ -110,18 +111,18 @@ import static org.testng.Assert.*;
  */
 public class ActionInvocationTest {
 
-    protected LocalService bindService(Class<?> clazz) throws Exception {
-        LocalServiceBinder binder = new AnnotationLocalServiceBinder();
+    protected <T> LocalService<T> bindService(Class<T> clazz) throws Exception {
+        AnnotationLocalServiceBinder binder = new AnnotationLocalServiceBinder();
         // Let's also test the overloaded reader
-        LocalService svc = binder.read(
+        LocalService<T> svc = binder.read(
                 clazz,
                 new UDAServiceId("SwitchPower"),
                 new UDAServiceType("SwitchPower", 1),
                 true,
-                new Class[]{MyString.class}
+                List.of(MyString.class)
         );
         svc.setManager(
-                new DefaultServiceManager(svc, clazz)
+                new DefaultServiceManager<>(svc, clazz)
         );
         return svc;
     }
@@ -136,22 +137,22 @@ public class ActionInvocationTest {
     }
 
     @Test(dataProvider = "devices")
-    public void invokeActions(LocalDevice device) throws Exception {
+    public void invokeActions(LocalDevice<?> device) throws Exception {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        Service service = device.findService(new UDAServiceId("SwitchPower")); // DOC: FINDSERVICE
-        Action getStatusAction = service.getAction("GetStatus");               // DOC: FINDSERVICE
+        LocalService<?> service = device.findService(new UDAServiceId("SwitchPower")); // DOC: FINDSERVICE
+        Action<?> getStatusAction = service.getAction("GetStatus");               // DOC: FINDSERVICE
 
         final boolean[] tests = new boolean[3];
 
-        ActionInvocation getStatusInvocation = new ActionInvocation(getStatusAction);   // DOC: GETSTATUS
+        ActionInvocation<?> getStatusInvocation = new ActionInvocation<>(getStatusAction);   // DOC: GETSTATUS
 
         ActionCallback getStatusCallback = new ActionCallback(getStatusInvocation) {
 
             @Override
-            public void success(ActionInvocation invocation) {
-                ActionArgumentValue status  = invocation.getOutput("ResultStatus");
+            public void success(ActionInvocation<?> invocation) {
+                ActionArgumentValue<?> status  = invocation.getOutput("ResultStatus");
 
                 assert status != null;
 
@@ -166,7 +167,7 @@ public class ActionInvocationTest {
             }
 
             @Override
-            public void failure(ActionInvocation invocation,
+            public void failure(ActionInvocation<?> invocation,
                                 UpnpResponse operation,
                                 String defaultMsg) {
                 System.err.println(defaultMsg);
@@ -176,9 +177,9 @@ public class ActionInvocationTest {
         upnpService.getControlPoint().execute(getStatusCallback);                       // DOC: GETSTATUS
 
 
-        Action action = service.getAction("SetTarget");                                 // DOC: SETTARGET
+        Action<?> action = service.getAction("SetTarget");                                 // DOC: SETTARGET
 
-        ActionInvocation setTargetInvocation = new ActionInvocation(action);
+        ActionInvocation<?> setTargetInvocation = new ActionInvocation<>(action);
 
         setTargetInvocation.setInput("NewTargetValue", true); // Can throw InvalidValueException
 
@@ -194,14 +195,14 @@ public class ActionInvocationTest {
         ActionCallback setTargetCallback = new ActionCallback(setTargetInvocation) {
 
             @Override
-            public void success(ActionInvocation invocation) {
-                ActionArgumentValue[] output = invocation.getOutput();
-                assertEquals(output.length, 0);
+            public void success(ActionInvocation<?> invocation) {
+                Collection<? extends ActionArgumentValue<?>> output = invocation.getOutput();
+                assertEquals(output.size(), 0);
                 tests[1] = true; // DOC: EXC2
             }
 
             @Override
-            public void failure(ActionInvocation invocation,
+            public void failure(ActionInvocation<?> invocation,
                                 UpnpResponse operation,
                                 String defaultMsg) {
                 System.err.println(defaultMsg);
@@ -210,9 +211,9 @@ public class ActionInvocationTest {
 
         upnpService.getControlPoint().execute(setTargetCallback);                       // DOC: SETTARGET
 
-        getStatusInvocation = new ActionInvocation(getStatusAction);
+        getStatusInvocation = new ActionInvocation<>(getStatusAction);
         new ActionCallback.Default(getStatusInvocation, upnpService.getControlPoint()).run(); // DOC: SYNCHRONOUS
-        ActionArgumentValue status  = getStatusInvocation.getOutput("ResultStatus");
+        ActionArgumentValue<?> status  = getStatusInvocation.getOutput("ResultStatus");
         if (Boolean.valueOf(true).equals(status.getValue())) {
             tests[2] = true;
         }
@@ -222,52 +223,50 @@ public class ActionInvocationTest {
         }
 
 
-        LocalService svc = (LocalService) service;
-
-        ActionInvocation getTargetInvocation = new ActionInvocation(svc.getAction("GetTarget"));
-        svc.getExecutor(getTargetInvocation.getAction()).execute(getTargetInvocation);
+		ActionInvocation<? extends LocalService<?>> getTargetInvocation = new ActionInvocation<>(service.getAction("GetTarget"));
+        service.getExecutor(getTargetInvocation.getAction()).executeWithUntypedGeneric(getTargetInvocation);
 		assertNull(getTargetInvocation.getFailure());
-        assertEquals(getTargetInvocation.getOutput().length, 1);
-        assertEquals(getTargetInvocation.getOutput()[0].toString(), "1");
+        assertEquals(getTargetInvocation.getOutput().size(), 1);
+        assertEquals(getTargetInvocation.getOutput().iterator().next().toString(), "1");
 
-        ActionInvocation setMyStringInvocation = new ActionInvocation(svc.getAction("SetMyString"));
+        ActionInvocation<? extends LocalService<?>> setMyStringInvocation = new ActionInvocation<>(service.getAction("SetMyString"));
         setMyStringInvocation.setInput("MyString", "foo");
-        svc.getExecutor(setMyStringInvocation.getAction()).execute(setMyStringInvocation);
+        service.getExecutor(setMyStringInvocation.getAction()).executeWithUntypedGeneric(setMyStringInvocation);
 		assertNull(setMyStringInvocation.getFailure());
-        assertEquals(setMyStringInvocation.getOutput().length, 0);
+        assertEquals(setMyStringInvocation.getOutput().size(), 0);
 
-        ActionInvocation getMyStringInvocation = new ActionInvocation(svc.getAction("GetMyString"));
-        svc.getExecutor(getMyStringInvocation.getAction()).execute(getMyStringInvocation);
+        ActionInvocation<? extends LocalService<?>> getMyStringInvocation = new ActionInvocation<>(service.getAction("GetMyString"));
+        service.getExecutor(getMyStringInvocation.getAction()).executeWithUntypedGeneric(getMyStringInvocation);
 		assertNull(getTargetInvocation.getFailure());
-        assertEquals(getMyStringInvocation.getOutput().length, 1);
-        assertEquals(getMyStringInvocation.getOutput()[0].toString(), "foo");
+        assertEquals(getMyStringInvocation.getOutput().size(), 1);
+        assertEquals(getMyStringInvocation.getOutput().iterator().next().toString(), "foo");
 
     }
 
     @Test(dataProvider = "devices")
-    public void invokeActionsWithAlias(LocalDevice device) throws Exception {
+    public void invokeActionsWithAlias(LocalDevice<?> device) throws Exception {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        Service service = device.findService(new UDAServiceId("SwitchPower"));
-        Action getStatusAction = service.getAction("GetStatus");
+        LocalService<?> service = device.findService(new UDAServiceId("SwitchPower"));
+
 
         final boolean[] tests = new boolean[1];
 
-        Action action = service.getAction("SetTarget");
-        ActionInvocation setTargetInvocation = new ActionInvocation(action);
+        Action<? extends LocalService<?>> action = service.getAction("SetTarget");
+        ActionInvocation<? extends LocalService<?>> setTargetInvocation = new ActionInvocation<>(action);
         setTargetInvocation.setInput("NewTargetValue1", true);
         ActionCallback setTargetCallback = new ActionCallback(setTargetInvocation) {
 
             @Override
-            public void success(ActionInvocation invocation) {
-                ActionArgumentValue[] output = invocation.getOutput();
-                assertEquals(output.length, 0);
+            public void success(ActionInvocation<?> invocation) {
+                Collection<? extends ActionArgumentValue<?>> output = invocation.getOutput();
+                assertEquals(output.size(), 0);
                 tests[0] = true;
             }
 
             @Override
-            public void failure(ActionInvocation invocation,
+            public void failure(ActionInvocation<?> invocation,
                                 UpnpResponse operation,
                                 String defaultMsg) {
                 System.err.println(defaultMsg);
@@ -279,25 +278,23 @@ public class ActionInvocationTest {
 			assertTrue(test);
         }
 
-        LocalService svc = (LocalService) service;
-
-        ActionInvocation getTargetInvocation = new ActionInvocation(svc.getAction("GetTarget"));
-        svc.getExecutor(getTargetInvocation.getAction()).execute(getTargetInvocation);
+		ActionInvocation<? extends LocalService<?>> getTargetInvocation = new ActionInvocation<>(service.getAction("GetTarget"));
+        service.getExecutor(getTargetInvocation.getAction()).executeWithUntypedGeneric(getTargetInvocation);
 		assertNull(getTargetInvocation.getFailure());
-        assertEquals(getTargetInvocation.getOutput().length, 1);
-        assertEquals(getTargetInvocation.getOutput()[0].toString(), "1");
+        assertEquals(getTargetInvocation.getOutput().size(), 1);
+        assertEquals(getTargetInvocation.getOutput().iterator().next().toString(), "1");
 
-        ActionInvocation setMyStringInvocation = new ActionInvocation(svc.getAction("SetMyString"));
+        ActionInvocation<? extends LocalService<?>> setMyStringInvocation = new ActionInvocation<>(service.getAction("SetMyString"));
         setMyStringInvocation.setInput("MyString1", "foo");
-        svc.getExecutor(setMyStringInvocation.getAction()).execute(setMyStringInvocation);
+        service.getExecutor(setMyStringInvocation.getAction()).executeWithUntypedGeneric(setMyStringInvocation);
 		assertNull(setMyStringInvocation.getFailure());
-        assertEquals(setMyStringInvocation.getOutput().length, 0);
+        assertEquals(setMyStringInvocation.getOutput().size(), 0);
 
-        ActionInvocation getMyStringInvocation = new ActionInvocation(svc.getAction("GetMyString"));
-        svc.getExecutor(getMyStringInvocation.getAction()).execute(getMyStringInvocation);
+        ActionInvocation<? extends LocalService<?>> getMyStringInvocation = new ActionInvocation<>(service.getAction("GetMyString"));
+        service.getExecutor(getMyStringInvocation.getAction()).executeWithUntypedGeneric(getMyStringInvocation);
 		assertNull(getTargetInvocation.getFailure());
-        assertEquals(getMyStringInvocation.getOutput().length, 1);
-        assertEquals(getMyStringInvocation.getOutput()[0].toString(), "foo");
+        assertEquals(getMyStringInvocation.getOutput().size(), 1);
+        assertEquals(getMyStringInvocation.getOutput().iterator().next().toString(), "foo");
 
     }
 
@@ -385,7 +382,7 @@ public class ActionInvocationTest {
             return new MyStringHolder(myString);
         }
 
-        public class StatusHolder {
+        public static class StatusHolder {
             boolean st;
 
             public StatusHolder(boolean st) {
@@ -397,7 +394,7 @@ public class ActionInvocationTest {
             }
         }
 
-        public class MyStringHolder {
+        public static class MyStringHolder {
             MyString myString;
 
             public MyStringHolder(MyString myString) {

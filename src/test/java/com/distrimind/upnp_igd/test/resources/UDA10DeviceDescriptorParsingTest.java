@@ -100,7 +100,7 @@ public class UDA10DeviceDescriptorParsingTest {
         MockUpnpService upnpService = new MockUpnpService();
         DeviceDescriptorBinder binder = new UDA10DeviceDescriptorBinderImpl(new NetworkAddressFactoryImpl());
 
-        LocalDevice device = SampleData.createLocalDevice(true);
+        LocalDevice<?> device = SampleData.createLocalDevice(true);
         String descriptorXml = binder.generate(
                 device,
                 new RemoteClientInfo(),
@@ -149,20 +149,20 @@ public class UDA10DeviceDescriptorParsingTest {
         );
 
         assertEquals(
-                device.normalizeURI(device.getIcons()[0].getUri()).toString(),
+                device.normalizeURI(device.getIcons().get(0).getUri()).toString(),
                 SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/icon.png"
         );
 
         assertEquals(device.normalizeURI(
-                device.getServices()[0].getDescriptorURI()).toString(),
+                device.getServices().get(0).getDescriptorURI()).toString(),
                      SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/desc.xml"
         );
         assertEquals(
-                device.normalizeURI(device.getServices()[0].getControlURI()).toString(),
+                device.normalizeURI(device.getServices().get(0).getControlURI()).toString(),
                 SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/control"
         );
         assertEquals(
-                device.normalizeURI(device.getServices()[0].getEventSubscriptionURI()).toString(),
+                device.normalizeURI(device.getServices().get(0).getEventSubscriptionURI()).toString(),
                 SampleData.getLocalBaseURL() + "someotherbase/MY-DEVICE-123/svc/upnp-org/MY-SERVICE-123/events"
         );
 
@@ -195,20 +195,20 @@ public class UDA10DeviceDescriptorParsingTest {
         );
 
         assertEquals(
-                device.normalizeURI(device.getIcons()[0].getUri()).toString(),
+                device.normalizeURI(device.getIcons().get(0).getUri()).toString(),
                 SampleData.getLocalBaseURL() + "icon.png"
         );
 
         assertEquals(device.normalizeURI(
-                device.getServices()[0].getDescriptorURI()).toString(),
+                device.getServices().get(0).getDescriptorURI()).toString(),
                      SampleData.getLocalBaseURL() + "svc.xml"
         );
         assertEquals(
-                device.normalizeURI(device.getServices()[0].getControlURI()).toString(),
+                device.normalizeURI(device.getServices().get(0).getControlURI()).toString(),
                 SampleData.getLocalBaseURL() + "control"
         );
         assertEquals(
-                device.normalizeURI(device.getServices()[0].getEventSubscriptionURI()).toString(),
+                device.normalizeURI(device.getServices().get(0).getEventSubscriptionURI()).toString(),
                 SampleData.getLocalBaseURL() + "events"
         );
 

@@ -121,11 +121,11 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
      * Typically you want to log this problem or create an error report, and in any
      * case, throw an {@link UnsupportedDataException} to notify the caller of the
      * processor of this failure.
-     * </p>
+   
      * <p>
      * You can access the invalid XML with
      * {@link UnsupportedDataException#getData()}.
-     * </p>
+   
      *
      * @param originalException   The original exception throw by the first parsing attempt
      * @param recoveringException The exception thrown after trying to fix the XML.

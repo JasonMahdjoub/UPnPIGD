@@ -48,7 +48,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
      * device is truly new, all its resources are tested for conflicts with existing resources in the registry's
      * namespace, then it is added to the registry and listeners are notified that a new fully described remote
      * device is now available.
-     * </p>
+   
      *
      * @param device The remote device to be added
      */
@@ -159,7 +159,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
      * Removes the given device from the registry and notifies registry listeners.
      *
      * @param remoteDevice The device to remove from the registry.
-     * @return <tt>true</tt> if the given device was found and removed from the registry, false if it wasn't registered.
+     * @return <code>true</code> if the given device was found and removed from the registry, false if it wasn't registered.
      */
     boolean remove(final RemoteDevice remoteDevice) {
         return remove(remoteDevice, false);

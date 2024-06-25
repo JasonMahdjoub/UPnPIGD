@@ -26,14 +26,14 @@ import java.util.Set;
  *
  * @author Christian Bauer
  */
-public interface LocalServiceBinder<T> {
+public interface LocalServiceBinder {
 
     /**
      * @param clazz The Java class that is the source of the service metadata.
      * @return The produced metadata.
      * @throws LocalServiceBindingException If binding failed.
      */
-    LocalService<T> read(Class<?> clazz) throws LocalServiceBindingException;
+    <T> LocalService<T> read(Class<T> clazz) throws LocalServiceBindingException;
 
     /**
      *
@@ -47,6 +47,6 @@ public interface LocalServiceBinder<T> {
      * @return The produced metadata.
      * @throws LocalServiceBindingException If binding failed.
      */
-    LocalService<T> read(Class<?> clazz, ServiceId id, ServiceType type,
+    <T> LocalService<T> read(Class<T> clazz, ServiceId id, ServiceType type,
                               boolean supportsQueryStateVariables, Set<Class<?>> stringConvertibleTypes) throws LocalServiceBindingException;
 }

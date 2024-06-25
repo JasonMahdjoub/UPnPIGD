@@ -40,7 +40,7 @@ public interface DatagramProcessor {
      * <p>
      * The message is either a {@link UpnpRequest} or
      * a {@link UpnpResponse} operation type.
-     * </p>
+   
      *
      * @param receivedOnAddress The address of the socket on which this datagram was received.
      * @param datagram The received UDP datagram.
@@ -54,7 +54,7 @@ public interface DatagramProcessor {
      * <p>
      * The outgoing message might be a {@link UpnpRequest} or a
      * {@link UpnpResponse}.
-     * </p>
+   
      *
      * @param message The outgoing datagram message.
      * @return An actual UDP datagram.

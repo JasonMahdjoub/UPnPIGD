@@ -35,10 +35,10 @@ public abstract class SampleService {
     public abstract URI getDescriptorURI();
     public abstract URI getControlURI();
     public abstract URI getEventSubscriptionURI();
-    public abstract Collection<Action> getActions();
-    public abstract Collection<StateVariable> getStateVariables();
+    public abstract Collection<Action<?>> getActions();
+    public abstract Collection<StateVariable<?>> getStateVariables();
 
-    public Service<?, ?, ?> newInstanceLocal(Constructor<? extends Service<?, ?, ?>> ctor) {
+    public <S extends Service<?, ?, ?>> S newInstanceLocal(Constructor<S> ctor) {
         try {
             return ctor.newInstance(
                     getServiceType(), getServiceId(),
@@ -49,7 +49,7 @@ public abstract class SampleService {
         }
     }
 
-    public Service<?, ?, ?> newInstanceRemote(Constructor<? extends Service<?, ?, ?>> ctor) {
+    public <S extends Service<?, ?, ?>> S newInstanceRemote(Constructor<S> ctor) {
         try {
             return ctor.newInstance(
                     getServiceType(), getServiceId(),

@@ -55,11 +55,11 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
     /**
      * Obtains the service implementation instance from the {@link ServiceManager}, handles exceptions.
      */
-    public void execute(final ActionInvocation<LocalService<?>> actionInvocation) {
+    public <T> void execute(final ActionInvocation<LocalService<T>> actionInvocation) {
 
         log.fine("Invoking on local service: " + actionInvocation);
 
-        final LocalService<?> service = actionInvocation.getAction().getService();
+        final LocalService<T> service = actionInvocation.getAction().getService();
 
         try {
 
@@ -67,8 +67,8 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
                 throw new IllegalStateException("Service has no implementation factory, can't get service instance");
             }
 
-            service.getManager().execute(new Command() {
-                public void execute(ServiceManager serviceManager) throws Exception {
+            service.getManager().execute(new Command<>() {
+                public void execute(ServiceManager<T> serviceManager) throws Exception {
                     AbstractActionExecutor.this.execute(
                             actionInvocation,
                             serviceManager.getImplementation()
@@ -109,7 +109,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
         }
     }
 
-    protected abstract void execute(ActionInvocation<LocalService<?>> actionInvocation, Object serviceImpl) throws Exception;
+    protected abstract <T> void execute(ActionInvocation<LocalService<T>> actionInvocation, Object serviceImpl) throws Exception;
 
     /**
      * Reads the output arguments after an action execution using accessors.
@@ -120,11 +120,11 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
      *         <code>Object[]</code> otherwise.
      * @throws Exception if a problem occurs
      */
-    protected Object readOutputArgumentValues(Action<LocalService<?>> action, Object instance) throws Exception {
+    protected <T> Object readOutputArgumentValues(Action<LocalService<T>> action, Object instance) throws Exception {
         List<Object> results = new ArrayList<>(action.getOutputArguments().size());
         log.fine("Attempting to retrieve output argument values using accessor: " + action.getOutputArguments().size());
 
-        for (ActionArgument<LocalService<?>> outputArgument : action.getOutputArguments()) {
+        for (ActionArgument<LocalService<T>> outputArgument : action.getOutputArguments()) {
             log.finer("Calling acccessor method for: " + outputArgument);
 
             StateVariableAccessor accessor = getOutputArgumentAccessors().get(outputArgument);
@@ -145,7 +145,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
     /**
      * Sets the output argument value on the {@link ActionInvocation}, considers string conversion.
      */
-    protected void setOutputArgumentValue(ActionInvocation<LocalService<?>> actionInvocation, ActionArgument<LocalService<?>> argument, Object result)
+    protected <T> void setOutputArgumentValue(ActionInvocation<LocalService<T>> actionInvocation, ActionArgument<LocalService<T>> argument, Object result)
             throws ActionException {
 
         LocalService<?> service = actionInvocation.getAction().getService();

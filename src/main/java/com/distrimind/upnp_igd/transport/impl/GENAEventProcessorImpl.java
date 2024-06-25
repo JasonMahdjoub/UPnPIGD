@@ -132,7 +132,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     /* ##################################################################################################### */
 
     protected void writeProperties(Document d, Element propertysetElement, OutgoingEventRequestMessage message) {
-        for (StateVariableValue stateVariableValue : message.getStateVariableValues()) {
+        for (StateVariableValue<?> stateVariableValue : message.getStateVariableValues()) {
             Element propertyElement = d.createElementNS(Constants.NS_UPNP_EVENT_10, "e:property");
             propertysetElement.appendChild(propertyElement);
             XMLUtil.appendNewElement(
@@ -166,12 +166,12 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
                         continue;
 
                     String stateVariableName = getUnprefixedNodeName(propertyChild);
-                    for (StateVariable stateVariable : stateVariables) {
+                    for (StateVariable<RemoteService> stateVariable : stateVariables) {
                         if (stateVariable.getName().equals(stateVariableName)) {
                             log.fine("Reading state variable value: " + stateVariableName);
                             String value = XMLUtil.getTextContent(propertyChild);
                             message.getStateVariableValues().add(
-                                    new StateVariableValue(stateVariable, value)
+                                    new StateVariableValue<>(stateVariable, value)
                             );
                             break;
                         }
@@ -184,7 +184,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
     /* ##################################################################################################### */
 
-    protected String getMessageBody(UpnpMessage message) throws UnsupportedDataException {
+    protected String getMessageBody(UpnpMessage<?> message) throws UnsupportedDataException {
         if (!message.isBodyNonEmptyString())
             throw new UnsupportedDataException(
                 "Can't transform null or non-string/zero-length body of: " + message

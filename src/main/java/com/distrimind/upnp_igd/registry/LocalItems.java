@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
+class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>> {
 
     private static final Logger log = Logger.getLogger(Registry.class.getName());
     
@@ -70,11 +70,11 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
         return getDiscoveryOptions(udn) != null && getDiscoveryOptions(udn).isByeByeBeforeFirstAlive();
     }
 
-    void add(LocalDevice localDevice) throws RegistrationException {
+    void add(LocalDevice<?> localDevice) throws RegistrationException {
         add(localDevice, null);
     }
 
-    void add(final LocalDevice localDevice, DiscoveryOptions options) throws RegistrationException {
+    void add(final LocalDevice<?> localDevice, DiscoveryOptions options) throws RegistrationException {
 
         // Always set/override the options, even if we don't end up adding the device
         setDiscoveryOptions(localDevice.getIdentity().getUdn(), options);
@@ -99,7 +99,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
 
         log.fine("Adding item to registry with expiration in seconds: " + localDevice.getIdentity().getMaxAgeSeconds());
 
-        RegistryItem<UDN, LocalDevice> localItem = new RegistryItem<>(
+        RegistryItem<UDN, LocalDevice<?>> localItem = new RegistryItem<>(
                 localDevice.getIdentity().getUdn(),
                 localDevice,
                 localDevice.getIdentity().getMaxAgeSeconds()
@@ -126,27 +126,27 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
 
     }
 
-    Collection<LocalDevice> get() {
-        Set<LocalDevice> c = new HashSet<>();
-        for (RegistryItem<UDN, LocalDevice> item : getDeviceItems()) {
+    Collection<LocalDevice<?>> get() {
+        Set<LocalDevice<?>> c = new HashSet<>();
+        for (RegistryItem<UDN, LocalDevice<?>> item : getDeviceItems()) {
             c.add(item.getItem());
         }
         return Collections.unmodifiableCollection(c);
     }
     @Override
-    boolean remove(final LocalDevice localDevice) throws RegistrationException {
+    boolean remove(final LocalDevice<?> localDevice) throws RegistrationException {
         return remove(localDevice, false);
     }
 
-    boolean remove(final LocalDevice localDevice, boolean shuttingDown) throws RegistrationException {
+    boolean remove(final LocalDevice<?> localDevice, boolean shuttingDown) throws RegistrationException {
 
-        LocalDevice registeredDevice = get(localDevice.getIdentity().getUdn(), true);
+        LocalDevice<?> registeredDevice = get(localDevice.getIdentity().getUdn(), true);
         if (registeredDevice != null) {
 
             log.fine("Removing local device from registry: " + localDevice);
 
             setDiscoveryOptions(localDevice.getIdentity().getUdn(), null);
-            getDeviceItems().remove(new RegistryItem<UDN, LocalDevice>(localDevice.getIdentity().getUdn()));
+            getDeviceItems().remove(new RegistryItem<UDN, LocalDevice<?>>(localDevice.getIdentity().getUdn()));
 
             for (Resource<?> deviceResource : getResources(localDevice)) {
                 if (registry.removeResource(deviceResource)) {
@@ -203,7 +203,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
     }
 
     void removeAll(boolean shuttingDown) {
-        for (LocalDevice device : get()) {
+        for (LocalDevice<?> device : get()) {
             remove(device, shuttingDown);
         }
     }
@@ -211,7 +211,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
     /* ############################################################################################################ */
 
     public void advertiseLocalDevices() {
-        for (RegistryItem<UDN, LocalDevice> localItem : deviceItems) {
+        for (RegistryItem<UDN, LocalDevice<?>> localItem : deviceItems) {
             if (isAdvertised(localItem.getKey()))
                 advertiseAlive(localItem.getItem());
         }
@@ -223,7 +223,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
 
     	if(getDeviceItems().isEmpty()) return ;
 
-        Set<RegistryItem<UDN, LocalDevice>> expiredLocalItems = new HashSet<>();
+        Set<RegistryItem<UDN, LocalDevice<?>>> expiredLocalItems = new HashSet<>();
 
         // "Flooding" is enabled, check if we need to send advertisements for all devices
         int aliveIntervalMillis = registry.getConfiguration().getAliveIntervalMillis();
@@ -231,7 +231,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
         	long now = System.currentTimeMillis();
         	if(now - lastAliveIntervalTimestamp > aliveIntervalMillis) {
         		lastAliveIntervalTimestamp = now;
-                for (RegistryItem<UDN, LocalDevice> localItem : getDeviceItems()) {
+                for (RegistryItem<UDN, LocalDevice<?>> localItem : getDeviceItems()) {
                     if (isAdvertised(localItem.getKey())) {
                         log.finer("Flooding advertisement of local item: " + localItem);
                         expiredLocalItems.add(localItem);
@@ -243,7 +243,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
             lastAliveIntervalTimestamp = 0;
 
             // Alive interval is not enabled, regular expiration check of all devices
-            for (RegistryItem<UDN, LocalDevice> localItem : getDeviceItems()) {
+            for (RegistryItem<UDN, LocalDevice<?>> localItem : getDeviceItems()) {
                 if (isAdvertised(localItem.getKey()) && localItem.getExpirationDetails().hasExpired(true)) {
                     log.finer("Local item has expired: " + localItem);
                     expiredLocalItems.add(localItem);
@@ -252,7 +252,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
         }
 
         // Now execute the advertisements
-        for (RegistryItem<UDN, LocalDevice> expiredLocalItem : expiredLocalItems) {
+        for (RegistryItem<UDN, LocalDevice<?>> expiredLocalItem : expiredLocalItems) {
             log.fine("Refreshing local device advertisement: " + expiredLocalItem.getItem());
             advertiseAlive(expiredLocalItem.getItem());
             expiredLocalItem.getExpirationDetails().stampLastRefresh();
@@ -285,7 +285,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
 
     protected Random randomGenerator = new Random();
 
-    protected void advertiseAlive(final LocalDevice localDevice) {
+    protected void advertiseAlive(final LocalDevice<?> localDevice) {
         registry.executeAsyncProtocol(new Runnable() {
             public void run() {
                 try {
@@ -299,7 +299,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription<?>> {
         });
     }
 
-    protected void advertiseByebye(final LocalDevice localDevice, boolean asynchronous) {
+    protected void advertiseByebye(final LocalDevice<?> localDevice, boolean asynchronous) {
         final SendingAsync prot = registry.getProtocolFactory().createSendingNotificationByebye(localDevice);
         if (asynchronous) {
             registry.executeAsyncProtocol(prot);

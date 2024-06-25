@@ -310,10 +310,10 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
      * Validation of every discovered network interface.
      * <p>
      * Override this method to customize which network interfaces are used.
-     * </p>
+   
      * <p>
      * The given implementation ignores interfaces which are
-     * </p>
+   
      * <ul>
      * <li>loopback (yes, we do not bind to lo0)</li>
      * <li>down</li>
@@ -425,10 +425,10 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
      * Validation of every discovered local address.
      * <p>
      * Override this method to customize which network addresses are used.
-     * </p>
+   
      * <p>
      * The given implementation ignores addresses which are
-     * </p>
+   
      * <ul>
      * <li>not IPv4</li>
      * <li>the local loopback (yes, we ignore 127.0.0.1)</li>

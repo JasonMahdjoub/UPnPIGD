@@ -35,16 +35,15 @@ import org.testng.annotations.Test;
 
 import java.util.Random;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.*;
 
 /**
  * @author Christian Bauer
  */
 public class LocalServiceBindingDatatypesTest {
 
-    public LocalDevice createTestDevice(LocalService service) throws Exception {
-        return new LocalDevice(
+    public <T> LocalDevice<T> createTestDevice(LocalService<T> service) throws Exception {
+        return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("TestDevice", 1),
                 new DeviceDetails("Test Device"),
@@ -64,27 +63,27 @@ public class LocalServiceBindingDatatypesTest {
     }
 
     @Test(dataProvider = "devices")
-    public void validateBinding(LocalDevice device) {
+    public void validateBinding(LocalDevice<?> device) {
 
-        LocalService svc = SampleData.getFirstService(device);
+        LocalService<?> svc = SampleData.getFirstService(device);
 
         //System.out.println("############################################################################");
         //ServiceDescriptorBinder binder = new DefaultRouterConfiguration().getServiceDescriptorBinderUDA10();
         //System.out.println(binder.generate(svc));
         //System.out.println("############################################################################");
 
-        assertEquals(svc.getStateVariables().length, 1);
+        assertEquals(svc.getStateVariables().size(), 1);
         assertEquals(svc.getStateVariable("Data").getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.BIN_BASE64);
 		assertFalse(svc.getStateVariable("Data").getEventDetails().isSendEvents());
 
-        assertEquals(svc.getActions().length, 1);
+        assertEquals(svc.getActions().size(), 1);
 
         assertEquals(svc.getAction("GetData").getName(), "GetData");
-        assertEquals(svc.getAction("GetData").getArguments().length, 1);
-        assertEquals(svc.getAction("GetData").getArguments()[0].getName(), "RandomData");
-        assertEquals(svc.getAction("GetData").getArguments()[0].getDirection(), ActionArgument.Direction.OUT);
-        assertEquals(svc.getAction("GetData").getArguments()[0].getRelatedStateVariableName(), "Data");
-        assertEquals(svc.getAction("GetData").getArguments()[0].isReturnValue(), true);
+        assertEquals(svc.getAction("GetData").getArguments().size(), 1);
+        assertEquals(svc.getAction("GetData").getArguments().get(0).getName(), "RandomData");
+        assertEquals(svc.getAction("GetData").getArguments().get(0).getDirection(), ActionArgument.Direction.OUT);
+        assertEquals(svc.getAction("GetData").getArguments().get(0).getRelatedStateVariableName(), "Data");
+		assertTrue(svc.getAction("GetData").getArguments().get(0).isReturnValue());
 
     }
 

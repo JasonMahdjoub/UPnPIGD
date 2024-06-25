@@ -71,13 +71,13 @@ import static org.testng.Assert.assertNull;
  */
 public class StringConvertibleTest {
 
-        public LocalDevice createTestDevice(Class serviceClass) throws Exception {
+        public <T> LocalDevice<T> createTestDevice(Class<T> serviceClass) throws Exception {
 
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
-        LocalService svc = binder.read(serviceClass);
-        svc.setManager(new DefaultServiceManager(svc, serviceClass));
+        LocalService<T> svc = binder.read(serviceClass);
+        svc.setManager(new DefaultServiceManager<>(svc, serviceClass));
 
-        return new LocalDevice(
+        return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new DeviceType("mydomain", "CustomDevice", 1),
                 new DeviceDetails("A Custom Device"),
@@ -101,76 +101,76 @@ public class StringConvertibleTest {
     }
 
     @Test(dataProvider = "devices")
-    public void validateBinding(LocalDevice device) {
+    public void validateBinding(LocalDevice<?> device) {
 
-        LocalService svc = device.getServices()[0];
+        LocalService<?> svc = device.getServices().iterator().next();
 
-        assertEquals(svc.getStateVariables().length, 4);
-        for (StateVariable stateVariable : svc.getStateVariables()) {
+        assertEquals(svc.getStateVariables().size(), 4);
+        for (StateVariable<?> stateVariable : svc.getStateVariables()) {
             assertEquals(stateVariable.getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.STRING);
         }
 
-        assertEquals(svc.getActions().length, 9); // Has 8 actions plus QueryStateVariableAction!
+        assertEquals(svc.getActions().size(), 9); // Has 8 actions plus QueryStateVariableAction!
 
-        assertEquals(svc.getAction("SetMyURL").getArguments().length, 1);
-        assertEquals(svc.getAction("SetMyURL").getArguments()[0].getName(), "In");
-        assertEquals(svc.getAction("SetMyURL").getArguments()[0].getDirection(), ActionArgument.Direction.IN);
-        assertEquals(svc.getAction("SetMyURL").getArguments()[0].getRelatedStateVariableName(), "MyURL");
+        assertEquals(svc.getAction("SetMyURL").getArguments().size(), 1);
+        assertEquals(svc.getAction("SetMyURL").getArguments().iterator().next().getName(), "In");
+        assertEquals(svc.getAction("SetMyURL").getArguments().iterator().next().getDirection(), ActionArgument.Direction.IN);
+        assertEquals(svc.getAction("SetMyURL").getArguments().iterator().next().getRelatedStateVariableName(), "MyURL");
         // The others are all the same...
 
     }
 
     @Test(dataProvider =  "devices")
-    public void invokeActions(LocalDevice device) {
-        LocalService svc = device.getServices()[0];
+    public void invokeActions(LocalDevice<?> device) {
+        LocalService<?> svc = device.getServices().iterator().next();
 
-        ActionInvocation setMyURL = new ActionInvocation(svc.getAction("SetMyURL"));
+        ActionInvocation<? extends LocalService<?>> setMyURL = new ActionInvocation<>(svc.getAction("SetMyURL"));
         setMyURL.setInput("In", "http://foo/bar");
-        svc.getExecutor(setMyURL.getAction()).execute(setMyURL);
+        svc.getExecutor(setMyURL.getAction()).executeWithUntypedGeneric(setMyURL);
 		assertNull(setMyURL.getFailure());
-        assertEquals(setMyURL.getOutput().length, 0);
+        assertEquals(setMyURL.getOutput().size(), 0);
 
-        ActionInvocation getMyURL = new ActionInvocation(svc.getAction("GetMyURL"));
-        svc.getExecutor(getMyURL.getAction()).execute(getMyURL);
+        ActionInvocation<? extends LocalService<?>> getMyURL = new ActionInvocation<>(svc.getAction("GetMyURL"));
+        svc.getExecutor(getMyURL.getAction()).executeWithUntypedGeneric(getMyURL);
 		assertNull(getMyURL.getFailure());
-        assertEquals(getMyURL.getOutput().length, 1);
-        assertEquals(getMyURL.getOutput()[0].toString(), "http://foo/bar");
+        assertEquals(getMyURL.getOutput().size(), 1);
+        assertEquals(getMyURL.getOutput().iterator().next().toString(), "http://foo/bar");
 
-        ActionInvocation setMyURI = new ActionInvocation(svc.getAction("SetMyURI"));
+        ActionInvocation<? extends LocalService<?>> setMyURI = new ActionInvocation<>(svc.getAction("SetMyURI"));
         setMyURI.setInput("In", "http://foo/bar");
-        svc.getExecutor(setMyURI.getAction()).execute(setMyURI);
+        svc.getExecutor(setMyURI.getAction()).executeWithUntypedGeneric(setMyURI);
 		assertNull(setMyURI.getFailure());
-        assertEquals(setMyURI.getOutput().length, 0);
+        assertEquals(setMyURI.getOutput().size(), 0);
 
-        ActionInvocation getMyURI = new ActionInvocation(svc.getAction("GetMyURI"));
-        svc.getExecutor(getMyURI.getAction()).execute(getMyURI);
+        ActionInvocation<? extends LocalService<?>> getMyURI = new ActionInvocation<>(svc.getAction("GetMyURI"));
+        svc.getExecutor(getMyURI.getAction()).executeWithUntypedGeneric(getMyURI);
 		assertNull(getMyURI.getFailure());
-        assertEquals(getMyURI.getOutput().length, 1);
-        assertEquals(getMyURI.getOutput()[0].toString(), "http://foo/bar");
+        assertEquals(getMyURI.getOutput().size(), 1);
+        assertEquals(getMyURI.getOutput().iterator().next().toString(), "http://foo/bar");
 
-        ActionInvocation setMyNumbers = new ActionInvocation(svc.getAction("SetMyNumbers"));
+        ActionInvocation<? extends LocalService<?>> setMyNumbers = new ActionInvocation<>(svc.getAction("SetMyNumbers"));
         setMyNumbers.setInput("In", "1,2,3");
-        svc.getExecutor(setMyNumbers.getAction()).execute(setMyNumbers);
+        svc.getExecutor(setMyNumbers.getAction()).executeWithUntypedGeneric(setMyNumbers);
 		assertNull(setMyNumbers.getFailure());
-        assertEquals(setMyNumbers.getOutput().length, 0);
+        assertEquals(setMyNumbers.getOutput().size(), 0);
 
-        ActionInvocation getMyNumbers = new ActionInvocation(svc.getAction("GetMyNumbers"));
-        svc.getExecutor(getMyNumbers.getAction()).execute(getMyNumbers);
+        ActionInvocation<? extends LocalService<?>> getMyNumbers = new ActionInvocation<>(svc.getAction("GetMyNumbers"));
+        svc.getExecutor(getMyNumbers.getAction()).executeWithUntypedGeneric(getMyNumbers);
 		assertNull(getMyNumbers.getFailure());
-        assertEquals(getMyNumbers.getOutput().length, 1);
-        assertEquals(getMyNumbers.getOutput()[0].toString(), "1,2,3");
+        assertEquals(getMyNumbers.getOutput().size(), 1);
+        assertEquals(getMyNumbers.getOutput().iterator().next().toString(), "1,2,3");
 
-        ActionInvocation setMyStringConvertible = new ActionInvocation(svc.getAction("SetMyStringConvertible"));
+        ActionInvocation<? extends LocalService<?>> setMyStringConvertible = new ActionInvocation<>(svc.getAction("SetMyStringConvertible"));
         setMyStringConvertible.setInput("In", "foobar");
-        svc.getExecutor(setMyStringConvertible.getAction()).execute(setMyStringConvertible);
+        svc.getExecutor(setMyStringConvertible.getAction()).executeWithUntypedGeneric(setMyStringConvertible);
 		assertNull(setMyStringConvertible.getFailure());
-        assertEquals(setMyStringConvertible.getOutput().length, 0);
+        assertEquals(setMyStringConvertible.getOutput().size(), 0);
 
-        ActionInvocation getMyStringConvertible = new ActionInvocation(svc.getAction("GetMyStringConvertible"));
-        svc.getExecutor(getMyStringConvertible.getAction()).execute(getMyStringConvertible);
+        ActionInvocation<? extends LocalService<?>> getMyStringConvertible = new ActionInvocation<>(svc.getAction("GetMyStringConvertible"));
+        svc.getExecutor(getMyStringConvertible.getAction()).executeWithUntypedGeneric(getMyStringConvertible);
 		assertNull(getMyStringConvertible.getFailure());
-        assertEquals(getMyStringConvertible.getOutput().length, 1);
-        assertEquals(getMyStringConvertible.getOutput()[0].toString(), "foobar");
+        assertEquals(getMyStringConvertible.getOutput().size(), 1);
+        assertEquals(getMyStringConvertible.getOutput().iterator().next().toString(), "foobar");
 
     }
 }

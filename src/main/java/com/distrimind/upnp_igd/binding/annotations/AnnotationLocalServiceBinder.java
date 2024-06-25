@@ -48,11 +48,11 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public class AnnotationLocalServiceBinder<T> implements LocalServiceBinder<T> {
+public class AnnotationLocalServiceBinder implements LocalServiceBinder {
 
     private static final Logger log = Logger.getLogger(AnnotationLocalServiceBinder.class.getName());
 
-    public LocalService<T> read(Class<?> clazz) throws LocalServiceBindingException {
+    public <T> LocalService<T> read(Class<T> clazz) throws LocalServiceBindingException {
         log.fine("Reading and binding annotations of service implementation class: " + clazz);
 
         // Read the service ID and service type from the annotation
@@ -79,8 +79,13 @@ public class AnnotationLocalServiceBinder<T> implements LocalServiceBinder<T> {
             throw new LocalServiceBindingException("Given class is not an @UpnpService");
         }
     }
-
-    public LocalService<T> read(Class<?> clazz, ServiceId id, ServiceType type,
+    public <T> LocalService<T> read(Class<T> clazz, ServiceId id, ServiceType type,
+                                    boolean supportsQueryStateVariables, List<Class<?>> stringConvertibleTypes)
+    {
+		Set<Class<?>> set = new HashSet<>(stringConvertibleTypes);
+        return read(clazz, id, type, supportsQueryStateVariables, set);
+    }
+    public <T> LocalService<T> read(Class<T> clazz, ServiceId id, ServiceType type,
                                    boolean supportsQueryStateVariables, Set<Class<?>> stringConvertibleTypes)
             throws LocalServiceBindingException {
 
@@ -130,7 +135,7 @@ public class AnnotationLocalServiceBinder<T> implements LocalServiceBinder<T> {
         return stringConvertibleTypes;
     }
 
-    protected Map<StateVariable<LocalService<T>>, StateVariableAccessor> readStateVariables(Class<?> clazz, Set<Class<?>> stringConvertibleTypes)
+    protected <T> Map<StateVariable<LocalService<T>>, StateVariableAccessor> readStateVariables(Class<?> clazz, Set<Class<?>> stringConvertibleTypes)
             throws LocalServiceBindingException {
 
         Map<StateVariable<LocalService<T>>, StateVariableAccessor> map = new HashMap<>();
@@ -223,7 +228,7 @@ public class AnnotationLocalServiceBinder<T> implements LocalServiceBinder<T> {
         return map;
     }
 
-    protected Map<Action<LocalService<T>>, ActionExecutor> readActions(Class<?> clazz,
+    protected <T> Map<Action<LocalService<T>>, ActionExecutor> readActions(Class<?> clazz,
                                                             Map<StateVariable<LocalService<T>>, StateVariableAccessor> stateVariables,
                                                       Set<Class<?>> stringConvertibleTypes)
             throws LocalServiceBindingException {

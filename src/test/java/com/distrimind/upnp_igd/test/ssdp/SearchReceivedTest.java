@@ -60,8 +60,8 @@ public class SearchReceivedTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice localDevice = SampleData.createLocalDevice();
-        LocalDevice embeddedDevice = localDevice.getEmbeddedDevices()[0];
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
+        LocalDevice<?> embeddedDevice = localDevice.getEmbeddedDevices().iterator().next();
         upnpService.getRegistry().addDevice(localDevice);
 
         IncomingSearchRequest searchMsg = createRequestMessage();
@@ -75,7 +75,7 @@ public class SearchReceivedTest {
 
         assertEquals(upnpService.getRouter().getOutgoingDatagramMessages().size(), 10);
 
-        for (OutgoingDatagramMessage msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
+        for (OutgoingDatagramMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
             //SampleData.debugMsg(msg);
             assertSearchResponseBasics(upnpService.getConfiguration().getNamespace(), msg, localDevice);
         }
@@ -88,7 +88,7 @@ public class SearchReceivedTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice localDevice = SampleData.createLocalDevice();
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(localDevice);
 
         IncomingSearchRequest searchMsg = createRequestMessage();
@@ -122,7 +122,7 @@ public class SearchReceivedTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice localDevice = SampleData.createLocalDevice();
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(localDevice);
 
         IncomingSearchRequest searchMsg = createRequestMessage();
@@ -156,7 +156,7 @@ public class SearchReceivedTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice localDevice = SampleData.createLocalDevice();
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(localDevice);
 
         IncomingSearchRequest searchMsg = createRequestMessage();
@@ -190,8 +190,8 @@ public class SearchReceivedTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice localDevice = SampleData.createLocalDevice();
-        Service service = localDevice.getServices()[0];
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
+        Service<?, ?, ?> service = localDevice.getServices().iterator().next();
         upnpService.getRegistry().addDevice(localDevice);
 
         IncomingSearchRequest searchMsg = createRequestMessage();
@@ -257,7 +257,7 @@ public class SearchReceivedTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice localDevice = SampleData.createLocalDevice();
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
 
         // Disable advertising
         upnpService.getRegistry().addDevice(localDevice, new DiscoveryOptions(false));
@@ -289,7 +289,7 @@ public class SearchReceivedTest {
         return new ReceivingSearch(upnpService, searchMsg);
     }
 
-    protected void assertSearchResponseBasics(Namespace namespace, UpnpMessage msg, LocalDevice rootDevice) {
+    protected void assertSearchResponseBasics(Namespace namespace, UpnpMessage<?> msg, LocalDevice<?> rootDevice) {
         assertEquals(
                 msg.getHeaders().getFirstHeader(UpnpHeader.Type.MAX_AGE).getString(),
                 new MaxAgeHeader(rootDevice.getIdentity().getMaxAgeSeconds()).getString()

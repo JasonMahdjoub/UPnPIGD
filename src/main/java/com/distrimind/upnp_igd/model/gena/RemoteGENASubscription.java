@@ -83,7 +83,7 @@ public abstract class RemoteGENASubscription extends GENASubscription<RemoteServ
         ended(reason, response);
     }
 
-    synchronized public void receive(UnsignedIntegerFourBytes sequence, Collection<StateVariableValue> newValues) {
+    synchronized public void receive(UnsignedIntegerFourBytes sequence, Collection<StateVariableValue<RemoteService>> newValues) {
 
         if (this.currentSequence != null) {
 
@@ -107,7 +107,7 @@ public abstract class RemoteGENASubscription extends GENASubscription<RemoteServ
 
         this.currentSequence = sequence;
 
-        for (StateVariableValue newValue : newValues) {
+        for (StateVariableValue<RemoteService> newValue : newValues) {
             currentValues.put(newValue.getStateVariable().getName(), newValue);
         }
 

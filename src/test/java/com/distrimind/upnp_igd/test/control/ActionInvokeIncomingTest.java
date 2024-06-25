@@ -92,20 +92,20 @@ public class ActionInvokeIncomingTest {
 
     @Test
     public void incomingRemoteCallClientInfo() throws Exception {
-        UpnpMessage response =
+        UpnpMessage<?> response =
                 incomingRemoteCallGet(ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceWithClientInfo.class));
 
         assertEquals(response.getHeaders().size(), 4);
         assertEquals(response.getHeaders().getFirstHeader("X-MY-HEADER"), "foobar");
     }
 
-    public IncomingActionResponseMessage incomingRemoteCallGet(LocalDevice ld) throws Exception {
+    public <T> IncomingActionResponseMessage incomingRemoteCallGet(LocalDevice<T> ld) throws Exception {
 
         MockUpnpService upnpService = new MockUpnpService();
-        LocalService service = ld.getServices()[0];
+        LocalService<T> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action action = service.getAction("GetTarget");
+        Action<LocalService<T>> action = service.getAction("GetTarget");
 
         URI controlURI = upnpService.getConfiguration().getNamespace().getControlPath(service);
         StreamRequestMessage request = new StreamRequestMessage(UpnpRequest.Method.POST, controlURI);
@@ -152,7 +152,7 @@ public class ActionInvokeIncomingTest {
         );
 
         IncomingActionResponseMessage responseMessage = new IncomingActionResponseMessage(response);
-        ActionInvocation responseInvocation = new ActionInvocation(action);
+        ActionInvocation<?> responseInvocation = new ActionInvocation<>(action);
         upnpService.getConfiguration().getSoapActionProcessor().readBody(responseMessage, responseInvocation);
 
         assertNotNull(responseInvocation.getOutput("RetTargetValue"));
@@ -164,8 +164,8 @@ public class ActionInvokeIncomingTest {
 
         // Register local device and its service
         MockUpnpService upnpService = new MockUpnpService(false, false, true);
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceThrowsException.class);
-        LocalService service = ld.getServices()[0];
+        LocalDevice<ActionSampleData.LocalTestServiceThrowsException> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceThrowsException.class);
+        LocalService<ActionSampleData.LocalTestServiceThrowsException> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
         // TODO: Use a latch instead of waiting
@@ -181,15 +181,15 @@ public class ActionInvokeIncomingTest {
 
     static class ConcurrentGetTest implements Runnable {
         private final UpnpService upnpService;
-        private final LocalService service;
+        private final LocalService<?> service;
 
-        ConcurrentGetTest(UpnpService upnpService, LocalService service) {
+        ConcurrentGetTest(UpnpService upnpService, LocalService<?> service) {
             this.upnpService = upnpService;
             this.service = service;
         }
 
         public void run() {
-            Action action = service.getAction("GetTarget");
+            Action<?> action = service.getAction("GetTarget");
 
             URI controlURI = upnpService.getConfiguration().getNamespace().getControlPath(service);
             StreamRequestMessage request = new StreamRequestMessage(UpnpRequest.Method.POST, controlURI);
@@ -218,7 +218,7 @@ public class ActionInvokeIncomingTest {
             );
 
             IncomingActionResponseMessage responseMessage = new IncomingActionResponseMessage(response);
-            ActionInvocation responseInvocation = new ActionInvocation(action);
+            ActionInvocation<?> responseInvocation = new ActionInvocation<>(action);
             upnpService.getConfiguration().getSoapActionProcessor().readBody(responseMessage, responseInvocation);
 
             assertNotNull(responseInvocation.getOutput("RetTargetValue"));
@@ -231,11 +231,11 @@ public class ActionInvokeIncomingTest {
 
         // Register local device and its service
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice ld = ActionSampleData.createTestDevice();
-        LocalService service = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice();
+        LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action action = service.getAction("SetTarget");
+        Action<?> action = service.getAction("SetTarget");
 
         URI controlURI = upnpService.getConfiguration().getNamespace().getControlPath(service);
         StreamRequestMessage request = new StreamRequestMessage(UpnpRequest.Method.POST, controlURI);
@@ -258,10 +258,10 @@ public class ActionInvokeIncomingTest {
         );
 
         IncomingActionResponseMessage responseMessage = new IncomingActionResponseMessage(response);
-        ActionInvocation responseInvocation = new ActionInvocation(action);
+        ActionInvocation<?> responseInvocation = new ActionInvocation<>(action);
         upnpService.getConfiguration().getSoapActionProcessor().readBody(responseMessage, responseInvocation);
 
-        assertEquals(responseInvocation.getOutput().length, 0);
+        assertEquals(responseInvocation.getOutput().size(), 0);
 
     }
 
@@ -270,11 +270,11 @@ public class ActionInvokeIncomingTest {
 
         // Register local device and its service
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice ld = ActionSampleData.createTestDevice();
-        LocalService service = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice();
+        LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action action = service.getAction("SetTarget");
+        Action<?> action = service.getAction("SetTarget");
 
         StreamRequestMessage request = new StreamRequestMessage(UpnpRequest.Method.POST, URI.create("/some/random/123/uri"));
         addMandatoryRequestHeaders(service, action, request);
@@ -284,7 +284,7 @@ public class ActionInvokeIncomingTest {
 
         prot.run();
 
-        UpnpMessage response = prot.getOutputMessage();
+        UpnpMessage<?> response = prot.getOutputMessage();
 
         assertNull(response);
         // The StreamServer will send a 404 response
@@ -295,11 +295,11 @@ public class ActionInvokeIncomingTest {
 
         // Register local device and its service
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceThrowsException.class);
-        LocalService service = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceThrowsException.class);
+        LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action action = service.getAction("SetTarget");
+        Action<?> action = service.getAction("SetTarget");
 
         URI controlURI = upnpService.getConfiguration().getNamespace().getControlPath(service);
         StreamRequestMessage request = new StreamRequestMessage(UpnpRequest.Method.POST, controlURI);
@@ -323,7 +323,7 @@ public class ActionInvokeIncomingTest {
         );
 
         IncomingActionResponseMessage responseMessage = new IncomingActionResponseMessage(response);
-        ActionInvocation responseInvocation = new ActionInvocation(action);
+        ActionInvocation<?> responseInvocation = new ActionInvocation<>(action);
         upnpService.getConfiguration().getSoapActionProcessor().readBody(responseMessage, responseInvocation);
 
         ActionException ex = responseInvocation.getFailure();
@@ -338,11 +338,11 @@ public class ActionInvokeIncomingTest {
 
         // Register local device and its service
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice ld = ActionSampleData.createTestDevice();
-        LocalService service = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice();
+        LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action action = service.getAction("GetTarget");
+        Action<?> action = service.getAction("GetTarget");
 
         URI controlURI = upnpService.getConfiguration().getNamespace().getControlPath(service);
         StreamRequestMessage request = new StreamRequestMessage(UpnpRequest.Method.POST, controlURI);
@@ -367,7 +367,7 @@ public class ActionInvokeIncomingTest {
         );
 
         IncomingActionResponseMessage responseMessage = new IncomingActionResponseMessage(response);
-        ActionInvocation responseInvocation = new ActionInvocation(action);
+        ActionInvocation<?> responseInvocation = new ActionInvocation<>(action);
         upnpService.getConfiguration().getSoapActionProcessor().readBody(responseMessage, responseInvocation);
 
         assertNotNull(responseInvocation.getOutput("RetTargetValue"));
@@ -401,11 +401,11 @@ public class ActionInvokeIncomingTest {
 
         // Register local device and its service
         MockUpnpService upnpService = new MockUpnpService();
-        LocalDevice ld = ActionSampleData.createTestDevice();
-        LocalService service = ld.getServices()[0];
+        LocalDevice<?> ld = ActionSampleData.createTestDevice();
+        LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action action = service.getAction(QueryStateVariableAction.ACTION_NAME);
+        Action<?> action = service.getAction(QueryStateVariableAction.ACTION_NAME);
 
         URI controlURI = upnpService.getConfiguration().getNamespace().getControlPath(service);
         StreamRequestMessage request = new StreamRequestMessage(UpnpRequest.Method.POST, controlURI);
@@ -440,15 +440,15 @@ public class ActionInvokeIncomingTest {
         );
 
         IncomingActionResponseMessage responseMessage = new IncomingActionResponseMessage(response);
-        ActionInvocation responseInvocation = new ActionInvocation(action);
+        ActionInvocation<?> responseInvocation = new ActionInvocation<>(action);
         upnpService.getConfiguration().getSoapActionProcessor().readBody(responseMessage, responseInvocation);
 
-        assertEquals(responseInvocation.getOutput()[0].getArgument().getName(), "return");
-        assertEquals(responseInvocation.getOutput()[0].toString(), "0");
+        assertEquals(responseInvocation.getOutput().iterator().next().getArgument().getName(), "return");
+        assertEquals(responseInvocation.getOutput().iterator().next().toString(), "0");
     }
 
 
-    protected void addMandatoryRequestHeaders(Service service, Action action, StreamRequestMessage request) {
+    protected void addMandatoryRequestHeaders(Service<?, ?, ?> service, Action<?> action, StreamRequestMessage request) {
         request.getHeaders().add(
                 UpnpHeader.Type.CONTENT_TYPE,
                 new ContentTypeHeader(ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8)

@@ -19,6 +19,7 @@ import com.distrimind.upnp_igd.model.action.ActionException;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.message.UpnpResponse;
 import com.distrimind.upnp_igd.model.message.control.IncomingActionResponseMessage;
+import com.distrimind.upnp_igd.model.meta.Action;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.meta.Service;
@@ -121,7 +122,7 @@ public abstract class ActionCallback implements Runnable {
             LocalService<?> localService = (LocalService<?>)service;
 
             // Executor validates input inside the execute() call immediately
-            localService.getExecutor(actionInvocation.getAction()).execute((ActionInvocation<LocalService<?>>) actionInvocation);
+            localService.getExecutor((Action<? extends LocalService<?>>) actionInvocation.getAction()).executeWithUntypedGeneric((ActionInvocation<LocalService<?>>) actionInvocation);
 
             if (actionInvocation.getFailure() != null) {
                 failure(actionInvocation, null);

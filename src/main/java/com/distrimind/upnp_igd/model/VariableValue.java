@@ -39,11 +39,11 @@ public class VariableValue {
      * with {@link Datatype#valueOf(String)}. Any
      * other value will be checked, whether it matches the datatype and if its
      * string representation is valid in XML documents (unicode character test).
-     * </p>
+   
      * <p>
      * Note that for performance reasons, validation of a non-string value
      * argument is skipped if executed on an Android runtime!
-     * </p>
+   
      *
      * @param datatype The type of the variable.
      * @param value The value of the variable.

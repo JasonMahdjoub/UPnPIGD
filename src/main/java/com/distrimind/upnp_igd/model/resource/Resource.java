@@ -71,7 +71,7 @@ public class Resource<M> {
      * Called periodically by the registry to maintain the resource.
      * <p>
      * NOOP by default.
-     * </p>
+   
      *
      * @param pendingExecutions Add <code>Runnable</code>'s to this collection if maintenance code has to run in the background.
      * @param expirationDetails The details of this resource's expiration, e.g. when it will expire.
@@ -85,7 +85,7 @@ public class Resource<M> {
      * Called by the registry when it stops, in the shutdown thread.
      * <p>
      * NOOP by default.
-     * </p>
+   
      */
     public void shutdown() {
         // Do nothing

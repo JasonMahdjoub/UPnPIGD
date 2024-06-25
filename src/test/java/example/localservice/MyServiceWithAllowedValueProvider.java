@@ -24,6 +24,9 @@ import com.distrimind.upnp_igd.binding.annotations.UpnpServiceId;
 import com.distrimind.upnp_igd.binding.annotations.UpnpServiceType;
 import com.distrimind.upnp_igd.binding.annotations.UpnpStateVariable;
 
+import java.util.Collection;
+import java.util.List;
+
 @UpnpService(
         serviceId = @UpnpServiceId("MyService"),
         serviceType = @UpnpServiceType(namespace = "mydomain", value = "MyService")
@@ -33,8 +36,8 @@ public class MyServiceWithAllowedValueProvider {
     // DOC:PROVIDER
     public static class MyAllowedValueProvider implements AllowedValueProvider {
         @Override
-        public String[] getValues() {
-            return new String[] {"Foo", "Bar", "Baz"};
+        public Collection<String> getValues() {
+            return List.of("Foo", "Bar", "Baz");
         }
     }
     // DOC:PROVIDER

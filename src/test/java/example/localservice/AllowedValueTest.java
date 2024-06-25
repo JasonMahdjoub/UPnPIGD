@@ -54,13 +54,13 @@ import static org.testng.Assert.assertEquals;
  */
 public class AllowedValueTest {
 
-    public LocalDevice createTestDevice(Class serviceClass) throws Exception {
+    public <T> LocalDevice<T> createTestDevice(Class<T> serviceClass) throws Exception {
 
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
-        LocalService svc = binder.read(serviceClass);
-        svc.setManager(new DefaultServiceManager(svc, serviceClass));
+        LocalService<T> svc = binder.read(serviceClass);
+        svc.setManager(new DefaultServiceManager<>(svc, serviceClass));
 
-        return new LocalDevice(
+        return new LocalDevice<>(
             SampleData.createLocalDeviceIdentity(),
             new DeviceType("mydomain", "CustomDevice", 1),
             new DeviceDetails("A Custom Device"),
@@ -83,14 +83,14 @@ public class AllowedValueTest {
     }
 
     @Test(dataProvider = "devices")
-    public void validateBinding(LocalDevice device) {
-        LocalService svc = device.getServices()[0];
-        assertEquals(svc.getStateVariables().length, 1);
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.STRING);
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getAllowedValues().length, 3);
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getAllowedValues()[0], "Foo");
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getAllowedValues()[1], "Bar");
-        assertEquals(svc.getStateVariables()[0].getTypeDetails().getAllowedValues()[2], "Baz");
+    public void validateBinding(LocalDevice<?> device) {
+        LocalService<?> svc = device.getServices().iterator().next();
+        assertEquals(svc.getStateVariables().size(), 1);
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.STRING);
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().size(), 3);
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().iterator().next(), "Foo");
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().iterator().next(), "Bar");
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().iterator().next(), "Baz");
     }
 
 }

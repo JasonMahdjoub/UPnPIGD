@@ -45,7 +45,7 @@ public class DocumentBuilderFactoryWithNonDTD extends DocumentBuilderFactory {
 			try {
 				return new DocumentBuilderFactoryWithNonDTD(true);
 			} catch (ParserConfigurationException e) {
-				return null;
+				throw new RuntimeException(e);
 			}
 		}
 		return (DocumentBuilderFactoryWithNonDTD)DocumentBuilderFactory.newInstance(DocumentBuilderFactoryWithNonDTD.class.getName(), ClassLoader.getSystemClassLoader());

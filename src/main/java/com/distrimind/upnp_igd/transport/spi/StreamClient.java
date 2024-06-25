@@ -39,14 +39,14 @@ public interface StreamClient<C extends StreamClientConfiguration> {
      * This method must implement expiration of timed out requests using the
      * {@link StreamClientConfiguration} settings. When a request expires, a
      * <code>null</code> response will be returned.
-     * </p>
+   
      * <p>
      * This method will always try to complete execution without throwing an exception. It will
      * return <code>null</code> if an error occurs, and optionally log any exception messages.
-     * </p>
+   
      * <p>
      * The rules for logging are:
-     * </p>
+   
      * <ul>
      *     <li>If the caller interrupts the calling thread, log at <code>FINE</code>.</li>
      *     <li>If the request expires because the timeout has been reached, log at <code>INFO</code> level.</li>
@@ -56,12 +56,12 @@ public interface StreamClient<C extends StreamClientConfiguration> {
      * This method <strong>is required</strong> to add a <code>Host</code> HTTP header to the
      * outgoing HTTP request, even if the given
      * {@link StreamRequestMessage} does not contain such a header.
-     * </p>
+   
      * <p>
      * This method will add the <code>User-Agent</code> HTTP header to the outgoing HTTP request if
      * the given message did not already contain such a header. You can set this default value in your
      * {@link StreamClientConfiguration}.
-     * </p>
+   
      *
      * @param message The message to send.
      * @return The response or <code>null</code> if no response has been received or an error occurred.

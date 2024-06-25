@@ -56,14 +56,14 @@ public class LocalDeviceBindingAdvertisementTest {
 
         MockUpnpService upnpService = new MockUpnpService(true, true);
 
-        LocalDevice binaryLight = DemoBinaryLight.createTestDevice();
+        LocalDevice<?> binaryLight = DemoBinaryLight.createTestDevice();
 
         upnpService.getRegistry().addDevice(binaryLight);
 
         Thread.sleep(2000);
 
         assertEquals(upnpService.getRouter().getOutgoingDatagramMessages().size(), 12);
-        for (UpnpMessage msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
+        for (UpnpMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
             assertAliveMsgBasics(upnpService.getConfiguration().getNamespace(), msg, binaryLight, 1800);
         }
 
@@ -84,7 +84,7 @@ public class LocalDeviceBindingAdvertisementTest {
         // TODO: more tests
 
         ServiceDescriptorBinder svcBinder = upnpService.getConfiguration().getServiceDescriptorBinderUDA10();
-        String serviceXml = svcBinder.generate(binaryLight.getServices()[0]);
+        String serviceXml = svcBinder.generate(binaryLight.getServices().iterator().next());
 
         // TODO: more tests
     }
@@ -94,7 +94,7 @@ public class LocalDeviceBindingAdvertisementTest {
 
         MockUpnpService upnpService = new MockUpnpService(true, true);
 
-        LocalDevice ld =
+        LocalDevice<?> ld =
             SampleData.createLocalDevice(
                 SampleData.createLocalDeviceIdentity(1)
             );
@@ -109,7 +109,7 @@ public class LocalDeviceBindingAdvertisementTest {
         // 30 from addDevice()
         // 30 from regular refresh
         assertTrue(upnpService.getRouter().getOutgoingDatagramMessages().size() >= 60);
-        for (UpnpMessage msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
+        for (UpnpMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
             assertAliveMsgBasics(upnpService.getConfiguration().getNamespace(), msg, ld, 1);
         }
 
@@ -119,7 +119,7 @@ public class LocalDeviceBindingAdvertisementTest {
 
         // Check correct byebye
         assertTrue(upnpService.getRouter().getOutgoingDatagramMessages().size() >= 30);
-        for (UpnpMessage msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
+        for (UpnpMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
             assertByeByeMsgBasics(upnpService.getConfiguration().getNamespace(), msg, ld, 1);
         }
     }
@@ -135,7 +135,7 @@ public class LocalDeviceBindingAdvertisementTest {
                 }
             });
 
-        LocalDevice ld =
+        LocalDevice<?> ld =
             SampleData.createLocalDevice(
                 SampleData.createLocalDeviceIdentity(1000) // Max age ignored
             );
@@ -151,7 +151,7 @@ public class LocalDeviceBindingAdvertisementTest {
         // 30 from first flood
         // 30 from second flood
         assertTrue(upnpService.getRouter().getOutgoingDatagramMessages().size() >= 90);
-        for (UpnpMessage msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
+        for (UpnpMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
             assertAliveMsgBasics(upnpService.getConfiguration().getNamespace(), msg, ld, 1000);
         }
 
@@ -163,7 +163,7 @@ public class LocalDeviceBindingAdvertisementTest {
 
         MockUpnpService upnpService = new MockUpnpService(true, true);
 
-        LocalDevice ld =
+        LocalDevice<?> ld =
             SampleData.createLocalDevice(
                 SampleData.createLocalDeviceIdentity(60)
             );
@@ -177,11 +177,11 @@ public class LocalDeviceBindingAdvertisementTest {
         // 30 ALIVE
         int i = 0;
         for (; i < 30; i++) {
-            UpnpMessage msg = upnpService.getRouter().getOutgoingDatagramMessages().get(i);
+            UpnpMessage<?> msg = upnpService.getRouter().getOutgoingDatagramMessages().get(i);
             assertByeByeMsgBasics(upnpService.getConfiguration().getNamespace(), msg, ld, 60);
         }
         for (; i < 60; i++) {
-            UpnpMessage msg = upnpService.getRouter().getOutgoingDatagramMessages().get(i);
+            UpnpMessage<?> msg = upnpService.getRouter().getOutgoingDatagramMessages().get(i);
             assertAliveMsgBasics(upnpService.getConfiguration().getNamespace(), msg, ld, 60);
         }
 
@@ -193,7 +193,7 @@ public class LocalDeviceBindingAdvertisementTest {
     public void registerNonAdvertisedLocalDevice() throws Exception {
         MockUpnpService upnpService = new MockUpnpService(true, true);
 
-        LocalDevice binaryLight = DemoBinaryLight.createTestDevice();
+        LocalDevice<?> binaryLight = DemoBinaryLight.createTestDevice();
 
         upnpService.getRegistry().addDevice(binaryLight, new DiscoveryOptions(false)); // Not advertised
 
@@ -204,7 +204,7 @@ public class LocalDeviceBindingAdvertisementTest {
         upnpService.shutdown();
     }
 
-    protected void assertAliveMsgBasics(Namespace namespace, UpnpMessage msg, LocalDevice device, Integer maxAge) {
+    protected void assertAliveMsgBasics(Namespace namespace, UpnpMessage<?> msg, LocalDevice<?> device, Integer maxAge) {
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.NTS).getValue(), NotificationSubtype.ALIVE);
         assertEquals(
             msg.getHeaders().getFirstHeader(UpnpHeader.Type.LOCATION).getValue().toString(),
@@ -214,7 +214,7 @@ public class LocalDeviceBindingAdvertisementTest {
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.SERVER).getValue(), new ServerClientTokens());
     }
 
-    protected void assertByeByeMsgBasics(Namespace namespace, UpnpMessage msg, LocalDevice device, Integer maxAge) {
+    protected void assertByeByeMsgBasics(Namespace namespace, UpnpMessage<?> msg, LocalDevice<?> device, Integer maxAge) {
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.NTS).getValue(), NotificationSubtype.BYEBYE);
         assertEquals(
             msg.getHeaders().getFirstHeader(UpnpHeader.Type.LOCATION).getValue().toString(),
@@ -230,9 +230,9 @@ public class LocalDeviceBindingAdvertisementTest {
     )
     public static class DemoBinaryLight {
 
-        private static LocalDevice createTestDevice() throws Exception {
+        private static LocalDevice<?> createTestDevice() throws Exception {
             LocalServiceBinder binder = new AnnotationLocalServiceBinder();
-            return new LocalDevice(
+            return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("BinaryLight", 1),
                 new DeviceDetails("Example Binary Light"),

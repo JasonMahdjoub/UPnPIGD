@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, S>, S extends Service<DI, D, ?>> implements Validatable {
+public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, S>, S extends Service<DI, D, S>> implements Validatable {
 
     final private static Logger log = Logger.getLogger(Device.class.getName());
 
@@ -45,9 +45,9 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
     final private UDAVersion version;
     final private DeviceType type;
     final private DeviceDetails details;
-    final private Collection<Icon> icons;
-    final protected Collection<S> services;
-    final protected Collection<D> embeddedDevices;
+    final private List<Icon> icons;
+    final protected List<S> services;
+    final protected List<D> embeddedDevices;
 
     // Package mutable state
     private D parentDevice;
@@ -62,12 +62,12 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
     }
 
     public Device(DI identity, DeviceType type, DeviceDetails details,
-                  Collection<Icon> icons, Collection<S> services, Collection<D> embeddedDevices) throws ValidationException {
+                  Collection<Icon> icons, Collection<S> services, List<D> embeddedDevices) throws ValidationException {
         this(identity, null, type, details, icons, services, embeddedDevices);
     }
 
     public Device(DI identity, UDAVersion version, DeviceType type, DeviceDetails details,
-                  Collection<Icon> icons, Collection<S> services, Collection<D> embeddedDevices) throws ValidationException {
+                  Collection<Icon> icons, Collection<S> services, List<D> embeddedDevices) throws ValidationException {
 
         this.identity = identity;
         this.version = version == null ? new UDAVersion() : version;
@@ -148,7 +148,7 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
         return this.getDetails();
     }
 
-    public Collection<Icon> getIcons() {
+    public List<Icon> getIcons() {
         return icons;
     }
 
@@ -179,11 +179,11 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
         return getParentDevice() == null;
     }
 
-    public Collection<S> getServices() {
+    public List<S> getServices() {
         return this.services != null ? this.services : Collections.emptyList();
     }
 
-    public Collection<D> getEmbeddedDevices() {
+    public List<D> getEmbeddedDevices() {
         return this.embeddedDevices != null ? this.embeddedDevices : Collections.emptyList();
     }
 
@@ -440,11 +440,11 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
     }
 
     public abstract D newInstance(UDN udn, UDAVersion version, DeviceType type, DeviceDetails details,
-                                  Collection<Icon> icons, Collection<S> services, Collection<D> embeddedDevices) throws ValidationException;
+                                  Collection<Icon> icons, Collection<S> services, List<D> embeddedDevices) throws ValidationException;
 
     public abstract S newInstance(ServiceType serviceType, ServiceId serviceId,
                                   URI descriptorURI, URI controlURI, URI eventSubscriptionURI,
-                                  Collection<Action<S>> actions, Collection<StateVariable<S>> stateVariables) throws ValidationException;
+                                  Collection<Action<S>> actions, List<StateVariable<S>> stateVariables) throws ValidationException;
 
 
     public abstract Collection<Resource<?>> discoverResources(Namespace namespace);

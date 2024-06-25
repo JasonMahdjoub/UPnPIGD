@@ -74,7 +74,7 @@ public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends
      * Called by the client of this protocol after the returned response has been successfully delivered.
      * <p>
      * NOOP by default.
-     * </p>
+   
      */
     public void responseSent(StreamResponseMessage responseMessage) {
     }
@@ -83,7 +83,7 @@ public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends
      * Called by the client of this protocol if the returned response was not delivered.
      * <p>
      * NOOP by default.
-     * </p>
+   
      *
      * @param t The reason why the response wasn't delivered.
      */

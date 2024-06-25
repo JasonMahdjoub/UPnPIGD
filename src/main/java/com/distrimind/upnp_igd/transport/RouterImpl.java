@@ -257,7 +257,7 @@ public class RouterImpl implements Router {
      * creating another thread or consuming further resources. This means we can filter the
      * datagrams in the protocol factory and e.g. completely disable discovery or only
      * allow notification message from some known services we'd like to work with.
-     * </p>
+   
      *
      * @param msg The received datagram message.
      */
@@ -351,7 +351,7 @@ public class RouterImpl implements Router {
      * using source port 9.
      * <p>
      * TODO: Support source port parameter
-     * </p>
+   
      *
      * @param bytes The byte payload of the UDP datagram.
      */

@@ -34,11 +34,12 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 public class LocalActionInvocationEnumTest {
 
-    public LocalDevice createTestDevice(LocalService service) throws Exception {
-        return new LocalDevice(
+    public <T> LocalDevice<T> createTestDevice(LocalService<T> service) throws Exception {
+        return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("BinaryLight", 1),
                 new DeviceDetails("Example Binary Light"),
@@ -57,33 +58,33 @@ public class LocalActionInvocationEnumTest {
     }
 
     @Test(dataProvider = "devices")
-    public void invokeActions(LocalDevice device) throws Exception {
+    public void invokeActions(LocalDevice<?> device) throws Exception {
 
-        LocalService svc = SampleData.getFirstService(device);
+        LocalService<?> svc = SampleData.getFirstService(device);
 
-        ActionInvocation checkTargetInvocation = new ActionInvocation(svc.getAction("GetTarget"));
-        svc.getExecutor(checkTargetInvocation.getAction()).execute(checkTargetInvocation);
-        assertEquals(checkTargetInvocation.getFailure(), null);
-        assertEquals(checkTargetInvocation.getOutput().length, 1);
-        assertEquals(checkTargetInvocation.getOutput()[0].toString(), "UNKNOWN");
+        ActionInvocation<? extends LocalService<?>> checkTargetInvocation = new ActionInvocation<>(svc.getAction("GetTarget"));
+        svc.getExecutor(checkTargetInvocation.getAction()).executeWithUntypedGeneric(checkTargetInvocation);
+		assertNull(checkTargetInvocation.getFailure());
+        assertEquals(checkTargetInvocation.getOutput().size(), 1);
+        assertEquals(checkTargetInvocation.getOutput().iterator().next().toString(), "UNKNOWN");
 
-        ActionInvocation setTargetInvocation = new ActionInvocation(svc.getAction("SetTarget"));
+        ActionInvocation<? extends LocalService<?>> setTargetInvocation = new ActionInvocation<>(svc.getAction("SetTarget"));
         setTargetInvocation.setInput("NewTargetValue", "ON");
-        svc.getExecutor(setTargetInvocation.getAction()).execute(setTargetInvocation);
-        assertEquals(setTargetInvocation.getFailure(), null);
-        assertEquals(setTargetInvocation.getOutput().length, 0);
+        svc.getExecutor(setTargetInvocation.getAction()).executeWithUntypedGeneric(setTargetInvocation);
+		assertNull(setTargetInvocation.getFailure());
+        assertEquals(setTargetInvocation.getOutput().size(), 0);
 
-        ActionInvocation getTargetInvocation = new ActionInvocation(svc.getAction("GetTarget"));
-        svc.getExecutor(getTargetInvocation.getAction()).execute(getTargetInvocation);
-        assertEquals(getTargetInvocation.getFailure(), null);
-        assertEquals(getTargetInvocation.getOutput().length, 1);
-        assertEquals(getTargetInvocation.getOutput()[0].toString(), "ON");
+        ActionInvocation<? extends LocalService<?>> getTargetInvocation = new ActionInvocation<>(svc.getAction("GetTarget"));
+        svc.getExecutor(getTargetInvocation.getAction()).executeWithUntypedGeneric(getTargetInvocation);
+		assertNull(getTargetInvocation.getFailure());
+        assertEquals(getTargetInvocation.getOutput().size(), 1);
+        assertEquals(getTargetInvocation.getOutput().iterator().next().toString(), "ON");
 
-        ActionInvocation getStatusInvocation = new ActionInvocation(svc.getAction("GetStatus"));
-        svc.getExecutor(getStatusInvocation.getAction()).execute(getStatusInvocation);
-        assertEquals(getStatusInvocation.getFailure(), null);
-        assertEquals(getStatusInvocation.getOutput().length, 1);
-        assertEquals(getStatusInvocation.getOutput()[0].toString(), "1");
+        ActionInvocation<? extends LocalService<?>> getStatusInvocation = new ActionInvocation<>(svc.getAction("GetStatus"));
+        svc.getExecutor(getStatusInvocation.getAction()).executeWithUntypedGeneric(getStatusInvocation);
+		assertNull(getStatusInvocation.getFailure());
+        assertEquals(getStatusInvocation.getOutput().size(), 1);
+        assertEquals(getStatusInvocation.getOutput().iterator().next().toString(), "1");
 
     }
 
@@ -181,7 +182,7 @@ public class LocalActionInvocationEnumTest {
             UNKNOWN
         }
 
-        public class TargetHolder {
+        public static class TargetHolder {
             private Target t;
 
             public TargetHolder(Target t) {
@@ -231,7 +232,7 @@ public class LocalActionInvocationEnumTest {
             UNKNOWN
         }
 
-        public class TargetHolder {
+        public static class TargetHolder {
             private Target t;
 
             public TargetHolder(Target t) {

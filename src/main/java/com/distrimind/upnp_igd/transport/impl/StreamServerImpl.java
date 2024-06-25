@@ -132,7 +132,7 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
      * Logs a warning and returns <code>true</code>, we can't access the socket using the awful JDK webserver API.
      * <p>
      * Override this method if you know how to do it.
-     * </p>
+   
      */
     protected boolean isConnectionOpen(HttpExchange exchange) {
         log.warning("Can't check client connection, socket access impossible on JDK webserver!");

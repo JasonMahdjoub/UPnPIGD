@@ -153,11 +153,11 @@ public class RegistryImpl implements Registry {
 
     // #################################################################################################
 
-    synchronized public void addDevice(LocalDevice localDevice) {
+    synchronized public void addDevice(LocalDevice<?> localDevice) {
         localItems.add(localDevice);
     }
 
-    synchronized public void addDevice(LocalDevice localDevice, DiscoveryOptions options) {
+    synchronized public void addDevice(LocalDevice<?> localDevice, DiscoveryOptions options) {
         localItems.add(localDevice, options);
     }
 
@@ -177,7 +177,7 @@ public class RegistryImpl implements Registry {
         return remoteItems.update(rdIdentity);
     }
 
-    synchronized public boolean removeDevice(LocalDevice localDevice) {
+    synchronized public boolean removeDevice(LocalDevice<?> localDevice) {
         return localItems.remove(localDevice);
     }
 
@@ -196,7 +196,7 @@ public class RegistryImpl implements Registry {
 	synchronized public boolean removeDevice(UDN udn) {
         Device<?, ?, ?> device = getDevice(udn, true);
         if (device != null && device instanceof LocalDevice)
-            return removeDevice((LocalDevice) device);
+            return removeDevice((LocalDevice<?>) device);
         if (device != null && device instanceof RemoteDevice)
             return removeDevice((RemoteDevice) device);
         return false;
@@ -209,7 +209,7 @@ public class RegistryImpl implements Registry {
         return null;
     }
 
-    synchronized public LocalDevice getLocalDevice(UDN udn, boolean rootOnly) {
+    synchronized public LocalDevice<?> getLocalDevice(UDN udn, boolean rootOnly) {
         return localItems.get(udn, rootOnly);
     }
 
@@ -217,7 +217,7 @@ public class RegistryImpl implements Registry {
         return remoteItems.get(udn, rootOnly);
     }
 
-    synchronized public Collection<LocalDevice> getLocalDevices() {
+    synchronized public Collection<LocalDevice<?>> getLocalDevices() {
         return Collections.unmodifiableCollection(localItems.get());
     }
 
@@ -333,19 +333,19 @@ public class RegistryImpl implements Registry {
 
     // #################################################################################################
 
-    synchronized public void addLocalSubscription(LocalGENASubscription subscription) {
+    synchronized public void addLocalSubscription(LocalGENASubscription<?> subscription) {
         localItems.addSubscription(subscription);
     }
 
-    synchronized public LocalGENASubscription getLocalSubscription(String subscriptionId) {
+    synchronized public LocalGENASubscription<?> getLocalSubscription(String subscriptionId) {
         return localItems.getSubscription(subscriptionId);
     }
 
-    synchronized public boolean updateLocalSubscription(LocalGENASubscription subscription) {
+    synchronized public boolean updateLocalSubscription(LocalGENASubscription<?> subscription) {
         return localItems.updateSubscription(subscription);
     }
 
-    synchronized public boolean removeLocalSubscription(LocalGENASubscription subscription) {
+    synchronized public boolean removeLocalSubscription(LocalGENASubscription<?> subscription) {
         return localItems.removeSubscription(subscription);
     }
 
@@ -489,7 +489,7 @@ public class RegistryImpl implements Registry {
 
             log.fine("====================================    LOCAL    ================================================");
 
-            for (LocalDevice localDevice : localItems.get()) {
+            for (LocalDevice<?> localDevice : localItems.get()) {
                 log.fine(localDevice.toString());
             }
 

@@ -83,7 +83,7 @@ public interface DatagramIO<C extends DatagramIOConfiguration> extends Runnable 
      * <p>
      * Recoverable errors should be logged, if appropriate only with debug level. Any
      * non-recoverable errors should be thrown as <code>RuntimeException</code>s.
-     * </p>
+   
      *
      * @param datagram The UDP datagram to send.
      */

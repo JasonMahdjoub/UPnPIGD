@@ -48,7 +48,7 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
                        RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
-        super(identity, type, details, null, Collections.singleton(service), Collections.singleton(embeddedDevice));
+        super(identity, type, details, null, Collections.singleton(service), Collections.singletonList(embeddedDevice));
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
@@ -57,7 +57,7 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type,
-                        Collection<RemoteService> services, DeviceDetails details, Collection<RemoteDevice> embeddedDevices) throws ValidationException {
+                        Collection<RemoteService> services, DeviceDetails details, List<RemoteDevice> embeddedDevices) throws ValidationException {
         super(identity, type, details, null, services, embeddedDevices);
     }
 
@@ -68,7 +68,7 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
                        Icon icon, RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
-        super(identity, type, details, Collections.singleton(icon), Collections.singleton(service), Collections.singleton(embeddedDevice));
+        super(identity, type, details, Collections.singleton(icon), Collections.singleton(service), Collections.singletonList(embeddedDevice));
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
@@ -77,7 +77,7 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                       Icon icon, Collection<RemoteService> services, Collection<RemoteDevice> embeddedDevices) throws ValidationException {
+                       Icon icon, Collection<RemoteService> services, List<RemoteDevice> embeddedDevices) throws ValidationException {
         super(identity, type, details, Collections.singleton(icon), services, embeddedDevices);
     }
 
@@ -88,7 +88,7 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
                         Collection<Icon> icons, RemoteService service, RemoteDevice embeddedDevice) throws ValidationException {
-        super(identity, type, details, icons, Collections.singleton(service), Collections.singleton(embeddedDevice));
+        super(identity, type, details, icons, Collections.singleton(service), Collections.singletonList(embeddedDevice));
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
@@ -97,12 +97,12 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, DeviceType type, DeviceDetails details,
-                        Collection<Icon> icons, Collection<RemoteService> services, Collection<RemoteDevice> embeddedDevices) throws ValidationException {
+                        Collection<Icon> icons, Collection<RemoteService> services, List<RemoteDevice> embeddedDevices) throws ValidationException {
         super(identity, type, details, icons, services, embeddedDevices);
     }
 
     public RemoteDevice(RemoteDeviceIdentity identity, UDAVersion version, DeviceType type, DeviceDetails details,
-                       Collection<Icon> icons, Collection<RemoteService> services, Collection<RemoteDevice> embeddedDevices) throws ValidationException {
+                       Collection<Icon> icons, Collection<RemoteService> services, List<RemoteDevice> embeddedDevices) throws ValidationException {
         super(identity, version, type, details, icons, services, embeddedDevices);
     }
 
@@ -126,7 +126,7 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
     @Override
     public RemoteDevice newInstance(UDN udn, UDAVersion version, DeviceType type, DeviceDetails details,
 									Collection<Icon> icons, Collection<RemoteService> services,
-									Collection<RemoteDevice> embeddedDevices) throws ValidationException {
+									List<RemoteDevice> embeddedDevices) throws ValidationException {
         return new RemoteDevice(
                 new RemoteDeviceIdentity(udn, getIdentity()),
                 version, type, details, icons,
@@ -138,7 +138,7 @@ public class RemoteDevice extends Device<RemoteDeviceIdentity, RemoteDevice, Rem
     @Override
     public RemoteService newInstance(ServiceType serviceType, ServiceId serviceId,
 									 URI descriptorURI, URI controlURI, URI eventSubscriptionURI,
-									 Collection<Action<RemoteService>> actions, Collection<StateVariable<RemoteService>> stateVariables) throws ValidationException {
+									 Collection<Action<RemoteService>> actions, List<StateVariable<RemoteService>> stateVariables) throws ValidationException {
         return new RemoteService(
                 serviceType, serviceId,
                 descriptorURI, controlURI, eventSubscriptionURI,

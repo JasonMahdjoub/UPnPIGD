@@ -131,7 +131,7 @@ public class NotifyTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalDevice localDevice = SampleData.createLocalDevice();
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(localDevice);
 
         RemoteDevice rd = SampleData.createRemoteDevice();
@@ -157,7 +157,7 @@ public class NotifyTest {
         RemoteDevice rd = SampleData.createRemoteDevice(
                 SampleData.createRemoteDeviceIdentity(2)
         );
-        RemoteDevice embedded = rd.getEmbeddedDevices()[0];
+        RemoteDevice embedded = rd.getEmbeddedDevices().iterator().next();
 
         upnpService.getRegistry().addDevice(rd);
 

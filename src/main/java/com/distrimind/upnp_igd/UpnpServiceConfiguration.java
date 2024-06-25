@@ -130,13 +130,13 @@ public interface UpnpServiceConfiguration {
      * All incoming notifications and search responses will then be dropped immediately.
      * This is mostly useful in applications that only provide services with no (remote)
      * control point functionality.
-     * </p>
+   
      * <p>
      * Note that a discovered service type with version 2 or 3 will match an exclusive
      * service type with version 1. UPnP services are required to be backwards
      * compatible, version 2 is a superset of version 1, and version 3 is a superset
      * of version 2, etc.
-     * </p>
+   
      *
      * @return An array of service types that are exclusively discovered, no other service will
      *         be discovered. A <code>null</code> return value will disable discovery!
@@ -155,12 +155,12 @@ public interface UpnpServiceConfiguration {
      * Use this to advertise local devices at the specified interval, independent of its
      * {@link DeviceIdentity#maxAgeSeconds} value. Note
      * that this will increase network traffic.
-     * </p>
+   
      * <p>
      * Some control points (XBMC and other Platinum UPnP SDK based devices, OPPO-93) seem
      * to not properly receive SSDP M-SEARCH replies sent by Cling, but will handle NOTIFY
      * alive messages just fine.
-     * </p>
+   
      *
      * @return The time in milliseconds for ALIVE message intervals, set to <code>0</code> to disable
      */
@@ -173,7 +173,7 @@ public interface UpnpServiceConfiguration {
      * in conjunction with a high value for
      * {@link UserConstants#DEFAULT_SUBSCRIPTION_DURATION_SECONDS}
      * ensures that your devices will not disappear on such control points.
-     * </p>
+   
      *
      * @return <code>true</code> if the timeout in incoming event subscriptions should be ignored
      *         and the default value ({@link UserConstants#DEFAULT_SUBSCRIPTION_DURATION_SECONDS})
@@ -195,7 +195,7 @@ public interface UpnpServiceConfiguration {
      * <code>0</code> in this case, so that the remote device is never expired unless you
      * manually remove it from the {@link Registry}. You typically remove
      * the device when an action or GENA subscription request to the remote device failed.
-     * </p>
+   
      *
      * @return <code>null</code> (the default) to accept the remote device's proposed maximum age, or
      *         <code>0</code> for unlimited age, or a value in seconds.
@@ -209,7 +209,7 @@ public interface UpnpServiceConfiguration {
      * method to set these headers. They will be used for every descriptor (XML) retrieval
      * HTTP request by Cling. See {@link ClientInfo} for
      * action request messages.
-     * </p>
+   
      *
      * @param identity The (so far) discovered identity of the remote device.
      * @return <code>null</code> or extra HTTP headers.
@@ -222,7 +222,7 @@ public interface UpnpServiceConfiguration {
      * Some devices might require extra headers to recognize your control point, use this
      * method to set these headers for GENA subscriptions. Note that the headers will
      * not be applied to actual event messages, only subscribe, unsubscribe, and renewal.
-     * </p>
+   
      *
      * @return <code>null</code> or extra HTTP headers.
      */

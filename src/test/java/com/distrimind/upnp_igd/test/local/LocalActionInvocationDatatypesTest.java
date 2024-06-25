@@ -29,9 +29,11 @@ import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 /**
  * @author Christian Bauer
@@ -41,19 +43,19 @@ public class LocalActionInvocationDatatypesTest {
     @Test
     public void invokeActions() throws Exception {
 
-        LocalDevice device = new LocalDevice(
+        LocalDevice<LocalTestServiceOne> device = new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("SomeDevice", 1),
                 new DeviceDetails("Some Device"),
                 SampleData.readService(LocalTestServiceOne.class)
         );
-        LocalService svc = SampleData.getFirstService(device);
+        LocalService<LocalTestServiceOne> svc = SampleData.getFirstService(device);
 
-        ActionInvocation getDataInvocation = new ActionInvocation(svc.getAction("GetData"));
+        ActionInvocation<LocalService<LocalTestServiceOne>> getDataInvocation = new ActionInvocation<>(svc.getAction("GetData"));
         svc.getExecutor(getDataInvocation.getAction()).execute(getDataInvocation);
-        assertEquals(getDataInvocation.getFailure(), null);
-        assertEquals(getDataInvocation.getOutput().length, 1);
-        assertEquals(((byte[]) getDataInvocation.getOutput()[0].getValue()).length, 512);
+		assertNull(getDataInvocation.getFailure());
+        assertEquals(getDataInvocation.getOutput().size(), 1);
+        assertEquals(((byte[]) getDataInvocation.getOutput().iterator().next().getValue()).length, 512);
 
         // This fails, we can't put arbitrary bytes into a String and hope it will be valid unicode characters!
         /* TODO: This now only logs a warning!
@@ -67,32 +69,32 @@ public class LocalActionInvocationDatatypesTest {
         );
         */
 
-        ActionInvocation invocation = new ActionInvocation(svc.getAction("GetStrings"));
+        ActionInvocation<LocalService<LocalTestServiceOne>> invocation = new ActionInvocation<>(svc.getAction("GetStrings"));
         svc.getExecutor(invocation.getAction()).execute(invocation);
-        assertEquals(invocation.getFailure(), null);
-        assertEquals(invocation.getOutput().length, 2);
+		assertNull(invocation.getFailure());
+        assertEquals(invocation.getOutput().size(), 2);
         assertEquals(invocation.getOutput("One").toString(), "foo");
         assertEquals(invocation.getOutput("Two").toString(), "bar");
 
-        invocation = new ActionInvocation(svc.getAction("GetThree"));
-        assertEquals(svc.getAction("GetThree").getOutputArguments()[0].getDatatype().getBuiltin().getDescriptorName(), "i2");
+        invocation = new ActionInvocation<>(svc.getAction("GetThree"));
+        assertEquals(svc.getAction("GetThree").getOutputArguments().iterator().next().getDatatype().getBuiltin().getDescriptorName(), "i2");
         svc.getExecutor(invocation.getAction()).execute(invocation);
-        assertEquals(invocation.getFailure(), null);
-        assertEquals(invocation.getOutput().length, 1);
+		assertNull(invocation.getFailure());
+        assertEquals(invocation.getOutput().size(), 1);
         assertEquals(invocation.getOutput("three").toString(), "123");
 
-        invocation = new ActionInvocation(svc.getAction("GetFour"));
-        assertEquals(svc.getAction("GetFour").getOutputArguments()[0].getDatatype().getBuiltin().getDescriptorName(), "int");
+        invocation = new ActionInvocation<>(svc.getAction("GetFour"));
+        assertEquals(svc.getAction("GetFour").getOutputArguments().iterator().next().getDatatype().getBuiltin().getDescriptorName(), "int");
         svc.getExecutor(invocation.getAction()).execute(invocation);
-        assertEquals(invocation.getFailure(), null);
-        assertEquals(invocation.getOutput().length, 1);
+		assertNull(invocation.getFailure());
+        assertEquals(invocation.getOutput().size(), 1);
         assertEquals(invocation.getOutput("four").toString(), "456");
 
-        invocation = new ActionInvocation(svc.getAction("GetFive"));
-        assertEquals(svc.getAction("GetFive").getOutputArguments()[0].getDatatype().getBuiltin().getDescriptorName(), "int");
+        invocation = new ActionInvocation<>(svc.getAction("GetFive"));
+        assertEquals(svc.getAction("GetFive").getOutputArguments().iterator().next().getDatatype().getBuiltin().getDescriptorName(), "int");
         svc.getExecutor(invocation.getAction()).execute(invocation);
-        assertEquals(invocation.getFailure(), null);
-        assertEquals(invocation.getOutput().length, 1);
+		assertNull(invocation.getFailure());
+        assertEquals(invocation.getOutput().size(), 1);
         assertEquals(invocation.getOutput("five").toString(), "456");
     }
 
@@ -126,7 +128,7 @@ public class LocalActionInvocationDatatypesTest {
             new Random().nextBytes(data);
 
             try {
-                dataString = new String(data, "UTF-8");
+                dataString = new String(data, StandardCharsets.UTF_8);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

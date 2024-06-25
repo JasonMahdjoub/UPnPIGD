@@ -222,7 +222,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
      * case, throw a {@link DescriptorBindingException} to notify the caller of the
      * binder of this failure. The default implementation simply rethrows the
      * given exception.
-     * </p>
+   
      *
      * @param xml       The original XML causing the parsing failure.
      * @param exception The original exception while parsing the XML.
@@ -240,12 +240,12 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
      * should throw a {@link ValidationException} to notify the caller of the
      * binder of failure. The default implementation simply rethrows the
      * given exception.
-     * </p>
+   
      * <p>
      * This method gives you a final chance to fix the problem, instead of
      * throwing an exception, you could try to create valid {@link Device}
      * model and return it.
-     * </p>
+   
      *
      * @param xml       The original XML causing the binding failure.
      * @param device    The unfinished {@link Device} that failed validation

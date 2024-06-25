@@ -12,7 +12,7 @@ import com.distrimind.upnp_igd.test.data.SampleData;
  */
 public class BinaryLightSampleData {
 
-    public static LocalDevice createDevice(Class<?> serviceClass) throws Exception {
+    public static <T> LocalDevice<T> createDevice(Class<T> serviceClass) throws Exception {
         return createDevice(
                 SampleData.readService(
                         new AnnotationLocalServiceBinder(),
@@ -21,8 +21,8 @@ public class BinaryLightSampleData {
         );
     }
 
-    public static LocalDevice createDevice(LocalService service) throws Exception {
-        return new LocalDevice(
+    public static <T> LocalDevice<T> createDevice(LocalService<T> service) throws Exception {
+        return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("BinaryLight", 1),
                 new DeviceDetails("Example Binary Light"),

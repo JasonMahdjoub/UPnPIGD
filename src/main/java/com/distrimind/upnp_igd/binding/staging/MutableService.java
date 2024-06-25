@@ -59,8 +59,8 @@ public class MutableService<D extends Device<?, D, S>, S extends Service<?, D, S
         return array;
     }
 
-    public Collection<StateVariable<S>> createStateVariables() {
-        Collection<StateVariable<S>> array = new ArrayList<>(stateVariables.size());
+    public List<StateVariable<S>> createStateVariables() {
+        List<StateVariable<S>> array = new ArrayList<>(stateVariables.size());
         for (MutableStateVariable<S> stateVariable : stateVariables) {
             array.add(stateVariable.build());
         }

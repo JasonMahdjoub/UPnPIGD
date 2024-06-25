@@ -18,12 +18,13 @@ package com.distrimind.upnp_igd.test.model;
 import com.distrimind.upnp_igd.model.meta.DeviceDetails;
 import com.distrimind.upnp_igd.model.meta.Icon;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
-import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 import static org.testng.Assert.*;
 
@@ -38,14 +39,14 @@ public class IconTest {
             SampleData.createRemoteDeviceIdentity(),
             new UDADeviceType("Foo", 1),
             new DeviceDetails("Foo"),
-            new Icon[]{
+            List.of(
                 new Icon(null, 0, 0, 0, URI.create("foo")),
                 new Icon("foo/bar", 0, 0, 0, URI.create("foo")),
                 new Icon("foo/bar", 123, 456, 0, URI.create("foo"))
-            },
-            new RemoteService[0]
+            ),
+                Collections.emptyList()
         );
-        assertEquals(rd.findIcons().length, 3);
+        assertEquals(rd.findIcons().size(), 3);
     }
 
     @Test
@@ -54,11 +55,11 @@ public class IconTest {
             SampleData.createRemoteDeviceIdentity(),
             new UDADeviceType("Foo", 1),
             new DeviceDetails("Foo"),
-            new Icon[]{
-                new Icon("image/png", 123, 123, 8, URI.create("urn:not_a_URL")),
-            },
-            new RemoteService[0]
+            List.of(
+                new Icon("image/png", 123, 123, 8, URI.create("urn:not_a_URL"))
+                    ),
+            Collections.emptyList()
         );
-        assertEquals(rd.findIcons().length, 0);
+        assertEquals(rd.findIcons().size(), 0);
     }
 }

@@ -19,7 +19,7 @@ package com.distrimind.upnp_igd.xml;
 import org.xml.sax.SAXParseException;
 
 /**
- * Unified exception thrown by the <tt>DOMParser</tt> and <tt>SAXParser</tt>.
+ * Unified exception thrown by the <code>DOMParser</code> and <code>SAXParser</code>.
  *
  * @author Christian Bauer
  */
