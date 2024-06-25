@@ -54,14 +54,14 @@ public class DatatypesTest {
     public void validUnsignedIntegers() {
 
         UnsignedIntegerOneByteDatatype typeOne = new UnsignedIntegerOneByteDatatype();
-        assertEquals(typeOne.valueOf("123").getValue(), Long.valueOf(123l));
+        assertEquals(typeOne.valueOf("123").getValue(), Long.valueOf(123L));
 
         UnsignedIntegerTwoBytesDatatype typeTwo = new UnsignedIntegerTwoBytesDatatype();
-        assertEquals(typeTwo.valueOf("257").getValue(), Long.valueOf(257l));
+        assertEquals(typeTwo.valueOf("257").getValue(), Long.valueOf(257L));
 
         UnsignedIntegerFourBytesDatatype typeFour = new UnsignedIntegerFourBytesDatatype();
-        assertEquals(typeFour.valueOf("65536").getValue(), Long.valueOf(65536l));
-        assertEquals(typeFour.valueOf("4294967295").getValue(), Long.valueOf(4294967295l));
+        assertEquals(typeFour.valueOf("65536").getValue(), Long.valueOf(65536L));
+        assertEquals(typeFour.valueOf("4294967295").getValue(), Long.valueOf(4294967295L));
 
         // Well, no need to write another test for that
         assertEquals(typeFour.valueOf("4294967295").increment(true).getValue(), Long.valueOf(1));
@@ -243,9 +243,9 @@ public class DatatypesTest {
 
         List<Boolean> csvBoolean = new CSVBoolean("1,1,0");
         assert csvBoolean.size() == 3;
-        assertEquals(csvBoolean.get(0), new Boolean(true));
-        assertEquals(csvBoolean.get(1), new Boolean(true));
-        assertEquals(csvBoolean.get(2), new Boolean(false));
+        assertEquals(csvBoolean.get(0), Boolean.TRUE);
+        assertEquals(csvBoolean.get(1), Boolean.TRUE);
+        assertEquals(csvBoolean.get(2), Boolean.FALSE);
         assertEquals(csvBoolean.toString(), "1,1,0");
     }
 

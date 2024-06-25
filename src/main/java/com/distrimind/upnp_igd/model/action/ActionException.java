@@ -24,7 +24,7 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
  */
 public class ActionException extends Exception {
 
-    private int errorCode;
+    private final int errorCode;
 
     public ActionException(int errorCode, String message) {
         super(message);

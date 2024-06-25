@@ -31,11 +31,11 @@ import com.distrimind.upnp_igd.support.lastchange.LastChangeAwareServiceManager;
  */
 public interface LastChangeDelegator {
 
-    public LastChange getLastChange();
+    LastChange getLastChange();
 
-    public void appendCurrentState(LastChange lc, UnsignedIntegerFourBytes instanceId) throws Exception;
+    void appendCurrentState(LastChange lc, UnsignedIntegerFourBytes instanceId) throws Exception;
 
-    public abstract UnsignedIntegerFourBytes[] getCurrentInstanceIds();
+    UnsignedIntegerFourBytes[] getCurrentInstanceIds();
 
 
 }

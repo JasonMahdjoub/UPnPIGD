@@ -77,7 +77,7 @@ public class IncomingSubscriptionLifecycleTest {
         assertEquals(subscribeResponseMessage.getOperation().getStatusCode(), UpnpResponse.Status.OK.getStatusCode());
         String subscriptionId = subscribeResponseMessage.getHeaders().getFirstHeader(UpnpHeader.Type.SID, SubscriptionIdHeader.class).getValue();
         assert subscriptionId.startsWith("uuid:");
-        assertEquals(subscribeResponseMessage.getHeaders().getFirstHeader(UpnpHeader.Type.TIMEOUT, TimeoutHeader.class).getValue(), new Integer(1800));
+        assertEquals(subscribeResponseMessage.getHeaders().getFirstHeader(UpnpHeader.Type.TIMEOUT, TimeoutHeader.class).getValue(), Integer.valueOf(1800));
         assertEquals(upnpService.getRegistry().getLocalSubscription(subscriptionId).getActualDurationSeconds(), 1800);
 
         // Now send the initial event
@@ -120,11 +120,11 @@ public class IncomingSubscriptionLifecycleTest {
         );
         assertEquals(
                 sentMessages.get(0).getHeaders().getFirstHeader(UpnpHeader.Type.SEQ, EventSequenceHeader.class).getValue().getValue(),
-                new Long(0)
+				Long.valueOf(0)
         );
         assertEquals(
                 sentMessages.get(1).getHeaders().getFirstHeader(UpnpHeader.Type.SEQ, EventSequenceHeader.class).getValue().getValue(),
-                new Long(1)
+				Long.valueOf(1)
         );
 
     }

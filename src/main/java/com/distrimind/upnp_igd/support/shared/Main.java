@@ -128,7 +128,7 @@ public abstract class Main implements ShutdownHandler, Thread.UncaughtExceptionH
                 text.append("-------------------------------------------------------------------------------------------------------------\n\n");
                 Writer stackTrace = new StringWriter();
                 throwable.printStackTrace(new PrintWriter(stackTrace));
-                text.append(stackTrace.toString());
+                text.append(stackTrace);
 
                 textArea.setText(text.toString());
                 JScrollPane pane = new JScrollPane(textArea);

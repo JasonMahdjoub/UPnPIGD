@@ -61,7 +61,7 @@ public class DatagramParsingTest {
                         "EXT:\r\n" +
                         "SERVER: foo/1 UPnP/1.0" + // FOLDED HEADER LINE!
                         " bar/2\r\n" +
-                        "USN: " + SampleDeviceRoot.getRootUDN().toString()+"::upnp:rootdevice\r\n\r\n";
+                        "USN: " + SampleDeviceRoot.getRootUDN() +"::upnp:rootdevice\r\n\r\n";
 
         DatagramPacket packet = new DatagramPacket(source.getBytes(), source.getBytes().length, new InetSocketAddress("123.123.123.123", 1234));
 

@@ -30,7 +30,7 @@ import com.distrimind.upnp_igd.model.types.NotificationSubtype;
  */
 public class OutgoingSearchRequest extends OutgoingDatagramMessage<UpnpRequest> {
 
-    private UpnpHeader searchTarget;
+    private final UpnpHeader searchTarget;
 
     public OutgoingSearchRequest(UpnpHeader searchTarget, int mxSeconds) {
         super(

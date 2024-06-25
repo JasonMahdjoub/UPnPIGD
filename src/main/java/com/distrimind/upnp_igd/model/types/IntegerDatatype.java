@@ -22,7 +22,7 @@ package com.distrimind.upnp_igd.model.types;
  */
 public class IntegerDatatype extends AbstractDatatype<Integer> {
 
-    private int byteSize;
+    private final int byteSize;
 
     public IntegerDatatype(int byteSize) {
         this.byteSize = byteSize;

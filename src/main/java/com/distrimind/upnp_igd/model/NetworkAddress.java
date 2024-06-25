@@ -60,10 +60,8 @@ public class NetworkAddress {
 
         if (port != that.port) return false;
         if (!address.equals(that.address)) return false;
-        if (!Arrays.equals(hardwareAddress, that.hardwareAddress)) return false;
-
-        return true;
-    }
+		return Arrays.equals(hardwareAddress, that.hardwareAddress);
+	}
 
     @Override
     public int hashCode() {

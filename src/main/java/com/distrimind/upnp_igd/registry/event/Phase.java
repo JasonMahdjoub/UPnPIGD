@@ -30,44 +30,44 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 public interface Phase {
 
-    public static AnnotationLiteral<Alive> ALIVE = new AnnotationLiteral<Alive>() {
+    AnnotationLiteral<Alive> ALIVE = new AnnotationLiteral<Alive>() {
     };
 
-    public static AnnotationLiteral<Complete> COMPLETE = new AnnotationLiteral<Complete>() {
+    AnnotationLiteral<Complete> COMPLETE = new AnnotationLiteral<Complete>() {
     };
 
-    public static AnnotationLiteral<Byebye> BYEBYE = new AnnotationLiteral<Byebye>() {
+    AnnotationLiteral<Byebye> BYEBYE = new AnnotationLiteral<Byebye>() {
     };
 
-    public static AnnotationLiteral<Updated> UPDATED = new AnnotationLiteral<Updated>() {
+    AnnotationLiteral<Updated> UPDATED = new AnnotationLiteral<Updated>() {
     };
 
 
     @Qualifier
     @Target({FIELD, PARAMETER})
     @Retention(RUNTIME)
-    public @interface Alive {
+	@interface Alive {
 
     }
 
     @Qualifier
     @Target({FIELD, PARAMETER})
     @Retention(RUNTIME)
-    public @interface Complete {
+	@interface Complete {
 
     }
 
     @Qualifier
     @Target({FIELD, PARAMETER})
     @Retention(RUNTIME)
-    public @interface Byebye {
+	@interface Byebye {
 
     }
 
     @Qualifier
     @Target({FIELD, PARAMETER})
     @Retention(RUNTIME)
-    public @interface Updated {
+	@interface Updated {
 
     }
 

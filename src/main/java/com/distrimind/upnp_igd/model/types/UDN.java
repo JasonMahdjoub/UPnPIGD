@@ -19,6 +19,7 @@ import com.distrimind.upnp_igd.model.ModelUtil;
 
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.security.MessageDigest;
 import java.math.BigInteger;
@@ -42,7 +43,7 @@ public class UDN {
 
     public static final String PREFIX = "uuid:";
 
-    private String identifierString;
+    private final String identifierString;
 
     /**
      * @param identifierString The identifier string without the "uuid:" prefix.
@@ -101,13 +102,8 @@ public class UDN {
 
         // Bug: On Android, NetworkInterface.isLoopback() isn't implemented
         if (!ModelUtil.ANDROID_RUNTIME) {
-            try {
-                systemSalt.append(new String(ModelUtil.getFirstNetworkInterfaceHardwareAddress(), "UTF-8"));
-            } catch (UnsupportedEncodingException ex) {
-                // If your JVM doesn't support utf-8, you have bigger problems
-                throw new RuntimeException(ex);
-            }
-        } else {
+			systemSalt.append(new String(ModelUtil.getFirstNetworkInterfaceHardwareAddress(), StandardCharsets.UTF_8));
+		} else {
             throw new RuntimeException(
                 "This method does not create a unique identifier on Android, see the Javadoc and " +
                     "use new UDN(UUID) instead!"
@@ -115,7 +111,7 @@ public class UDN {
         }
 
         try {
-            byte[] hash = MessageDigest.getInstance("MD5").digest(systemSalt.toString().getBytes("UTF-8"));
+            byte[] hash = MessageDigest.getInstance("MD5").digest(systemSalt.toString().getBytes(StandardCharsets.UTF_8));
             return new UDN(
                     new UUID(
                             new BigInteger(-1, hash).longValue(),

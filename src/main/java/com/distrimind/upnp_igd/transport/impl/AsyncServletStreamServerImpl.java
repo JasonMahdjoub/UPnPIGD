@@ -86,7 +86,7 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
             getConfiguration().getServletContainerAdapter().registerServlet(contextPath, createServlet(router));
 
         } catch (Exception ex) {
-            throw new InitializationException("Could not initialize " + getClass().getSimpleName() + ": " + ex.toString(), ex);
+            throw new InitializationException("Could not initialize " + getClass().getSimpleName() + ": " + ex, ex);
         }
     }
 
@@ -115,7 +115,7 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
                 	log.fine(String.format("HttpServlet.service(): id: %3d, request URI: %s", counter, req.getRequestURI()));
 
                 AsyncContext async = req.startAsync();
-                async.setTimeout(getConfiguration().getAsyncTimeoutSeconds()*1000);
+                async.setTimeout(getConfiguration().getAsyncTimeoutSeconds()* 1000L);
 
                 async.addListener(new AsyncListener() {
 

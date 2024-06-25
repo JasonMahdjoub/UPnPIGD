@@ -40,7 +40,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
     // Ephemeral port is the default
     public static final int DEFAULT_TCP_HTTP_LISTEN_PORT = 0;
 
-    private static Logger log = Logger.getLogger(NetworkAddressFactoryImpl.class.getName());
+    private static final Logger log = Logger.getLogger(NetworkAddressFactoryImpl.class.getName());
 
     final protected Set<String> useInterfaces = new HashSet<>();
     final protected Set<String> useAddresses = new HashSet<>();
@@ -49,7 +49,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
     final protected List<InetAddress> bindAddresses = new ArrayList<>();
 
     protected int streamListenPort;
-    private int multicastPort;
+    private final int multicastPort;
 
     /**
      * Defaults to an ephemeral port.

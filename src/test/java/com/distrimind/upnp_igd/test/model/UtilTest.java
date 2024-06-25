@@ -33,7 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 
 public class UtilTest {
@@ -52,16 +52,16 @@ public class UtilTest {
 
     @Test
     public void validUDAName() {
-        assertEquals(ModelUtil.isValidUDAName("in-valid"), false);
+		assertFalse(ModelUtil.isValidUDAName("in-valid"));
 
-        assertEquals(ModelUtil.isValidUDAName("a_valid"), true);
-        assertEquals(ModelUtil.isValidUDAName("A_valid"), true);
-        assertEquals(ModelUtil.isValidUDAName("1_valid"), true);
-        assertEquals(ModelUtil.isValidUDAName("_valid"), true);
+		assertTrue(ModelUtil.isValidUDAName("a_valid"));
+		assertTrue(ModelUtil.isValidUDAName("A_valid"));
+		assertTrue(ModelUtil.isValidUDAName("1_valid"));
+		assertTrue(ModelUtil.isValidUDAName("_valid"));
 
-        assertEquals(ModelUtil.isValidUDAName("Some_Valid.Name"), true);
-        assertEquals(ModelUtil.isValidUDAName("XML_invalid"), false);
-        assertEquals(ModelUtil.isValidUDAName("xml_invalid"), false);
+		assertTrue(ModelUtil.isValidUDAName("Some_Valid.Name"));
+		assertFalse(ModelUtil.isValidUDAName("XML_invalid"));
+		assertFalse(ModelUtil.isValidUDAName("xml_invalid"));
     }
 
     @Test

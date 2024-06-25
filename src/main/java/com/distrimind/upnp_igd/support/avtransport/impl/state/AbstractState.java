@@ -23,7 +23,7 @@ import com.distrimind.upnp_igd.support.model.TransportAction;
  */
 public abstract class AbstractState<T extends AVTransport> {
 
-    private T transport;
+    private final T transport;
 
     public AbstractState(T transport) {
         this.transport = transport;

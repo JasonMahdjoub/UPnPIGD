@@ -44,8 +44,8 @@ public class NewPlatformApple {
 
     static class AppListenerProxy implements InvocationHandler {
 
-        private ShutdownHandler shutdownHandler;
-        private Object object;
+        private final ShutdownHandler shutdownHandler;
+        private final Object object;
 
         public static Object newInstance(Object obj, ShutdownHandler shutdownHandler) {
             return Proxy.newProxyInstance(

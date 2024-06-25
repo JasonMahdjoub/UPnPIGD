@@ -42,7 +42,7 @@ public abstract class Search extends ActionCallback {
         LOADING("Loading..."),
         OK("OK");
 
-        private String defaultMessage;
+        private final String defaultMessage;
 
         Status(String defaultMessage) {
             this.defaultMessage = defaultMessage;
@@ -53,7 +53,7 @@ public abstract class Search extends ActionCallback {
         }
     }
 
-    private static Logger log = Logger.getLogger(Search.class.getName());
+    private static final Logger log = Logger.getLogger(Search.class.getName());
 
     /**
      * Search with first result 0 and {@link #getDefaultMaxResults()}, filters with {@link #CAPS_WILDCARD}.

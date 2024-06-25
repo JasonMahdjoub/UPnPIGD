@@ -115,20 +115,19 @@ public class ServerClientTokens {
     }
 
     public String getHttpToken() {
-        StringBuilder sb = new StringBuilder(256);
-        sb.append(osName.indexOf(' ') != -1 ? osName.replace(' ', '_') : osName);
-        sb.append('/');
-        sb.append(osVersion.indexOf(' ') != -1 ? osVersion.replace(' ', '_') : osVersion);
-        sb.append(" UPnP/");
-        sb.append(majorVersion);
-        sb.append('.');
-        sb.append(minorVersion);
-        sb.append(' ');
-        sb.append(productName.indexOf(' ') != -1 ? productName.replace(' ', '_') : productName);
-        sb.append('/');
-        sb.append(productVersion.indexOf(' ') != -1 ? productVersion.replace(' ', '_') : productVersion);
+		String sb = (osName.indexOf(' ') != -1 ? osName.replace(' ', '_') : osName) +
+				'/' +
+				(osVersion.indexOf(' ') != -1 ? osVersion.replace(' ', '_') : osVersion) +
+				" UPnP/" +
+				majorVersion +
+				'.' +
+				minorVersion +
+				' ' +
+				(productName.indexOf(' ') != -1 ? productName.replace(' ', '_') : productName) +
+				'/' +
+				(productVersion.indexOf(' ') != -1 ? productVersion.replace(' ', '_') : productVersion);
 
-        return sb.toString();
+        return sb;
     }
 
     public String getOsToken() {
@@ -151,10 +150,8 @@ public class ServerClientTokens {
         if (!osName.equals(that.osName)) return false;
         if (!osVersion.equals(that.osVersion)) return false;
         if (!productName.equals(that.productName)) return false;
-        if (!productVersion.equals(that.productVersion)) return false;
-
-        return true;
-    }
+		return productVersion.equals(that.productVersion);
+	}
 
     @Override
     public int hashCode() {

@@ -100,18 +100,14 @@ public class RegistryBrowseTest {
 
         Registry registry = upnpService.getRegistry();
 
-        try {
-            DeviceType deviceType = new UDADeviceType("MY-DEVICE-TYPE", 1);         // DOC: FIND_DEV_TYPE
-            Collection<Device<?, ?, ?>> devices = registry.getDevices(deviceType);           // DOC: FIND_DEV_TYPE
-            assertEquals(devices.size(), 1);
-        } finally {}
+		DeviceType deviceType = new UDADeviceType("MY-DEVICE-TYPE", 1);         // DOC: FIND_DEV_TYPE
+		Collection<Device<?, ?, ?>> devices = registry.getDevices(deviceType);           // DOC: FIND_DEV_TYPE
+		assertEquals(devices.size(), 1);
 
-        try {
-            ServiceType serviceType = new UDAServiceType("MY-SERVICE-TYPE-ONE", 1); // DOC: FIND_SERV_TYPE
-            Collection<Device<?, ?, ?>> devices = registry.getDevices(serviceType);          // DOC: FIND_SERV_TYPE
-            assertEquals(devices.size(), 1);
-        } finally {}
-    }
+		ServiceType serviceType = new UDAServiceType("MY-SERVICE-TYPE-ONE", 1); // DOC: FIND_SERV_TYPE
+		Collection<Device<?, ?, ?>> devices = registry.getDevices(serviceType);          // DOC: FIND_SERV_TYPE
+		assertEquals(devices.size(), 1);
+	}
 
 
     @Test

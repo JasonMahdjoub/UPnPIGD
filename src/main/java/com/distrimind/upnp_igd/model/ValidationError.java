@@ -21,9 +21,9 @@ package com.distrimind.upnp_igd.model;
  * @author Christian Bauer
  */
 public class ValidationError {
-    private Class clazz;
+    private final Class clazz;
     private String propertyName;
-    private String message;
+    private final String message;
 
     public ValidationError(Class clazz, String message) {
         this.clazz = clazz;

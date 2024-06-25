@@ -57,10 +57,8 @@ public class HostPort {
         HostPort hostPort = (HostPort) o;
 
         if (port != hostPort.port) return false;
-        if (!host.equals(hostPort.host)) return false;
-
-        return true;
-    }
+		return host.equals(hostPort.host);
+	}
 
     @Override
     public int hashCode() {

@@ -42,7 +42,7 @@ public abstract class ReceivingAsync<M extends UpnpMessage> implements Runnable 
 
     private final UpnpService upnpService;
 
-    private M inputMessage;
+    private final M inputMessage;
 
     protected ReceivingAsync(UpnpService upnpService, M inputMessage) {
         this.upnpService = upnpService;

@@ -24,8 +24,8 @@ public class NormalPlayTimeRange {
 
     public static final String PREFIX = "npt=";
     
-    private NormalPlayTime timeStart;
-    private NormalPlayTime timeEnd;
+    private final NormalPlayTime timeStart;
+    private final NormalPlayTime timeEnd;
     private NormalPlayTime timeDuration;
 
     public NormalPlayTimeRange(long timeStart, long timeEnd) {

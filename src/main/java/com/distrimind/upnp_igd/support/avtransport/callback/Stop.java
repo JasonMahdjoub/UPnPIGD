@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public abstract class Stop extends ActionCallback {
 
-    private static Logger log = Logger.getLogger(Stop.class.getName());
+    private static final Logger log = Logger.getLogger(Stop.class.getName());
 
     public Stop(Service service) {
         this(new UnsignedIntegerFourBytes(0), service);

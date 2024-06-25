@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
 @Alternative
 public class RecoveringGENAEventProcessorImpl extends PullGENAEventProcessorImpl {
 
-    private static Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
+    private static final Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
 
     public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
         try {

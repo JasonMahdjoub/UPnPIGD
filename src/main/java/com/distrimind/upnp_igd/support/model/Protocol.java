@@ -32,7 +32,7 @@ public enum Protocol {
 
     private static final Logger LOG = Logger.getLogger(Protocol.class.getName());
 
-    private String protocolString;
+    private final String protocolString;
 
     Protocol(String protocolString) {
         this.protocolString = protocolString;

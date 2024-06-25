@@ -20,8 +20,8 @@ package com.distrimind.upnp_igd.binding;
  */
 public interface AllowedValueRangeProvider {
 
-    public long getMinimum();
-    public long getMaximum();
-    public long getStep();
+    long getMinimum();
+    long getMaximum();
+    long getStep();
 
 }

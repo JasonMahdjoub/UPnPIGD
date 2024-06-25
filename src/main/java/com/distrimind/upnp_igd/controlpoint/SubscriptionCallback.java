@@ -185,7 +185,7 @@ public abstract class SubscriptionCallback implements Runnable {
             localSubscription.registerOnService();
 
         } catch (Exception ex) {
-            log.fine("Local callback creation failed: " + ex.toString());
+            log.fine("Local callback creation failed: " + ex);
             log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
             if (localSubscription != null)
                 getControlPoint().getRegistry().removeLocalSubscription(localSubscription);

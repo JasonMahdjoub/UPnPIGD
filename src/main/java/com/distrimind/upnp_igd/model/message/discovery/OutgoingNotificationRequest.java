@@ -34,7 +34,7 @@ import com.distrimind.upnp_igd.model.types.NotificationSubtype;
  */
 public abstract class OutgoingNotificationRequest extends OutgoingDatagramMessage<UpnpRequest> {
 
-    private NotificationSubtype type;
+    private final NotificationSubtype type;
 
     protected OutgoingNotificationRequest(Location location, LocalDevice device, NotificationSubtype type) {
         super(

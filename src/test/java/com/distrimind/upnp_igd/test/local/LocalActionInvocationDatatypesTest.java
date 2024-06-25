@@ -106,10 +106,10 @@ public class LocalActionInvocationDatatypesTest {
     public static class LocalTestServiceOne {
 
         @UpnpStateVariable(sendEvents = false)
-        private byte[] data;
+        private final byte[] data;
 
         @UpnpStateVariable(sendEvents = false, datatype = "string")
-        private String dataString;
+        private final String dataString;
 
         @UpnpStateVariable(sendEvents = false)
         private String one;

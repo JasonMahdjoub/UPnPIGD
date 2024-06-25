@@ -139,7 +139,7 @@ public abstract class DIDLObject {
         static public class DC {
 
             public interface NAMESPACE extends Property.NAMESPACE {
-                public static final String URI = "http://purl.org/dc/elements/1.1/";
+                String URI = "http://purl.org/dc/elements/1.1/";
             }
 
             static public class DESCRIPTION extends Property<String> implements NAMESPACE {
@@ -209,7 +209,7 @@ public abstract class DIDLObject {
         static public abstract class SEC {
 
             public interface NAMESPACE extends Property.NAMESPACE {
-                public static final String URI = "http://www.sec.co.kr/";
+                String URI = "http://www.sec.co.kr/";
             }
             
             static public class CAPTIONINFOEX extends Property<URI> implements NAMESPACE {
@@ -256,7 +256,7 @@ public abstract class DIDLObject {
         static public abstract class UPNP {
 
             public interface NAMESPACE extends Property.NAMESPACE {
-                public static final String URI = "urn:schemas-upnp-org:metadata-1-0/upnp/";
+                String URI = "urn:schemas-upnp-org:metadata-1-0/upnp/";
             }
 
             static public class ARTIST extends PropertyPersonWithRole implements NAMESPACE {
@@ -567,7 +567,7 @@ public abstract class DIDLObject {
         static public abstract class DLNA {
 
             public interface NAMESPACE extends Property.NAMESPACE {
-                public static final String URI = "urn:schemas-dlna-org:metadata-1-0/";
+                String URI = "urn:schemas-dlna-org:metadata-1-0/";
             }
 
             static public class PROFILE_ID extends Property<DIDLAttribute> implements NAMESPACE {
@@ -886,10 +886,8 @@ public abstract class DIDLObject {
 
         DIDLObject that = (DIDLObject) o;
 
-        if (!id.equals(that.id)) return false;
-
-        return true;
-    }
+		return id.equals(that.id);
+	}
 
     @Override
     public int hashCode() {

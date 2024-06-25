@@ -20,7 +20,7 @@ package com.distrimind.upnp_igd.model.types;
  */
 public class CustomDatatype extends AbstractDatatype<String> {
 
-    private String name;
+    private final String name;
 
     public CustomDatatype(String name) {
         this.name = name;

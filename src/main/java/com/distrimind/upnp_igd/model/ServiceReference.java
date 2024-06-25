@@ -74,10 +74,8 @@ public class ServiceReference {
         ServiceReference that = (ServiceReference) o;
 
         if (!serviceId.equals(that.serviceId)) return false;
-        if (!udn.equals(that.udn)) return false;
-
-        return true;
-    }
+		return udn.equals(that.udn);
+	}
 
     @Override
     public int hashCode() {
@@ -88,7 +86,7 @@ public class ServiceReference {
 
     @Override
     public String toString() {
-        return udn == null || serviceId == null ? "" : udn.toString() + DELIMITER + serviceId.toString();
+        return udn == null || serviceId == null ? "" : udn + DELIMITER + serviceId;
     }
 
 }

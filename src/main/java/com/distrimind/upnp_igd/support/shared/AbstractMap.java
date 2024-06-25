@@ -341,7 +341,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 
                 @Override public Iterator<K> iterator() {
                     return new Iterator<K>() {
-                        Iterator<Entry<K, V>> setIterator = entrySet().iterator();
+                        final Iterator<Entry<K, V>> setIterator = entrySet().iterator();
 
                         public boolean hasNext() {
                             return setIterator.hasNext();
@@ -476,7 +476,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 
                 @Override public Iterator<V> iterator() {
                     return new Iterator<V>() {
-                        Iterator<Entry<K, V>> setIterator = entrySet().iterator();
+                        final Iterator<Entry<K, V>> setIterator = entrySet().iterator();
 
                         public boolean hasNext() {
                             return setIterator.hasNext();

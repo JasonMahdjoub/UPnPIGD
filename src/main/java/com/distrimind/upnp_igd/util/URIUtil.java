@@ -20,6 +20,7 @@ package com.distrimind.upnp_igd.util;
 import java.net.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 
 /**
@@ -187,7 +188,7 @@ public class URIUtil {
 	public static String percentEncode(String s) {
 		if (s == null) return "";
 		try {
-			return URLEncoder.encode(s, "UTF-8");
+			return URLEncoder.encode(s, StandardCharsets.UTF_8);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -196,7 +197,7 @@ public class URIUtil {
 	public static String percentDecode(String s) {
 		if (s == null) return "";
 		try {
-			return URLDecoder.decode(s, "UTF-8");
+			return URLDecoder.decode(s, StandardCharsets.UTF_8);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

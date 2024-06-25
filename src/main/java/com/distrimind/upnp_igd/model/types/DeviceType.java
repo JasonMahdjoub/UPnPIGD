@@ -39,8 +39,8 @@ public class DeviceType {
     public static final Pattern PATTERN =
             Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):device:(" + Constants.REGEX_TYPE + "):([0-9]+).*");
 
-    private String namespace;
-    private String type;
+    private final String namespace;
+    private final String type;
     private int version = 1;
 
     public DeviceType(String namespace, String type) {
@@ -123,7 +123,7 @@ public class DeviceType {
             }
         } catch (RuntimeException e) {
             throw new InvalidValueException(String.format(
-                "Can't parse device type string (namespace/type/version) '%s': %s", s, e.toString()
+                "Can't parse device type string (namespace/type/version) '%s': %s", s, e
             ));
         }
 
@@ -133,9 +133,8 @@ public class DeviceType {
     public boolean implementsVersion(DeviceType that) {
         if (!namespace.equals(that.namespace)) return false;
         if (!type.equals(that.type)) return false;
-        if (version < that.version) return false;
-        return true;
-    }
+		return version >= that.version;
+	}
 
     public String getDisplayString() {
         return getType();
@@ -155,10 +154,8 @@ public class DeviceType {
 
         if (version != that.version) return false;
         if (!namespace.equals(that.namespace)) return false;
-        if (!type.equals(that.type)) return false;
-
-        return true;
-    }
+		return type.equals(that.type);
+	}
 
     @Override
     public int hashCode() {

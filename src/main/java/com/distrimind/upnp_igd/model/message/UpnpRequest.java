@@ -29,7 +29,7 @@ import java.util.Locale;
  */
 public class UpnpRequest extends UpnpOperation {
 
-    public static enum Method {
+    public enum Method {
 
         GET("GET"),
         POST("POST"),
@@ -39,13 +39,13 @@ public class UpnpRequest extends UpnpOperation {
         UNSUBSCRIBE("UNSUBSCRIBE"),
         UNKNOWN("UNKNOWN");
 
-        private static Map<String, Method> byName = new HashMap<String, Method>() {{
+        private static final Map<String, Method> byName = new HashMap<String, Method>() {{
             for (Method m : Method.values()) {
                 put(m.getHttpName(), m);
             }
         }};
 
-        private String httpName;
+        private final String httpName;
 
         Method(String httpName) {
             this.httpName = httpName;
@@ -62,7 +62,7 @@ public class UpnpRequest extends UpnpOperation {
         }
     }
 
-    private Method method;
+    private final Method method;
     private URI uri;
 
     public UpnpRequest(Method method) {

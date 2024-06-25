@@ -22,9 +22,9 @@ package com.distrimind.upnp_igd.support.model;
  */
 public class DIDLAttribute {
     
-    private String namespaceURI;
-    private String prefix;
-    private String value;
+    private final String namespaceURI;
+    private final String prefix;
+    private final String value;
 
     public DIDLAttribute(String namespaceURI, String prefix, String value) {
         this.namespaceURI = namespaceURI;

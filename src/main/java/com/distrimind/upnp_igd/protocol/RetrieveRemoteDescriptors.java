@@ -215,8 +215,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
                             describedDevice,
                             new DescriptorBindingException("Device service description failed: " + rd)
                     );
-                return;
-            } else {
+			} else {
                 log.fine("Adding fully hydrated remote device to registry: " + hydratedDevice);
                 // The registry will do the right thing: A new root device is going to be added, if it's
                 // already present or we just received the descriptor again (because we got an embedded
@@ -245,7 +244,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
 
         } catch (RegistrationException ex) {
             log.warning("Adding hydrated device to registry failed: " + rd);
-            log.warning("Cause was: " + ex.toString());
+            log.warning("Cause was: " + ex);
             if (describedDevice != null && notifiedStart)
                 getUpnpService().getRegistry().notifyDiscoveryFailure(describedDevice, ex);
         }

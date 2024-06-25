@@ -170,7 +170,7 @@ abstract class RegistryItems<D extends Device<?, ?, ?>, S extends GENASubscripti
         try {
             return registry.getConfiguration().getNamespace().getResources(device);
         } catch (ValidationException ex) {
-            throw new RegistrationException("Resource discover error: " + ex.toString(), ex);
+            throw new RegistrationException("Resource discover error: " + ex, ex);
         }
     }
 }

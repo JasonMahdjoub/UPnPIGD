@@ -25,7 +25,7 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
 public class BufferInfoType {
 
     final static Pattern pattern = Pattern.compile("^dejitter=(\\d{1,10})(;CDB=(\\d{1,10});BTM=(0|1|2))?(;TD=(\\d{1,10}))?(;BFR=(0|1))?$", Pattern.CASE_INSENSITIVE);
-    private Long dejitterSize;
+    private final Long dejitterSize;
     private CodedDataBuffer cdb;
     private Long targetDuration;
     private Boolean fullnessReports;
@@ -74,7 +74,7 @@ public class BufferInfoType {
             s += ";CDB=" + cdb.getSize().toString() + ";BTM=" + cdb.getTranfer().ordinal();
         }
         if (targetDuration != null) {
-            s += ";TD=" + targetDuration.toString();
+            s += ";TD=" + targetDuration;
         }
         if (fullnessReports != null) {
             s += ";BFR=" + (fullnessReports?"1":"0");

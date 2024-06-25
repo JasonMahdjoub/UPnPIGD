@@ -39,7 +39,7 @@ public abstract class DLNAAttribute<T> {
     /**
      * Maps a standardized DLNA attribute to potential attribute subtypes.
      */
-    public static enum Type {
+    public enum Type {
 
         /**
          * Order is important for DLNAProtocolInfo
@@ -50,7 +50,7 @@ public abstract class DLNAAttribute<T> {
         DLNA_ORG_CI("DLNA.ORG_CI", DLNAConversionIndicatorAttribute.class),
         DLNA_ORG_FLAGS("DLNA.ORG_FLAGS", DLNAFlagsAttribute.class);
     
-        private static Map<String, Type> byName = new HashMap<String, Type>() {
+        private static final Map<String, Type> byName = new HashMap<String, Type>() {
             {
                 for (Type t : Type.values()) {
                     put(t.getAttributeName().toUpperCase(Locale.ROOT), t);
@@ -58,11 +58,11 @@ public abstract class DLNAAttribute<T> {
             }
         };
 
-        private String attributeName;
-        private Class<? extends DLNAAttribute>[] attributeTypes;
+        private final String attributeName;
+        private final Class<? extends DLNAAttribute>[] attributeTypes;
 
         @SafeVarargs
-        private Type(String attributeName, Class<? extends DLNAAttribute>... attributeClass) {
+		Type(String attributeName, Class<? extends DLNAAttribute>... attributeClass) {
             this.attributeName = attributeName;
             this.attributeTypes = attributeClass;
         }

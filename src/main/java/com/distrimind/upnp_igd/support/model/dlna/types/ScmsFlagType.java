@@ -20,8 +20,8 @@ package com.distrimind.upnp_igd.support.model.dlna.types;
  */
 public class ScmsFlagType {
 
-    private boolean copyright;
-    private boolean original;
+    private final boolean copyright;
+    private final boolean original;
     
     public ScmsFlagType() {
         this.copyright = true;

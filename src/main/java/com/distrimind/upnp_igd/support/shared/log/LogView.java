@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface LogView extends View<LogView.Presenter> {
 
-    public interface Presenter {
+    interface Presenter {
 
         void init();
 
@@ -35,7 +35,7 @@ public interface LogView extends View<LogView.Presenter> {
         void pushMessage(LogMessage logMessage);
     }
 
-    public interface LogCategories extends List<LogCategory> {
+    interface LogCategories extends List<LogCategory> {
     }
 
     void pushMessage(LogMessage logMessage);

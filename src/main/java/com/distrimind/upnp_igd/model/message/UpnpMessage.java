@@ -39,7 +39,7 @@ import java.nio.charset.StandardCharsets;
  */
 public abstract class UpnpMessage<O extends UpnpOperation> {
 
-    public static enum BodyType {
+    public enum BodyType {
         STRING, BYTES
     }
 

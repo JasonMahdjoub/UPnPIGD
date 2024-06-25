@@ -32,7 +32,7 @@ public abstract class UnsignedVariableInteger {
         TWENTYFOUR(0xffffffL),
         THIRTYTWO(0xffffffffL);
 
-        private long maxValue;
+        private final long maxValue;
 
         Bits(long maxValue) {
             this.maxValue = maxValue;
@@ -100,10 +100,8 @@ public abstract class UnsignedVariableInteger {
 
         UnsignedVariableInteger that = (UnsignedVariableInteger) o;
 
-        if (value != that.value) return false;
-
-        return true;
-    }
+		return value == that.value;
+	}
 
     @Override
     public int hashCode() {

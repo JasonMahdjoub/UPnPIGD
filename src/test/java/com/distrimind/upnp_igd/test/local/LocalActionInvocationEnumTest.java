@@ -183,7 +183,7 @@ public class LocalActionInvocationEnumTest {
         }
 
         public static class TargetHolder {
-            private Target t;
+            private final Target t;
 
             public TargetHolder(Target t) {
                 this.t = t;
@@ -233,7 +233,7 @@ public class LocalActionInvocationEnumTest {
         }
 
         public static class TargetHolder {
-            private Target t;
+            private final Target t;
 
             public TargetHolder(Target t) {
                 this.t = t;

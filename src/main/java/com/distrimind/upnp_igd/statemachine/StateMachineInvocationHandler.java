@@ -102,7 +102,7 @@ public class StateMachineInvocationHandler implements InvocationHandler {
             }
 
             Method signalMethod = getMethodOfCurrentState(method);
-            log.fine("Invoking signal method of current state: " + signalMethod.toString());
+            log.fine("Invoking signal method of current state: " + signalMethod);
             Object methodReturn = signalMethod.invoke(currentState, args);
 
             if (methodReturn instanceof Class) {

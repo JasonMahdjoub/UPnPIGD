@@ -28,7 +28,7 @@ public class AvailableSeekRangeType {
         MODE_1,
     }
     
-    private Mode modeFlag;
+    private final Mode modeFlag;
     private NormalPlayTimeRange normalPlayTimeRange;
     private BytesRange bytesRange;
     

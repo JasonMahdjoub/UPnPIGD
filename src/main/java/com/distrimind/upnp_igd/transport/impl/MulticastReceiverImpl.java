@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceiverConfigurationImpl> {
 
-    private static Logger log = Logger.getLogger(MulticastReceiver.class.getName());
+    private static final Logger log = Logger.getLogger(MulticastReceiver.class.getName());
 
     final protected MulticastReceiverConfigurationImpl configuration;
 

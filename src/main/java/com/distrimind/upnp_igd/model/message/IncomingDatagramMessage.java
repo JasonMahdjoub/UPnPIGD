@@ -36,9 +36,9 @@ import java.net.InetAddress;
  */
 public class IncomingDatagramMessage<O extends UpnpOperation> extends UpnpMessage<O> {
 
-    private InetAddress sourceAddress;
-    private int sourcePort;
-    private InetAddress localAddress;
+    private final InetAddress sourceAddress;
+    private final int sourcePort;
+    private final InetAddress localAddress;
 
     public IncomingDatagramMessage(O operation, InetAddress sourceAddress, int sourcePort, InetAddress localAddress) {
         super(operation);

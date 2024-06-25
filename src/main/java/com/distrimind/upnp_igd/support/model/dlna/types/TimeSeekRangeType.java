@@ -22,7 +22,7 @@ import com.distrimind.upnp_igd.model.types.BytesRange;
  */
 public class TimeSeekRangeType {
 
-    private NormalPlayTimeRange normalPlayTimeRange;
+    private final NormalPlayTimeRange normalPlayTimeRange;
     private BytesRange bytesRange;
     
 

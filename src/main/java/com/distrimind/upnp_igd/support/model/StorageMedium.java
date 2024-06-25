@@ -59,13 +59,13 @@ public enum StorageMedium {
     NOT_IMPLEMENTED,
     VENDOR_SPECIFIC;
 
-    private static Map<String, StorageMedium> byProtocolString = new HashMap<String, StorageMedium>() {{
+    private static final Map<String, StorageMedium> byProtocolString = new HashMap<String, StorageMedium>() {{
         for (StorageMedium e : StorageMedium.values()) {
             put(e.protocolString, e);
         }
     }};
 
-    private String protocolString;
+    private final String protocolString;
 
     StorageMedium() {
         this(null);

@@ -36,7 +36,7 @@ import java.net.URL;
  */
 public class OutgoingActionRequestMessage extends StreamRequestMessage implements ActionRequestMessage {
 
-    private static Logger log = Logger.getLogger(OutgoingActionRequestMessage.class.getName());
+    private static final Logger log = Logger.getLogger(OutgoingActionRequestMessage.class.getName());
 
     final private String actionNamespace;
 

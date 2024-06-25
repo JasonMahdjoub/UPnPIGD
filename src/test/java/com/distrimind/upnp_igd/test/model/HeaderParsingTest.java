@@ -31,6 +31,7 @@ import java.net.URI;
 import java.util.Locale;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 
 public class HeaderParsingTest {
@@ -173,7 +174,7 @@ public class HeaderParsingTest {
     public void parseMaxAgeHeader() {
         MaxAgeHeader header = new MaxAgeHeader();
         header.setString("max-age=1234, foobar=baz");
-        assertEquals(header.getValue(), new Integer(1234));
+        assertEquals(header.getValue(), Integer.valueOf(1234));
     }
 
     @Test(expectedExceptions = InvalidHeaderException.class)
@@ -186,7 +187,7 @@ public class HeaderParsingTest {
     public void parseMXHeader() {
         MXHeader header = new MXHeader();
         header.setString("111");
-        assertEquals(header.getValue(), new Integer(111));
+        assertEquals(header.getValue(), Integer.valueOf(111));
         
         header = new MXHeader();
         header.setString("123");
@@ -416,9 +417,9 @@ public class HeaderParsingTest {
     public void parseSoapActionHeaderQueryString() {
         SoapActionHeader header = new SoapActionHeader();
         header.setString("\"urn:schemas-upnp-org:control-1-0#QueryStateVariable\"");
-        assertEquals(header.getValue().getServiceType(), null);
+		assertNull(header.getValue().getServiceType());
         assertEquals(header.getValue().getType(), "control-1-0");
-        assertEquals(header.getValue().getVersion(), null);
+		assertNull(header.getValue().getVersion());
         assertEquals(header.getValue().getActionName(), "QueryStateVariable");
         assertEquals(header.getString(), "\"urn:schemas-upnp-org:control-1-0#QueryStateVariable\"");
     }
@@ -500,17 +501,17 @@ public class HeaderParsingTest {
     @Test
     public void parseRange() {
         RangeHeader header = new RangeHeader("bytes=1539686400-1540210688");
-        assertEquals(header.getValue().getFirstByte(),new Long(1539686400));
-        assertEquals(header.getValue().getLastByte(), new Long(1540210688));
+        assertEquals(header.getValue().getFirstByte(), Long.valueOf(1539686400));
+        assertEquals(header.getValue().getLastByte(), Long.valueOf(1540210688));
         assertEquals(header.getString(), "bytes=1539686400-1540210688");
     }
     
     @Test
     public void parseContentRange() {
         ContentRangeHeader header = new ContentRangeHeader("bytes 1539686400-1540210688/21323123");
-        assertEquals(header.getValue().getFirstByte(),new Long(1539686400));
-        assertEquals(header.getValue().getLastByte(), new Long(1540210688));
-        assertEquals(header.getValue().getByteLength(), new Long(21323123));
+        assertEquals(header.getValue().getFirstByte(), Long.valueOf(1539686400));
+        assertEquals(header.getValue().getLastByte(), Long.valueOf(1540210688));
+        assertEquals(header.getValue().getByteLength(), Long.valueOf(21323123));
         assertEquals(header.getString(), "bytes 1539686400-1540210688/21323123");
     }
     
