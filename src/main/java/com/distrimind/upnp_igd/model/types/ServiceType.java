@@ -103,12 +103,12 @@ public class ServiceType {
         try {
             Matcher matcher = ServiceType.PATTERN.matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
-                return new ServiceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
+                return new ServiceType(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3)));
             }
 
             matcher = ServiceType.BROKEN_PATTERN.matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
-                return new ServiceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
+                return new ServiceType(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3)));
             }
 
             // TODO: UPNP VIOLATION: EyeTV Netstream uses colons in service type token
@@ -136,7 +136,7 @@ public class ServiceType {
                     + "' with: "
                     + cleanToken
                 );
-                return new ServiceType(matcher.group(1), cleanToken, Integer.valueOf(matcher.group(3)));
+                return new ServiceType(matcher.group(1), cleanToken, Integer.parseInt(matcher.group(3)));
             }
         } catch (RuntimeException e) {
             throw new InvalidValueException(String.format(
@@ -170,7 +170,7 @@ public class ServiceType {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof ServiceType)) return false;
+        if (!(o instanceof ServiceType)) return false;
 
         ServiceType that = (ServiceType) o;
 

@@ -49,7 +49,7 @@ public class StateVariableTypeDetails implements Validatable {
     public StateVariableTypeDetails(Datatype<?> datatype, String defaultValue, Collection<String> allowedValues, StateVariableAllowedValueRange allowedValueRange) {
         this.datatype = datatype;
         this.defaultValue = defaultValue;
-        this.allowedValues = List.copyOf(allowedValues);
+        this.allowedValues = allowedValues==null?null:List.copyOf(allowedValues);
         this.allowedValueRange = allowedValueRange;
     }
 

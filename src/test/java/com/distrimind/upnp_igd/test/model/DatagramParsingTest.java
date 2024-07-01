@@ -67,8 +67,7 @@ public class DatagramParsingTest {
 
         DatagramProcessor processor = new DefaultUpnpServiceConfiguration().getDatagramProcessor();
 
-        UpnpMessage<UpnpRequest> msg = processor.read(InetAddress.getByName("127.0.0.1"), packet);
-
+        @SuppressWarnings("unchecked") UpnpMessage<UpnpRequest> msg = (UpnpMessage<UpnpRequest>)processor.read(InetAddress.getByName("127.0.0.1"), packet);
         assertEquals(msg.getOperation().getMethod(), UpnpRequest.Method.NOTIFY);
 
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.HOST, HostHeader.class).getValue().getHost(), Constants.IPV4_UPNP_MULTICAST_GROUP);
@@ -103,7 +102,7 @@ public class DatagramParsingTest {
                 "/some/path/123/desc/xml"
         );
 
-        OutgoingDatagramMessage msg =
+        OutgoingDatagramMessage<?> msg =
                 new OutgoingNotificationRequestRootDevice(
                         location,
                         SampleData.createLocalDevice(),
@@ -118,7 +117,7 @@ public class DatagramParsingTest {
 
         Assert.assertTrue(new String(packet.getData()).endsWith("\r\n\r\n"));
 
-        UpnpMessage readMsg = processor.read(InetAddress.getByName("127.0.0.1"), packet);
+        UpnpMessage<?> readMsg = processor.read(InetAddress.getByName("127.0.0.1"), packet);
 
         assertEquals(readMsg.getHeaders().getFirstHeader(UpnpHeader.Type.HOST).getString(), msg.getHeaders().getFirstHeader(UpnpHeader.Type.HOST).getString());
         assertEquals(readMsg.getHeaders().getFirstHeader(UpnpHeader.Type.MAX_AGE).getString(), msg.getHeaders().getFirstHeader(UpnpHeader.Type.MAX_AGE).getString());

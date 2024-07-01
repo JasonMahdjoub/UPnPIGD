@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.model.profile.DeviceDetailsProvider;
+import org.testng.Assert;
 
 
 public class SampleData {
@@ -128,7 +129,8 @@ public class SampleData {
                             ? getLocalDeviceWithProviderConstructor()
                             : getLocalDeviceConstructor();
 
-            @SuppressWarnings("rawtypes") Constructor<LocalService> serviceConstructor = getLocalServiceConstructor();
+            @SuppressWarnings("rawtypes") final Constructor<LocalService> serviceConstructor = getLocalServiceConstructor();
+            Assert.assertNotNull(serviceConstructor);
 
             return new SampleDeviceRootLocal<>(
                     identity,

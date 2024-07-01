@@ -86,26 +86,28 @@ public abstract class UpnpHeader<T> {
         EXT_IFACE_MAC("X-CLING-IFACE-MAC", InterfaceMacHeader.class),
         EXT_AV_CLIENT_INFO("X-AV-CLIENT-INFO", AVClientInfoHeader.class);
 
-        private static final Map<String, Type> byName = new HashMap<>() {{
-			for (Type t : Type.values()) {
-				put(t.getHttpName(), t);
-			}
-		}};
+        private static final Map<String, Type> byName = new HashMap<>();
+        static
+        {
+            for (Type t : Type.values()) {
+                byName.put(t.getHttpName(), t);
+            }
+        }
 
         private final String httpName;
-        private final Set<Class<? extends UpnpHeader<?>>> headerTypes;
+        private final List<Class<? extends UpnpHeader<?>>> headerTypes;
 
         @SafeVarargs
         Type(String httpName, Class<? extends UpnpHeader<?>>... headerClass) {
             this.httpName = httpName;
-            this.headerTypes = Set.copyOf(List.of(headerClass));
+            this.headerTypes = List.of(headerClass);
         }
 
         public String getHttpName() {
             return httpName;
         }
 
-        public Set<Class<? extends UpnpHeader<?>>> getHeaderTypes() {
+        public List<Class<? extends UpnpHeader<?>>> getHeaderTypes() {
             return headerTypes;
         }
 
@@ -173,17 +175,16 @@ public abstract class UpnpHeader<T> {
                 if (headerValue != null) {
                     upnpHeader.setString(headerValue);
                 }
+                return upnpHeader;
             } catch (InvalidHeaderException ex) {
                 log.finest("Invalid header value for tested type: " + headerClass.getSimpleName() + " - " + ex.getMessage());
-                upnpHeader = null;
-                break;
             } catch (Exception ex) {
                 log.severe("Error instantiating header of type '" + type + "' with value: " + headerValue);
                 log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));
             }
 
         }
-        return upnpHeader;
+        return null;
     }
 
     @Override

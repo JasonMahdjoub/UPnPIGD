@@ -83,7 +83,7 @@ public class Common {
 			if (idm.getHeaders().containsKey(t))
 				return null;
 		}
-		@SuppressWarnings("rawtypes") List<UpnpHeader> luh=idm.getHeaders().get(UpnpHeader.Type.CALLBACK);
+		List<UpnpHeader<?>> luh=idm.getHeaders().get(UpnpHeader.Type.CALLBACK);
 
 		if (luh!=null) {
 			for (UpnpHeader<?> uh : luh) {

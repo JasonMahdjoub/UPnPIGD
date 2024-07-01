@@ -30,7 +30,6 @@ import com.distrimind.upnp_igd.model.UnsupportedDataException;
 import com.distrimind.upnp_igd.http.Headers;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Locale;
@@ -44,7 +43,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
 
     private static final Logger log = Logger.getLogger(DatagramProcessor.class.getName());
 
-    public IncomingDatagramMessage read(InetAddress receivedOnAddress, DatagramPacket datagram) throws UnsupportedDataException {
+    public IncomingDatagramMessage<?> read(InetAddress receivedOnAddress, DatagramPacket datagram) throws UnsupportedDataException {
 
         try {
 
@@ -58,7 +57,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
 
             String[] startLine = Headers.readLine(is).split(" ");
             if (startLine[0].startsWith("HTTP/1.")) {
-                return readResponseMessage(receivedOnAddress, datagram, is, Integer.valueOf(startLine[1]), startLine[2], startLine[0]);
+                return readResponseMessage(receivedOnAddress, datagram, is, Integer.parseInt(startLine[1]), startLine[2], startLine[0]);
             } else {
                 return readRequestMessage(receivedOnAddress, datagram, is, startLine[0], startLine[2]);
             }
@@ -68,7 +67,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
         }
     }
 
-    public DatagramPacket write(OutgoingDatagramMessage message) throws UnsupportedDataException {
+    public DatagramPacket write(OutgoingDatagramMessage<?> message) throws UnsupportedDataException {
 
         StringBuilder statusLine = new StringBuilder();
 
@@ -113,7 +112,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
 
 	}
 
-    protected IncomingDatagramMessage readRequestMessage(InetAddress receivedOnAddress,
+    protected IncomingDatagramMessage<UpnpRequest> readRequestMessage(InetAddress receivedOnAddress,
                                                          DatagramPacket datagram,
                                                          ByteArrayInputStream is,
                                                          String requestMethod,
@@ -123,17 +122,17 @@ public class DatagramProcessorImpl implements DatagramProcessor {
         UpnpHeaders headers = new UpnpHeaders(is);
 
         // Assemble message
-        IncomingDatagramMessage requestMessage;
+        IncomingDatagramMessage<UpnpRequest> requestMessage;
         UpnpRequest upnpRequest = new UpnpRequest(UpnpRequest.Method.getByHttpName(requestMethod));
         upnpRequest.setHttpMinorVersion(httpProtocol.toUpperCase(Locale.ROOT).equals("HTTP/1.1") ? 1 : 0);
-        requestMessage = new IncomingDatagramMessage(upnpRequest, datagram.getAddress(), datagram.getPort(), receivedOnAddress);
+        requestMessage = new IncomingDatagramMessage<>(upnpRequest, datagram.getAddress(), datagram.getPort(), receivedOnAddress);
 
         requestMessage.setHeaders(headers);
 
         return requestMessage;
     }
 
-    protected IncomingDatagramMessage readResponseMessage(InetAddress receivedOnAddress,
+    protected IncomingDatagramMessage<?> readResponseMessage(InetAddress receivedOnAddress,
                                                           DatagramPacket datagram,
                                                           ByteArrayInputStream is,
                                                           int statusCode,
@@ -144,10 +143,10 @@ public class DatagramProcessorImpl implements DatagramProcessor {
         UpnpHeaders headers = new UpnpHeaders(is);
 
         // Assemble the message
-        IncomingDatagramMessage responseMessage;
+        IncomingDatagramMessage<?> responseMessage;
         UpnpResponse upnpResponse = new UpnpResponse(statusCode, statusMessage);
         upnpResponse.setHttpMinorVersion(httpProtocol.toUpperCase(Locale.ROOT).equals("HTTP/1.1") ? 1 : 0);
-        responseMessage = new IncomingDatagramMessage(upnpResponse, datagram.getAddress(), datagram.getPort(), receivedOnAddress);
+        responseMessage = new IncomingDatagramMessage<>(upnpResponse, datagram.getAddress(), datagram.getPort(), receivedOnAddress);
 
         responseMessage.setHeaders(headers);
 

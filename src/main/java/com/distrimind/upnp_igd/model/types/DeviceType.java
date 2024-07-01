@@ -97,7 +97,7 @@ public class DeviceType {
             // Now try a generic DeviceType parse
             Matcher matcher = PATTERN.matcher(s);
             if (matcher.matches()) {
-                return new DeviceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
+                return new DeviceType(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3)));
             }
 
             // TODO: UPNP VIOLATION: Escient doesn't provide any device type token

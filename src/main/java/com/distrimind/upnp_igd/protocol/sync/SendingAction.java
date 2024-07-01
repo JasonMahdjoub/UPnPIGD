@@ -53,9 +53,9 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
 
     final private static Logger log = Logger.getLogger(SendingAction.class.getName());
 
-    final protected ActionInvocation actionInvocation;
+    final protected ActionInvocation<?> actionInvocation;
 
-    public SendingAction(UpnpService upnpService, ActionInvocation actionInvocation, URL controlURL) {
+    public SendingAction(UpnpService upnpService, ActionInvocation<?> actionInvocation, URL controlURL) {
         super(upnpService, new OutgoingActionRequestMessage(actionInvocation, controlURL));
         this.actionInvocation = actionInvocation;
     }
@@ -65,7 +65,7 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
     }
 
     protected IncomingActionResponseMessage invokeRemote(OutgoingActionRequestMessage requestMessage) throws RouterException {
-        Device device = actionInvocation.getAction().getService().getDevice();
+        Device<?, ?, ?> device = actionInvocation.getAction().getService().getDevice();
 
         log.fine("Sending outgoing action call '" + actionInvocation.getAction().getName() + "' to remote service of: " + device);
         IncomingActionResponseMessage responseMessage = null;

@@ -105,7 +105,7 @@ public class RegistryBrowseTest {
 		assertEquals(devices.size(), 1);
 
 		ServiceType serviceType = new UDAServiceType("MY-SERVICE-TYPE-ONE", 1); // DOC: FIND_SERV_TYPE
-		Collection<Device<?, ?, ?>> devices = registry.getDevices(serviceType);          // DOC: FIND_SERV_TYPE
+		devices = registry.getDevices(serviceType);          // DOC: FIND_SERV_TYPE
 		assertEquals(devices.size(), 1);
 	}
 
