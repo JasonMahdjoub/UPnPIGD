@@ -76,6 +76,7 @@ dependencies {
     var testngVersion='7.10.2'
     var beanShellVersion='2.0b6'
     var jakartaAnnotationApiVersion='3.0.0'
+    var jsoupVersion='1.17.2'
 
     testImplementation 'org.testng:testng:'+testngVersion
     testImplementation 'org.slf4j:slf4j-api:'+slf4jVersion
@@ -87,6 +88,8 @@ dependencies {
     implementation 'org.seamless:seamless-swing:'+seamlessVersion*/
 
     //compileOnly 'org.xmlpull:com.springsource.org.xmlpull:'+xmlpullVersion
+
+    implementation 'org.jsoup:jsoup:'+jsoupVersion
 
     compileOnly 'jakarta.enterprise:jakarta.enterprise.cdi-api:'+cdiapiVerison
 

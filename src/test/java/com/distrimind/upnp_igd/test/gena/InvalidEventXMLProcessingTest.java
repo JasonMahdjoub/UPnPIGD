@@ -15,7 +15,6 @@
 
 package com.distrimind.upnp_igd.test.gena;
 
-import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderImpl;
@@ -38,11 +37,13 @@ import com.distrimind.upnp_igd.transport.impl.PullGENAEventProcessorImpl;
 import com.distrimind.upnp_igd.transport.impl.RecoveringGENAEventProcessorImpl;
 import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.util.io.IO;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+import org.jsoup.select.Elements;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -201,21 +202,21 @@ public class InvalidEventXMLProcessingTest {
 
 
 
-    public static void parseLastChangeXML(Node e, Map<String, String> m) throws ParserConfigurationException {
-        NodeList nl=e.getChildNodes();
-        if (nl.getLength()>0)
+    public static void parseLastChangeXML(Element e, Map<String, String> m) throws ParserConfigurationException {
+        Elements nl=e.children();
+        if (!nl.isEmpty())
         {
-            for (int i=0;i<nl.getLength();i++)
-                parseLastChangeXML(nl.item(i), m);
+            for (Element e2 : nl)
+                parseLastChangeXML(e2, m);
         }
         else {
-            Node n=e.getAttributes().getNamedItem("val");
-            if (n!=null)
-                m.put(e.getNodeName(), n.getTextContent());
+            String att="val";
+            if (e.hasAttr(att))
+                m.put(e.tagName(), e.attr(att));
         }
     }
     public static Map<String, String> parseLastChangeXML(String text) throws ParserConfigurationException, IOException, SAXException {
-        Document d= DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance(false).newDocumentBuilder().parse(text);
+        Document d= Jsoup.parse(text, "", Parser.xmlParser());
         Map<String, String> r=new HashMap<>();
         parseLastChangeXML(d, r);
         return r;

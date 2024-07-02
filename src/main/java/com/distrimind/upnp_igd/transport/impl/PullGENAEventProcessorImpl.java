@@ -16,19 +16,20 @@
 package com.distrimind.upnp_igd.transport.impl;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.model.message.gena.IncomingEventRequestMessage;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 
 import jakarta.enterprise.inject.Alternative;
 
@@ -59,36 +60,37 @@ public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 
         String body = getMessageBody(requestMessage);
 		try {
-			Document d=Objects.requireNonNull(DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance(false)).newDocumentBuilder().parse(body);
+			Document d= Jsoup.parse(body, "", Parser.xmlParser());
 			readProperties(d, requestMessage);
 		} catch (Exception ex) {
 			throw new UnsupportedDataException("Can't transform message payload: " + ex.getMessage(), ex, body);	
 		}
 	}
-
-	protected void readProperties(Document doc, IncomingEventRequestMessage message) throws Exception {
-		// We're inside the propertyset tag
+	protected void readProperties(Element e, IncomingEventRequestMessage message) throws Exception {
 		Collection<StateVariable<RemoteService>> stateVariables = message.getService().getStateVariables();
-		for (int i = 0; i < doc.getChildNodes().getLength(); i++) {
-			Node n = doc.getChildNodes().item(i);
-			if (n.getNodeName().equals("property"))
+
+		for (Element n : e.children())
+		{
+			if (XmlPullParserUtils.tagsEquals(n.tagName(), "property"))
 			{
 				readProperty(n, message, stateVariables);
 			}
+			readProperties(n, message);
 
 		}
-
 	}
-
-	protected void readProperty(Node node, IncomingEventRequestMessage message, Collection<StateVariable<RemoteService>> stateVariables) throws Exception  {
-		String stateVariableName = node.getNodeName();
+	protected void readProperty(Element element, IncomingEventRequestMessage message, Collection<StateVariable<RemoteService>> stateVariables) throws Exception {
+		String stateVariableName = element.tagName();
 		for (StateVariable<RemoteService> stateVariable : stateVariables) {
 			if (stateVariable.getName().equals(stateVariableName)) {
 				log.fine("Reading state variable value: " + stateVariableName);
-				String value = node.getTextContent();
+				String value = element.text();
 				message.getStateVariableValues().add(new StateVariableValue<>(stateVariable, value));
 				break;
 			}
 		}
+		for (Element e : element.children())
+			readProperty(e, message, stateVariables);
 	}
+
 }

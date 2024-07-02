@@ -30,4 +30,5 @@ module com.distrimind.upnp_igd {
 	requires org.eclipse.jetty.util;
 	requires java.desktop;
 	requires static android;
+	requires org.jsoup;
 }

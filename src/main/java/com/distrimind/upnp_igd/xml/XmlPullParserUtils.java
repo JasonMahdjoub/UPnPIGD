@@ -14,8 +14,8 @@
  */
 package com.distrimind.upnp_igd.xml;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -104,12 +104,26 @@ public class XmlPullParserUtils {
 		return s == null || s.isEmpty();
 	}
 
-	static public void searchTag(Node node, String tag) throws IOException {
-		if (node instanceof Document)
-			if (((Document)node).getElementsByTagName(tag).getLength()==0)
-				throw new IOException(String.format("tag '%s' not found", tag));
-
+	public static void searchTag(Element element, String tag) throws IOException {
+		if (!searchTagImpl(element, tag)) {
+			throw new IOException(String.format("Tag '%s' not found", tag));
+		}
 	}
+
+	public static boolean searchTagImpl(Element element, String tag) {
+		Elements children = element.children();
+		for (Element child : children) {
+			String tagName = child.tagName();
+			if (tagsEquals(tagName, tag)) {
+				return true;
+			}
+			if (searchTagImpl(child, tag)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static String fixXMLEntities(String xml) {
 		if (xml==null)
 			return null;
@@ -143,4 +157,8 @@ public class XmlPullParserUtils {
 	}
 
 
+	public static boolean tagsEquals(String foundTag, String tag)
+	{
+		return tag.equalsIgnoreCase(foundTag) || (tag.length()<foundTag.length() && foundTag.charAt(foundTag.length()-tag.length()-1)==':' && tag.regionMatches(true, 0, foundTag, foundTag.length()-tag.length(), tag.length()));
+	}
 }

@@ -30,6 +30,7 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
+import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -256,7 +257,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
         Element envelopeElement = d.getDocumentElement();
         
-        if (envelopeElement == null || !getUnprefixedNodeName(envelopeElement).equals("Envelope")) {
+        if (envelopeElement == null || !XmlPullParserUtils.tagsEquals(envelopeElement.getTagName(), "Envelope")) {
             throw new RuntimeException("Response root element was not 'Envelope'");
         }
 
@@ -267,7 +268,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             if (envelopeChild.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
-            if (getUnprefixedNodeName(envelopeChild).equals("Body")) {
+            if (XmlPullParserUtils.tagsEquals(envelopeChild.getNodeName(), "Body")) {
                 return (Element) envelopeChild;
             }
         }
@@ -565,10 +566,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     {
         List<String> names = new ArrayList<>();
         for (ActionArgument<?> argument : args) {
-            names.add(argument.getName().toUpperCase(Locale.ROOT));
-            for (String alias : argument.getAliases()) {
-                names.add(alias.toUpperCase(Locale.ROOT));
-            }
+            names.add(argument.getName());
+			names.addAll(argument.getAliases());
         }
         return names;
     }

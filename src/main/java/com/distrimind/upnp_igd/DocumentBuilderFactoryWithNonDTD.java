@@ -182,4 +182,5 @@ public class DocumentBuilderFactoryWithNonDTD extends DocumentBuilderFactory {
 	public boolean isXIncludeAware() {
 		return base.isXIncludeAware();
 	}
+
 }
