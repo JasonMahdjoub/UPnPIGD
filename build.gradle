@@ -7,6 +7,7 @@ plugins {
     id "eclipse"
     id "idea"
     id "signing"
+    id 'pmd'
     //id "org.owasp.dependencycheck" version "6.1.0"
 }
 
@@ -39,6 +40,12 @@ if (propFile.canRead())
 }
 
 
+pmd {
+    consoleOutput = true
+    toolVersion = "7.3.0"
+    rulesMinimumPriority = 5
+    ruleSetFiles = files("pmd/pmd-rules.xml")
+}
 
 
 
