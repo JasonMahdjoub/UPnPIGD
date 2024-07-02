@@ -88,9 +88,9 @@ public class AllowedValueTest {
         assertEquals(svc.getStateVariables().size(), 1);
         assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getDatatype().getBuiltin(), Datatype.Builtin.STRING);
         assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().size(), 3);
-        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().iterator().next(), "Foo");
-        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().iterator().next(), "Bar");
-        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().iterator().next(), "Baz");
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().get(0), "Foo");
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().get(1), "Bar");
+        assertEquals(svc.getStateVariables().iterator().next().getTypeDetails().getAllowedValues().get(2), "Baz");
     }
 
 }

@@ -27,6 +27,7 @@ import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
 import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
@@ -78,13 +79,52 @@ public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 			readProperties(n, message);
 
 		}
+		if (message.getStateVariableValues().isEmpty())
+			throw new Exception("There is no state variables !");
+	}
+	private void getAllText(StringBuilder text, Element element, String tagName) {
+		String e=element.text();
+
+		if (e.isEmpty()) {
+			if (tagName!=null) {
+				text.append("<")
+						.append(tagName);
+				for (Attribute a : element.attributes()) {
+					text.append(" ")
+							.append(a.getKey())
+							.append("=")
+							.append("\"")
+							.append(a.getValue())
+							.append("\"");
+				}
+				text.append(">");
+			}
+			for (Element child : element.children()) {
+				getAllText(text, child, child.tagName());
+			}
+			if (tagName!=null)
+				text.append("</")
+						.append(tagName)
+						.append(">");
+		}
+		else
+			text.append(e);
+
+	}
+	private String getAllText(Element element) {
+		StringBuilder text = new StringBuilder(element.text());
+		if (text.length()==0) {
+			getAllText(text, element, null);
+		}
+		return text.toString();
+
 	}
 	protected void readProperty(Element element, IncomingEventRequestMessage message, Collection<StateVariable<RemoteService>> stateVariables) throws Exception {
 		String stateVariableName = element.tagName();
 		for (StateVariable<RemoteService> stateVariable : stateVariables) {
 			if (stateVariable.getName().equals(stateVariableName)) {
 				log.fine("Reading state variable value: " + stateVariableName);
-				String value = element.text();
+				String value = getAllText(element);
 				message.getStateVariableValues().add(new StateVariableValue<>(stateVariable, value));
 				break;
 			}
