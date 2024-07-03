@@ -74,9 +74,7 @@ repositories {
 }
 
 dependencies {
-    var xmlpullVersion='1.1.4'
-    var cdiapiVerison='4.1.0'
-    var androidVersion='4.1.1.4'
+    var cdiAPIVersion='4.1.0'
     var kxmlVersion='2.3.0'
     var jettyVersion='11+'
     var slf4jVersion='2.0.13'
@@ -89,16 +87,9 @@ dependencies {
     testImplementation 'org.slf4j:slf4j-api:'+slf4jVersion
     testImplementation 'org.slf4j:slf4j-simple:'+slf4jVersion
 
-    /*implementation 'org.seamless:seamless-util:'+seamlessVersion
-    implementation 'org.seamless:seamless-http:'+seamlessVersion
-    implementation 'org.seamless:seamless-xml:'+seamlessVersion
-    implementation 'org.seamless:seamless-swing:'+seamlessVersion*/
-
-    //compileOnly 'org.xmlpull:com.springsource.org.xmlpull:'+xmlpullVersion
-
     implementation 'org.jsoup:jsoup:'+jsoupVersion
 
-    compileOnly 'jakarta.enterprise:jakarta.enterprise.cdi-api:'+cdiapiVerison
+    compileOnly 'jakarta.enterprise:jakarta.enterprise.cdi-api:'+cdiAPIVersion
 
     compileOnly files('FlatLibs/AndroidStub-4.2.0.0.jar')
 
@@ -107,10 +98,7 @@ dependencies {
     compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
     compileOnly 'net.sf.kxml:kxml2:'+kxmlVersion
 
-    //implementation 'org.xmlpull:com.springsource.org.xmlpull:'+xmlpullVersion
-
-    testImplementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:'+cdiapiVerison
-    //implementation 'androidx.appcompat:appcompat:1.4.1'
+    testImplementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:'+cdiAPIVersion
     testImplementation files('FlatLibs/AndroidStub-4.2.0.0.jar')
 
     testImplementation 'org.eclipse.jetty:jetty-server:'+jettyVersion
