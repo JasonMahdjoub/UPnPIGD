@@ -75,7 +75,6 @@ repositories {
 
 dependencies {
     var cdiAPIVersion='4.1.0'
-    var kxmlVersion='2.3.0'
     var jettyVersion='11+'
     var slf4jVersion='2.0.13'
     var testngVersion='7.10.2'
@@ -96,7 +95,6 @@ dependencies {
     compileOnly 'org.eclipse.jetty:jetty-server:'+jettyVersion
     compileOnly 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
     compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
-    compileOnly 'net.sf.kxml:kxml2:'+kxmlVersion
 
     testImplementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:'+cdiAPIVersion
     testImplementation files('FlatLibs/AndroidStub-4.2.0.0.jar')
@@ -104,7 +102,6 @@ dependencies {
     testImplementation 'org.eclipse.jetty:jetty-server:'+jettyVersion
     testImplementation 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
     testImplementation 'org.eclipse.jetty:jetty-client:'+jettyVersion
-    testImplementation 'net.sf.kxml:kxml2:'+kxmlVersion
     testImplementation 'org.apache-extras.beanshell:bsh:'+beanShellVersion
 
     implementation 'jakarta.annotation:jakarta.annotation-api:'+jakartaAnnotationApiVersion
