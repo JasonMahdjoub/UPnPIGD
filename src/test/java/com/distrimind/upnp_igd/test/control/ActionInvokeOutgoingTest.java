@@ -59,8 +59,8 @@ public class ActionInvokeOutgoingTest {
 
     public static final String RESPONSE_SUCCESSFUL = "<?xml version=\"1.0\"?>\n" +
         " <s:Envelope\n" +
-        "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-        "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+        "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+        "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
         "   <s:Body>\n" +
         "     <u:GetTargetResponse xmlns:u=\"urn:schemas-upnp-org:service:SwitchPower:1\">\n" +
         "       <RetTargetValue>0</RetTargetValue>\n" +
@@ -70,8 +70,8 @@ public class ActionInvokeOutgoingTest {
 
     public static final String RESPONSE_QUERY_VARIABLE = "<?xml version=\"1.0\"?>\n" +
         " <s:Envelope\n" +
-        "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-        "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+        "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+        "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
         "   <s:Body>\n" +
         "     <u:QueryStateVariableResponse xmlns:u=\"urn:schemas-upnp-org:control-1-0\">\n" +
         "       <return>0</return>\n" +
@@ -81,8 +81,8 @@ public class ActionInvokeOutgoingTest {
 
     public static final String RESPONSE_FAILURE = "<?xml version=\"1.0\"?>\n" +
         " <s:Envelope\n" +
-        "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-        "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+        "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+        "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
         "   <s:Body>\n" +
         "     <s:Fault>\n" +
         "       <faultcode>s:Client</faultcode>\n" +
@@ -99,8 +99,8 @@ public class ActionInvokeOutgoingTest {
 
     public static final String RESPONSE_NEGATIVE_VALUE = "<?xml version=\"1.0\"?>\n" +
         " <s:Envelope\n" +
-        "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-        "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+        "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+        "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
         "   <s:Body>\n" +
         "     <u:GetNegativeValueResponse xmlns:u=\"urn:schemas-upnp-org:service:MyService:1\">\n" +
         "       <Result>-1</Result>\n" + // That's an illegal value for this state var!

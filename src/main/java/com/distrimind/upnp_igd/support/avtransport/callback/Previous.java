@@ -31,25 +31,25 @@ public abstract class Previous extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(Previous.class.getName());
 
-    protected Previous(ActionInvocation actionInvocation, ControlPoint controlPoint) {
+    protected Previous(ActionInvocation<?> actionInvocation, ControlPoint controlPoint) {
         super(actionInvocation, controlPoint);
     }
 
-    protected Previous(ActionInvocation actionInvocation) {
+    protected Previous(ActionInvocation<?> actionInvocation) {
         super(actionInvocation);
     }
 
-    public Previous(Service service) {
+    public Previous(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);
     }
 
-    public Previous(UnsignedIntegerFourBytes instanceId, Service service) {
-        super(new ActionInvocation(service.getAction("Previous")));
+    public Previous(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("Previous")));
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         log.fine("Execution successful");
     }
 }

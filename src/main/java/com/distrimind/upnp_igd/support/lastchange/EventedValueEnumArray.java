@@ -19,27 +19,29 @@ import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Christian Bauer
  */
-public abstract class EventedValueEnumArray<E extends Enum> extends EventedValue<E[]> {
+public abstract class EventedValueEnumArray<E extends Enum<?>> extends EventedValue<List<E>> {
 
-    public EventedValueEnumArray(E[] e) {
+    public EventedValueEnumArray(List<E> e) {
         super(e);
     }
 
-    public EventedValueEnumArray(Map.Entry<String, String>[] attributes) {
+    public EventedValueEnumArray(Collection<Map.Entry<String, String>> attributes) {
         super(attributes);
     }
 
     @Override
-    protected E[] valueOf(String s) throws InvalidValueException {
+    protected List<E> valueOf(String s) throws InvalidValueException {
         return enumValueOf(ModelUtil.fromCommaSeparatedList(s));
     }
 
-    protected abstract E[] enumValueOf(String[] names);
+    protected abstract List<E> enumValueOf(String[] names);
 
     @Override
     public String toString() {
@@ -47,7 +49,7 @@ public abstract class EventedValueEnumArray<E extends Enum> extends EventedValue
     }
 
     @Override
-    protected Datatype getDatatype() {
+    protected Datatype<List<E>> getDatatype() {
         return null;
     }
 }

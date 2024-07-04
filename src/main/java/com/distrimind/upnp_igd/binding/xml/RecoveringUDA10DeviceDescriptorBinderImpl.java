@@ -99,7 +99,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
             }
 
             fixedXml = XmlPullParserUtils.fixXMLEntities(descriptorXml);
-            if(!fixedXml.equals(descriptorXml)) {
+            if(fixedXml==null || !fixedXml.equals(descriptorXml)) {
                 try {
                     device = super.describe(undescribedDevice, fixedXml);
                     return device;
@@ -152,7 +152,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
             return null;
         }
         if (descriptorXml.length() != index + "</root>".length()) {
-            log.warning("Detected garbage characters after <root> node, removing");
+            log.warning("Detected garbage characters after <root> node, removing"+(ex==null?"":ex.getMessage()));
             return descriptorXml.substring(0, index) + "</root>";
         }
         return null;

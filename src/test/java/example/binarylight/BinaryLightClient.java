@@ -55,7 +55,7 @@ public class BinaryLightClient implements Runnable {
             @Override
             public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
 
-                Service switchPower;
+                Service<?, ?, ?> switchPower;
                 if ((switchPower = device.findService(serviceId)) != null) {
 
                     System.out.println("Service discovered: " + switchPower);
@@ -67,7 +67,7 @@ public class BinaryLightClient implements Runnable {
 
             @Override
             public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
-                Service switchPower;
+                Service<?, ?, ?> switchPower;
                 if ((switchPower = device.findService(serviceId)) != null) {
                     System.out.println("Service disappeared: " + switchPower);
                 }
@@ -77,9 +77,9 @@ public class BinaryLightClient implements Runnable {
     }
     // DOC: REGISTRYLISTENER
     // DOC: EXECUTEACTION
-    void executeAction(UpnpService upnpService, Service switchPowerService) {
+    void executeAction(UpnpService upnpService, Service<?, ?, ?> switchPowerService) {
 
-            ActionInvocation setTargetInvocation =
+            ActionInvocation<?> setTargetInvocation =
                     new SetTargetActionInvocation(switchPowerService);
 
             // Executes asynchronous in the background
@@ -87,13 +87,13 @@ public class BinaryLightClient implements Runnable {
                     new ActionCallback(setTargetInvocation) {
 
                         @Override
-                        public void success(ActionInvocation invocation) {
+                        public void success(ActionInvocation<?> invocation) {
                             assert invocation.getOutput().isEmpty();
                             System.out.println("Successfully called action!");
                         }
 
                         @Override
-                        public void failure(ActionInvocation invocation,
+                        public void failure(ActionInvocation<?> invocation,
                                             UpnpResponse operation,
                                             String defaultMsg) {
                             System.err.println(defaultMsg);
@@ -103,9 +103,9 @@ public class BinaryLightClient implements Runnable {
 
     }
 
-    class SetTargetActionInvocation extends ActionInvocation {
+    static class SetTargetActionInvocation extends ActionInvocation<Service<?, ?, ?>> {
 
-        SetTargetActionInvocation(Service service) {
+        SetTargetActionInvocation(Service<?, ?, ?> service) {
             super(service.getAction("SetTarget"));
             try {
 

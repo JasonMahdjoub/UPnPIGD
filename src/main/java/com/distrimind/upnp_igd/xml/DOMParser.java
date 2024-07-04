@@ -94,7 +94,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 		if (schema == null) {
 			// Lazy initialization
-			// TODO: http://stackoverflow.com/questions/3129934/schemafactory-doesnt-support-w3c-xml-schema-in-platform-level-8
+			// TODO: https://stackoverflow.com/questions/3129934/schemafactory-doesnt-support-w3c-xml-schema-in-platform-level-8
 			try {
 				SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
@@ -141,7 +141,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 			Transformer transformer = transFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, standalone ? "no" : "yes");
 
-			// JDK 7 bug: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7150637
+			// JDK 7 bug: https://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7150637
 			if (standalone) {
 				try {
 					transformer.setOutputProperty("http://www.oracle.com/xml/is-standalone", "yes");
@@ -288,7 +288,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 		return getXPathResult(dom.getW3CDocument(), xpath, expr, result);
 	}
 
-	public Object getXPathResult(DOMElement element, XPath xpath, String expr, QName result) {
+	public Object getXPathResult(DOMElement<?, ?> element, XPath xpath, String expr, QName result) {
 		return getXPathResult(element.getW3CElement(), xpath, expr, result);
 	}
 
@@ -385,7 +385,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 			output = output.replaceFirst(meta, "");
 
 			// Rip out the even dumber xmlns attribute that magically got added (seems to be a difference between JDK 1.4 and 5)
-			String xmlns = "<html xmlns=\"http://www.w3.org/1999/xhtml\">";
+			String xmlns = "<html xmlns=\"https://www.w3.org/1999/xhtml\">";
 			output = output.replaceFirst(xmlns, "<html>");
 
 			return output;
@@ -492,7 +492,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 		if (convertSpaces) {
 			// Converts the _beginning_ of line whitespaces into non-breaking spaces
 			Matcher matcher = Pattern.compile("(\\n+)(\\s*)(.*)").matcher(result);
-			StringBuffer temp = new StringBuffer();
+			StringBuilder temp = new StringBuilder();
 			while (matcher.find()) {
 				String group = matcher.group(2);
 				StringBuilder spaces = new StringBuilder();

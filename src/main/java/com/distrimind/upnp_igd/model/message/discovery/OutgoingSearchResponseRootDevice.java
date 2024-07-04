@@ -27,9 +27,9 @@ import com.distrimind.upnp_igd.model.meta.LocalDevice;
  */
 public class OutgoingSearchResponseRootDevice extends OutgoingSearchResponse {
 
-    public OutgoingSearchResponseRootDevice(IncomingDatagramMessage request,
+    public OutgoingSearchResponseRootDevice(IncomingDatagramMessage<?> request,
 											Location location,
-											LocalDevice device) {
+											LocalDevice<?> device) {
         super(request, location, device);
 
         getHeaders().add(UpnpHeader.Type.ST, new RootDeviceHeader());

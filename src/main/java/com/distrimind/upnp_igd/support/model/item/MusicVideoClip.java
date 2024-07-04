@@ -51,12 +51,11 @@ public class MusicVideoClip extends VideoItem {
         return getFirstPropertyValue(Property.UPNP.ARTIST.class);
     }
 
-    public PersonWithRole[] getArtists() {
-        List<PersonWithRole> list = getPropertyValues(Property.UPNP.ARTIST.class);
-        return list.toArray(new PersonWithRole[list.size()]);
+    public List<PersonWithRole> getArtists() {
+        return getPropertyValues(Property.UPNP.ARTIST.class);
     }
 
-    public MusicVideoClip setArtists(PersonWithRole[] artists) {
+    public MusicVideoClip setArtists(List<PersonWithRole> artists) {
         removeProperties(Property.UPNP.ARTIST.class);
         for (PersonWithRole artist : artists) {
             addProperty(new Property.UPNP.ARTIST(artist));
@@ -86,12 +85,11 @@ public class MusicVideoClip extends VideoItem {
         return getFirstPropertyValue(Property.UPNP.SCHEDULED_START_TIME.class);
     }
 
-    public String[] getScheduledStartTimes() {
-        List<String> list = getPropertyValues(Property.UPNP.SCHEDULED_START_TIME.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getScheduledStartTimes() {
+        return getPropertyValues(Property.UPNP.SCHEDULED_START_TIME.class);
     }
 
-    public MusicVideoClip setScheduledStartTimes(String[] strings) {
+    public MusicVideoClip setScheduledStartTimes(List<String> strings) {
         removeProperties(Property.UPNP.SCHEDULED_START_TIME.class);
         for (String s : strings) {
             addProperty(new Property.UPNP.SCHEDULED_START_TIME(s));
@@ -103,12 +101,11 @@ public class MusicVideoClip extends VideoItem {
         return getFirstPropertyValue(Property.UPNP.SCHEDULED_END_TIME.class);
     }
 
-    public String[] getScheduledEndTimes() {
-        List<String> list = getPropertyValues(Property.UPNP.SCHEDULED_END_TIME.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getScheduledEndTimes() {
+        return getPropertyValues(Property.UPNP.SCHEDULED_END_TIME.class);
     }
 
-    public MusicVideoClip setScheduledEndTimes(String[] strings) {
+    public MusicVideoClip setScheduledEndTimes(List<String> strings) {
         removeProperties(Property.UPNP.SCHEDULED_END_TIME.class);
         for (String s : strings) {
             addProperty(new Property.UPNP.SCHEDULED_END_TIME(s));
@@ -120,12 +117,11 @@ public class MusicVideoClip extends VideoItem {
         return getFirstPropertyValue(Property.DC.CONTRIBUTOR.class);
     }
 
-    public Person[] getContributors() {
-        List<Person> list = getPropertyValues(Property.DC.CONTRIBUTOR.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getContributors() {
+        return getPropertyValues(Property.DC.CONTRIBUTOR.class);
     }
 
-    public MusicVideoClip setContributors(Person[] contributors) {
+    public MusicVideoClip setContributors(List<Person> contributors) {
         removeProperties(Property.DC.CONTRIBUTOR.class);
         for (Person p : contributors) {
             addProperty(new Property.DC.CONTRIBUTOR(p));

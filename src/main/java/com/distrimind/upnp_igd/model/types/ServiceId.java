@@ -113,7 +113,7 @@ public class ServiceId {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof ServiceId)) return false;
+        if (!(o instanceof ServiceId)) return false;
 
         ServiceId serviceId = (ServiceId) o;
 

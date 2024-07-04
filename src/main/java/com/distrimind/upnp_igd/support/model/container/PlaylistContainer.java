@@ -49,12 +49,11 @@ public class PlaylistContainer extends Container {
         return getFirstPropertyValue(DIDLObject.Property.UPNP.ARTIST.class);
     }
 
-    public PersonWithRole[] getArtists() {
-        List<PersonWithRole> list = getPropertyValues(DIDLObject.Property.UPNP.ARTIST.class);
-        return list.toArray(new PersonWithRole[list.size()]);
+    public List<PersonWithRole> getArtists() {
+        return getPropertyValues(DIDLObject.Property.UPNP.ARTIST.class);
     }
 
-    public PlaylistContainer setArtists(PersonWithRole[] artists) {
+    public PlaylistContainer setArtists(List<PersonWithRole> artists) {
         removeProperties(DIDLObject.Property.UPNP.ARTIST.class);
         for (PersonWithRole artist : artists) {
             addProperty(new DIDLObject.Property.UPNP.ARTIST(artist));
@@ -66,12 +65,11 @@ public class PlaylistContainer extends Container {
         return getFirstPropertyValue(DIDLObject.Property.UPNP.GENRE.class);
     }
 
-    public String[] getGenres() {
-        List<String> list = getPropertyValues(DIDLObject.Property.UPNP.GENRE.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getGenres() {
+        return getPropertyValues(DIDLObject.Property.UPNP.GENRE.class);
     }
 
-    public PlaylistContainer setGenres(String[] genres) {
+    public PlaylistContainer setGenres(List<String> genres) {
         removeProperties(DIDLObject.Property.UPNP.GENRE.class);
         for (String genre : genres) {
             addProperty(new DIDLObject.Property.UPNP.GENRE(genre));
@@ -101,12 +99,11 @@ public class PlaylistContainer extends Container {
         return getFirstPropertyValue(DIDLObject.Property.UPNP.PRODUCER.class);
     }
 
-    public Person[] getProducers() {
-        List<Person> list = getPropertyValues(DIDLObject.Property.UPNP.PRODUCER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getProducers() {
+        return getPropertyValues(DIDLObject.Property.UPNP.PRODUCER.class);
     }
 
-    public PlaylistContainer setProducers(Person[] persons) {
+    public PlaylistContainer setProducers(List<Person> persons) {
         removeProperties(DIDLObject.Property.UPNP.PRODUCER.class);
         for (Person p : persons) {
             addProperty(new DIDLObject.Property.UPNP.PRODUCER(p));
@@ -136,12 +133,11 @@ public class PlaylistContainer extends Container {
         return getFirstPropertyValue(DIDLObject.Property.DC.RIGHTS.class);
     }
 
-    public String[] getRights() {
-        List<String> list = getPropertyValues(DIDLObject.Property.DC.RIGHTS.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getRights() {
+        return getPropertyValues(DIDLObject.Property.DC.RIGHTS.class);
     }
 
-    public PlaylistContainer setRights(String[] rights) {
+    public PlaylistContainer setRights(List<String> rights) {
         removeProperties(DIDLObject.Property.DC.RIGHTS.class);
         for (String right : rights) {
             addProperty(new DIDLObject.Property.DC.RIGHTS(right));
@@ -153,12 +149,11 @@ public class PlaylistContainer extends Container {
         return getFirstPropertyValue(DIDLObject.Property.DC.CONTRIBUTOR.class);
     }
 
-    public Person[] getContributors() {
-        List<Person> list = getPropertyValues(DIDLObject.Property.DC.CONTRIBUTOR.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getContributors() {
+        return getPropertyValues(DIDLObject.Property.DC.CONTRIBUTOR.class);
     }
 
-    public PlaylistContainer setContributors(Person[] contributors) {
+    public PlaylistContainer setContributors(List<Person> contributors) {
         removeProperties(DIDLObject.Property.DC.CONTRIBUTOR.class);
         for (Person p : contributors) {
             addProperty(new DIDLObject.Property.DC.CONTRIBUTOR(p));

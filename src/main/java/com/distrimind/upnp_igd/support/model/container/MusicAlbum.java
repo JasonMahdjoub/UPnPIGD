@@ -61,12 +61,11 @@ public class MusicAlbum extends Album {
         return getFirstPropertyValue(Property.UPNP.ARTIST.class);
     }
 
-    public PersonWithRole[] getArtists() {
-        List<PersonWithRole> list = getPropertyValues(Property.UPNP.ARTIST.class);
-        return list.toArray(new PersonWithRole[list.size()]);
+    public List<PersonWithRole> getArtists() {
+        return getPropertyValues(Property.UPNP.ARTIST.class);
     }
 
-    public MusicAlbum setArtists(PersonWithRole[] artists) {
+    public MusicAlbum setArtists(List<PersonWithRole> artists) {
         removeProperties(Property.UPNP.ARTIST.class);
         for (PersonWithRole artist : artists) {
             addProperty(new Property.UPNP.ARTIST(artist));
@@ -78,12 +77,11 @@ public class MusicAlbum extends Album {
         return getFirstPropertyValue(Property.UPNP.GENRE.class);
     }
 
-    public String[] getGenres() {
-        List<String> list = getPropertyValues(Property.UPNP.GENRE.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getGenres() {
+        return getPropertyValues(Property.UPNP.GENRE.class);
     }
 
-    public MusicAlbum setGenres(String[] genres) {
+    public MusicAlbum setGenres(List<String> genres) {
         removeProperties(Property.UPNP.GENRE.class);
         for (String genre : genres) {
             addProperty(new Property.UPNP.GENRE(genre));
@@ -95,12 +93,11 @@ public class MusicAlbum extends Album {
         return getFirstPropertyValue(Property.UPNP.PRODUCER.class);
     }
 
-    public Person[] getProducers() {
-        List<Person> list = getPropertyValues(Property.UPNP.PRODUCER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getProducers() {
+        return getPropertyValues(Property.UPNP.PRODUCER.class);
     }
 
-    public MusicAlbum setProducers(Person[] persons) {
+    public MusicAlbum setProducers(List<Person> persons) {
         removeProperties(Property.UPNP.PRODUCER.class);
         for (Person p : persons) {
             addProperty(new Property.UPNP.PRODUCER(p));
@@ -112,12 +109,11 @@ public class MusicAlbum extends Album {
         return getFirstPropertyValue(Property.UPNP.ALBUM_ART_URI.class);
     }
 
-    public URI[] getAlbumArtURIs() {
-        List<URI> list = getPropertyValues(Property.UPNP.ALBUM_ART_URI.class);
-        return list.toArray(new URI[list.size()]);
+    public List<URI> getAlbumArtURIs() {
+        return getPropertyValues(Property.UPNP.ALBUM_ART_URI.class);
     }
 
-    public MusicAlbum setAlbumArtURIs(URI[] uris) {
+    public MusicAlbum setAlbumArtURIs(List<URI> uris) {
         removeProperties(Property.UPNP.ALBUM_ART_URI.class);
         for (URI uri : uris) {
             addProperty(new Property.UPNP.ALBUM_ART_URI(uri));
@@ -134,19 +130,16 @@ public class MusicAlbum extends Album {
         return this;
     }
 
-    public MusicTrack[] getMusicTracks() {
+    public List<MusicTrack> getMusicTracks() {
         List<MusicTrack> list = new ArrayList<>();
         for (Item item : getItems()) {
             if (item instanceof MusicTrack) list.add((MusicTrack)item);
         }
-        return list.toArray(new MusicTrack[list.size()]);
+        return list;
     }
+
 
     public void addMusicTracks(List<MusicTrack> musicTracks) {
-        addMusicTracks(musicTracks.toArray(new MusicTrack[musicTracks.size()]));
-    }
-
-    public void addMusicTracks(MusicTrack[] musicTracks) {
         if (musicTracks != null) {
             for (MusicTrack musicTrack : musicTracks) {
                 musicTrack.setAlbum(getTitle());

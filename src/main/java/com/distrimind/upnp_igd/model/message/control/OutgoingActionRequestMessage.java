@@ -40,12 +40,12 @@ public class OutgoingActionRequestMessage extends StreamRequestMessage implement
 
     final private String actionNamespace;
 
-    public OutgoingActionRequestMessage(ActionInvocation actionInvocation, URL controlURL) {
+    public OutgoingActionRequestMessage(ActionInvocation<?> actionInvocation, URL controlURL) {
         this(actionInvocation.getAction(), new UpnpRequest(UpnpRequest.Method.POST, controlURL));
 
         // For proxy remote invocations, pass through the user agent header
         if (actionInvocation instanceof RemoteActionInvocation) {
-            RemoteActionInvocation remoteActionInvocation = (RemoteActionInvocation) actionInvocation;
+            RemoteActionInvocation<?> remoteActionInvocation = (RemoteActionInvocation<?>) actionInvocation;
             if (remoteActionInvocation.getRemoteClientInfo() != null
                 && remoteActionInvocation.getRemoteClientInfo().getRequestUserAgent() != null) {
                 getHeaders().add(
@@ -58,7 +58,7 @@ public class OutgoingActionRequestMessage extends StreamRequestMessage implement
         }
     }
 
-    public OutgoingActionRequestMessage(Action action, UpnpRequest operation) {
+    public OutgoingActionRequestMessage(Action<?> action, UpnpRequest operation) {
         super(operation);
 
         getHeaders().add(

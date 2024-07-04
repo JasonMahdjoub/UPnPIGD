@@ -77,10 +77,10 @@ public class RouterImpl implements Router {
 
     // These are created/destroyed when the router is enabled/disabled
     protected NetworkAddressFactory networkAddressFactory;
-    protected StreamClient streamClient;
-    protected final Map<NetworkInterface, MulticastReceiver> multicastReceivers = new HashMap<>();
-    protected final Map<InetAddress, DatagramIO> datagramIOs = new HashMap<>();
-    protected final Map<InetAddress, StreamServer> streamServers = new HashMap<>();
+    protected StreamClient<?> streamClient;
+    protected final Map<NetworkInterface, MulticastReceiver<?>> multicastReceivers = new HashMap<>();
+    protected final Map<InetAddress, DatagramIO<?>> datagramIOs = new HashMap<>();
+    protected final Map<InetAddress, StreamServer<?>> streamServers = new HashMap<>();
 
     protected RouterImpl() {
     }
@@ -166,19 +166,19 @@ public class RouterImpl implements Router {
                     streamClient = null;
                 }
 
-                for (Map.Entry<InetAddress, StreamServer> entry : streamServers.entrySet()) {
+                for (Map.Entry<InetAddress, StreamServer<?>> entry : streamServers.entrySet()) {
                     log.fine("Stopping stream server on address: " + entry.getKey());
                     entry.getValue().stop();
                 }
                 streamServers.clear();
 
-                for (Map.Entry<NetworkInterface, MulticastReceiver> entry : multicastReceivers.entrySet()) {
+                for (Map.Entry<NetworkInterface, MulticastReceiver<?>> entry : multicastReceivers.entrySet()) {
                     log.fine("Stopping multicast receiver on interface: " + entry.getKey().getDisplayName());
                     entry.getValue().stop();
                 }
                 multicastReceivers.clear();
 
-                for (Map.Entry<InetAddress, DatagramIO> entry : datagramIOs.entrySet()) {
+                for (Map.Entry<InetAddress, DatagramIO<?>> entry : datagramIOs.entrySet()) {
                     log.fine("Stopping datagram I/O on address: " + entry.getKey());
                     entry.getValue().stop();
                 }
@@ -217,10 +217,10 @@ public class RouterImpl implements Router {
     public List<NetworkAddress> getActiveStreamServers(InetAddress preferredAddress) throws RouterException {
         lock(readLock);
         try {
-            if (enabled && streamServers.size() > 0) {
+            if (enabled && !streamServers.isEmpty()) {
                 List<NetworkAddress> streamServerAddresses = new ArrayList<>();
 
-                StreamServer preferredServer;
+                StreamServer<?> preferredServer;
                 if (preferredAddress != null &&
                     (preferredServer = streamServers.get(preferredAddress)) != null) {
                     streamServerAddresses.add(
@@ -234,7 +234,7 @@ public class RouterImpl implements Router {
                     return streamServerAddresses;
                 }
 
-                for (Map.Entry<InetAddress, StreamServer> entry : streamServers.entrySet()) {
+                for (Map.Entry<InetAddress, StreamServer<?>> entry : streamServers.entrySet()) {
                     byte[] hardwareAddress = networkAddressFactory.getHardwareAddress(entry.getKey());
                     streamServerAddresses.add(
                         new NetworkAddress(entry.getKey(), entry.getValue().getPort(), hardwareAddress)
@@ -242,7 +242,7 @@ public class RouterImpl implements Router {
                 }
                 return streamServerAddresses;
             } else {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
         } finally {
             unlock(readLock);
@@ -261,13 +261,13 @@ public class RouterImpl implements Router {
      *
      * @param msg The received datagram message.
      */
-    public void received(IncomingDatagramMessage msg) {
+    public void received(IncomingDatagramMessage<?> msg) {
         if (!enabled) {
             log.fine("Router disabled, ignoring incoming message: " + msg);
             return;
         }
         try {
-            ReceivingAsync protocol = getProtocolFactory().createReceivingAsync(msg);
+            ReceivingAsync<?> protocol = getProtocolFactory().createReceivingAsync(msg);
             if (protocol == null) {
                 if (log.isLoggable(Level.FINEST))
                     log.finest("No protocol, ignoring received message: " + msg);
@@ -301,11 +301,11 @@ public class RouterImpl implements Router {
      *
      * @param msg The UDP datagram message to send.
      */
-    public void send(OutgoingDatagramMessage msg) throws RouterException {
+    public void send(OutgoingDatagramMessage<?> msg) throws RouterException {
         lock(readLock);
         try {
             if (enabled) {
-                for (DatagramIO datagramIO : datagramIOs.values()) {
+                for (DatagramIO<?> datagramIO : datagramIOs.values()) {
                     datagramIO.send(msg);
                 }
             } else {
@@ -359,7 +359,7 @@ public class RouterImpl implements Router {
         lock(readLock);
         try {
             if (enabled) {
-                for (Map.Entry<InetAddress, DatagramIO> entry : datagramIOs.entrySet()) {
+                for (Map.Entry<InetAddress, DatagramIO<?>> entry : datagramIOs.entrySet()) {
                     InetAddress broadcast = networkAddressFactory.getBroadcastAddress(entry.getKey());
                     if (broadcast != null) {
                         log.fine("Sending UDP datagram to broadcast address: " + broadcast.getHostAddress());
@@ -380,7 +380,7 @@ public class RouterImpl implements Router {
             NetworkInterface networkInterface = interfaces.next();
 
             // We only have the MulticastReceiver as an interface-based transport
-            MulticastReceiver multicastReceiver = getConfiguration().createMulticastReceiver(networkAddressFactory);
+            MulticastReceiver<?> multicastReceiver = getConfiguration().createMulticastReceiver(networkAddressFactory);
             if (multicastReceiver == null) {
                 log.info("Configuration did not create a MulticastReceiver for: " + networkInterface);
             } else {
@@ -412,7 +412,7 @@ public class RouterImpl implements Router {
             }
         }
 
-        for (Map.Entry<NetworkInterface, MulticastReceiver> entry : multicastReceivers.entrySet()) {
+        for (Map.Entry<NetworkInterface, MulticastReceiver<?>> entry : multicastReceivers.entrySet()) {
             if (log.isLoggable(Level.FINE))
                 log.fine("Starting multicast receiver on interface: " + entry.getKey().getDisplayName());
             getConfiguration().getMulticastReceiverExecutor().execute(entry.getValue());
@@ -424,7 +424,7 @@ public class RouterImpl implements Router {
             InetAddress address = addresses.next();
 
             // HTTP servers
-            StreamServer streamServer = getConfiguration().createStreamServer(networkAddressFactory);
+            StreamServer<?> streamServer = getConfiguration().createStreamServer(networkAddressFactory);
             if (streamServer == null) {
                 log.info("Configuration did not create a StreamServer for: " + address);
             } else {
@@ -449,7 +449,7 @@ public class RouterImpl implements Router {
             }
 
             // Datagram I/O
-            DatagramIO datagramIO = getConfiguration().createDatagramIO(networkAddressFactory);
+            DatagramIO<?> datagramIO = getConfiguration().createDatagramIO(networkAddressFactory);
             if (datagramIO == null) {
                 log.info("Configuration did not create a StreamServer for: " + address);
             } else {
@@ -475,13 +475,13 @@ public class RouterImpl implements Router {
             }
         }
 
-        for (Map.Entry<InetAddress, StreamServer> entry : streamServers.entrySet()) {
+        for (Map.Entry<InetAddress, StreamServer<?>> entry : streamServers.entrySet()) {
             if (log.isLoggable(Level.FINE))
                 log.fine("Starting stream server on address: " + entry.getKey());
             getConfiguration().getStreamServerExecutorService().execute(entry.getValue());
         }
 
-        for (Map.Entry<InetAddress, DatagramIO> entry : datagramIOs.entrySet()) {
+        for (Map.Entry<InetAddress, DatagramIO<?>> entry : datagramIOs.entrySet()) {
             if (log.isLoggable(Level.FINE))
                 log.fine("Starting datagram I/O on address: " + entry.getKey());
             getConfiguration().getDatagramIOExecutor().execute(entry.getValue());

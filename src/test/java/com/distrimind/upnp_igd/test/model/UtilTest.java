@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.List;
 
 import static org.testng.Assert.*;
 
@@ -67,13 +68,13 @@ public class UtilTest {
     @Test
     public void csvToString() {
 
-        Object[] plainStrings = new Object[]{"foo", "bar", "baz"};
+        List<Object> plainStrings = List.of("foo", "bar", "baz");
         assertEquals(ModelUtil.toCommaSeparatedList(plainStrings), "foo,bar,baz");
 
-        Object[] commaStrings = new Object[]{"foo,", "bar", "b,az"};
+        List<Object> commaStrings = List.of("foo,", "bar", "b,az");
         assertEquals(ModelUtil.toCommaSeparatedList(commaStrings), "foo\\,,bar,b\\,az");
 
-        Object[] backslashStrings = new Object[]{"f\\oo", "b,ar", "b\\az"};
+        List<Object> backslashStrings = List.of("f\\oo", "b,ar", "b\\az");
         assertEquals(ModelUtil.toCommaSeparatedList(backslashStrings), "f\\\\oo,b\\,ar,b\\\\az");
     }
 
@@ -240,7 +241,7 @@ public class UtilTest {
         Element fooEl = dom.createElementNS("urn:foo", "abc");
         dom.appendChild(fooEl);
 
-        fooEl.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:bar", "urn:bar");
+        fooEl.setAttributeNS("https://www.w3.org/2000/xmlns/", "xmlns:bar", "urn:bar");
 
         Element barEl = dom.createElementNS("urn:bar", "bar:def");
         fooEl.appendChild(barEl);

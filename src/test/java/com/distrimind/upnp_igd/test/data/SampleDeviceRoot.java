@@ -71,9 +71,9 @@ public class SampleDeviceRoot<D extends Device<?, D, S>, S extends Service<?, D,
                         new DLNADoc("DMS", DLNADoc.Version.V1_5),
                         new DLNADoc("M-DMS", DLNADoc.Version.V1_5)
                 ),
-                new DLNACaps(new String[] {
+                new DLNACaps(List.of(
                         "av-upload", "image-upload", "audio-upload"
-                })
+                ))
         );
     }
 

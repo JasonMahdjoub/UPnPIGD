@@ -41,7 +41,7 @@ public class DeviceDescriptorRetrievalTest {
         MockUpnpService upnpService = new MockUpnpService();
 
         // Register a device
-        LocalDevice localDevice = SampleData.createLocalDevice();
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(localDevice);
 
         // Retrieve the descriptor

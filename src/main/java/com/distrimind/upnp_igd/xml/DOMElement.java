@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author Christian Bauer
  */
-public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMElement> {
+public abstract class DOMElement<CHILD extends DOMElement<CHILD, PARENT>, PARENT extends DOMElement<CHILD, PARENT>> {
 
 	public final Builder<PARENT> PARENT_BUILDER;
 	public final ArrayBuilder<CHILD> CHILD_BUILDER;
@@ -75,10 +75,10 @@ public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMEle
 
 	public String getAttribute(String attribute) {
 		String v = getW3CElement().getAttribute(attribute);
-		return v.length() > 0 ? v : null;
+		return !v.isEmpty() ? v : null;
 	}
 
-	public DOMElement setAttribute(String attribute, String value) {
+	public DOMElement<CHILD, PARENT> setAttribute(String attribute, String value) {
 		getW3CElement().setAttribute(attribute, value);
 		return this;
 	}
@@ -87,34 +87,32 @@ public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMEle
 		return PARENT_BUILDER.build((Element) getW3CElement().getParentNode());
 	}
 
-	public CHILD[] getChildren() {
+	public List<CHILD> getChildren() {
 		NodeList nodes = getW3CElement().getChildNodes();
-		List<CHILD> children = new ArrayList();
+		List<CHILD> children = new ArrayList<>();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				children.add(CHILD_BUILDER.build((Element) node));
 			}
 		}
-		return children.toArray(CHILD_BUILDER.newChildrenArray(children.size()));
+		return children;
 	}
 
-	public CHILD[] getChildren(String name) {
-		Collection<CHILD> list = getXPathChildElements(CHILD_BUILDER, prefix(name));
-		return list.toArray(CHILD_BUILDER.newChildrenArray(list.size()));
+	public List<CHILD> getChildren(String name) {
+		return getXPathChildElements(CHILD_BUILDER, prefix(name));
 	}
 
 	public CHILD getRequiredChild(String name) throws ParserException {
-		CHILD[] children = getChildren(name);
-		if (children.length != 1) {
+		List<CHILD> children = getChildren(name);
+		if (children.size() != 1) {
 			throw new ParserException("Required single child element of '" + getElementName() + "' not found: " + name);
 		}
-		return children[0];
+		return children.get(0);
 	}
 
-	public CHILD[] findChildren(String name) {
-		Collection<CHILD> list = getXPathChildElements(CHILD_BUILDER, "descendant::" + prefix(name));
-		return list.toArray(CHILD_BUILDER.newChildrenArray(list.size()));
+	public List<CHILD> findChildren(String name) {
+		return getXPathChildElements(CHILD_BUILDER, "descendant::" + prefix(name));
 	}
 
 	public CHILD findChildWithIdentifier(final String id) {
@@ -153,9 +151,9 @@ public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMEle
 		return replacement;
 	}
 
-	public void replaceEqualChild(DOMElement source, String identifier) {
-		DOMElement original = findChildWithIdentifier(identifier);
-		DOMElement replacement = source.findChildWithIdentifier(identifier);
+	public void replaceEqualChild(DOMElement<CHILD, PARENT> source, String identifier) {
+		CHILD original = findChildWithIdentifier(identifier);
+		CHILD replacement = source.findChildWithIdentifier(identifier);
 		original.getParent().replaceChild(original, replacement, true);
 	}
 
@@ -187,9 +185,9 @@ public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMEle
 	}
 
 
-	protected abstract Builder<PARENT> createParentBuilder(DOMElement el);
+	protected abstract Builder<PARENT> createParentBuilder(DOMElement<CHILD, PARENT> el);
 
-	protected abstract ArrayBuilder<CHILD> createChildBuilder(DOMElement el);
+	protected abstract ArrayBuilder<CHILD> createChildBuilder(DOMElement<CHILD, PARENT> el);
 
 	public String toSimpleXMLString() {
 		StringBuilder sb = new StringBuilder();
@@ -200,7 +198,7 @@ public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMEle
 			sb.append(" ").append(attr.getNodeName()).append("=\"")
 					.append(attr.getTextContent()).append("\"");
 		}
-		if (getContent().length() > 0) {
+		if (!getContent().isEmpty()) {
 			sb.append(">").append(getContent()).append("</").append(getElementName()).append(">");
 		} else {
 			sb.append("/>");
@@ -222,11 +220,11 @@ public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMEle
 		return localName;
 	}
 
-	public Collection<PARENT> getXPathParentElements(Builder<CHILD> builder, String expr) {
+	public List<PARENT> getXPathParentElements(Builder<PARENT> builder, String expr) {
 		return getXPathElements(builder, expr);
 	}
 
-	public Collection<CHILD> getXPathChildElements(Builder<CHILD> builder, String expr) {
+	public List<CHILD> getXPathChildElements(Builder<CHILD> builder, String expr) {
 		return getXPathElements(builder, expr);
 	}
 
@@ -240,11 +238,11 @@ public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMEle
 		return node != null && node.getNodeType() == Node.ELEMENT_NODE ? builder.build((Element) node) : null;
 	}
 
-	public Collection getXPathElements(Builder builder, String expr) {
-		Collection col = new ArrayList();
+	public <T extends DOMElement<CHILD, PARENT>> List<T> getXPathElements(Builder<T> builder, String expr) {
+		List<T> col = new ArrayList<>();
 		NodeList result = (NodeList) getXPathResult(getW3CElement(), expr, XPathConstants.NODESET);
 		for (int i = 0; i < result.getLength(); i++) {
-			DOMElement e = builder.build((Element) result.item(i));
+			T e = builder.build((Element) result.item(i));
 			col.add(e);
 		}
 		return col;
@@ -271,42 +269,42 @@ public abstract class DOMElement<CHILD extends DOMElement, PARENT extends DOMEle
 	}
 
 
-	public abstract class Builder<T extends DOMElement> {
-		public DOMElement element;
+	public abstract class Builder<T extends DOMElement<CHILD, PARENT>> {
+		public T element;
 
-		protected Builder(DOMElement element) {
+		protected Builder(T element) {
 			this.element = element;
 		}
 
 		public abstract T build(Element element);
 
 		public T firstChildOrNull(String elementName) {
-			DOMElement el = element.getFirstChild(elementName);
+			DOMElement<?, ?> el = element.getFirstChild(elementName);
 			return el != null ? build(el.getW3CElement()) : null;
 		}
 
 	}
 
-	public abstract class ArrayBuilder<T extends DOMElement> extends Builder<T> {
+	public abstract class ArrayBuilder<T extends DOMElement<CHILD, PARENT>> extends Builder<T> {
 
-		protected ArrayBuilder(DOMElement element) {
+		protected ArrayBuilder(T element) {
 			super(element);
 		}
 
-		public abstract T[] newChildrenArray(int length);
+		public abstract List<T> newChildrenArray(int length);
 
-		public T[] getChildElements() {
+		public List<T> getChildElements() {
 			return buildArray(element.getChildren());
 		}
 
-		public T[] getChildElements(String elementName) {
+		public List<T> getChildElements(String elementName) {
 			return buildArray(element.getChildren(elementName));
 		}
 
-		protected T[] buildArray(DOMElement[] list) {
-			T[] children = newChildrenArray(list.length);
-			for (int i = 0; i < children.length; i++) {
-				children[i] = build(list[i].getW3CElement());
+		protected List<T> buildArray(List<CHILD> list) {
+			List<T> children = newChildrenArray(list.size());
+			for (int i = 0; i < children.size(); i++) {
+				children.add(build(list.get(i).getW3CElement()));
 			}
 			return children;
 		}

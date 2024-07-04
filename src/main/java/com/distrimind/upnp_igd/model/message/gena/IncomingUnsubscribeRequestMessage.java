@@ -27,14 +27,14 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
  */
 public class IncomingUnsubscribeRequestMessage extends StreamRequestMessage {
 
-    final private LocalService service;
+    final private LocalService<?> service;
 
-    public IncomingUnsubscribeRequestMessage(StreamRequestMessage source, LocalService service) {
+    public IncomingUnsubscribeRequestMessage(StreamRequestMessage source, LocalService<?> service) {
         super(source);
         this.service = service;
     }
 
-    public LocalService getService() {
+    public LocalService<?> getService() {
         return service;
     }
 

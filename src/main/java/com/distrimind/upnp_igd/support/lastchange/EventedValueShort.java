@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.support.lastchange;
 
 import com.distrimind.upnp_igd.model.types.Datatype;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -28,12 +29,13 @@ public class EventedValueShort extends EventedValue<Short> {
         super(value);
     }
 
-    public EventedValueShort(Map.Entry<String, String>[] attributes) {
+    public EventedValueShort(Collection<Map.Entry<String, String>> attributes) {
         super(attributes);
     }
 
-    @Override
-    protected Datatype getDatatype() {
-        return Datatype.Builtin.I2_SHORT.getDatatype();
+    @SuppressWarnings("unchecked")
+	@Override
+    protected Datatype<Short> getDatatype() {
+        return (Datatype<Short>)Datatype.Builtin.I2_SHORT.getDatatype();
     }
 }

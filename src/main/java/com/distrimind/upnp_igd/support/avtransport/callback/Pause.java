@@ -31,25 +31,25 @@ public abstract class Pause extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(Pause.class.getName());
 
-    protected Pause(ActionInvocation actionInvocation, ControlPoint controlPoint) {
+    protected Pause(ActionInvocation<?> actionInvocation, ControlPoint controlPoint) {
         super(actionInvocation, controlPoint);
     }
 
-    protected Pause(ActionInvocation actionInvocation) {
+    protected Pause(ActionInvocation<?> actionInvocation) {
         super(actionInvocation);
     }
 
-    public Pause(Service service) {
+    public Pause(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);
     }
 
-    public Pause(UnsignedIntegerFourBytes instanceId, Service service) {
-        super(new ActionInvocation(service.getAction("Pause")));
+    public Pause(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("Pause")));
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         log.fine("Execution successful");
     }
 }

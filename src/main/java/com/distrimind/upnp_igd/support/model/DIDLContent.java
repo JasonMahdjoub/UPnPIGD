@@ -55,7 +55,7 @@ public class DIDLContent {
 
     protected List<Container> containers = new ArrayList<>();
     protected List<Item> items = new ArrayList<>();
-    protected List<DescMeta> descMetadata = new ArrayList<>();
+    protected List<DescMeta<?>> descMetadata = new ArrayList<>();
 
     public Container getFirstContainer() {
         return getContainers().get(0);
@@ -99,16 +99,16 @@ public class DIDLContent {
         this.items = items;
     }
 
-    public DIDLContent addDescMetadata(DescMeta descMetadata) {
+    public DIDLContent addDescMetadata(DescMeta<?> descMetadata) {
         getDescMetadata().add(descMetadata);
         return this;
     }
 
-    public List<DescMeta> getDescMetadata() {
+    public List<DescMeta<?>> getDescMetadata() {
         return descMetadata;
     }
 
-    public void setDescMetadata(List<DescMeta> descMetadata) {
+    public void setDescMetadata(List<DescMeta<?>> descMetadata) {
         this.descMetadata = descMetadata;
     }
 

@@ -31,7 +31,7 @@ public class DLNAConversionIndicatorAttribute extends DLNAAttribute<DLNAConversi
         DLNAConversionIndicator value = null;
         try {
             value = DLNAConversionIndicator.valueOf(Integer.parseInt(s));
-        } catch (NumberFormatException numberFormatException) {
+        } catch (NumberFormatException ignored) {
         }
         if (value == null) {
             throw new InvalidDLNAProtocolAttributeException("Can't parse DLNA play speed integer from: " + s);

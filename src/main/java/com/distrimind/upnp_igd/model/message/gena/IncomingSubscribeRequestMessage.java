@@ -31,14 +31,14 @@ import java.util.List;
  */
 public class IncomingSubscribeRequestMessage extends StreamRequestMessage {
 
-    final private LocalService service;
+    final private LocalService<?> service;
 
-    public IncomingSubscribeRequestMessage(StreamRequestMessage source, LocalService  service) {
+    public IncomingSubscribeRequestMessage(StreamRequestMessage source, LocalService<?>  service) {
         super(source);
         this.service = service;
     }
 
-    public LocalService getService() {
+    public LocalService<?> getService() {
         return service;
     }
 

@@ -31,20 +31,20 @@ public abstract class GetTransportInfo extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(GetTransportInfo.class.getName());
 
-    public GetTransportInfo(Service service) {
+    public GetTransportInfo(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);
     }
 
-    public GetTransportInfo(UnsignedIntegerFourBytes instanceId, Service service) {
-        super(new ActionInvocation(service.getAction("GetTransportInfo")));
+    public GetTransportInfo(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("GetTransportInfo")));
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         TransportInfo transportInfo = new TransportInfo(invocation.getOutputMap());
         received(invocation, transportInfo);
     }
 
-    public abstract void received(ActionInvocation invocation, TransportInfo transportInfo);
+    public abstract void received(ActionInvocation<?> invocation, TransportInfo transportInfo);
 
 }

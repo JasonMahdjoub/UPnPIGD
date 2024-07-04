@@ -18,10 +18,6 @@ package com.distrimind.upnp_igd.support.contentdirectory.ui;
 import com.distrimind.upnp_igd.controlpoint.ActionCallback;
 import com.distrimind.upnp_igd.controlpoint.ControlPoint;
 import com.distrimind.upnp_igd.model.meta.Service;
-import com.distrimind.upnp_igd.support.contentdirectory.ui.ContentBrowseActionCallback;
-import com.distrimind.upnp_igd.support.contentdirectory.ui.ContentBrowseActionCallbackCreator;
-import com.distrimind.upnp_igd.support.contentdirectory.ui.ContentTreeCellRenderer;
-import com.distrimind.upnp_igd.support.contentdirectory.ui.ContentTreeExpandListener;
 import com.distrimind.upnp_igd.support.model.container.Container;
 
 import javax.swing.JTree;
@@ -47,11 +43,11 @@ public abstract class ContentTree extends JTree implements ContentBrowseActionCa
     protected ContentTree() {
     }
 
-    public ContentTree(ControlPoint controlPoint, Service service) {
+    public ContentTree(ControlPoint controlPoint, Service<?, ?, ?> service) {
         init(controlPoint, service);
     }
 
-    public void init(ControlPoint controlPoint, Service service) {
+    public void init(ControlPoint controlPoint, Service<?, ?, ?> service) {
         rootContainer = createRootContainer(service);
         rootNode = new DefaultMutableTreeNode(rootContainer) {
             @Override
@@ -82,7 +78,7 @@ public abstract class ContentTree extends JTree implements ContentBrowseActionCa
         return (DefaultMutableTreeNode) getLastSelectedPathComponent();
     }
 
-    protected Container createRootContainer(Service service) {
+    protected Container createRootContainer(Service<?, ?, ?> service) {
         Container rootContainer = new Container();
         rootContainer.setId("0");
         rootContainer.setTitle("Content Directory on " + service.getDevice().getDisplayString());
@@ -90,7 +86,7 @@ public abstract class ContentTree extends JTree implements ContentBrowseActionCa
     }
 
     protected TreeWillExpandListener createContainerTreeExpandListener(ControlPoint controlPoint,
-                                                                       Service service,
+                                                                       Service<?, ?, ?> service,
                                                                        DefaultTreeModel treeModel) {
         return new ContentTreeExpandListener(controlPoint, service, treeModel, this);
     }
@@ -99,7 +95,7 @@ public abstract class ContentTree extends JTree implements ContentBrowseActionCa
         return new ContentTreeCellRenderer();
     }
 
-    public ActionCallback createContentBrowseActionCallback(Service service,
+    public ActionCallback createContentBrowseActionCallback(Service<?, ?, ?> service,
                                                               DefaultTreeModel treeModel,
                                                               DefaultMutableTreeNode treeNode) {
 
@@ -119,7 +115,7 @@ public abstract class ContentTree extends JTree implements ContentBrowseActionCa
             case LOADING:
             case NO_CONTENT:
                 treeNode.removeAllChildren();
-                int index = treeNode.getChildCount() <= 0 ? 0 : treeNode.getChildCount();
+                int index = Math.max(treeNode.getChildCount(), 0);
                 treeModel.insertNodeInto(new DefaultMutableTreeNode(status.getDefaultMessage()), treeNode, index);
                 treeModel.nodeStructureChanged(treeNode);
                 break;

@@ -16,11 +16,10 @@
 package com.distrimind.upnp_igd.support.lastchange;
 
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
-import com.distrimind.upnp_igd.support.lastchange.EventedValue;
-import com.distrimind.upnp_igd.support.lastchange.LastChangeParser;
 
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -63,7 +62,7 @@ public class LastChange {
     }
 
     public LastChange(LastChangeParser parser, String xml) throws Exception {
-        if (xml != null && xml.length() > 0) {
+        if (xml != null && !xml.isEmpty()) {
             this.event = parser.parse(xml);
         } else {
             this.event = new Event();
@@ -76,42 +75,42 @@ public class LastChange {
         event.clear();
     }
 
-    synchronized public void setEventedValue(int instanceID, EventedValue... ev) {
+    synchronized public void setEventedValue(int instanceID, EventedValue<?>... ev) {
         setEventedValue(new UnsignedIntegerFourBytes(instanceID), ev);
     }
 
-    synchronized public void setEventedValue(UnsignedIntegerFourBytes instanceID, EventedValue... ev) {
-        for (EventedValue eventedValue : ev) {
+    synchronized public void setEventedValue(UnsignedIntegerFourBytes instanceID, EventedValue<?>... ev) {
+        for (EventedValue<?> eventedValue : ev) {
             if (eventedValue != null)
                 event.setEventedValue(instanceID, eventedValue);
 
         }
     }
 
-    synchronized public UnsignedIntegerFourBytes[] getInstanceIDs() {
+    synchronized public List<UnsignedIntegerFourBytes> getInstanceIDs() {
         List<UnsignedIntegerFourBytes> list = new ArrayList<>();
         for (InstanceID instanceID : event.getInstanceIDs()) {
             list.add(instanceID.getId());
         }
-        return list.toArray(new UnsignedIntegerFourBytes[list.size()]);
+        return list;
     }
 
-    synchronized EventedValue[] getEventedValues(UnsignedIntegerFourBytes instanceID) {
+    synchronized List<EventedValue<?>> getEventedValues(UnsignedIntegerFourBytes instanceID) {
         InstanceID inst = event.getInstanceID(instanceID);
-        return inst != null ? inst.getValues().toArray(new EventedValue[inst.getValues().size()]) : null;
+        return inst != null ? Collections.unmodifiableList(inst.getValues()) : null;
     }
 
-    synchronized public <EV extends EventedValue> EV getEventedValue(int instanceID, Class<EV> type) {
+    synchronized public <EV extends EventedValue<?>> EV getEventedValue(int instanceID, Class<EV> type) {
         return getEventedValue(new UnsignedIntegerFourBytes(instanceID), type);
     }
 
-    synchronized public <EV extends EventedValue> EV getEventedValue(UnsignedIntegerFourBytes id, Class<EV> type) {
+    synchronized public <EV extends EventedValue<?>> EV getEventedValue(UnsignedIntegerFourBytes id, Class<EV> type) {
         return event.getEventedValue(id, type);
     }
 
     synchronized public void fire(PropertyChangeSupport propertyChangeSupport) {
         String lastChanges = toString();
-        if (lastChanges != null && lastChanges.length() > 0) {
+        if (lastChanges != null && !lastChanges.isEmpty()) {
             propertyChangeSupport.firePropertyChange("LastChange", previousValue, lastChanges);
             reset();
         }

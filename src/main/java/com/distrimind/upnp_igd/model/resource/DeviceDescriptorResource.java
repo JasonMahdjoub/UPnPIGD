@@ -22,9 +22,9 @@ import java.net.URI;
 /**
  * @author Christian Bauer
  */
-public class DeviceDescriptorResource extends Resource<LocalDevice> {
+public class DeviceDescriptorResource<T> extends Resource<LocalDevice<T>> {
 
-    public DeviceDescriptorResource(URI localURI, LocalDevice model) {
+    public DeviceDescriptorResource(URI localURI, LocalDevice<T> model) {
         super(localURI, model);
     }
 }

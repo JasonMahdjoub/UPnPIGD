@@ -19,6 +19,8 @@ import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Christian Bauer
@@ -26,9 +28,7 @@ import java.util.ArrayList;
 public class ProtocolInfos extends ArrayList<ProtocolInfo> {
 
     public ProtocolInfos(ProtocolInfo... info) {
-        for (ProtocolInfo protocolInfo : info) {
-            add(protocolInfo);
-        }
+		this.addAll(Arrays.asList(info));
     }
 
     public ProtocolInfos(String s) throws InvalidValueException {
@@ -40,6 +40,6 @@ public class ProtocolInfos extends ArrayList<ProtocolInfo> {
 
     @Override
     public String toString() {
-        return ModelUtil.toCommaSeparatedList(toArray(new ProtocolInfo[size()]));
+        return ModelUtil.toCommaSeparatedList(List.of(new ProtocolInfo[size()]));
     }
 }

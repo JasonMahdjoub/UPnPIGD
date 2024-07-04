@@ -21,6 +21,7 @@ import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.support.model.TransportAction;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -30,20 +31,20 @@ public abstract class GetCurrentTransportActions extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(GetCurrentTransportActions.class.getName());
 
-    public GetCurrentTransportActions(Service service) {
+    public GetCurrentTransportActions(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);
     }
 
-    public GetCurrentTransportActions(UnsignedIntegerFourBytes instanceId, Service service) {
-        super(new ActionInvocation(service.getAction("GetCurrentTransportActions")));
+    public GetCurrentTransportActions(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("GetCurrentTransportActions")));
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         String actionsString = (String)invocation.getOutput("Actions").getValue();
         received(invocation, TransportAction.valueOfCommaSeparatedList(actionsString));
     }
 
-    public abstract void received(ActionInvocation actionInvocation, TransportAction[] actions);
+    public abstract void received(ActionInvocation<?> actionInvocation, List<TransportAction> actions);
 
 }

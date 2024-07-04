@@ -62,13 +62,13 @@ public class Main {
                 );
             }
 
-            public void localDeviceAdded(Registry registry, LocalDevice device) {
+            public void localDeviceAdded(Registry registry, LocalDevice<?> device) {
                 System.out.println(
                         "Local device added: " + device.getDisplayString()
                 );
             }
 
-            public void localDeviceRemoved(Registry registry, LocalDevice device) {
+            public void localDeviceRemoved(Registry registry, LocalDevice<?> device) {
                 System.out.println(
                         "Local device removed: " + device.getDisplayString()
                 );

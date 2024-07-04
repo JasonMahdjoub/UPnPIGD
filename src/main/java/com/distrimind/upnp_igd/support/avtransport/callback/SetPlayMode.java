@@ -30,18 +30,18 @@ public abstract class SetPlayMode extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(SetPlayMode.class.getName());
 
-    public SetPlayMode(Service service, PlayMode playMode) {
+    public SetPlayMode(Service<?, ?, ?> service, PlayMode playMode) {
         this(new UnsignedIntegerFourBytes(0), service, playMode);
     }
 
-    public SetPlayMode(UnsignedIntegerFourBytes instanceId, Service service, PlayMode playMode) {
-        super(new ActionInvocation(service.getAction("SetPlayMode")));
+    public SetPlayMode(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service, PlayMode playMode) {
+        super(new ActionInvocation<>(service.getAction("SetPlayMode")));
         getActionInvocation().setInput("InstanceID", instanceId);
         getActionInvocation().setInput("NewPlayMode", playMode.toString());
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         log.fine("Execution successful");
     }
 }

@@ -26,15 +26,15 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
  */
 public abstract class GetSystemUpdateID extends ActionCallback {
 
-    public GetSystemUpdateID(com.distrimind.upnp_igd.model.meta.Service service) {
-        super(new ActionInvocation(service.getAction("GetSystemUpdateID")));
+    public GetSystemUpdateID(com.distrimind.upnp_igd.model.meta.Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("GetSystemUpdateID")));
     }
 
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         boolean ok = true;
         long id = 0;
         try {
-            id = Long.valueOf(invocation.getOutput("Id").getValue().toString()); // UnsignedIntegerFourBytes...
+            id = Long.parseLong(invocation.getOutput("Id").getValue().toString()); // UnsignedIntegerFourBytes...
         } catch (Exception ex) {
             invocation.setFailure(new ActionException(ErrorCode.ACTION_FAILED, "Can't parse GetSystemUpdateID response: " + ex, ex));
             failure(invocation, null);
@@ -43,6 +43,6 @@ public abstract class GetSystemUpdateID extends ActionCallback {
         if (ok) received(invocation, id);
     }
 
-    public abstract void received(ActionInvocation invocation, long systemUpdateID);
+    public abstract void received(ActionInvocation<?> invocation, long systemUpdateID);
 
 }

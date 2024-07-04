@@ -53,12 +53,11 @@ public class PlaylistItem extends Item {
         return getFirstPropertyValue(Property.UPNP.ARTIST.class);
     }
 
-    public PersonWithRole[] getArtists() {
-        List<PersonWithRole> list = getPropertyValues(Property.UPNP.ARTIST.class);
-        return list.toArray(new PersonWithRole[list.size()]);
+    public List<PersonWithRole> getArtists() {
+        return getPropertyValues(Property.UPNP.ARTIST.class);
     }
 
-    public PlaylistItem setArtists(PersonWithRole[] artists) {
+    public PlaylistItem setArtists(List<PersonWithRole> artists) {
         removeProperties(Property.UPNP.ARTIST.class);
         for (PersonWithRole artist : artists) {
             addProperty(new Property.UPNP.ARTIST(artist));
@@ -70,12 +69,11 @@ public class PlaylistItem extends Item {
         return getFirstPropertyValue(Property.UPNP.GENRE.class);
     }
 
-    public String[] getGenres() {
-        List<String> list = getPropertyValues(Property.UPNP.GENRE.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getGenres() {
+        return getPropertyValues(Property.UPNP.GENRE.class);
     }
 
-    public PlaylistItem setGenres(String[] genres) {
+    public PlaylistItem setGenres(List<String> genres) {
         removeProperties(Property.UPNP.GENRE.class);
         for (String genre : genres) {
             addProperty(new Property.UPNP.GENRE(genre));

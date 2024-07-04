@@ -16,7 +16,7 @@
     &lt;CurrentTrackDuration val=&quot;0:03:35&quot;/&gt;
     &lt;CurrentMediaDuration val=&quot;0:03:35&quot;/&gt;
     &lt;AVTransportURI val=&quot;http://192.168.1.2:8080/%2Fmnt%2Fsdcard%2Fmp3download%2Fsongs%2FMadcon-Beggin.mp3&quot;/&gt;
-    &lt;AVTransportURIMetaData val=&quot;&amp;lt;DIDL-Lite xmlns=&amp;quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&amp;quot; xmlns:dc=&amp;quot;http://purl.org/dc/elements/1.1/&amp;quot; xmlns:upnp=&amp;quot;urn:schemas-upnp-org:metadata-1-0/upnp/&amp;quot;&amp;gt;&amp;lt;item id=&amp;quot;2981&amp;quot;&amp;gt;
+    &lt;AVTransportURIMetaData val=&quot;&amp;lt;DIDL-Lite xmlns=&amp;quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&amp;quot; xmlns:dc=&amp;quot;https://purl.org/dc/elements/1.1/&amp;quot; xmlns:upnp=&amp;quot;urn:schemas-upnp-org:metadata-1-0/upnp/&amp;quot;&amp;gt;&amp;lt;item id=&amp;quot;2981&amp;quot;&amp;gt;
    &amp;lt;dc:title&amp;gt;Beggin&amp;lt;/dc:title&amp;gt;
    &amp;lt;res protocolInfo=&amp;quot;http-get:*:audio/mpeg:*&amp;quot; duration=&amp;quot;0:03:35&amp;quot;&amp;gt;http://192.168.1.2:8080/%2Fmnt%2Fsdcard%2Fmp3download%2Fsongs%2FMadcon-Beggin.mp3&amp;lt;/res&amp;gt;
    &amp;lt;upnp:album&amp;gt;Hits and Dance 2009&amp;lt;/upnp:album&amp;gt;

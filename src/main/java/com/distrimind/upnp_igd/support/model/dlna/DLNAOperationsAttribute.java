@@ -48,7 +48,7 @@ public class DLNAOperationsAttribute extends DLNAAttribute<EnumSet<DLNAOperation
                     value.add(op);
                 }
             }
-        } catch (NumberFormatException numberFormatException) {
+        } catch (NumberFormatException ignored) {
         }
 
         if (value.isEmpty())

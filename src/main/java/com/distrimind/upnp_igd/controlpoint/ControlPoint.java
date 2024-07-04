@@ -34,10 +34,10 @@ public interface ControlPoint {
     Registry getRegistry();
 
     void search();
-    void search(UpnpHeader searchType);
+    void search(UpnpHeader<?> searchType);
     void search(int mxSeconds);
-    void search(UpnpHeader searchType, int mxSeconds);
-    Future execute(ActionCallback callback);
+    void search(UpnpHeader<?> searchType, int mxSeconds);
+    Future<?> execute(ActionCallback callback);
     void execute(SubscriptionCallback callback);
 
 }

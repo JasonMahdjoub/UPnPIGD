@@ -16,6 +16,7 @@
 package com.distrimind.upnp_igd.support.avtransport.impl.state;
 
 import java.net.URI;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.support.avtransport.lastchange.AVTransportVariable;
@@ -56,11 +57,11 @@ public abstract class PausedPlay<T extends AVTransport> extends AbstractState<T>
     public abstract Class<? extends AbstractState<?>> stop();
     public abstract Class<? extends AbstractState<?>> play(String speed);
 
-    public TransportAction[] getCurrentTransportActions() {
-        return new TransportAction[] {
+    public List<TransportAction> getCurrentTransportActions() {
+        return List.of(
                 TransportAction.Stop,
                 TransportAction.Play
-        };
+        );
     }
 
 }

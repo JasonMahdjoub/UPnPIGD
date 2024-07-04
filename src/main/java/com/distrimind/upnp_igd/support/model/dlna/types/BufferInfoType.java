@@ -62,7 +62,7 @@ public class BufferInfoType {
                     fullnessReports = matcher.group(8).equals("1");
                 }
                 return new BufferInfoType(dejitterSize, cdb, targetDuration, fullnessReports);
-            } catch (NumberFormatException ex1) {
+            } catch (NumberFormatException ignored) {
             }
         }
         throw new InvalidValueException("Can't parse BufferInfoType: " + s);

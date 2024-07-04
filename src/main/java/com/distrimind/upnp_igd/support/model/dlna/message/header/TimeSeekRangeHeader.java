@@ -33,7 +33,7 @@ public class TimeSeekRangeHeader extends DLNAHeader<TimeSeekRangeType> {
     }
     @Override
     public void setString(String s) throws InvalidHeaderException {
-        if (s.length() != 0) {
+        if (!s.isEmpty()) {
             String[] params = s.split(" ");
             if (params.length>0) {
                 try {

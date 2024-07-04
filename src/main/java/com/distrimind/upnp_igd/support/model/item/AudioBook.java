@@ -69,9 +69,8 @@ public class AudioBook extends AudioItem {
         return getFirstPropertyValue(Property.UPNP.PRODUCER.class);
     }
 
-    public Person[] getProducers() {
-        List<Person> list = getPropertyValues(Property.UPNP.PRODUCER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getProducers() {
+        return getPropertyValues(Property.UPNP.PRODUCER.class);
     }
 
     public AudioBook setProducers(Person[] persons) {
@@ -86,9 +85,8 @@ public class AudioBook extends AudioItem {
         return getFirstPropertyValue(Property.DC.CONTRIBUTOR.class);
     }
 
-    public Person[] getContributors() {
-        List<Person> list = getPropertyValues(Property.DC.CONTRIBUTOR.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getContributors() {
+        return getPropertyValues(Property.DC.CONTRIBUTOR.class);
     }
 
     public AudioBook setContributors(Person[] contributors) {

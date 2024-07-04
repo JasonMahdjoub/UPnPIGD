@@ -31,14 +31,14 @@ public class NewPlatformApple {
         System.setProperty("apple.awt.showGrowBox", "true");
 
         // Use reflection to avoid compile-time dependency
-        Class appClass = Class.forName("com.apple.eawt.Application");
-        Object application = appClass.newInstance();
-        Class listenerClass = Class.forName("com.apple.eawt.ApplicationListener");
+        Class<?> appClass = Class.forName("com.apple.eawt.Application");
+        Object application = appClass.getConstructor().newInstance();
+        Class<?> listenerClass = Class.forName("com.apple.eawt.ApplicationListener");
         Method addAppListmethod = appClass.getDeclaredMethod("addApplicationListener", listenerClass);
 
         // creating and adding a custom adapter/listener to the Application
-        Class adapterClass = Class.forName("com.apple.eawt.ApplicationAdapter");
-        Object listener = AppListenerProxy.newInstance(adapterClass.newInstance(), shutdownHandler);
+        Class<?> adapterClass = Class.forName("com.apple.eawt.ApplicationAdapter");
+        Object listener = AppListenerProxy.newInstance(adapterClass.getConstructor().newInstance(), shutdownHandler);
         addAppListmethod.invoke(application, listener);
     }
 

@@ -38,7 +38,7 @@ public class SendingSearch extends SendingAsync {
 
     final private static Logger log = Logger.getLogger(SendingSearch.class.getName());
 
-    private final UpnpHeader searchTarget;
+    private final UpnpHeader<?> searchTarget;
     private final int mxSeconds;
 
     /**
@@ -51,7 +51,7 @@ public class SendingSearch extends SendingAsync {
     /**
      * Defaults to an MX value of 3 seconds.
      */
-    public SendingSearch(UpnpService upnpService, UpnpHeader searchTarget) {
+    public SendingSearch(UpnpService upnpService, UpnpHeader<?> searchTarget) {
         this(upnpService, searchTarget, MXHeader.DEFAULT_VALUE);
     }
 
@@ -70,7 +70,7 @@ public class SendingSearch extends SendingAsync {
         this.mxSeconds = mxSeconds;
     }
 
-    public UpnpHeader getSearchTarget() {
+    public UpnpHeader<?> getSearchTarget() {
         return searchTarget;
     }
 

@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class JettyServerJettyClientTest extends StreamServerClientTest {
 
     @Override
-    public StreamServer createStreamServer(int port) {
+    public StreamServer<?> createStreamServer(int port) {
         AsyncServletStreamServerConfigurationImpl configuration =
             new AsyncServletStreamServerConfigurationImpl(
                 JettyServletContainer.INSTANCE,
@@ -49,7 +49,7 @@ public class JettyServerJettyClientTest extends StreamServerClientTest {
     }
 
     @Override
-    public StreamClient createStreamClient(UpnpServiceConfiguration configuration) {
+    public StreamClient<?> createStreamClient(UpnpServiceConfiguration configuration) {
         return new StreamClientImpl(
             new StreamClientConfigurationImpl(
                 configuration.getSyncProtocolExecutorService(),

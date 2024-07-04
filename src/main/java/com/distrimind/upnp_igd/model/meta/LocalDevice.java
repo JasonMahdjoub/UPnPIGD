@@ -246,24 +246,24 @@ public class LocalDevice<T> extends Device<DeviceIdentity, LocalDevice<T>, Local
         if (isRoot()) {
             // This should guarantee that each logical local device tree (with all its embedded devices) has only
             // one device descriptor resource - because only one device in the tree isRoot().
-            discovered.add(new DeviceDescriptorResource(namespace.getDescriptorPath(this), this));
+            discovered.add(new DeviceDescriptorResource<>(namespace.getDescriptorPath(this), this));
         }
 
         // Services
         for (LocalService<T> service : getServices()) {
 
             discovered.add(
-                    new ServiceDescriptorResource(namespace.getDescriptorPath(service), service)
+                    new ServiceDescriptorResource<>(namespace.getDescriptorPath(service), service)
             );
 
             // Control
             discovered.add(
-                    new ServiceControlResource(namespace.getControlPath(service), service)
+                    new ServiceControlResource<>(namespace.getControlPath(service), service)
             );
 
             // Event subscription
             discovered.add(
-                    new ServiceEventSubscriptionResource(namespace.getEventSubscriptionPath(service), service)
+                    new ServiceEventSubscriptionResource<>(namespace.getEventSubscriptionPath(service), service)
             );
 
         }

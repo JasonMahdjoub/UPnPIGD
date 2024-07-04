@@ -63,7 +63,7 @@ public class RequestInfo {
 	}
 
 	public static void reportParameters(StringBuilder builder, HttpServletRequest req) {
-		Enumeration names = req.getParameterNames();
+		Enumeration<String> names = req.getParameterNames();
 		if (names == null) return;
 
 		if (names.hasMoreElements()) {
@@ -81,7 +81,7 @@ public class RequestInfo {
 	}
 
 	public static void reportHeaders(StringBuilder builder, HttpServletRequest req) {
-		Enumeration names = req.getHeaderNames();
+		Enumeration<String> names = req.getHeaderNames();
 		if (names == null) return;
 		if (names.hasMoreElements()) {
 			builder.append("Headers:\n");

@@ -36,7 +36,7 @@ public abstract class OutgoingNotificationRequest extends OutgoingDatagramMessag
 
     private final NotificationSubtype type;
 
-    protected OutgoingNotificationRequest(Location location, LocalDevice device, NotificationSubtype type) {
+    protected OutgoingNotificationRequest(Location location, LocalDevice<?> device, NotificationSubtype type) {
         super(
                 new UpnpRequest(UpnpRequest.Method.NOTIFY),
                 ModelUtil.getInetAddressByName(Constants.IPV4_UPNP_MULTICAST_GROUP),

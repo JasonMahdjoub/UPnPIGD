@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.support.model;
 import com.distrimind.upnp_igd.model.ModelUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,9 +54,9 @@ public enum RecordQualityMode {
         throw new IllegalArgumentException("Invalid record quality mode string: " + s);
     }
 
-    public static RecordQualityMode[] valueOfCommaSeparatedList(String s) {
+    public static List<RecordQualityMode> valueOfCommaSeparatedList(String s) {
         String[] strings = ModelUtil.fromCommaSeparatedList(s);
-        if (strings == null) return new RecordQualityMode[0];
+        if (strings == null) return Collections.emptyList();
         List<RecordQualityMode> result = new ArrayList<>();
         for (String rqm : strings) {
             for (RecordQualityMode recordQualityMode : values()) {
@@ -64,6 +65,6 @@ public enum RecordQualityMode {
                 }
             }
         }
-        return result.toArray(new RecordQualityMode[result.size()]);
+        return result;
     }
 }

@@ -29,12 +29,12 @@ public class IntegerDatatype extends AbstractDatatype<Integer> {
     }
 
     @Override
-    public boolean isHandlingJavaType(Class type) {
+    public boolean isHandlingJavaType(Class<?> type) {
         return type == Integer.TYPE || Integer.class.isAssignableFrom(type);
     }
 
     public Integer valueOf(String s) throws InvalidValueException {
-        if (s.equals("")) return null;
+        if (s.isEmpty()) return null;
         try {
             Integer value = Integer.parseInt(s.trim());
             if (!isValid(value)) {

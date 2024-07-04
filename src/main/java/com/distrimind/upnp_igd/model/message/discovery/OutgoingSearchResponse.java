@@ -33,9 +33,9 @@ import com.distrimind.upnp_igd.model.meta.LocalDevice;
  */
 public class OutgoingSearchResponse extends OutgoingDatagramMessage<UpnpResponse> {
 
-    public OutgoingSearchResponse(IncomingDatagramMessage request,
+    public OutgoingSearchResponse(IncomingDatagramMessage<?> request,
 								  Location location,
-								  LocalDevice device) {
+								  LocalDevice<?> device) {
 
         super(new UpnpResponse(UpnpResponse.Status.OK), request.getSourceAddress(), request.getSourcePort());
 

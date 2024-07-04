@@ -69,11 +69,11 @@ public class Container extends DIDLObject {
         setItems(other.getItems());
     }
 
-    public Container(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property> properties, List<DescMeta> descMetadata) {
+    public Container(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property<?>> properties, List<DescMeta<?>> descMetadata) {
         super(id, parentID, title, creator, restricted, writeStatus, clazz, resources, properties, descMetadata);
     }
 
-    public Container(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property> properties, List<DescMeta> descMetadata, Integer childCount, boolean searchable, List<Class> createClasses, List<Class> searchClasses, List<Item> items) {
+    public Container(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property<?>> properties, List<DescMeta<?>> descMetadata, Integer childCount, boolean searchable, List<Class> createClasses, List<Class> searchClasses, List<Item> items) {
         super(id, parentID, title, creator, restricted, writeStatus, clazz, resources, properties, descMetadata);
         this.childCount = childCount;
         this.searchable = searchable;
@@ -83,19 +83,19 @@ public class Container extends DIDLObject {
     }
 
     public Container(String id, Container parent, String title, String creator, Class clazz, Integer childCount) {
-        this(id, parent.getId(), title, creator, true, null, clazz, new ArrayList<Res>(), new ArrayList<Property>(), new ArrayList<DescMeta>(), childCount, false, new ArrayList<Class>(), new ArrayList<Class>(), new ArrayList<Item>());
+        this(id, parent.getId(), title, creator, true, null, clazz, new ArrayList<Res>(), new ArrayList<>(), new ArrayList<>(), childCount, false, new ArrayList<Class>(), new ArrayList<Class>(), new ArrayList<Item>());
     }
 
     public Container(String id, String parentID, String title, String creator, Class clazz, Integer childCount) {
-        this(id, parentID, title, creator, true, null, clazz, new ArrayList<Res>(), new ArrayList<Property>(), new ArrayList<DescMeta>(), childCount, false, new ArrayList<Class>(), new ArrayList<Class>(), new ArrayList<Item>());
+        this(id, parentID, title, creator, true, null, clazz, new ArrayList<Res>(), new ArrayList<>(), new ArrayList<>(), childCount, false, new ArrayList<Class>(), new ArrayList<Class>(), new ArrayList<Item>());
     }
 
     public Container(String id, Container parent, String title, String creator, Class clazz, Integer childCount, boolean searchable, List<Class> createClasses, List<Class> searchClasses, List<Item> items) {
-        this(id, parent.getId(), title, creator, true, null, clazz, new ArrayList<Res>(), new ArrayList<Property>(), new ArrayList<DescMeta>(), childCount, searchable, createClasses, searchClasses, items);
+        this(id, parent.getId(), title, creator, true, null, clazz, new ArrayList<Res>(), new ArrayList<>(), new ArrayList<>(), childCount, searchable, createClasses, searchClasses, items);
     }
 
     public Container(String id, String parentID, String title, String creator, Class clazz, Integer childCount, boolean searchable, List<Class> createClasses, List<Class> searchClasses, List<Item> items) {
-        this(id, parentID, title, creator, true, null, clazz, new ArrayList<Res>(), new ArrayList<Property>(), new ArrayList<DescMeta>(), childCount, searchable, createClasses, searchClasses, items);
+        this(id, parentID, title, creator, true, null, clazz, new ArrayList<Res>(), new ArrayList<>(), new ArrayList<>(), childCount, searchable, createClasses, searchClasses, items);
     }
 
     public Integer getChildCount() {

@@ -30,7 +30,7 @@ import com.distrimind.upnp_igd.model.types.SoapActionType;
  */
 public class IncomingActionRequestMessage extends StreamRequestMessage implements ActionRequestMessage {
 
-    final private Action<?> action;
+    final private Action<? extends LocalService<?>> action;
     final private String actionNamespace;
 
     public IncomingActionRequestMessage(StreamRequestMessage source,
@@ -58,7 +58,7 @@ public class IncomingActionRequestMessage extends StreamRequestMessage implement
         this.actionNamespace = actionType.getTypeString();
     }
 
-    public Action<?> getAction() {
+    public Action<? extends LocalService<?>> getAction() {
         return action;
     }
 

@@ -27,14 +27,14 @@ public class PeerManagerHeader extends DLNAHeader<ServiceReference> {
 
     @Override
     public void setString(String s) throws InvalidHeaderException {
-        if (s.length() != 0) {
+        if (!s.isEmpty()) {
             try {
                 ServiceReference serviceReference = new ServiceReference(s);
                 if (serviceReference.getUdn()!=null && serviceReference.getServiceId()!=null) {
                     setValue(serviceReference);
                     return;
                 }
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         }
         throw new InvalidHeaderException("Invalid PeerManager header value: " + s);

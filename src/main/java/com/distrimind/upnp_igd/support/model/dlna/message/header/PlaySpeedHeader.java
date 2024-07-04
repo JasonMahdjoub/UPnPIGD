@@ -32,12 +32,12 @@ public class PlaySpeedHeader extends DLNAHeader<TransportPlaySpeed> {
 
     @Override
     public void setString(String s) throws InvalidHeaderException {
-        if (s.length() != 0) {
+        if (!s.isEmpty()) {
             try {
                 TransportPlaySpeed t = new TransportPlaySpeed(s);
                 setValue(t);
                 return;
-            } catch (InvalidValueException invalidValueException) {}
+            } catch (InvalidValueException ignored) {}
         }
         throw new InvalidHeaderException("Invalid PlaySpeed header value: " + s);
     }

@@ -59,17 +59,17 @@ public abstract class Browse extends ActionCallback {
     /**
      * Browse with first result 0 and {@link #getDefaultMaxResults()}, filters with {@link #CAPS_WILDCARD}.
      */
-    public Browse(Service service, String containerId, BrowseFlag flag) {
+    public Browse(Service<?, ?, ?> service, String containerId, BrowseFlag flag) {
         this(service, containerId, flag, CAPS_WILDCARD, 0, null);
     }
 
     /**
      * @param maxResults Can be <code>null</code>, then {@link #getDefaultMaxResults()} is used.
      */
-    public Browse(Service service, String objectID, BrowseFlag flag,
+    public Browse(Service<?, ?, ?> service, String objectID, BrowseFlag flag,
                                 String filter, long firstResult, Long maxResults, SortCriterion... orderBy) {
 
-        super(new ActionInvocation(service.getAction("Browse")));
+        super(new ActionInvocation<>(service.getAction("Browse")));
 
         log.fine("Creating browse action for object ID: " + objectID);
 
@@ -89,7 +89,7 @@ public abstract class Browse extends ActionCallback {
         super.run();
     }
 
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         log.fine("Successful browse action, reading output argument values");
 
         BrowseResult result = new BrowseResult(
@@ -101,7 +101,7 @@ public abstract class Browse extends ActionCallback {
 
         boolean proceed = receivedRaw(invocation, result);
 
-        if (proceed && result.getCountLong() > 0 && result.getResult().length() > 0) {
+        if (proceed && result.getCountLong() > 0 && !result.getResult().isEmpty()) {
 
             try {
 
@@ -132,7 +132,7 @@ public abstract class Browse extends ActionCallback {
         return 999;
     }
 
-    public boolean receivedRaw(ActionInvocation actionInvocation, BrowseResult browseResult) {
+    public boolean receivedRaw(ActionInvocation<?> actionInvocation, BrowseResult browseResult) {
         /*
         if (log.isLoggable(Level.FINER)) {
             log.finer("-------------------------------------------------------------------------------------");
@@ -143,7 +143,7 @@ public abstract class Browse extends ActionCallback {
         return true;
     }
 
-    public abstract void received(ActionInvocation actionInvocation, DIDLContent didl);
+    public abstract void received(ActionInvocation<?> actionInvocation, DIDLContent didl);
     public abstract void updateStatus(Status status);
 
 }

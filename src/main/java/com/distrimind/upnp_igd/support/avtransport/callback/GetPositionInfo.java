@@ -31,16 +31,16 @@ public abstract class GetPositionInfo extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(GetPositionInfo.class.getName());
 
-    public GetPositionInfo(Service service) {
+    public GetPositionInfo(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);
     }
 
-    public GetPositionInfo(UnsignedIntegerFourBytes instanceId, Service service) {
-        super(new ActionInvocation(service.getAction("GetPositionInfo")));
+    public GetPositionInfo(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("GetPositionInfo")));
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         PositionInfo positionInfo = new PositionInfo(invocation.getOutputMap());
         received(invocation, positionInfo);
     }

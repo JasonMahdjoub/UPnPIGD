@@ -69,7 +69,7 @@ public class DefaultRegistryListener implements RegistryListener {
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   The local device added to the {@link Registry}.
      */
-    public void localDeviceAdded(Registry registry, LocalDevice device) {
+    public void localDeviceAdded(Registry registry, LocalDevice<?> device) {
         deviceAdded(registry, device);
     }
 
@@ -79,7 +79,7 @@ public class DefaultRegistryListener implements RegistryListener {
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   The local device removed from the {@link Registry}.
      */
-    public void localDeviceRemoved(Registry registry, LocalDevice device) {
+    public void localDeviceRemoved(Registry registry, LocalDevice<?> device) {
         deviceRemoved(registry, device);
     }
 

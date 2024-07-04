@@ -35,22 +35,20 @@ public class MimeType {
 		this.type = type == null ? WILDCARD : type;
 		this.subtype = subtype == null ? WILDCARD : subtype;
 		if (parameters == null) {
-			this.parameters = Collections.EMPTY_MAP;
+			this.parameters = Collections.emptyMap();
 		} else {
 			Map<String, String> map = new TreeMap<String, String>(new Comparator<String>() {
 				public int compare(String o1, String o2) {
 					return o1.compareToIgnoreCase(o2);
 				}
 			});
-			for (Map.Entry<String, String> e : parameters.entrySet()) {
-				map.put(e.getKey(), e.getValue());
-			}
+			map.putAll(parameters);
 			this.parameters = Collections.unmodifiableMap(map);
 		}
 	}
 
 	public MimeType(String type, String subtype) {
-		this(type, subtype, Collections.EMPTY_MAP);
+		this(type, subtype, Collections.emptyMap());
 	}
 
 	public String getType() {
@@ -112,8 +110,8 @@ public class MimeType {
 			throw new IllegalArgumentException("Error parsing string: " + stringValue);
 		}
 
-		if (params != null && params.length() > 0) {
-			HashMap<String, String> map = new HashMap();
+		if (params != null && !params.isEmpty()) {
+			HashMap<String, String> map = new HashMap<>();
 
 			int start = 0;
 
@@ -185,7 +183,7 @@ public class MimeType {
 		if (equals == -1 && semicolon == -1) return params.length();
 		if (equals == -1) return semicolon;
 		if (semicolon == -1) return equals;
-		return (equals < semicolon) ? equals : semicolon;
+		return Math.min(equals, semicolon);
 	}
 
 	@Override
@@ -212,7 +210,7 @@ public class MimeType {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(toStringNoParameters());
-		if (getParameters() != null || getParameters().size() > 0) {
+		if (getParameters() != null || !getParameters().isEmpty()) {
 			for (String name : getParameters().keySet()) {
 				sb.append(";").append(name).append("=\"").append(getParameters().get(name)).append("\"");
 			}

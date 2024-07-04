@@ -115,7 +115,7 @@ public class SoapActionType {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof SoapActionType)) return false;
+        if (!(o instanceof SoapActionType)) return false;
 
         SoapActionType that = (SoapActionType) o;
 

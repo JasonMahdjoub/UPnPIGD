@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.support.model.dlna;
 import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -59,19 +60,19 @@ public abstract class DLNAAttribute<T> {
         };
 
         private final String attributeName;
-        private final Class<? extends DLNAAttribute>[] attributeTypes;
+        private final List<Class<? extends DLNAAttribute<?>>> attributeTypes;
 
         @SafeVarargs
-		Type(String attributeName, Class<? extends DLNAAttribute>... attributeClass) {
+		Type(String attributeName, Class<? extends DLNAAttribute<?>>... attributeClass) {
             this.attributeName = attributeName;
-            this.attributeTypes = attributeClass;
+            this.attributeTypes = List.of(attributeClass);
         }
 
         public String getAttributeName() {
             return attributeName;
         }
 
-        public Class<? extends DLNAAttribute>[] getAttributeTypes() {
+        public List<Class<? extends DLNAAttribute<?>>> getAttributeTypes() {
             return attributeTypes;
         }
 
@@ -120,14 +121,14 @@ public abstract class DLNAAttribute<T> {
      * @param contentFormat  The DLNA mime type of the attribute, optional.
      * @return The best matching attribute subtype instance, or <code>null</code> if no subtype can be found.
      */
-    public static DLNAAttribute newInstance(Type type, String attributeValue, String contentFormat) {
+    public static DLNAAttribute<?> newInstance(Type type, String attributeValue, String contentFormat) {
 
-        DLNAAttribute attr = null;
-        for (int i = 0; i < type.getAttributeTypes().length && attr == null; i++) {
-            Class<? extends DLNAAttribute> attributeClass = type.getAttributeTypes()[i];
+        DLNAAttribute<?> attr = null;
+        for (int i = 0; i < type.getAttributeTypes().size() && attr == null; i++) {
+            Class<? extends DLNAAttribute<?>> attributeClass = type.getAttributeTypes().get(i);
             try {
                 log.finest("Trying to parse DLNA '" + type + "' with class: " + attributeClass.getSimpleName());
-                attr = attributeClass.newInstance();
+                attr = attributeClass.getConstructor().newInstance();
                 if (attributeValue != null) {
                     attr.setString(attributeValue, contentFormat);
                 }

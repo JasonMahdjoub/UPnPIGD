@@ -22,7 +22,7 @@ import com.distrimind.upnp_igd.model.meta.Device;
  *
  * @author Christian Bauer
  */
-public class DeviceDiscovery<D extends Device> {
+public class DeviceDiscovery<D extends Device<?, D, ?>> {
 
     protected D device;
 

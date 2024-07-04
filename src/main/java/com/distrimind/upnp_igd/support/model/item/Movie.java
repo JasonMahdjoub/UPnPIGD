@@ -76,9 +76,8 @@ public class Movie extends VideoItem {
         return getFirstPropertyValue(Property.UPNP.SCHEDULED_START_TIME.class);
     }
 
-    public String[] getScheduledStartTimes() {
-        List<String> list = getPropertyValues(Property.UPNP.SCHEDULED_START_TIME.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getScheduledStartTimes() {
+        return getPropertyValues(Property.UPNP.SCHEDULED_START_TIME.class);
     }
 
     public Movie setScheduledStartTimes(String[] strings) {
@@ -93,9 +92,8 @@ public class Movie extends VideoItem {
         return getFirstPropertyValue(Property.UPNP.SCHEDULED_END_TIME.class);
     }
 
-    public String[] getScheduledEndTimes() {
-        List<String> list = getPropertyValues(Property.UPNP.SCHEDULED_END_TIME.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getScheduledEndTimes() {
+        return getPropertyValues(Property.UPNP.SCHEDULED_END_TIME.class);
     }
 
     public Movie setScheduledEndTimes(String[] strings) {

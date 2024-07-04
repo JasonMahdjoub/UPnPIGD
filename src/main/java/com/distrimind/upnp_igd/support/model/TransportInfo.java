@@ -31,7 +31,7 @@ public class TransportInfo {
     public TransportInfo() {
     }
 
-    public TransportInfo(Map<String, ActionArgumentValue> args) {
+    public TransportInfo(Map<String, ? extends ActionArgumentValue<?>> args) {
         this(
                 TransportState.valueOrCustomOf((String) args.get("CurrentTransportState").getValue()),
                 TransportStatus.valueOrCustomOf((String) args.get("CurrentTransportStatus").getValue()),

@@ -46,7 +46,7 @@ public abstract class UpnpStream implements Runnable {
     private static final Logger log = Logger.getLogger(UpnpStream.class.getName());
 
     protected final ProtocolFactory protocolFactory;
-    protected ReceivingSync syncProtocol;
+    protected ReceivingSync<?, ?> syncProtocol;
 
     protected UpnpStream(ProtocolFactory protocolFactory) {
         this.protocolFactory = protocolFactory;

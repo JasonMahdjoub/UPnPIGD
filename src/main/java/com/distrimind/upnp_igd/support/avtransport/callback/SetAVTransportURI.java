@@ -29,20 +29,20 @@ public abstract class SetAVTransportURI extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(SetAVTransportURI.class.getName());
 
-    public SetAVTransportURI(Service service, String uri) {
+    public SetAVTransportURI(Service<?, ?, ?> service, String uri) {
         this(new UnsignedIntegerFourBytes(0), service, uri, null);
     }
 
-    public SetAVTransportURI(Service service, String uri, String metadata) {
+    public SetAVTransportURI(Service<?, ?, ?> service, String uri, String metadata) {
         this(new UnsignedIntegerFourBytes(0), service, uri, metadata);
     }
 
-    public SetAVTransportURI(UnsignedIntegerFourBytes instanceId, Service service, String uri) {
+    public SetAVTransportURI(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service, String uri) {
         this(instanceId, service, uri, null);
     }
 
-    public SetAVTransportURI(UnsignedIntegerFourBytes instanceId, Service service, String uri, String metadata) {
-        super(new ActionInvocation(service.getAction("SetAVTransportURI")));
+    public SetAVTransportURI(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service, String uri, String metadata) {
+        super(new ActionInvocation<>(service.getAction("SetAVTransportURI")));
         log.fine("Creating SetAVTransportURI action for URI: " + uri);
         getActionInvocation().setInput("InstanceID", instanceId);
         getActionInvocation().setInput("CurrentURI", uri);
@@ -50,7 +50,7 @@ public abstract class SetAVTransportURI extends ActionCallback {
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         log.fine("Execution successful");
     }
 }

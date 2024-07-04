@@ -24,12 +24,12 @@ import com.distrimind.upnp_igd.model.meta.Service;
  */
 public abstract class GetExternalIP extends ActionCallback {
 
-    public GetExternalIP(Service service) {
-        super(new ActionInvocation(service.getAction("GetExternalIPAddress")));
+    public GetExternalIP(Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("GetExternalIPAddress")));
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         success((String)invocation.getOutput("NewExternalIPAddress").getValue());
     }
 

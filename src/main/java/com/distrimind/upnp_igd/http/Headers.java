@@ -143,7 +143,7 @@
 
 	 public String getFirstHeader(String key) {
 		 List<String> l = map.get(normalize(key));
-		 return l != null && l.size() > 0 ? l.get(0) : null;
+		 return l != null && !l.isEmpty() ? l.get(0) : null;
 	 }
 
 	 public void add(String key, String value) {
@@ -233,7 +233,7 @@
 		 return new String[]
 				 {
 						 sb.substring(nameStart, nameEnd),
-						 sb.length() >= valueStart && sb.length() >= valueEnd && valueStart < valueEnd
+						 sb.length() >= valueEnd && valueStart < valueEnd
 								 ? sb.substring(valueStart, valueEnd)
 								 : null
 				 };

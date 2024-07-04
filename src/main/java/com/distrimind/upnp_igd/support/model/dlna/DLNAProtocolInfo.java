@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class DLNAProtocolInfo extends ProtocolInfo {
 
-    protected final Map<DLNAAttribute.Type, DLNAAttribute> attributes = new EnumMap<>(DLNAAttribute.Type.class);
+    protected final Map<DLNAAttribute.Type, DLNAAttribute<?>> attributes = new EnumMap<>(DLNAAttribute.Type.class);
 
     public DLNAProtocolInfo(String s) throws InvalidValueException {
         super(s);
@@ -48,7 +48,7 @@ public class DLNAProtocolInfo extends ProtocolInfo {
         this.additionalInfo = this.getAttributesString();
     }
 
-    public DLNAProtocolInfo(DLNAProfiles profile, EnumMap<DLNAAttribute.Type, DLNAAttribute> attributes) {
+    public DLNAProtocolInfo(DLNAProfiles profile, EnumMap<DLNAAttribute.Type, DLNAAttribute<?>> attributes) {
         super(MimeType.valueOf(profile.getContentFormat()));
         this.attributes.putAll(attributes);
         this.attributes.put(DLNAAttribute.Type.DLNA_ORG_PN, new DLNAProfileAttribute(profile));
@@ -60,7 +60,7 @@ public class DLNAProtocolInfo extends ProtocolInfo {
         parseAdditionalInfo();
     }
 
-    public DLNAProtocolInfo(Protocol protocol, String network, String contentFormat, EnumMap<DLNAAttribute.Type, DLNAAttribute> attributes) {
+    public DLNAProtocolInfo(Protocol protocol, String network, String contentFormat, EnumMap<DLNAAttribute.Type, DLNAAttribute<?>> attributes) {
         super(protocol, network, contentFormat, "");
         this.attributes.putAll(attributes);
         this.additionalInfo = this.getAttributesString();
@@ -78,22 +78,22 @@ public class DLNAProtocolInfo extends ProtocolInfo {
         return attributes.containsKey(type);
     }
 
-    public DLNAAttribute getAttribute(DLNAAttribute.Type type) {
+    public DLNAAttribute<?> getAttribute(DLNAAttribute.Type type) {
         return attributes.get(type);
     }
 
-    public Map<DLNAAttribute.Type, DLNAAttribute> getAttributes() {
+    public Map<DLNAAttribute.Type, DLNAAttribute<?>> getAttributes() {
         return attributes;
     }
 
     protected String getAttributesString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (DLNAAttribute.Type type : DLNAAttribute.Type.values() ) {
             String value = attributes.containsKey(type)?attributes.get(type).getString():null;
-            if (value!=null && value.length() != 0)
-                s += (s.length() == 0 ? "" : ";") + type.getAttributeName() + "=" + value;
+            if (value!=null && !value.isEmpty())
+                s.append((s.length() == 0) ? "" : ";").append(type.getAttributeName()).append("=").append(value);
         }
-        return s;
+        return s.toString();
     }
 
     protected void parseAdditionalInfo() {
@@ -105,7 +105,7 @@ public class DLNAProtocolInfo extends ProtocolInfo {
                     DLNAAttribute.Type type =
                             DLNAAttribute.Type.valueOfAttributeName(attNameValue[0]);
                     if (type != null) {
-                        DLNAAttribute dlnaAttrinute =
+                        DLNAAttribute<?> dlnaAttrinute =
                                 DLNAAttribute.newInstance(type, attNameValue[1], this.getContentFormat());
                         attributes.put(type, dlnaAttrinute);
                     }

@@ -33,7 +33,7 @@ public class OutgoingSubscribeResponseMessage extends StreamResponseMessage {
         super(status);
     }
 
-    public OutgoingSubscribeResponseMessage(LocalGENASubscription subscription) {
+    public OutgoingSubscribeResponseMessage(LocalGENASubscription<?> subscription) {
         super(new UpnpResponse(UpnpResponse.Status.OK));
 
         getHeaders().add(UpnpHeader.Type.SERVER,new ServerHeader());

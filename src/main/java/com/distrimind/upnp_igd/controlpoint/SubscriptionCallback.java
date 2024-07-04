@@ -118,13 +118,13 @@ public abstract class SubscriptionCallback implements Runnable {
         }
 
         if (getService() instanceof LocalService) {
-            establishLocalSubscription((LocalService) service);
+            establishLocalSubscription((LocalService<?>) service);
         } else if (getService() instanceof RemoteService) {
             establishRemoteSubscription((RemoteService) service);
         }
     }
 
-    private void establishLocalSubscription(LocalService service) {
+    private <T> void establishLocalSubscription(LocalService<T> service) {
 
         if (getControlPoint().getRegistry().getLocalDevice(service.getDevice().getIdentity().getUdn(), false) == null) {
             log.fine("Local device service is currently not registered, failing subscription immediately");
@@ -136,10 +136,10 @@ public abstract class SubscriptionCallback implements Runnable {
         // used for inbound subscriptions from remote control points on local services!
         // Except that it doesn't ever expire, we override the requested duration with Integer.MAX_VALUE!
 
-        LocalGENASubscription localSubscription = null;
+        LocalGENASubscription<T> localSubscription = null;
         try {
             localSubscription =
-                    new LocalGENASubscription(service, Integer.MAX_VALUE, Collections.emptyList()) {
+                    new LocalGENASubscription<T>(service, Integer.MAX_VALUE, Collections.emptyList()) {
 
                         public void failed(Exception ex) {
                             synchronized (SubscriptionCallback.this) {
@@ -250,13 +250,13 @@ public abstract class SubscriptionCallback implements Runnable {
     synchronized public void end() {
         if (subscription == null) return;
         if (subscription instanceof LocalGENASubscription) {
-            endLocalSubscription((LocalGENASubscription)subscription);
+            endLocalSubscription((LocalGENASubscription<?>)subscription);
         } else if (subscription instanceof RemoteGENASubscription) {
             endRemoteSubscription((RemoteGENASubscription)subscription);
         }
     }
 
-    private void endLocalSubscription(LocalGENASubscription subscription) {
+    private void endLocalSubscription(LocalGENASubscription<?> subscription) {
         log.fine("Removing local subscription and ending it in callback: " + subscription);
         getControlPoint().getRegistry().removeLocalSubscription(subscription);
         subscription.end(null); // No reason, on controlpoint request

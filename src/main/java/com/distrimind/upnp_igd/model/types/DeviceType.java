@@ -92,41 +92,41 @@ public class DeviceType {
 
         if (deviceType != null)
             return deviceType;
+        if (s!=null) {
+            try {
+                // Now try a generic DeviceType parse
+                Matcher matcher = PATTERN.matcher(s);
+                if (matcher.matches()) {
+                    return new DeviceType(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3)));
+                }
 
-        try {
-            // Now try a generic DeviceType parse
-            Matcher matcher = PATTERN.matcher(s);
-            if (matcher.matches()) {
-                return new DeviceType(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3)));
-            }
+                // TODO: UPNP VIOLATION: Escient doesn't provide any device type token
+                // urn:schemas-upnp-org:device::1
+                matcher = Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):device::([0-9]+).*").matcher(s);
+                if (matcher.matches() && matcher.groupCount() >= 2) {
+                    log.warning("UPnP specification violation, no device type token, defaulting to " + UNKNOWN + ": " + s);
+                    return new DeviceType(matcher.group(1), UNKNOWN, Integer.parseInt(matcher.group(2)));
+                }
 
-            // TODO: UPNP VIOLATION: Escient doesn't provide any device type token
-            // urn:schemas-upnp-org:device::1
-            matcher = Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):device::([0-9]+).*").matcher(s);
-            if (matcher.matches() && matcher.groupCount() >= 2) {
-                log.warning("UPnP specification violation, no device type token, defaulting to " + UNKNOWN + ": " + s);
-                return new DeviceType(matcher.group(1), UNKNOWN, Integer.valueOf(matcher.group(2)));
+                // TODO: UPNP VIOLATION: EyeTV Netstream uses colons in device type token
+                // urn:schemas-microsoft-com:service:pbda:tuner:1
+                matcher = Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):device:(.+?):([0-9]+).*").matcher(s);
+                if (matcher.matches() && matcher.groupCount() >= 3) {
+                    String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
+                    log.warning(
+                            "UPnP specification violation, replacing invalid device type token '"
+                                    + matcher.group(2)
+                                    + "' with: "
+                                    + cleanToken
+                    );
+                    return new DeviceType(matcher.group(1), cleanToken, Integer.parseInt(matcher.group(3)));
+                }
+            } catch (RuntimeException e) {
+                throw new InvalidValueException(String.format(
+                        "Can't parse device type string (namespace/type/version) '%s': %s", s, e
+                ));
             }
-
-            // TODO: UPNP VIOLATION: EyeTV Netstream uses colons in device type token
-            // urn:schemas-microsoft-com:service:pbda:tuner:1
-            matcher = Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):device:(.+?):([0-9]+).*").matcher(s);
-            if (matcher.matches() && matcher.groupCount() >= 3) {
-                String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
-                log.warning(
-                    "UPnP specification violation, replacing invalid device type token '"
-                        + matcher.group(2)
-                        + "' with: "
-                        + cleanToken
-                );
-                return new DeviceType(matcher.group(1), cleanToken, Integer.valueOf(matcher.group(3)));
-            }
-        } catch (RuntimeException e) {
-            throw new InvalidValueException(String.format(
-                "Can't parse device type string (namespace/type/version) '%s': %s", s, e
-            ));
         }
-
         throw new InvalidValueException("Can't parse device type string (namespace/type/version): " + s);
     }
 
@@ -148,7 +148,7 @@ public class DeviceType {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof DeviceType)) return false;
+        if (!(o instanceof DeviceType)) return false;
 
         DeviceType that = (DeviceType) o;
 

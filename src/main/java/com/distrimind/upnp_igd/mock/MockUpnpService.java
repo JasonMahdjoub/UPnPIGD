@@ -126,7 +126,7 @@ public class MockUpnpService implements UpnpService {
         }
 
         @Override
-        public SendingNotificationAlive createSendingNotificationAlive(LocalDevice localDevice) {
+        public <T> SendingNotificationAlive createSendingNotificationAlive(LocalDevice<T> localDevice) {
             return new SendingNotificationAlive(getUpnpService(), localDevice) {
                 @Override
                 protected void execute() throws RouterException {

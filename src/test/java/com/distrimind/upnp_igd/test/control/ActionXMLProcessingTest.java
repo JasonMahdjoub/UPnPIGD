@@ -52,8 +52,8 @@ public class ActionXMLProcessingTest {
 
     public static final String ENCODED_REQUEST = "<?xml version=\"1.0\"?>\n" +
             " <s:Envelope\n" +
-            "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-            "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+            "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+            "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
             "   <s:Body>\n" +
             "     <u:SetSomeValue xmlns:u=\"urn:schemas-upnp-org:service:SwitchPower:1\">\n" +
             "       <SomeValue>This is encoded: &lt;</SomeValue>\n" +
@@ -63,8 +63,8 @@ public class ActionXMLProcessingTest {
 
     public static final String ALIAS_ENCODED_REQUEST = "<?xml version=\"1.0\"?>\n" +
             " <s:Envelope\n" +
-            "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-            "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+            "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+            "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
             "   <s:Body>\n" +
             "     <u:SetSomeValue xmlns:u=\"urn:schemas-upnp-org:service:SwitchPower:1\">\n" +
             "       <SomeValue1>This is encoded: &lt;</SomeValue1>\n" +
@@ -192,7 +192,7 @@ public class ActionXMLProcessingTest {
             }
         });
 
-        StreamRequestMessage streamRequest = new StreamRequestMessage(UpnpRequest.Method.POST, URI.create("http://some.uri"));
+        StreamRequestMessage streamRequest = new StreamRequestMessage(UpnpRequest.Method.POST, URI.create("https://some.uri"));
         streamRequest.getHeaders().add(
                 UpnpHeader.Type.CONTENT_TYPE,
                 new ContentTypeHeader(ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8)

@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.support.model.dlna.message.header;
 import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,24 +76,24 @@ public abstract class DLNAHeader<T> extends UpnpHeader<T> {
         }};
 
         private final String httpName;
-        private final Class<? extends DLNAHeader>[] headerTypes;
+        private final List<Class<? extends DLNAHeader<?>>> headerTypes;
 
         @SafeVarargs
-		Type(String httpName, Class<? extends DLNAHeader>... headerClass) {
+		Type(String httpName, Class<? extends DLNAHeader<?>>... headerClass) {
             this.httpName = httpName;
-            this.headerTypes = headerClass;
+            this.headerTypes = List.of(headerClass);
         }
 
         public String getHttpName() {
             return httpName;
         }
 
-        public Class<? extends DLNAHeader>[] getHeaderTypes() {
+        public List<Class<? extends DLNAHeader<?>>> getHeaderTypes() {
             return headerTypes;
         }
 
-        public boolean isValidHeaderType(Class<? extends DLNAHeader> clazz) {
-            for (Class<? extends DLNAHeader> permissibleType : getHeaderTypes()) {
+        public boolean isValidHeaderType(Class<? extends DLNAHeader<?>> clazz) {
+            for (Class<? extends DLNAHeader<?>> permissibleType : getHeaderTypes()) {
                 if (permissibleType.isAssignableFrom(clazz)) {
                     return true;
                 }
@@ -124,15 +125,15 @@ public abstract class DLNAHeader<T> extends UpnpHeader<T> {
      * @param headerValue The value of the header.
      * @return The best matching header subtype instance, or <code>null</code> if no subtype can be found.
      */
-    public static DLNAHeader newInstance(Type type, String headerValue) {
+    public static DLNAHeader<?> newInstance(Type type, String headerValue) {
 
         // Try all the UPnP headers and see if one matches our value parsers
-        DLNAHeader upnpHeader = null;
-        for (int i = 0; i < type.getHeaderTypes().length && upnpHeader == null; i++) {
-            Class<? extends DLNAHeader> headerClass = type.getHeaderTypes()[i];
+        DLNAHeader<?> upnpHeader = null;
+        for (int i = 0; i < type.getHeaderTypes().size() && upnpHeader == null; i++) {
+            Class<? extends DLNAHeader<?>> headerClass = type.getHeaderTypes().get(i);
             try {
                 log.finest("Trying to parse '" + type + "' with class: " + headerClass.getSimpleName());
-                upnpHeader = headerClass.newInstance();
+                upnpHeader = headerClass.getConstructor().newInstance();
                 if (headerValue != null) {
                     upnpHeader.setString(headerValue);
                 }

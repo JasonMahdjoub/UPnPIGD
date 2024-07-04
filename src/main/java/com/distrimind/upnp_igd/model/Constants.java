@@ -58,8 +58,8 @@ public interface Constants {
 	String REGEX_UDA_NAME = "[a-zA-Z0-9^-_\\p{L}\\p{N}]{1}[a-zA-Z0-9^-_\\.\\\\p{L}\\\\p{N}\\p{Mc}\\p{Sk}]*";
 
     // Random patentable "inventions" by MSFT
-	String SOAP_NS_ENVELOPE = "http://schemas.xmlsoap.org/soap/envelope/";
-    String SOAP_URI_ENCODING_STYLE = "http://schemas.xmlsoap.org/soap/encoding/";
+	String SOAP_NS_ENVELOPE = "https://schemas.xmlsoap.org/soap/envelope/";
+    String SOAP_URI_ENCODING_STYLE = "https://schemas.xmlsoap.org/soap/encoding/";
     String NS_UPNP_CONTROL_10 = "urn:schemas-upnp-org:control-1-0";
     String NS_UPNP_EVENT_10 = "urn:schemas-upnp-org:event-1-0";
 

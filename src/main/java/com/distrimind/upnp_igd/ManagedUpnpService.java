@@ -162,7 +162,7 @@ public class ManagedUpnpService implements UpnpService {
 
         @Inject
         @Any
-        Event<LocalDeviceDiscovery> localDeviceDiscoveryEvent;
+        Event<LocalDeviceDiscovery<?>> localDeviceDiscoveryEvent;
 
         @Inject
         @Any
@@ -204,16 +204,16 @@ public class ManagedUpnpService implements UpnpService {
         }
 
         @Override
-        public void localDeviceAdded(Registry registry, LocalDevice device) {
+        public void localDeviceAdded(Registry registry, LocalDevice<?> device) {
             localDeviceDiscoveryEvent.select(Phase.COMPLETE).fire(
-                    new LocalDeviceDiscovery(device)
+                    new LocalDeviceDiscovery<>(device)
             );
         }
 
         @Override
-        public void localDeviceRemoved(Registry registry, LocalDevice device) {
+        public void localDeviceRemoved(Registry registry, LocalDevice<?> device) {
             localDeviceDiscoveryEvent.select(Phase.BYEBYE).fire(
-                    new LocalDeviceDiscovery(device)
+                    new LocalDeviceDiscovery<>(device)
             );
         }
 

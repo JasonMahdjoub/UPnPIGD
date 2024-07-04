@@ -63,9 +63,8 @@ public class MusicTrack extends AudioItem {
         return getFirstPropertyValue(Property.UPNP.ARTIST.class);
     }
 
-    public PersonWithRole[] getArtists() {
-        List<PersonWithRole> list = getPropertyValues(Property.UPNP.ARTIST.class);
-        return list.toArray(new PersonWithRole[list.size()]);
+    public List<PersonWithRole> getArtists() {
+        return getPropertyValues(Property.UPNP.ARTIST.class);
     }
 
     public MusicTrack setArtists(PersonWithRole[] artists) {
@@ -98,9 +97,8 @@ public class MusicTrack extends AudioItem {
         return getFirstPropertyValue(Property.UPNP.PLAYLIST.class);
     }
 
-    public String[] getPlaylists() {
-        List<String> list = getPropertyValues(Property.UPNP.PLAYLIST.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getPlaylists() {
+        return getPropertyValues(Property.UPNP.PLAYLIST.class);
     }
 
     public MusicTrack setPlaylists(String[] playlists) {
@@ -124,9 +122,8 @@ public class MusicTrack extends AudioItem {
         return getFirstPropertyValue(Property.DC.CONTRIBUTOR.class);
     }
 
-    public Person[] getContributors() {
-        List<Person> list = getPropertyValues(Property.DC.CONTRIBUTOR.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getContributors() {
+        return getPropertyValues(Property.DC.CONTRIBUTOR.class);
     }
 
     public MusicTrack setContributors(Person[] contributors) {

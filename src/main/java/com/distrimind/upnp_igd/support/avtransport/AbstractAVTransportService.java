@@ -45,6 +45,7 @@ import com.distrimind.upnp_igd.support.model.TransportStatus;
 
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
+import java.util.List;
 
 /**
  * Skeleton of service with "LastChange" eventing support.
@@ -379,5 +380,5 @@ public abstract class AbstractAVTransportService implements LastChangeDelegator 
         }
     }
 
-    protected abstract TransportAction[] getCurrentTransportActions(UnsignedIntegerFourBytes instanceId) throws Exception;
+    protected abstract List<TransportAction> getCurrentTransportActions(UnsignedIntegerFourBytes instanceId) throws Exception;
 }

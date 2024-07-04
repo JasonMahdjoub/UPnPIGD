@@ -45,8 +45,8 @@ import static org.testng.Assert.assertNull;
 
 public class LocalActionInvocationCSVTest {
 
-    public LocalDevice createTestDevice(LocalService service) throws Exception {
-        return new LocalDevice(
+    public LocalDevice<?> createTestDevice(LocalService<?> service) throws Exception {
+        return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("TestDevice", 1),
                 new DeviceDetails("Test Device"),

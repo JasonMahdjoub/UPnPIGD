@@ -20,6 +20,7 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -34,7 +35,7 @@ public class EventedValueURI extends EventedValue<URI> {
         super(value);
     }
 
-    public EventedValueURI(Map.Entry<String, String>[] attributes) {
+    public EventedValueURI(Collection<Map.Entry<String, String>> attributes) {
         super(attributes);
     }
     
@@ -50,8 +51,9 @@ public class EventedValueURI extends EventedValue<URI> {
         }
     }
 
-    @Override
-    protected Datatype getDatatype() {
-        return Datatype.Builtin.URI.getDatatype();
+    @SuppressWarnings("unchecked")
+	@Override
+    protected Datatype<URI> getDatatype() {
+        return (Datatype<URI>)Datatype.Builtin.URI.getDatatype();
     }
 }

@@ -19,6 +19,7 @@ package com.distrimind.upnp_igd.util.io;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class IO {
 
 	public static String makeRelativePath(String path, String base) {
 		String p = "";
-		if (path != null && path.length() > 0) {
+		if (path != null && !path.isEmpty()) {
 			if (path.startsWith("/")) {
 				if (path.startsWith(base)) {
 					p = path.substring(base.length());
@@ -48,6 +49,8 @@ public class IO {
 
 	public static void recursiveRename(File dir, String from, String to) {
 		File[] subfiles = dir.listFiles();
+		if (subfiles==null)
+			return;
 		for (File file : subfiles) {
 			if (file.isDirectory()) {
 				recursiveRename(file, from, to);
@@ -91,19 +94,8 @@ public class IO {
 			destFile.createNewFile();
 		}
 
-		FileChannel source = null;
-		FileChannel destination = null;
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
+		try (FileChannel source = new FileInputStream(sourceFile).getChannel(); FileChannel destination = new FileOutputStream(destFile).getChannel()) {
 			destination.transferFrom(source, 0, source.size());
-		} finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
 		}
 	}
 
@@ -114,11 +106,8 @@ public class IO {
 	}
 
 	public static byte[] readBytes(File file) throws IOException {
-		InputStream is = new FileInputStream(file);
-		try {
+		try (InputStream is = new FileInputStream(file)) {
 			return readBytes(is);
-		} finally {
-			is.close();
 		}
 	}
 
@@ -140,12 +129,9 @@ public class IO {
 			throw new IllegalArgumentException("File cannot be written: " + file);
 		}
 
-		OutputStream os = new FileOutputStream(file);
-		try {
+		try (OutputStream os = new FileOutputStream(file)) {
 			writeBytes(os, data);
 			os.flush();
-		} finally {
-			os.close();
 		}
 	}
 
@@ -167,12 +153,9 @@ public class IO {
 			throw new IllegalArgumentException("File cannot be written: " + file);
 		}
 
-		OutputStream os = new FileOutputStream(file);
-		try {
+		try (OutputStream os = new FileOutputStream(file)) {
 			writeUTF8(os, contents);
 			os.flush();
-		} finally {
-			os.close();
 		}
 	}
 
@@ -187,44 +170,38 @@ public class IO {
 		StringBuilder input = new StringBuilder();
 		String inputLine;
 		while ((inputLine = inputReader.readLine()) != null) {
-			input.append(inputLine).append(System.getProperty("line.separator"));
+			input.append(inputLine).append(System.lineSeparator());
 		}
 
 		return input.length() > 0 ? input.toString() : "";
 	}
 
 	public static String readLines(File file) throws IOException {
-		InputStream is = new FileInputStream(file);
-		try {
+		try (InputStream is = new FileInputStream(file)) {
 			return readLines(is);
-		} finally {
-			is.close();
 		}
 	}
 
-	public static String[] readLines(File file, boolean trimLines) throws IOException {
+	public static List<String> readLines(File file, boolean trimLines) throws IOException {
 		return readLines(file, trimLines, null);
 	}
 
-	public static String[] readLines(File file, boolean trimLines, Character commentChar) throws IOException {
+	public static List<String> readLines(File file, boolean trimLines, Character commentChar) throws IOException {
 		return readLines(file, trimLines, commentChar, false);
 	}
 
-	public static String[] readLines(File file, boolean trimLines, Character commentChar, boolean skipEmptyLines) throws IOException {
-		List<String> contents = new ArrayList();
-		BufferedReader input = new BufferedReader(new FileReader(file));
-		try {
+	public static List<String> readLines(File file, boolean trimLines, Character commentChar, boolean skipEmptyLines) throws IOException {
+		List<String> contents = new ArrayList<>();
+		try (BufferedReader input = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = input.readLine()) != null) {
 				if (commentChar != null && line.matches("^\\s*" + commentChar + ".*")) continue;
 				String l = trimLines ? line.trim() : line;
-				if (skipEmptyLines && l.length() == 0) continue;
+				if (skipEmptyLines && l.isEmpty()) continue;
 				contents.add(l);
 			}
-		} finally {
-			input.close();
 		}
-		return contents.toArray(new String[contents.size()]);
+		return contents;
 	}
 
 
@@ -236,7 +213,7 @@ public class IO {
 	 * (the "License"); you may not use this file except in compliance with
 	 * the License.  You may obtain a copy of the License at
 	 *
-	 *      http://www.apache.org/licenses/LICENSE-2.0
+	 *      https://www.apache.org/licenses/LICENSE-2.0
 	 *
 	 * Unless required by applicable law or agreed to in writing, software
 	 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -418,7 +395,7 @@ public class IO {
 	 * using the specified character encoding.
 
 	 * Character encoding names can be found at
-	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
+	 * <a href="https://www.iana.org/assignments/character-sets">IANA</a>.
 
 	 * This method buffers the input internally, so there is no need to use a
 	 * <code>BufferedReader</code>.
@@ -446,10 +423,11 @@ public class IO {
 	 * @param input the <code>String</code> to convert
 	 * @return the requested byte array
 	 * @throws NullPointerException if the input is null
-	 * @throws java.io.IOException          if an I/O error occurs (never occurs)
+	 *
 	 * @deprecated Use {@link String#getBytes()}
 	 */
-	public static byte[] toByteArray(String input) throws IOException {
+	@Deprecated
+	public static byte[] toByteArray(String input) {
 		return input.getBytes();
 	}
 
@@ -588,6 +566,7 @@ public class IO {
 	 * @throws java.io.IOException          if an I/O error occurs (never occurs)
 	 * @deprecated Use {@link String#String(byte[])}
 	 */
+	@Deprecated
 	public static String toString(byte[] input) throws IOException {
 		return new String(input);
 	}
@@ -606,6 +585,7 @@ public class IO {
 	 * @throws java.io.IOException          if an I/O error occurs (never occurs)
 	 * @deprecated Use {@link String#String(byte[], String)}
 	 */
+	@Deprecated
 	public static String toString(byte[] input, String encoding)
 			throws IOException {
 		if (encoding == null) {

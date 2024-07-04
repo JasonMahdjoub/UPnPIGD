@@ -41,9 +41,9 @@ public class IncomingSearchResponse extends IncomingDatagramMessage<UpnpResponse
     }
 
     public boolean isSearchResponseMessage() {
-        UpnpHeader st = getHeaders().getFirstHeader(UpnpHeader.Type.ST);
-        UpnpHeader usn = getHeaders().getFirstHeader(UpnpHeader.Type.USN);
-        UpnpHeader ext = getHeaders().getFirstHeader(UpnpHeader.Type.EXT); // Has no value!
+        UpnpHeader<?> st = getHeaders().getFirstHeader(UpnpHeader.Type.ST);
+        UpnpHeader<?> usn = getHeaders().getFirstHeader(UpnpHeader.Type.USN);
+        UpnpHeader<?> ext = getHeaders().getFirstHeader(UpnpHeader.Type.EXT); // Has no value!
         return st != null && st.getValue() != null && usn != null && usn.getValue() != null && ext != null;
     }
 

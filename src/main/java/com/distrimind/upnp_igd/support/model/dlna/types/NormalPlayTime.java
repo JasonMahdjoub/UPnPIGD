@@ -15,6 +15,7 @@
 package com.distrimind.upnp_igd.support.model.dlna.types;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,21 +85,19 @@ public class NormalPlayTime {
 
     /**
      * We don't ignore the right zeros in milliseconds, a small compromise 
-     * @param format
+     *
      */
     public String getString(Format format) {        
         long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
         long ms = milliseconds % 1000;
-        switch (format) {
-            case TIME:
-                seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds));
-                long hours = TimeUnit.MILLISECONDS.toHours(milliseconds);
-                long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
-                return String.format(Locale.ROOT, "%d:%02d:%02d.%03d", hours, minutes, seconds, ms);
-            default:
-                return String.format(Locale.ROOT, "%d.%03d", seconds, ms);
-        }
-    }
+		if (Objects.requireNonNull(format) == Format.TIME) {
+			seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds));
+			long hours = TimeUnit.MILLISECONDS.toHours(milliseconds);
+			long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliseconds));
+			return String.format(Locale.ROOT, "%d:%02d:%02d.%03d", hours, minutes, seconds, ms);
+		}
+		return String.format(Locale.ROOT, "%d.%03d", seconds, ms);
+	}
 
     public static NormalPlayTime valueOf(String s) throws InvalidValueException {
         Matcher matcher = pattern.matcher(s);
@@ -117,7 +116,7 @@ public class NormalPlayTime {
                     return new NormalPlayTime(
                             Long.parseLong(matcher.group(6)) * 1000 + Long.parseLong(matcher.group(8))*msMultiplier);
                 }
-            } catch (NumberFormatException ex1) {
+            } catch (NumberFormatException ignored) {
             }
         }
         throw new InvalidValueException("Can't parse NormalPlayTime: " + s);

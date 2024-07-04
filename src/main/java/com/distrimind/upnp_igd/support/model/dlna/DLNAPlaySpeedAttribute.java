@@ -44,7 +44,7 @@ public class DLNAPlaySpeedAttribute extends DLNAAttribute<TransportPlaySpeed[]> 
 
     public void setString(String s, String cf) throws InvalidDLNAProtocolAttributeException {
         TransportPlaySpeed[] value = null;
-        if (s != null && s.length() != 0) {
+        if (s != null && !s.isEmpty()) {
             String[] speeds = s.split(",");
             try {
                 value = new TransportPlaySpeed[speeds.length]; 
@@ -62,13 +62,13 @@ public class DLNAPlaySpeedAttribute extends DLNAAttribute<TransportPlaySpeed[]> 
     }
 
     public String getString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (TransportPlaySpeed speed : getValue()) {
             if (speed.getValue().equals("1"))
                 continue;
-            s += (s.length() == 0 ? "" : ",") + speed;
+            s.append(s.length() == 0 ? "" : ",").append(speed);
         }
-        return s;
+        return s.toString();
     }
     
 }

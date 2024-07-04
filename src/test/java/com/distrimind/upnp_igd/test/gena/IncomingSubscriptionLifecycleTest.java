@@ -50,7 +50,7 @@ public class IncomingSubscriptionLifecycleTest {
         MockUpnpService upnpService = new MockUpnpService();
 
         // Register local device and its service
-        LocalDevice device = GenaSampleData.createTestDevice(GenaSampleData.LocalTestService.class);
+        LocalDevice<?> device = GenaSampleData.createTestDevice(GenaSampleData.LocalTestService.class);
         upnpService.getRegistry().addDevice(device);
 
         Namespace ns = upnpService.getConfiguration().getNamespace();
@@ -135,7 +135,7 @@ public class IncomingSubscriptionLifecycleTest {
         MockUpnpService upnpService = new MockUpnpService();
 
         // Register local device and its service
-        LocalDevice device = GenaSampleData.createTestDevice(GenaSampleData.LocalTestService.class);
+        LocalDevice<?> device = GenaSampleData.createTestDevice(GenaSampleData.LocalTestService.class);
         upnpService.getRegistry().addDevice(device);
 
         Namespace ns = upnpService.getConfiguration().getNamespace();

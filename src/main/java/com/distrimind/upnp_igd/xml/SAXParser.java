@@ -45,7 +45,7 @@ public class SAXParser {
 	final private static Logger log = Logger.getLogger(SAXParser.class.getName());
 
 	public static final URI XML_SCHEMA_NAMESPACE =
-			URI.create("http://www.w3.org/2001/xml.xsd");
+			URI.create("https://www.w3.org/2001/xml.xsd");
 	public static final URL XML_SCHEMA_RESOURCE =
 			Thread.currentThread().getContextClassLoader().getResource("org/seamless/schemas/xml.xsd");
 
@@ -122,7 +122,7 @@ public class SAXParser {
 	/**
 	 * Always throws exceptions and stops parsing.
 	 */
-	public class SimpleErrorHandler implements ErrorHandler {
+	public static class SimpleErrorHandler implements ErrorHandler {
 		public void warning(SAXParseException e) throws SAXException {
 			throw new SAXException(e);
 		}
@@ -141,7 +141,7 @@ public class SAXParser {
 
 		protected SAXParser parser;
 		protected I instance;
-		protected Handler parent;
+		protected Handler<?> parent;
 		protected StringBuilder characters = new StringBuilder();
 		protected Attributes attributes;
 
@@ -153,11 +153,11 @@ public class SAXParser {
 			this(instance, parser, null);
 		}
 
-		public Handler(I instance, Handler parent) {
+		public Handler(I instance, Handler<?> parent) {
 			this(instance, parent.getParser(), parent);
 		}
 
-		public Handler(I instance, SAXParser parser, Handler parent) {
+		public Handler(I instance, SAXParser parser, Handler<?> parent) {
 			this.instance = instance;
 			this.parser = parser;
 			this.parent = parent;
@@ -174,7 +174,7 @@ public class SAXParser {
 			return parser;
 		}
 
-		public Handler getParent() {
+		public Handler<?> getParent() {
 			return parent;
 		}
 
@@ -193,7 +193,7 @@ public class SAXParser {
 		public void startElement(String uri, String localName, String qName,
 								 Attributes attributes) throws SAXException {
 			this.characters = new StringBuilder();
-			this.attributes = new AttributesImpl(attributes); // see http://docstore.mik.ua/orelly/xml/sax2/ch05_01.htm, section 5.1.1
+			this.attributes = new AttributesImpl(attributes); // see https://docstore.mik.ua/orelly/xml/sax2/ch05_01.htm, section 5.1.1
 			log.finer(getClass().getSimpleName() + " starting: " + localName);
 		}
 

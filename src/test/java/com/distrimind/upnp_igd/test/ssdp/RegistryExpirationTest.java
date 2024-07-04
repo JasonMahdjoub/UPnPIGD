@@ -123,7 +123,7 @@ public class RegistryExpirationTest {
 
         MockUpnpService upnpService = new MockUpnpService(false, true);
 
-        Resource resource = new Resource(URI.create("/this/is/a/test"), "foo");
+        Resource<String> resource = new Resource<>(URI.create("/this/is/a/test"), "foo");
         upnpService.getRegistry().addResource(resource, 2);
 
         assertEquals(upnpService.getRegistry().getResources().size(), 1);
@@ -142,7 +142,7 @@ public class RegistryExpirationTest {
 
         final TestRunnable testRunnable = new TestRunnable();
 
-        Resource resource = new Resource<String>(URI.create("/this/is/a/test"), "foo") {
+        Resource<String> resource = new Resource<>(URI.create("/this/is/a/test"), "foo") {
             @Override
             public void maintain(List<Runnable> pendingExecutions, ExpirationDetails expirationDetails) {
                 if (expirationDetails.getSecondsUntilExpiration() == 1) {
@@ -161,7 +161,7 @@ public class RegistryExpirationTest {
         upnpService.shutdown();
     }
 
-    protected class TestRunnable implements Runnable {
+    protected static class TestRunnable implements Runnable {
         boolean wasExecuted = false;
 
         public void run() {

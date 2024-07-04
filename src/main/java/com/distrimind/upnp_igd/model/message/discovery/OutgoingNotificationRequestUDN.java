@@ -26,7 +26,7 @@ import com.distrimind.upnp_igd.model.types.NotificationSubtype;
  */
 public class OutgoingNotificationRequestUDN extends OutgoingNotificationRequest {
 
-    public OutgoingNotificationRequestUDN(Location location, LocalDevice device, NotificationSubtype type) {
+    public OutgoingNotificationRequestUDN(Location location, LocalDevice<?> device, NotificationSubtype type) {
         super(location, device, type);
 
         getHeaders().add(UpnpHeader.Type.NT, new UDNHeader(device.getIdentity().getUdn()));

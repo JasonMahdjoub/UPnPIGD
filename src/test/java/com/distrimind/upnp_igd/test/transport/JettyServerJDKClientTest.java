@@ -25,7 +25,7 @@ import com.distrimind.upnp_igd.transport.spi.StreamClient;
 public class JettyServerJDKClientTest extends JettyServerJettyClientTest {
 
     @Override
-    public StreamClient createStreamClient(UpnpServiceConfiguration configuration) {
+    public StreamClient<?> createStreamClient(UpnpServiceConfiguration configuration) {
         return new StreamClientImpl(
             new StreamClientConfigurationImpl(
                 configuration.getSyncProtocolExecutorService(),

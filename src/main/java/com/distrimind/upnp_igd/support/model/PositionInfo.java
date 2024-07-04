@@ -38,7 +38,7 @@ public class PositionInfo {
     public PositionInfo() {
     }
 
-    public PositionInfo(Map<String, ActionArgumentValue> args) {
+    public PositionInfo(Map<String, ? extends ActionArgumentValue<?>> args) {
         this(
                 ((UnsignedIntegerFourBytes) args.get("Track").getValue()).getValue(),
                 (String) args.get("TrackDuration").getValue(),
@@ -157,7 +157,7 @@ public class PositionInfo {
         long elapsed = getTrackElapsedSeconds();
         long total = getTrackDurationSeconds();
         if (elapsed == 0 || total == 0) return 0;
-        return new Double(elapsed/((double)total/100)).intValue();
+        return Double.valueOf(elapsed/((double)total/100)).intValue();
     }
 
 

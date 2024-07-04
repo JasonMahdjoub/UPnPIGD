@@ -30,26 +30,26 @@ public abstract class Play extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(Play.class.getName());
 
-    public Play(Service service) {
+    public Play(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service, "1");
     }
 
-    public Play(Service service, String speed) {
+    public Play(Service<?, ?, ?> service, String speed) {
         this(new UnsignedIntegerFourBytes(0), service, speed);
     }
 
-    public Play(UnsignedIntegerFourBytes instanceId, Service service) {
+    public Play(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
         this(instanceId, service, "1");
     }
 
-    public Play(UnsignedIntegerFourBytes instanceId, Service service, String speed) {
-        super(new ActionInvocation(service.getAction("Play")));
+    public Play(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service, String speed) {
+        super(new ActionInvocation<>(service.getAction("Play")));
         getActionInvocation().setInput("InstanceID", instanceId);
         getActionInvocation().setInput("Speed", speed);
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         log.fine("Execution successful");
     }
 }

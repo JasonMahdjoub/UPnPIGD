@@ -117,7 +117,7 @@ public class RegistryBrowseTest {
         LocalDevice<?> deviceOne = SampleData.createLocalDevice();
         upnpService.getRegistry().addDevice(deviceOne);
 
-        DeviceDescriptorResource resource =
+        DeviceDescriptorResource<?> resource =
                 upnpService.getRegistry().getResource(
                         DeviceDescriptorResource.class,
                         SampleDeviceRoot.getDeviceDescriptorURI()

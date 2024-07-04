@@ -115,7 +115,7 @@ public interface Router {
    
      * @param msg The received datagram message.
      */
-	void received(IncomingDatagramMessage msg);
+	void received(IncomingDatagramMessage<?> msg);
 
     /**
      * <p>
@@ -126,7 +126,7 @@ public interface Router {
      * should be free to process the next reception as soon as possible. Typically this means starting
      * a new thread of execution in this method.
    
-     * @param stream
+     *
      */
 	void received(UpnpStream stream);
 
@@ -137,7 +137,7 @@ public interface Router {
      * @param msg The UDP datagram message to send.
      * @throws RouterException if a recoverable error, such as thread interruption, occurs.
      */
-	void send(OutgoingDatagramMessage msg) throws RouterException;
+	void send(OutgoingDatagramMessage<?> msg) throws RouterException;
 
     /**
      * <p>

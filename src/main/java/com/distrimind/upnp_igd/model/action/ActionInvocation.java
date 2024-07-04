@@ -39,9 +39,9 @@ public class ActionInvocation<S extends Service<?, ?, ?>> {
     protected Map<String, ActionArgumentValue<S>> output = new LinkedHashMap<>();
 
     protected ActionException failure = null;
-
-    public ActionInvocation(Action<S> action) {
-        this(action, null, null, null);
+    @SuppressWarnings("unchecked")
+	public ActionInvocation(Action<? extends Service<?, ?, ?>> action) {
+        this((Action<S>)action, null, null, null);
     }
 
     public ActionInvocation(Action<S> action,

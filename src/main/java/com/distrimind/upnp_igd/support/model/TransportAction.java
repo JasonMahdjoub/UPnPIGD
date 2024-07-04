@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.support.model;
 import com.distrimind.upnp_igd.model.ModelUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,9 +34,9 @@ public enum TransportAction {
     Previous,
     Record;
 
-    public static TransportAction[] valueOfCommaSeparatedList(String s) {
+    public static List<TransportAction> valueOfCommaSeparatedList(String s) {
         String[] strings = ModelUtil.fromCommaSeparatedList(s);
-        if (strings == null) return new TransportAction[0];
+        if (strings == null) return Collections.emptyList();
         List<TransportAction> result = new ArrayList<>();
         for (String taString : strings) {
             for (TransportAction ta : values()) {
@@ -45,6 +46,6 @@ public enum TransportAction {
             }
 
         }
-        return result.toArray(new TransportAction[result.size()]);
+        return result;
     }
 }

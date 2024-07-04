@@ -16,11 +16,8 @@
 package com.distrimind.upnp_igd.support.lastchange;
 
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
-import com.distrimind.upnp_igd.support.lastchange.EventedValue;
-import com.distrimind.upnp_igd.support.lastchange.InstanceID;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -52,7 +49,7 @@ public class Event {
         instanceIDs = new ArrayList<>();
     }
 
-    public void setEventedValue(UnsignedIntegerFourBytes id, EventedValue ev) {
+    public void setEventedValue(UnsignedIntegerFourBytes id, EventedValue<?> ev) {
         InstanceID instanceID = null;
         for (InstanceID i : getInstanceIDs()) {
             if (i.getId().equals(id)) {
@@ -64,20 +61,15 @@ public class Event {
             getInstanceIDs().add(instanceID);
         }
 
-        Iterator<EventedValue> it = instanceID.getValues().iterator();
-        while (it.hasNext()) {
-            EventedValue existingEv = it.next();
-            if (existingEv.getClass().equals(ev.getClass())) {
-                it.remove();
-            }
-        }
+		instanceID.getValues().removeIf(existingEv -> existingEv.getClass().equals(ev.getClass()));
         instanceID.getValues().add(ev);
     }
 
-    public <EV extends EventedValue> EV getEventedValue(UnsignedIntegerFourBytes id, Class<EV> type) {
+    @SuppressWarnings("unchecked")
+	public <EV extends EventedValue<?>> EV getEventedValue(UnsignedIntegerFourBytes id, Class<EV> type) {
         for (InstanceID instanceID : getInstanceIDs()) {
             if (instanceID.getId().equals(id)) {
-                for (EventedValue eventedValue : instanceID.getValues()) {
+                for (EventedValue<?> eventedValue : instanceID.getValues()) {
                     if (eventedValue.getClass().equals(type))
                         return (EV) eventedValue;
                 }
@@ -88,7 +80,7 @@ public class Event {
 
     public boolean hasChanges() {
         for (InstanceID instanceID : instanceIDs) {
-            if (instanceID.getValues().size() > 0) return true;
+            if (!instanceID.getValues().isEmpty()) return true;
         }
         return false;
     }

@@ -48,13 +48,13 @@ public abstract class ContentBrowseActionCallback extends Browse {
     final protected DefaultTreeModel treeModel;
     final protected DefaultMutableTreeNode treeNode;
 
-    public ContentBrowseActionCallback(Service service, DefaultTreeModel treeModel, DefaultMutableTreeNode treeNode) {
+    public ContentBrowseActionCallback(Service<?, ?, ?> service, DefaultTreeModel treeModel, DefaultMutableTreeNode treeNode) {
         super(service, ((Container) treeNode.getUserObject()).getId(), BrowseFlag.DIRECT_CHILDREN, "*", 0, null, new SortCriterion(true, "dc:title"));
         this.treeModel = treeModel;
         this.treeNode = treeNode;
     }
 
-    public ContentBrowseActionCallback(Service service, DefaultTreeModel treeModel, DefaultMutableTreeNode treeNode,
+    public ContentBrowseActionCallback(Service<?, ?, ?> service, DefaultTreeModel treeModel, DefaultMutableTreeNode treeNode,
                                        String filter, long firstResult, long maxResults, SortCriterion... orderBy) {
         super(service, ((Container) treeNode.getUserObject()).getId(), BrowseFlag.DIRECT_CHILDREN, filter, firstResult, maxResults, orderBy);
         this.treeModel = treeModel;
@@ -69,7 +69,7 @@ public abstract class ContentBrowseActionCallback extends Browse {
         return treeNode;
     }
 
-    public void received(final ActionInvocation actionInvocation, DIDLContent didl) {
+    public void received(final ActionInvocation<?> actionInvocation, DIDLContent didl) {
         log.fine("Received browse action DIDL descriptor, creating tree nodes");
         final List<DefaultMutableTreeNode> childNodes = new ArrayList<>();
 
@@ -131,7 +131,7 @@ public abstract class ContentBrowseActionCallback extends Browse {
     }
 
     @Override
-    public void failure(ActionInvocation invocation, UpnpResponse operation, final String defaultMsg) {
+    public void failure(ActionInvocation<?> invocation, UpnpResponse operation, final String defaultMsg) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 failureUI(defaultMsg);
@@ -156,7 +156,7 @@ public abstract class ContentBrowseActionCallback extends Browse {
     }
 
     protected void insertChild(MutableTreeNode childNode) {
-        int index = treeNode.getChildCount() <= 0 ? 0 : treeNode.getChildCount();
+        int index = Math.max(treeNode.getChildCount(), 0);
         treeModel.insertNodeInto(childNode, treeNode, index);
     }
 

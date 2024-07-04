@@ -57,7 +57,7 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
 
     final private static Logger log = Logger.getLogger(ReceivingSubscribe.class.getName());
 
-    protected LocalGENASubscription subscription;
+    protected LocalGENASubscription<?> subscription;
 
     public ReceivingSubscribe(UpnpService upnpService, StreamRequestMessage inputMessage) {
         super(upnpService, inputMessage);
@@ -65,7 +65,7 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
 
     protected OutgoingSubscribeResponseMessage executeSync() throws RouterException {
 
-        ServiceEventSubscriptionResource resource =
+        ServiceEventSubscriptionResource<?> resource =
                 getUpnpService().getRegistry().getResource(
                         ServiceEventSubscriptionResource.class,
                         getInputMessage().getUri()
@@ -99,7 +99,7 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
 
     }
 
-    protected OutgoingSubscribeResponseMessage processRenewal(LocalService service,
+    protected OutgoingSubscribeResponseMessage processRenewal(LocalService<?> service,
                                                               IncomingSubscribeRequestMessage requestMessage) {
 
         subscription = getUpnpService().getRegistry().getLocalSubscription(requestMessage.getSubscriptionId());
@@ -120,12 +120,12 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
         }
     }
 
-    protected OutgoingSubscribeResponseMessage processNewSubscription(LocalService service,
+    protected <T> OutgoingSubscribeResponseMessage processNewSubscription(LocalService<T> service,
                                                                       IncomingSubscribeRequestMessage requestMessage) {
         List<URL> callbackURLs = requestMessage.getCallbackURLs();
 
         // Error conditions UDA 1.0 section 4.1.1 and 4.1.2
-        if (callbackURLs == null || callbackURLs.size() == 0) {
+        if (callbackURLs == null || callbackURLs.isEmpty()) {
             log.fine("Missing or invalid Callback URLs in subscribe request: " + getInputMessage());
             return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
         }
@@ -143,7 +143,7 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
         }
         
         try {
-            subscription = new LocalGENASubscription(service, timeoutSeconds, callbackURLs) {
+            subscription = new LocalGENASubscription<>(service, timeoutSeconds, callbackURLs) {
                 public void established() {
                 }
 

@@ -30,9 +30,9 @@ import com.distrimind.upnp_igd.model.types.NotificationSubtype;
  */
 public class OutgoingSearchRequest extends OutgoingDatagramMessage<UpnpRequest> {
 
-    private final UpnpHeader searchTarget;
+    private final UpnpHeader<?> searchTarget;
 
-    public OutgoingSearchRequest(UpnpHeader searchTarget, int mxSeconds) {
+    public OutgoingSearchRequest(UpnpHeader<?> searchTarget, int mxSeconds) {
         super(
                 new UpnpRequest(UpnpRequest.Method.MSEARCH),
                 ModelUtil.getInetAddressByName(Constants.IPV4_UPNP_MULTICAST_GROUP),
@@ -47,7 +47,7 @@ public class OutgoingSearchRequest extends OutgoingDatagramMessage<UpnpRequest> 
         getHeaders().add(UpnpHeader.Type.HOST, new HostHeader());
     }
 
-    public UpnpHeader getSearchTarget() {
+    public UpnpHeader<?> getSearchTarget() {
         return searchTarget;
     }
 }

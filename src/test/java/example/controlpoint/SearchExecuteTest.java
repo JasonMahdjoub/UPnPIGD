@@ -189,14 +189,14 @@ public class SearchExecuteTest {
         SendingSearch search = new SendingSearch(new MockUpnpService(), new MXHeader());
     }
 
-    protected void assertMessages(MockUpnpService upnpService, UpnpHeader header) throws Exception {
+    protected void assertMessages(MockUpnpService upnpService, UpnpHeader<?> header) throws Exception {
         assertEquals(upnpService.getRouter().getOutgoingDatagramMessages().size(), 5);
-        for (UpnpMessage msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
+        for (UpnpMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
             assertSearchMessage(msg, header);
         }
     }
 
-    protected void assertSearchMessage(UpnpMessage msg, UpnpHeader searchTarget) {
+    protected void assertSearchMessage(UpnpMessage<?> msg, UpnpHeader<?> searchTarget) {
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.MAN).getString(), new MANHeader(NotificationSubtype.DISCOVER.getHeaderString()).getString());
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.MX).getString(), new MXHeader().getString());
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.ST).getString(), searchTarget.getString());

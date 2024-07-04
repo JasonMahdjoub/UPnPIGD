@@ -17,7 +17,6 @@ package com.distrimind.upnp_igd.model;
 
 import com.distrimind.upnp_igd.model.action.ActionExecutor;
 import com.distrimind.upnp_igd.model.action.MethodActionExecutor;
-import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.state.FieldStateVariableAccessor;
 import com.distrimind.upnp_igd.model.state.StateVariableAccessor;
 import com.distrimind.upnp_igd.model.meta.LocalService;

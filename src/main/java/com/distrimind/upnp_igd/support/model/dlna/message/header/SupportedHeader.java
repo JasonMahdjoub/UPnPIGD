@@ -27,7 +27,7 @@ public class SupportedHeader extends DLNAHeader<String[]> {
 
     @Override
     public void setString(String s) throws InvalidHeaderException {
-        if (s.length() != 0) {
+        if (!s.isEmpty()) {
             if (s.endsWith(";"))
                 s = s.substring(0, s.length()-1);
             setValue(s.split("\\s*,\\s*"));
@@ -39,10 +39,10 @@ public class SupportedHeader extends DLNAHeader<String[]> {
     @Override
     public String getString() {
         String[] v = getValue();
-        String r = v.length>0 ? v[0] : "";
+        StringBuilder r = new StringBuilder(v.length > 0 ? v[0] : "");
         for (int i = 1; i < v.length; i++) {
-            r += ","+v[i];
+            r.append(",").append(v[i]);
         }
-        return r;
+        return r.toString();
     }
 }

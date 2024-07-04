@@ -17,7 +17,9 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.ModelUtil;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * An arbitrary list of comma-separated elements, representing DLNA capabilities (whatever that is).
@@ -26,23 +28,23 @@ import java.util.Arrays;
  */
 public class DLNACaps {
 
-    final String[] caps;
+    final List<String> caps;
 
-    public DLNACaps(String[] caps) {
+    public DLNACaps(List<String> caps) {
         this.caps = caps;
     }
 
-    public String[] getCaps() {
+    public List<String> getCaps() {
         return caps;
     }
 
     static public DLNACaps valueOf(String s) throws InvalidValueException {
-        if (s == null || s.length() == 0) return new DLNACaps(new String[0]);
+        if (s == null || s.isEmpty()) return new DLNACaps(Collections.emptyList());
         String[] caps = s.split(",");
-        String[] trimmed = new String[caps.length];
-        for (int i = 0; i < caps.length; i++) {
-            trimmed[i] = caps[i].trim();
-        }
+        List<String> trimmed = new ArrayList<String>(caps.length);
+		for (String cap : caps) {
+			trimmed.add(cap.trim());
+		}
         return new DLNACaps(trimmed);
     }
 
@@ -53,12 +55,12 @@ public class DLNACaps {
 
         DLNACaps dlnaCaps = (DLNACaps) o;
 
-		return Arrays.equals(caps, dlnaCaps.caps);
+		return caps.equals(dlnaCaps.caps);
 	}
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(caps);
+        return caps.size();
     }
 
     @Override

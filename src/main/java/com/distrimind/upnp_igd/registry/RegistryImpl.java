@@ -195,9 +195,9 @@ public class RegistryImpl implements Registry {
 
 	synchronized public boolean removeDevice(UDN udn) {
         Device<?, ?, ?> device = getDevice(udn, true);
-        if (device != null && device instanceof LocalDevice)
+        if (device instanceof LocalDevice)
             return removeDevice((LocalDevice<?>) device);
-        if (device != null && device instanceof RemoteDevice)
+        if (device instanceof RemoteDevice)
             return removeDevice((RemoteDevice) device);
         return false;
     }

@@ -199,11 +199,11 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         throw new ProtocolCreationException("Protocol for message type not found: " + message);
     }
 
-    public SendingNotificationAlive createSendingNotificationAlive(LocalDevice localDevice) {
+    public <T> SendingNotificationAlive createSendingNotificationAlive(LocalDevice<T> localDevice) {
         return new SendingNotificationAlive(getUpnpService(), localDevice);
     }
 
-    public SendingNotificationByebye createSendingNotificationByebye(LocalDevice localDevice) {
+    public <T> SendingNotificationByebye createSendingNotificationByebye(LocalDevice<T> localDevice) {
         return new SendingNotificationByebye(getUpnpService(), localDevice);
     }
 
@@ -238,7 +238,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         return new SendingUnsubscribe(getUpnpService(), subscription);
     }
 
-    public SendingEvent createSendingEvent(LocalGENASubscription subscription) {
+    public SendingEvent createSendingEvent(LocalGENASubscription<?> subscription) {
         return new SendingEvent(getUpnpService(), subscription);
     }
 

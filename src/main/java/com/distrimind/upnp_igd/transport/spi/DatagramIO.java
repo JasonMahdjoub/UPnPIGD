@@ -76,7 +76,7 @@ public interface DatagramIO<C extends DatagramIOConfiguration> extends Runnable 
      *
      * @param message The message to send.
      */
-	void send(OutgoingDatagramMessage message);
+	void send(OutgoingDatagramMessage<?> message);
 
     /**
      * The actual sending of a UDP datagram.

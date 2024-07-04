@@ -29,7 +29,7 @@ import java.util.Map;
 public class DeviceDetailsProviderTest {
 
     @Test
-    public void headerRegexMatch() throws Exception {
+    public void headerRegexMatch() {
 
         RemoteClientInfo clientInfo = new RemoteClientInfo();
 

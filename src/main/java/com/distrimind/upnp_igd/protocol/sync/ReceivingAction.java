@@ -74,7 +74,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             log.warning("Received without Content-Type: " + getInputMessage());
         }
 
-        ServiceControlResource resource =
+        ServiceControlResource<?> resource =
                 getUpnpService().getRegistry().getResource(
                         ServiceControlResource.class,
                         getInputMessage().getUri()
@@ -87,7 +87,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 
         log.fine("Found local action resource matching relative request URI: " + getInputMessage().getUri());
 
-        RemoteActionInvocation invocation;
+        RemoteActionInvocation<? extends LocalService<?>> invocation;
         OutgoingActionResponseMessage responseMessage = null;
 
         try {
@@ -97,14 +97,14 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
                     new IncomingActionRequestMessage(getInputMessage(), resource.getModel());
 
             log.finer("Created incoming action request message: " + requestMessage);
-            invocation = new RemoteActionInvocation(requestMessage.getAction(), getRemoteClientInfo());
+            invocation = new RemoteActionInvocation<>(requestMessage.getAction(), getRemoteClientInfo());
 
             // Throws UnsupportedDataException if the body can't be read
             log.fine("Reading body of request message");
             getUpnpService().getConfiguration().getSoapActionProcessor().readBody(requestMessage, invocation);
 
             log.fine("Executing on local service: " + invocation);
-            resource.getModel().getExecutor(invocation.getAction()).execute(invocation);
+            resource.getModel().getExecutor(invocation.getAction()).executeWithUntypedGeneric(invocation);
 
             if (invocation.getFailure() == null) {
                 responseMessage =
@@ -129,14 +129,14 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
         } catch (ActionException ex) {
             log.finer("Error executing local action: " + ex);
 
-            invocation = new RemoteActionInvocation(ex, getRemoteClientInfo());
+            invocation = new RemoteActionInvocation<>(ex, getRemoteClientInfo());
             responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
 
         } catch (UnsupportedDataException ex) {
         	log.log(Level.WARNING, "Error reading action request XML body: " + ex, Exceptions.unwrap(ex));
 
             invocation =
-                    new RemoteActionInvocation(
+                    new RemoteActionInvocation<>(
                         Exceptions.unwrap(ex) instanceof ActionException
                                 ? (ActionException)Exceptions.unwrap(ex)
                                 : new ActionException(ErrorCode.ACTION_FAILED, ex.getMessage()),

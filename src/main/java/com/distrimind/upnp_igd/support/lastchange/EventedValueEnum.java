@@ -18,18 +18,20 @@ package com.distrimind.upnp_igd.support.lastchange;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Christian Bauer
  */
-public abstract class EventedValueEnum<E extends Enum> extends EventedValue<E> {
+public abstract class EventedValueEnum<E extends Enum<?>> extends EventedValue<E> {
 
     public EventedValueEnum(E e) {
         super(e);
     }
 
-    public EventedValueEnum(Map.Entry<String, String>[] attributes) {
+    public EventedValueEnum(Collection<Map.Entry<String, String>> attributes) {
         super(attributes);
     }
 
@@ -46,7 +48,7 @@ public abstract class EventedValueEnum<E extends Enum> extends EventedValue<E> {
     }
 
     @Override
-    protected Datatype getDatatype() {
+    protected Datatype<E> getDatatype() {
         return null;
     }
 }

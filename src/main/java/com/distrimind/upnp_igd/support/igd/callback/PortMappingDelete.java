@@ -28,12 +28,12 @@ public abstract class PortMappingDelete extends ActionCallback {
 
     final protected PortMapping portMapping;
 
-    public PortMappingDelete(Service service, PortMapping portMapping) {
+    public PortMappingDelete(Service<?, ?, ?> service, PortMapping portMapping) {
         this(service, null, portMapping);
     }
 
-    protected PortMappingDelete(Service service, ControlPoint controlPoint, PortMapping portMapping) {
-        super(new ActionInvocation(service.getAction("DeletePortMapping")), controlPoint);
+    protected PortMappingDelete(Service<?, ?, ?> service, ControlPoint controlPoint, PortMapping portMapping) {
+        super(new ActionInvocation<>(service.getAction("DeletePortMapping")), controlPoint);
 
         this.portMapping = portMapping;
 

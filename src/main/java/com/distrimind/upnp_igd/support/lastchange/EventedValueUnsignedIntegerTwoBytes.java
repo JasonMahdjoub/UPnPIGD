@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.support.lastchange;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerTwoBytes;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -29,12 +30,13 @@ public class EventedValueUnsignedIntegerTwoBytes extends EventedValue<UnsignedIn
         super(value);
     }
 
-    public EventedValueUnsignedIntegerTwoBytes(Map.Entry<String, String>[] attributes) {
+    public EventedValueUnsignedIntegerTwoBytes(Collection<Map.Entry<String, String>> attributes) {
         super(attributes);
     }
 
-    @Override
-    protected Datatype getDatatype() {
-        return Datatype.Builtin.UI2.getDatatype();
+    @SuppressWarnings("unchecked")
+	@Override
+    protected Datatype<UnsignedIntegerTwoBytes> getDatatype() {
+        return (Datatype<UnsignedIntegerTwoBytes>)Datatype.Builtin.UI2.getDatatype();
     }
 }

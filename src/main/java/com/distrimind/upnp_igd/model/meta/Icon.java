@@ -57,13 +57,13 @@ public class Icon implements Validatable {
     final private byte[] data;
 
     // Package mutable state
-    private Device device;
+    private Device<?, ?, ?> device;
 
     /**
      * Used internally by Cling when {@link RemoteDevice} is discovered, you shouldn't have to call this.
      */
     public Icon(String mimeType, int width, int height, int depth, URI uri) {
-        this(mimeType != null && mimeType.length() > 0 ? MimeType.valueOf(mimeType) : null, width, height, depth, uri, null);
+        this(mimeType != null && !mimeType.isEmpty() ? MimeType.valueOf(mimeType) : null, width, height, depth, uri, null);
     }
 
     /**
@@ -99,7 +99,7 @@ public class Icon implements Validatable {
      * @param uniqueName Must be a valid URI path segment and unique within the scope of a device.
      */
     public Icon(String mimeType, int width, int height, int depth, String uniqueName, byte[] data) {
-        this(mimeType != null && mimeType.length() > 0 ? MimeType.valueOf(mimeType) : null, width, height, depth, URI.create(uniqueName), data);
+        this(mimeType != null && !mimeType.isEmpty() ? MimeType.valueOf(mimeType) : null, width, height, depth, URI.create(uniqueName), data);
     }
 
     /**
@@ -111,7 +111,7 @@ public class Icon implements Validatable {
     public Icon(String mimeType, int width, int height, int depth, String uniqueName, String binHexEncoded) {
         this(
                 mimeType, width, height, depth, uniqueName,
-                binHexEncoded != null && !binHexEncoded.equals("") ? new BinHexDatatype().valueOf(binHexEncoded) : null
+                binHexEncoded != null && !binHexEncoded.isEmpty() ? new BinHexDatatype().valueOf(binHexEncoded) : null
         );
     }
 
@@ -148,11 +148,11 @@ public class Icon implements Validatable {
         return data;
     }
 
-    public Device getDevice() {
+    public Device<?, ?, ?> getDevice() {
         return device;
     }
 
-    void setDevice(Device device) {
+    void setDevice(Device<?, ?, ?> device) {
         if (this.device != null)
             throw new IllegalStateException("Final value has been set already, model is immutable");
         this.device = device;

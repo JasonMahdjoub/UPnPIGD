@@ -29,12 +29,12 @@ import com.distrimind.upnp_igd.model.types.PragmaType;
 public class PragmaHeader extends DLNAHeader<List<PragmaType>> {
     
     public PragmaHeader() {
-        setValue(new ArrayList<PragmaType>());
+        setValue(new ArrayList<>());
     }
     
     @Override
     public void setString(String s) throws InvalidHeaderException {
-        if (s.length() != 0) {
+        if (!s.isEmpty()) {
             if (s.endsWith(";")) {
                 s = s.substring(0, s.length() - 1);
             }
@@ -43,6 +43,7 @@ public class PragmaHeader extends DLNAHeader<List<PragmaType>> {
             for (String pragma : list) {
                 value.add(PragmaType.valueOf(pragma));
             }
+            setValue(value);
             return;
         }
         throw new InvalidHeaderException("Invalid Pragma header value: " + s);
@@ -51,10 +52,10 @@ public class PragmaHeader extends DLNAHeader<List<PragmaType>> {
     @Override
     public String getString() {
         List<PragmaType> v = getValue();
-        String r = "";
+        StringBuilder r = new StringBuilder();
         for (PragmaType pragma : v) {
-            r += (r.length() == 0 ? "": "," )+  pragma.getString();
+            r.append((r.length() == 0) ? "" : ",").append(pragma.getString());
         }
-        return r;
+        return r.toString();
     }
 }

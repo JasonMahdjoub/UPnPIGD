@@ -54,9 +54,8 @@ public class VideoItem extends Item {
         return getFirstPropertyValue(Property.UPNP.GENRE.class);
     }
 
-    public String[] getGenres() {
-        List<String> list = getPropertyValues(Property.UPNP.GENRE.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getGenres() {
+        return getPropertyValues(Property.UPNP.GENRE.class);
     }
 
     public VideoItem setGenres(String[] genres) {
@@ -89,12 +88,11 @@ public class VideoItem extends Item {
         return getFirstPropertyValue(Property.UPNP.PRODUCER.class);
     }
 
-    public Person[] getProducers() {
-        List<Person> list = getPropertyValues(Property.UPNP.PRODUCER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getProducers() {
+        return getPropertyValues(Property.UPNP.PRODUCER.class);
     }
 
-    public VideoItem setProducers(Person[] persons) {
+    public VideoItem setProducers(List<Person> persons) {
         removeProperties(Property.UPNP.PRODUCER.class);
         for (Person p : persons) {
             addProperty(new Property.UPNP.PRODUCER(p));
@@ -115,9 +113,8 @@ public class VideoItem extends Item {
         return getFirstPropertyValue(Property.UPNP.ACTOR.class);
     }
 
-    public PersonWithRole[] getActors() {
-        List<PersonWithRole> list = getPropertyValues(Property.UPNP.ACTOR.class);
-        return list.toArray(new PersonWithRole[list.size()]);
+    public List<PersonWithRole> getActors() {
+        return getPropertyValues(Property.UPNP.ACTOR.class);
     }
 
     public VideoItem setActors(PersonWithRole[] persons) {
@@ -132,12 +129,11 @@ public class VideoItem extends Item {
         return getFirstPropertyValue(Property.UPNP.DIRECTOR.class);
     }
 
-    public Person[] getDirectors() {
-        List<Person> list = getPropertyValues(Property.UPNP.DIRECTOR.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getDirectors() {
+        return getPropertyValues(Property.UPNP.DIRECTOR.class);
     }
 
-    public VideoItem setDirectors(Person[] persons) {
+    public VideoItem setDirectors(List<Person> persons) {
         removeProperties(Property.UPNP.DIRECTOR.class);
         for (Person p : persons) {
             addProperty(new Property.UPNP.DIRECTOR(p));
@@ -149,12 +145,11 @@ public class VideoItem extends Item {
         return getFirstPropertyValue(Property.DC.PUBLISHER.class);
     }
 
-    public Person[] getPublishers() {
-        List<Person> list = getPropertyValues(Property.DC.PUBLISHER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getPublishers() {
+        return getPropertyValues(Property.DC.PUBLISHER.class);
     }
 
-    public VideoItem setPublishers(Person[] publishers) {
+    public VideoItem setPublishers(List<Person> publishers) {
         removeProperties(Property.DC.PUBLISHER.class);
         for (Person publisher : publishers) {
             addProperty(new Property.DC.PUBLISHER(publisher));
@@ -175,12 +170,11 @@ public class VideoItem extends Item {
         return getFirstPropertyValue(Property.DC.RELATION.class);
     }
 
-    public URI[] getRelations() {
-        List<URI> list = getPropertyValues(Property.DC.RELATION.class);
-        return list.toArray(new URI[list.size()]);
+    public List<URI> getRelations() {
+        return getPropertyValues(Property.DC.RELATION.class);
     }
 
-    public VideoItem setRelations(URI[] relations) {
+    public VideoItem setRelations(List<URI> relations) {
         removeProperties(Property.DC.RELATION.class);
         for (URI relation : relations) {
             addProperty(new Property.DC.RELATION(relation));

@@ -21,7 +21,7 @@ package com.distrimind.upnp_igd.model.types;
 public class UnsignedIntegerFourBytesDatatype extends AbstractDatatype<UnsignedIntegerFourBytes> {
 
     public UnsignedIntegerFourBytes valueOf(String s) throws InvalidValueException {
-        if (s.equals("")) return null;
+        if (s.isEmpty()) return null;
         try {
             return new UnsignedIntegerFourBytes(s);
         } catch (NumberFormatException ex) {

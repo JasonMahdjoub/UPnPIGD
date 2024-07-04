@@ -39,7 +39,7 @@ public class MediaInfo {
     public MediaInfo() {
     }
 
-    public MediaInfo(Map<String, ActionArgumentValue> args) {
+    public MediaInfo(Map<String, ? extends ActionArgumentValue<?>> args) {
         this(
                 (String) args.get("CurrentURI").getValue(),
                 (String) args.get("CurrentURIMetaData").getValue(),

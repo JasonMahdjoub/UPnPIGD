@@ -22,22 +22,22 @@ import com.distrimind.upnp_igd.model.message.header.InvalidHeaderException;
 /**
  * @author Mario Franco
  */
-public class ContentFeaturesHeader extends DLNAHeader<EnumMap<DLNAAttribute.Type, DLNAAttribute>> {
+public class ContentFeaturesHeader extends DLNAHeader<EnumMap<DLNAAttribute.Type, DLNAAttribute<?>>> {
 
     public ContentFeaturesHeader() {
-        setValue(new EnumMap<DLNAAttribute.Type, DLNAAttribute>(DLNAAttribute.Type.class));
+        setValue(new EnumMap<>(DLNAAttribute.Type.class));
     }
 
     @Override
     public void setString(String s) throws InvalidHeaderException {
-        if (s.length() != 0) {
+        if (!s.isEmpty()) {
             String[] atts = s.split(";");
             for (String att : atts) {
                 String[] attNameValue = att.split("=");
                 if (attNameValue.length == 2) {
                     DLNAAttribute.Type type = DLNAAttribute.Type.valueOfAttributeName(attNameValue[0]);
                     if (type != null) {
-                        DLNAAttribute dlnaAttrinute = DLNAAttribute.newInstance(type, attNameValue[1], "");
+                        DLNAAttribute<?> dlnaAttrinute = DLNAAttribute.newInstance(type, attNameValue[1], "");
                         getValue().put(type, dlnaAttrinute);
                     }
                 }
@@ -47,13 +47,13 @@ public class ContentFeaturesHeader extends DLNAHeader<EnumMap<DLNAAttribute.Type
 
     @Override
     public String getString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (DLNAAttribute.Type type : DLNAAttribute.Type.values()) {
             String value = getValue().containsKey(type) ? getValue().get(type).getString() : null;
-            if (value != null && value.length() != 0) {
-                s += (s.length() == 0 ? "" : ";") + type.getAttributeName() + "=" + value;
+            if (value != null && !value.isEmpty()) {
+                s.append((s.length() == 0) ? "" : ";").append(type.getAttributeName()).append("=").append(value);
             }
         }
-        return s;
+        return s.toString();
     }
 }

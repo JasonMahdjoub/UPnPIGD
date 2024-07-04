@@ -60,7 +60,7 @@ public class OutgoingSubscribeRequestMessage extends StreamRequestMessage {
     public boolean hasCallbackURLs() {
         CallbackHeader callbackHeader =
                 getHeaders().getFirstHeader(UpnpHeader.Type.CALLBACK, CallbackHeader.class);
-        return callbackHeader.getValue().size() > 0;
+        return !callbackHeader.getValue().isEmpty();
     }
 
 }

@@ -37,7 +37,7 @@ public class ProtocolFactoryTest {
     public void noSyncProtocol() throws Exception {
         MockUpnpService upnpService = new MockUpnpService();
 
-        ReceivingSync protocol = upnpService.getProtocolFactory().createReceivingSync(
+        ReceivingSync<?, ?> protocol = upnpService.getProtocolFactory().createReceivingSync(
             new StreamRequestMessage(
                 UpnpRequest.Method.NOTIFY,
                 URI.create("/dev/1234/upnp-org/SwitchPower/invalid"),
@@ -55,7 +55,7 @@ public class ProtocolFactoryTest {
             URI.create("/dev/1234/upnp-org/SwitchPower" + Namespace.EVENTS + Namespace.CALLBACK_FILE),
             ""
         );
-        ReceivingSync protocol = upnpService.getProtocolFactory().createReceivingSync(message);
+        ReceivingSync<?, ?> protocol = upnpService.getProtocolFactory().createReceivingSync(message);
         assertTrue(protocol instanceof ReceivingEvent);
 
         // TODO: UPNP VIOLATION: Onkyo devices send event messages with trailing garbage characters

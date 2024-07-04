@@ -56,8 +56,8 @@ public class ActionInvokeIncomingTest {
 
     public static final String SET_REQUEST = "<?xml version=\"1.0\"?>\n" +
             " <s:Envelope\n" +
-            "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-            "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+            "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+            "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
             "   <s:Body>\n" +
             "     <u:SetTarget xmlns:u=\"urn:schemas-upnp-org:service:SwitchPower:1\">\n" +
             "       <NewTargetValue>1</NewTargetValue>\n" +
@@ -67,8 +67,8 @@ public class ActionInvokeIncomingTest {
 
     public static final String GET_REQUEST = "<?xml version=\"1.0\"?>\n" +
             " <s:Envelope\n" +
-            "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-            "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+            "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+            "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
             "   <s:Body>\n" +
             "     <u:GetTarget xmlns:u=\"urn:schemas-upnp-org:service:SwitchPower:1\"/>\n" +
             "   </s:Body>\n" +
@@ -76,8 +76,8 @@ public class ActionInvokeIncomingTest {
 
     public static final String QUERY_STATE_VARIABLE_REQUEST = "<?xml version=\"1.0\"?>\n" +
             " <s:Envelope\n" +
-            "     xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-            "     s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
+            "     xmlns:s=\"https://schemas.xmlsoap.org/soap/envelope/\"\n" +
+            "     s:encodingStyle=\"https://schemas.xmlsoap.org/soap/encoding/\">\n" +
             "   <s:Body>\n" +
             "     <u:QueryStateVariable xmlns:u=\"urn:schemas-upnp-org:control-1-0\">\n" +
             "       <varName>Status</varName>\n" +

@@ -22,9 +22,9 @@ import java.net.URI;
 /**
  * @author Christian Bauer
  */
-public class ServiceDescriptorResource extends Resource<LocalService> {
+public class ServiceDescriptorResource<T> extends Resource<LocalService<T>> {
 
-    public ServiceDescriptorResource(URI localURI, LocalService model) {
+    public ServiceDescriptorResource(URI localURI, LocalService<T> model) {
         super(localURI, model);
     }
 }

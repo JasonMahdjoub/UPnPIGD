@@ -69,7 +69,7 @@ public class Connection {
         @Override
         public int hashCode() {
             int result = status.hashCode();
-            result = 31 * result + (int) (uptimeSeconds ^ (uptimeSeconds >>> 32));
+            result = 31 * result + Long.hashCode(uptimeSeconds);
             result = 31 * result + lastError.hashCode();
             return result;
         }

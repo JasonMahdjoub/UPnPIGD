@@ -48,7 +48,6 @@ import javax.xml.parsers.FactoryConfigurationError;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -141,7 +140,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
             Element bodyElement = readBodyElement(d);
 
-            readBodyRequest(d, bodyElement, requestMessage, actionInvocation);
+            readBodyRequest(bodyElement, requestMessage, actionInvocation);
 
         } catch (Exception ex) {
             throw new UnsupportedDataException("Can't transform message payload: " + ex, ex, body);
@@ -170,10 +169,10 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
             Element bodyElement = readBodyElement(d);
 
-            ActionException failure = readBodyFailure(d, bodyElement);
+            ActionException failure = readBodyFailure(bodyElement);
 
             if (failure == null) {
-                readBodyResponse(d, bodyElement, responseMsg, actionInvocation);
+                readBodyResponse(bodyElement, actionInvocation);
             } else {
                 actionInvocation.setFailure(failure);
             }
@@ -215,23 +214,20 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         message.setBody(toString(d));
     }
 
-    protected ActionException readBodyFailure(Document d, Element bodyElement) throws Exception {
+    protected ActionException readBodyFailure(Element bodyElement) {
         return readFaultElement(bodyElement);
     }
 
-    protected <S extends Service<?, ?, ?>> void readBodyRequest(Document d,
-                                   Element bodyElement,
-                                   ActionRequestMessage message,
-                                   ActionInvocation<S> actionInvocation) throws Exception {
+    protected <S extends Service<?, ?, ?>> void readBodyRequest(Element bodyElement,
+                                                                ActionRequestMessage message,
+                                                                ActionInvocation<S> actionInvocation) throws Exception {
 
         Element actionRequestElement = readActionRequestElement(bodyElement, message, actionInvocation);
         readActionInputArguments(actionRequestElement, actionInvocation);
     }
 
-    protected <S extends Service<?, ?, ?>> void readBodyResponse(Document d,
-                                    Element bodyElement,
-                                    ActionResponseMessage message,
-                                    ActionInvocation<S> actionInvocation) throws Exception {
+    protected <S extends Service<?, ?, ?>> void readBodyResponse(Element bodyElement,
+                                                                 ActionInvocation<S> actionInvocation) throws Exception {
 
         Element actionResponse = readActionResponseElement(bodyElement, actionInvocation);
         readActionOutputArguments(actionResponse, actionInvocation);

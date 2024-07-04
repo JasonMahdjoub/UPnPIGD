@@ -16,7 +16,6 @@
 package com.distrimind.upnp_igd.support.lastchange;
 
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
-import com.distrimind.upnp_igd.support.lastchange.LastChangeAwareServiceManager;
 
 /**
  * Any service implementation using the "LastChange" mechanism.

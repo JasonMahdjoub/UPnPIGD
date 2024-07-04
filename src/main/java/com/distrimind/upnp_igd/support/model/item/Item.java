@@ -39,29 +39,29 @@ public class Item extends DIDLObject {
         setRefID(other.getRefID());
     }
 
-    public Item(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property> properties, List<DescMeta> descMetadata) {
+    public Item(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property<?>> properties, List<DescMeta<?>> descMetadata) {
         super(id, parentID, title, creator, restricted, writeStatus, clazz, resources, properties, descMetadata);
     }
 
-    public Item(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property> properties, List<DescMeta> descMetadata, String refID) {
+    public Item(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property<?>> properties, List<DescMeta<?>> descMetadata, String refID) {
         super(id, parentID, title, creator, restricted, writeStatus, clazz, resources, properties, descMetadata);
         this.refID = refID;
     }
 
     public Item(String id, Container parent, String title, String creator, Class clazz) {
-        this(id, parent.getId(), title, creator, false, null, clazz, new ArrayList(), new ArrayList(), new ArrayList());
+        this(id, parent.getId(), title, creator, false, null, clazz, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     public Item(String id, Container parent, String title, String creator, Class clazz, String refID) {
-        this(id, parent.getId(), title, creator, false, null, clazz, new ArrayList(), new ArrayList(), new ArrayList(), refID);
+        this(id, parent.getId(), title, creator, false, null, clazz, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), refID);
     }
 
     public Item(String id, String parentID, String title, String creator, Class clazz) {
-        this(id, parentID, title, creator, false, null, clazz, new ArrayList(), new ArrayList(), new ArrayList());
+        this(id, parentID, title, creator, false, null, clazz, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     public Item(String id, String parentID, String title, String creator, Class clazz, String refID) {
-        this(id, parentID, title, creator, false, null, clazz, new ArrayList(), new ArrayList(), new ArrayList(), refID);
+        this(id, parentID, title, creator, false, null, clazz, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), refID);
     }
 
     public String getRefID() {

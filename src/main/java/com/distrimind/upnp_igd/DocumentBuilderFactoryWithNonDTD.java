@@ -15,13 +15,6 @@
 
 package com.distrimind.upnp_igd;
 
-
-/**
- * @author Jason Mahdjoub
- * @version 1.0
- * @since UPNPIGD 1.0.0
- */
-
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

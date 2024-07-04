@@ -29,7 +29,7 @@ import com.distrimind.upnp_igd.model.types.NotificationSubtype;
  */
 public class OutgoingNotificationRequestRootDevice extends OutgoingNotificationRequest {
 
-    public OutgoingNotificationRequestRootDevice(Location location, LocalDevice device, NotificationSubtype type) {
+    public OutgoingNotificationRequestRootDevice(Location location, LocalDevice<?> device, NotificationSubtype type) {
         super(location, device, type);
 
         getHeaders().add(UpnpHeader.Type.NT, new RootDeviceHeader());

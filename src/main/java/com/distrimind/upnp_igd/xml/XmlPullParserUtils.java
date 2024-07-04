@@ -64,8 +64,8 @@ public class XmlPullParserUtils {
 
 		if (indent > 0) {
 			try {
-				serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
-				//serializer.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", StringUtils.repeat(' ', indent));
+				serializer.setFeature("https://xmlpull.org/v1/doc/features.html#indent-output", true);
+				//serializer.setProperty("https://xmlpull.org/v1/doc/properties.html#serializer-indentation", StringUtils.repeat(' ', indent));
 			} catch (Exception e) {
 				log.warning("error setting feature of XmlSerializer: " + e);
 			}

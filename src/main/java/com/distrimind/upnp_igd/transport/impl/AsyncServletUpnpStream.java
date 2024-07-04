@@ -198,14 +198,9 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
 
         // Body
         byte[] bodyBytes;
-        InputStream is = null;
-        try {
-            is = getRequest().getInputStream();
-            bodyBytes = IO.readBytes(is);
-        } finally {
-            if (is != null)
-                is.close();
-        }
+		try (InputStream is = getRequest().getInputStream()) {
+			bodyBytes = IO.readBytes(is);
+		}
         if (log.isLoggable(Level.FINER))
             log.finer("Reading request body bytes: " + bodyBytes.length);
 

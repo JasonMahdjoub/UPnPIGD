@@ -22,9 +22,9 @@ import java.net.URI;
 /**
  * @author Christian Bauer
  */
-public class ServiceEventSubscriptionResource extends Resource<LocalService> {
+public class ServiceEventSubscriptionResource<T> extends Resource<LocalService<T>> {
 
-    public ServiceEventSubscriptionResource(URI localURI, LocalService model) {
+    public ServiceEventSubscriptionResource(URI localURI, LocalService<T> model) {
         super(localURI, model);
     }
 }

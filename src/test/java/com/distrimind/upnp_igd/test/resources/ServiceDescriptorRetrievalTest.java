@@ -45,8 +45,8 @@ public class ServiceDescriptorRetrievalTest {
         MockUpnpService upnpService = new MockUpnpService();
 
         // Register a device
-        LocalDevice localDevice = SampleData.createLocalDevice();
-        LocalService service = SampleData.getFirstService(localDevice);
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
+        LocalService<?> service = SampleData.getFirstService(localDevice);
         upnpService.getRegistry().addDevice(localDevice);
 
         // Retrieve the descriptor
@@ -78,8 +78,8 @@ public class ServiceDescriptorRetrievalTest {
         MockUpnpService upnpService = new MockUpnpService();
 
         // Retrieve the descriptor
-        LocalDevice localDevice = SampleData.createLocalDevice();
-        Service service = SampleData.getFirstService(localDevice);
+        LocalDevice<?> localDevice = SampleData.createLocalDevice();
+        Service<?, ?, ?> service = SampleData.getFirstService(localDevice);
 
         URI descriptorURI = upnpService.getConfiguration().getNamespace().getDescriptorPath(service);
         StreamRequestMessage descRetrievalMessage =

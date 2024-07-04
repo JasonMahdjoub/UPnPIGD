@@ -52,12 +52,11 @@ public class TextItem extends Item {
         return getFirstPropertyValue(DIDLObject.Property.UPNP.AUTHOR.class);
     }
 
-    public PersonWithRole[] getAuthors() {
-        List<PersonWithRole> list = getPropertyValues(DIDLObject.Property.UPNP.AUTHOR.class);
-        return list.toArray(new PersonWithRole[list.size()]);
+    public List<PersonWithRole> getAuthors() {
+        return getPropertyValues(DIDLObject.Property.UPNP.AUTHOR.class);
     }
 
-    public TextItem setAuthors(PersonWithRole[] persons) {
+    public TextItem setAuthors(List<PersonWithRole> persons) {
         removeProperties(DIDLObject.Property.UPNP.AUTHOR.class);
         for (PersonWithRole p: persons) {
             addProperty(new DIDLObject.Property.UPNP.AUTHOR(p));
@@ -114,12 +113,11 @@ public class TextItem extends Item {
         return getFirstPropertyValue(DIDLObject.Property.DC.RELATION.class);
     }
 
-    public URI[] getRelations() {
-        List<URI> list = getPropertyValues(DIDLObject.Property.DC.RELATION.class);
-        return list.toArray(new URI[list.size()]);
+    public List<URI> getRelations() {
+        return getPropertyValues(DIDLObject.Property.DC.RELATION.class);
     }
 
-    public TextItem setRelations(URI[] relations) {
+    public TextItem setRelations(List<URI> relations) {
         removeProperties(DIDLObject.Property.DC.RELATION.class);
         for (URI relation : relations) {
             addProperty(new DIDLObject.Property.DC.RELATION(relation));
@@ -131,12 +129,11 @@ public class TextItem extends Item {
         return getFirstPropertyValue(DIDLObject.Property.DC.RIGHTS.class);
     }
 
-    public String[] getRights() {
-        List<String> list = getPropertyValues(DIDLObject.Property.DC.RIGHTS.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getRights() {
+        return getPropertyValues(DIDLObject.Property.DC.RIGHTS.class);
     }
 
-    public TextItem setRights(String[] rights) {
+    public TextItem setRights(List<String> rights) {
         removeProperties(DIDLObject.Property.DC.RIGHTS.class);
         for (String right : rights) {
             addProperty(new DIDLObject.Property.DC.RIGHTS(right));
@@ -157,12 +154,11 @@ public class TextItem extends Item {
         return getFirstPropertyValue(DIDLObject.Property.DC.CONTRIBUTOR.class);
     }
 
-    public Person[] getContributors() {
-        List<Person> list = getPropertyValues(DIDLObject.Property.DC.CONTRIBUTOR.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getContributors() {
+        return getPropertyValues(DIDLObject.Property.DC.CONTRIBUTOR.class);
     }
 
-    public TextItem setContributors(Person[] contributors) {
+    public TextItem setContributors(List<Person> contributors) {
         removeProperties(DIDLObject.Property.DC.CONTRIBUTOR.class);
         for (Person p : contributors) {
             addProperty(new DIDLObject.Property.DC.CONTRIBUTOR(p));
@@ -174,12 +170,11 @@ public class TextItem extends Item {
         return getFirstPropertyValue(DIDLObject.Property.DC.PUBLISHER.class);
     }
 
-    public Person[] getPublishers() {
-        List<Person> list = getPropertyValues(DIDLObject.Property.DC.PUBLISHER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getPublishers() {
+        return getPropertyValues(DIDLObject.Property.DC.PUBLISHER.class);
     }
 
-    public TextItem setPublishers(Person[] publishers) {
+    public TextItem setPublishers(List<Person> publishers) {
         removeProperties(DIDLObject.Property.DC.PUBLISHER.class);
         for (Person publisher : publishers) {
             addProperty(new DIDLObject.Property.DC.PUBLISHER(publisher));

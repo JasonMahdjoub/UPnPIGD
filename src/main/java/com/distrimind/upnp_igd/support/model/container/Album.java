@@ -85,12 +85,11 @@ public class Album extends Container {
         return getFirstPropertyValue(DIDLObject.Property.DC.RELATION.class);
     }
 
-    public URI[] getRelations() {
-        List<URI> list = getPropertyValues(DIDLObject.Property.DC.RELATION.class);
-        return list.toArray(new URI[list.size()]);
+    public List<URI> getRelations() {
+		return getPropertyValues(Property.DC.RELATION.class);
     }
 
-    public Album setRelations(URI[] relations) {
+    public Album setRelations(List<URI> relations) {
         removeProperties(DIDLObject.Property.DC.RELATION.class);
         for (URI relation : relations) {
             addProperty(new DIDLObject.Property.DC.RELATION(relation));
@@ -102,12 +101,11 @@ public class Album extends Container {
         return getFirstPropertyValue(DIDLObject.Property.DC.RIGHTS.class);
     }
 
-    public String[] getRights() {
-        List<String> list = getPropertyValues(DIDLObject.Property.DC.RIGHTS.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getRights() {
+		return getPropertyValues(Property.DC.RIGHTS.class);
     }
 
-    public Album setRights(String[] rights) {
+    public Album setRights(List<String> rights) {
         removeProperties(DIDLObject.Property.DC.RIGHTS.class);
         for (String right : rights) {
             addProperty(new DIDLObject.Property.DC.RIGHTS(right));
@@ -119,12 +117,11 @@ public class Album extends Container {
         return getFirstPropertyValue(DIDLObject.Property.DC.CONTRIBUTOR.class);
     }
 
-    public Person[] getContributors() {
-        List<Person> list = getPropertyValues(DIDLObject.Property.DC.CONTRIBUTOR.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getContributors() {
+        return getPropertyValues(DIDLObject.Property.DC.CONTRIBUTOR.class);
     }
 
-    public Album setContributors(Person[] contributors) {
+    public Album setContributors(List<Person> contributors) {
         removeProperties(DIDLObject.Property.DC.CONTRIBUTOR.class);
         for (Person p : contributors) {
             addProperty(new DIDLObject.Property.DC.CONTRIBUTOR(p));
@@ -136,12 +133,11 @@ public class Album extends Container {
         return getFirstPropertyValue(DIDLObject.Property.DC.PUBLISHER.class);
     }
 
-    public Person[] getPublishers() {
-        List<Person> list = getPropertyValues(DIDLObject.Property.DC.PUBLISHER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getPublishers() {
+        return getPropertyValues(DIDLObject.Property.DC.PUBLISHER.class);
     }
 
-    public Album setPublishers(Person[] publishers) {
+    public Album setPublishers(List<Person> publishers) {
         removeProperties(DIDLObject.Property.DC.PUBLISHER.class);
         for (Person publisher : publishers) {
             addProperty(new DIDLObject.Property.DC.PUBLISHER(publisher));

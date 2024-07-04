@@ -19,6 +19,8 @@ import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.support.shared.AbstractMap;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public abstract class EventedValue<V> {
@@ -29,7 +31,7 @@ public abstract class EventedValue<V> {
         this.value = value;
     }
 
-    public EventedValue(Map.Entry<String,String>[] attributes) {
+    public EventedValue(Collection<Map.Entry<String,String>> attributes) {
         try {
             this.value = valueOf(attributes);
         } catch (InvalidValueException ex) {
@@ -45,13 +47,13 @@ public abstract class EventedValue<V> {
         return value;
     }
 
-    public Map.Entry<String, String>[] getAttributes() {
-        return new Map.Entry[] {
+    public List<Map.Entry<String, String>> getAttributes() {
+        return List.of(
             new AbstractMap.SimpleEntry<>("val", toString())
-        };
+        );
     }
 
-    protected V valueOf(Map.Entry<String,String>[] attributes) throws InvalidValueException {
+    protected V valueOf(Collection<Map.Entry<String,String>> attributes) throws InvalidValueException {
         V v = null;
         for (Map.Entry<String, String> attribute : attributes) {
             if (attribute.getKey().equals("val")) v = valueOf(attribute.getValue());
@@ -59,14 +61,14 @@ public abstract class EventedValue<V> {
         return v;
     }
 
-    protected V valueOf(String s) throws InvalidValueException {
+	protected V valueOf(String s) throws InvalidValueException {
         return (V)getDatatype().valueOf(s);
     }
 
-    @Override
+	@Override
     public String toString() {
         return getDatatype().getString(getValue());
     }
 
-    abstract protected Datatype getDatatype();
+    abstract protected Datatype<V> getDatatype();
 }

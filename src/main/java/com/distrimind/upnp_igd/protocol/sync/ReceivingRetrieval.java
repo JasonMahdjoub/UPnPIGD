@@ -71,7 +71,7 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
 
         URI requestedURI = getInputMessage().getOperation().getURI();
 
-        Resource foundResource = getUpnpService().getRegistry().getResource(requestedURI);
+        Resource<?> foundResource = getUpnpService().getRegistry().getResource(requestedURI);
 
         if (foundResource == null) {
             foundResource = onResourceNotFound(requestedURI);
@@ -84,7 +84,7 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
         return createResponse(requestedURI, foundResource);
     }
 
-    protected StreamResponseMessage createResponse(URI requestedURI, Resource resource) {
+    protected StreamResponseMessage createResponse(URI requestedURI, Resource<?> resource) {
 
         StreamResponseMessage response;
 
@@ -93,7 +93,7 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
             if (DeviceDescriptorResource.class.isAssignableFrom(resource.getClass())) {
 
                 log.fine("Found local device matching relative request URI: " + requestedURI);
-                LocalDevice device = (LocalDevice) resource.getModel();
+                LocalDevice<?> device = (LocalDevice<?>) resource.getModel();
 
                 DeviceDescriptorBinder deviceDescriptorBinder =
                         getUpnpService().getConfiguration().getDeviceDescriptorBinderUDA10();
@@ -110,7 +110,7 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
 
 
                 log.fine("Found local service matching relative request URI: " + requestedURI);
-                LocalService service = (LocalService) resource.getModel();
+                LocalService<?> service = (LocalService<?>) resource.getModel();
 
                 ServiceDescriptorBinder serviceDescriptorBinder =
                         getUpnpService().getConfiguration().getServiceDescriptorBinderUDA10();
@@ -149,7 +149,7 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
      * @param requestedURIPath The requested URI path
      * @return <code>null</code> or your own {@link Resource}
      */
-    protected Resource onResourceNotFound(URI requestedURIPath) {
+    protected Resource<?> onResourceNotFound(URI requestedURIPath) {
         return null;
     }
 }

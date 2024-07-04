@@ -80,12 +80,12 @@ public interface ProtocolFactory {
     /**
      * Called by the {@link Registry}, creates a protocol for announcing local devices.
      */
-	SendingNotificationAlive createSendingNotificationAlive(LocalDevice localDevice);
+	<T> SendingNotificationAlive createSendingNotificationAlive(LocalDevice<T> localDevice);
 
     /**
      * Called by the {@link Registry}, creates a protocol for announcing local devices.
      */
-	SendingNotificationByebye createSendingNotificationByebye(LocalDevice localDevice);
+	<T> SendingNotificationByebye createSendingNotificationByebye(LocalDevice<T> localDevice);
 
     /**
      * Called by the {@link ControlPoint}, creates a protocol for a multicast search.

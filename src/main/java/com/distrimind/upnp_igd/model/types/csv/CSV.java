@@ -77,6 +77,6 @@ public abstract class CSV<T> extends ArrayList<T> {
         for (T t : this) {
             stringValues.add(datatype.getDatatype().getObjectString(t));
         }
-        return ModelUtil.toCommaSeparatedList(stringValues.toArray(new Object[0]));
+        return ModelUtil.toCommaSeparatedList(stringValues);
     }
 }

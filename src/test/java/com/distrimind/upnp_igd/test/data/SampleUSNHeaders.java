@@ -18,7 +18,6 @@ package com.distrimind.upnp_igd.test.data;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.message.OutgoingDatagramMessage;
 import com.distrimind.upnp_igd.model.message.UpnpMessage;
-import com.distrimind.upnp_igd.model.message.UpnpOperation;
 import com.distrimind.upnp_igd.model.message.header.DeviceTypeHeader;
 import com.distrimind.upnp_igd.model.message.header.DeviceUSNHeader;
 import com.distrimind.upnp_igd.model.message.header.RootDeviceHeader;
@@ -38,7 +37,7 @@ import static org.testng.Assert.assertTrue;
  */
 public class SampleUSNHeaders {
 
-    public static void assertUSNHeaders(List<OutgoingDatagramMessage> msgs, LocalDevice rootDevice, LocalDevice embeddedDevice, UpnpHeader.Type ntstHeaderType) {
+    public static void assertUSNHeaders(List<OutgoingDatagramMessage<?>> msgs, LocalDevice<?> rootDevice, LocalDevice<?> embeddedDevice, UpnpHeader.Type ntstHeaderType) {
 
         // See the tables in UDA 1.0 section 1.1.2
 
@@ -52,7 +51,7 @@ public class SampleUSNHeaders {
         boolean gotFirstServiceMsg = false;
         boolean gotSecondServiceMsg = false;
 
-        for (UpnpMessage<UpnpOperation> msg : msgs) {
+        for (UpnpMessage<?> msg : msgs) {
 
             if (msg.getHeaders().getFirstHeader(ntstHeaderType, RootDeviceHeader.class) != null) {
                 assertEquals(

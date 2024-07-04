@@ -262,12 +262,10 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
                         return false;
                     }
                 }
-            } catch (NullPointerException ignored) {
-                return false;
-            } catch (ClassCastException ignored) {
+            } catch (NullPointerException | ClassCastException ignored) {
                 return false;
             }
-            return true;
+			return true;
         }
         return false;
     }
@@ -306,10 +304,9 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      */
     @Override public int hashCode() {
         int result = 0;
-        Iterator<Entry<K, V>> it = entrySet().iterator();
-        while (it.hasNext()) {
-            result += it.next().hashCode();
-        }
+		for (Entry<K, V> kvEntry : entrySet()) {
+			result += kvEntry.hashCode();
+		}
         return result;
     }
 

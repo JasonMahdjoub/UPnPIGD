@@ -32,7 +32,7 @@ public class OutgoingActionResponseMessage extends StreamResponseMessage impleme
 
     private String actionNamespace;
 
-    public OutgoingActionResponseMessage(Action action) {
+    public OutgoingActionResponseMessage(Action<?> action) {
         this(UpnpResponse.Status.OK, action);
     }
 
@@ -40,7 +40,7 @@ public class OutgoingActionResponseMessage extends StreamResponseMessage impleme
         this(status, null);
     }
 
-    public OutgoingActionResponseMessage(UpnpResponse.Status status, Action action) {
+    public OutgoingActionResponseMessage(UpnpResponse.Status status, Action<?> action) {
         super(new UpnpResponse(status));
 
         if (action != null) {

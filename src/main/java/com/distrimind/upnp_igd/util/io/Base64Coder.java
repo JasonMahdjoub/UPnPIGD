@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
- * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.</p>
+ * <p>Homepage: <a href="https://iharder.net/base64">https://iharder.net/base64</a>.</p>
  * 
  * <p>Example:</p>
  * 
@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
  * things as first gzipping the bytes before encoding them, not inserting linefeeds,
  * and encoding using the URL-safe and Ordered dialects.</p>
  *
- * <p>Note, according to <a href="http://www.faqs.org/rfcs/rfc3548.html">RFC3548</a>,
+ * <p>Note, according to <a href="https://www.faqs.org/rfcs/rfc3548.html">RFC3548</a>,
  * Section 2.1, implementations should not add line feeds unless explicitly told
  * to do so. I've got Base64 set to this behavior now, although earlier versions
  * broke lines by default.</p>
@@ -76,7 +76,7 @@ import java.nio.charset.StandardCharsets;
  *   that may affect you:
  *   <ul>
  *    <li><em>Does not break lines, by default.</em> This is to keep in compliance with
- *      <a href="http://www.faqs.org/rfcs/rfc3548.html">RFC3548</a>.</li>
+ *      <a href="https://www.faqs.org/rfcs/rfc3548.html">RFC3548</a>.</li>
  *    <li><em>Throws exceptions instead of returning null values.</em> Because some operations
  *      (especially those that may permit the GZIP option) use IO streams, there
  *      is a possiblity of an java.io.IOException being thrown. After some discussion and
@@ -1281,46 +1281,22 @@ public class Base64Coder
             
             int head = ((int)bytes[0] & 0xff) | ((bytes[1] << 8) & 0xff00);
             if( java.util.zip.GZIPInputStream.GZIP_MAGIC == head )  {
-                java.io.ByteArrayInputStream  bais = null;
-                java.util.zip.GZIPInputStream gzis = null;
-                java.io.ByteArrayOutputStream baos = null;
-                byte[] buffer = new byte[2048];
+				byte[] buffer = new byte[2048];
                 int    length = 0;
 
-                try {
-                    baos = new java.io.ByteArrayOutputStream();
-                    bais = new java.io.ByteArrayInputStream( bytes );
-                    gzis = new java.util.zip.GZIPInputStream( bais );
+				try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream(); java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes); java.util.zip.GZIPInputStream gzis = new java.util.zip.GZIPInputStream(bais)) {
 
-                    while( ( length = gzis.read( buffer ) ) >= 0 ) {
-                        baos.write(buffer,0,length);
-                    }   // end while: reading input
+					while ((length = gzis.read(buffer)) >= 0) {
+						baos.write(buffer, 0, length);
+					}   // end while: reading input
 
-                    // No error? Get new bytes.
-                    bytes = baos.toByteArray();
+					// No error? Get new bytes.
+					bytes = baos.toByteArray();
 
-                }   // end try
-                catch( java.io.IOException e ) {
-                    e.printStackTrace();
-                    // Just return originally-decoded bytes
-                }   // end catch
-                finally {
-                    try{
-						if (baos != null) {
-							baos.close();
-						}
-					} catch(Exception ignored){}
-                    try{
-						if (gzis != null) {
-							gzis.close();
-						}
-					} catch(Exception ignored){}
-                    try{
-						if (bais != null) {
-							bais.close();
-						}
-					} catch(Exception ignored){}
-                }   // end finally
+				} catch (IOException e) {
+					e.printStackTrace();
+					// Just return originally-decoded bytes
+				}
 
             }   // end if: gzipped
         }   // end if: bytes.length >= 2
@@ -1390,13 +1366,8 @@ public class Base64Coder
                     @Override
                     public Class<?> resolveClass(java.io.ObjectStreamClass streamClass)
                     throws java.io.IOException, ClassNotFoundException {
-                        Class c = Class.forName(streamClass.getName(), false, loader);
-                        if( c == null ){
-                            return super.resolveClass(streamClass);
-                        } else {
-                            return c;   // Class loader knows of this class.
-                        }   // end else: not null
-                    }   // end resolveClass
+						return Class.forName(streamClass.getName(), false, loader);   // Class loader knows of this class.
+					}   // end resolveClass
                 };  // end ois
             }   // end else: no custom class loader
         

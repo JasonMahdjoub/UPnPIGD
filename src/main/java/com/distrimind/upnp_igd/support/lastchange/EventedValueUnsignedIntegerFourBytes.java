@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.support.lastchange;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -29,12 +30,13 @@ public class EventedValueUnsignedIntegerFourBytes extends EventedValue<UnsignedI
         super(value);
     }
 
-    public EventedValueUnsignedIntegerFourBytes(Map.Entry<String, String>[] attributes) {
+    public EventedValueUnsignedIntegerFourBytes(Collection<Map.Entry<String, String>> attributes) {
         super(attributes);
     }
 
-    @Override
-    protected Datatype getDatatype() {
-        return Datatype.Builtin.UI4.getDatatype();
+    @SuppressWarnings("unchecked")
+	@Override
+    protected Datatype<UnsignedIntegerFourBytes> getDatatype() {
+        return (Datatype<UnsignedIntegerFourBytes>)Datatype.Builtin.UI4.getDatatype();
     }
 }

@@ -19,7 +19,7 @@
 			&lt;CurrentTrackMetaData val=&quot;&amp;lt;DIDL-Lite
 			xmlns=&amp;quot;urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/&amp;quot;
 			xmlns:upnp=&amp;quot;urn:schemas-upnp-org:metadata-1-0/upnp/&amp;quot;
-			xmlns:dc=&amp;quot;http://purl.org/dc/elements/1.1/&amp;quot;
+			xmlns:dc=&amp;quot;https://purl.org/dc/elements/1.1/&amp;quot;
 			xmlns:dlna=&amp;quot;urn:schemas-dlna-org:metadata-1-0/&amp;quot;&amp;gt;&amp;lt;item
 			parentID=&amp;quot;musicdb://3/492/&amp;quot;
 			id=&amp;quot;musicdb://3/492/5249.mp3&amp;quot;&amp;gt;&amp;lt;upnp:albumArtURI

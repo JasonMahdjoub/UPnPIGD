@@ -31,7 +31,7 @@ public interface GENAEventProcessor {
      * Transforms a collection of {@link StateVariableValue}s into an XML message body.
      *
      * @param requestMessage The message to transform.
-     * @throws UnsupportedDataException
+     *
      */
 	void writeBody(OutgoingEventRequestMessage requestMessage) throws UnsupportedDataException;
 
@@ -39,7 +39,7 @@ public interface GENAEventProcessor {
      * Transforms an XML message body and adds to a collection of {@link StateVariableValue}s..
      *
      * @param requestMessage The message to transform.
-     * @throws UnsupportedDataException
+     *
      */
 	void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException;
 

@@ -21,7 +21,7 @@ import java.net.URL;
 /**
  * TODO: UDA 1.1 says it should be RfC 3986 compatible.
  *
- * <p>See http://blog.jclark.com/2008/11/what-allowed-in-uri.html</p>
+ * <p>See <a href="https://blog.jclark.com/2008/11/what-allowed-in-uri.html">https://blog.jclark.com/2008/11/what-allowed-in-uri.html</a></p>
  *
  * @author Christian Bauer
  */

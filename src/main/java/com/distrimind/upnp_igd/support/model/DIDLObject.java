@@ -19,7 +19,6 @@ import org.w3c.dom.Element;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -647,9 +646,9 @@ public abstract class DIDLObject {
     protected Class clazz; // UPNP
 
     protected List<Res> resources = new ArrayList<>();
-    protected List<Property> properties = new ArrayList<>();
+    protected List<Property<?>> properties = new ArrayList<>();
 
-    protected List<DescMeta> descMetadata = new ArrayList<>();
+    protected List<DescMeta<?>> descMetadata = new ArrayList<>();
 
     protected DIDLObject() {
     }
@@ -668,7 +667,7 @@ public abstract class DIDLObject {
         );
     }
 
-    protected DIDLObject(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property> properties, List<DescMeta> descMetadata) {
+    protected DIDLObject(String id, String parentID, String title, String creator, boolean restricted, WriteStatus writeStatus, Class clazz, List<Res> resources, List<Property<?>> properties, List<DescMeta<?>> descMetadata) {
         this.id = id;
         this.parentID = parentID;
         this.title = title;
@@ -736,7 +735,7 @@ public abstract class DIDLObject {
     }
 
     public Res getFirstResource() {
-        return getResources().size() > 0 ? getResources().get(0) : null;
+        return !getResources().isEmpty() ? getResources().get(0) : null;
     }
 
     public List<Res> getResources() {
@@ -762,95 +761,93 @@ public abstract class DIDLObject {
         return this;
     }
 
-    public List<Property> getProperties() {
+    public List<Property<?>> getProperties() {
         return properties;
     }
 
-    public DIDLObject setProperties(List<Property> properties) {
+    public DIDLObject setProperties(List<Property<?>> properties) {
         this.properties = properties;
         return this;
     }
 
-    public DIDLObject addProperty(Property property) {
+    public DIDLObject addProperty(Property<?> property) {
         if (property == null) return this;
         getProperties().add(property);
         return this;
     }
 
-    public DIDLObject replaceFirstProperty(Property property) {
+    public DIDLObject replaceFirstProperty(Property<?> property) {
         if (property == null) return this;
-        Iterator<Property> it = getProperties().iterator();
-        while (it.hasNext()) {
-            Property p = it.next();
-            if (p.getClass().isAssignableFrom(property.getClass()))
-                it.remove();
-        }
+		getProperties().removeIf(p -> p.getClass().isAssignableFrom(property.getClass()));
         addProperty(property);
         return this;
     }
 
-    public DIDLObject replaceProperties(java.lang.Class<? extends Property> propertyClass, Property[] properties) {
-        if (properties.length == 0) return this;
+    public DIDLObject replaceProperties(java.lang.Class<? extends Property<?>> propertyClass, List<Property<?>> properties) {
+        if (properties.isEmpty()) return this;
         removeProperties(propertyClass);
         return addProperties(properties);
     }
 
-    public DIDLObject addProperties(Property[] properties) {
+    public DIDLObject addProperties(List<Property<?>> properties) {
         if (properties == null) return this;
-        for (Property property : properties) {
+        for (Property<?> property : properties) {
             addProperty(property);
         }
         return this;
     }
 
-    public DIDLObject removeProperties(java.lang.Class<? extends Property> propertyClass) {
-        Iterator<Property> it = getProperties().iterator();
-        while (it.hasNext()) {
-            Property property = it.next();
-            if (propertyClass.isInstance(property))
-                it.remove();
-        }
+    public DIDLObject removeProperties(java.lang.Class<? extends Property<?>> propertyClass) {
+		getProperties().removeIf(propertyClass::isInstance);
         return this;
     }
 
-    public boolean hasProperty(java.lang.Class<? extends Property> propertyClass) {
-        for (Property property : getProperties()) {
+    public boolean hasProperty(java.lang.Class<? extends Property<?>> propertyClass) {
+        for (Property<?> property : getProperties()) {
             if (propertyClass.isInstance(property)) return true;
         }
         return false;
     }
 
-    public <V> Property<V> getFirstProperty(java.lang.Class<? extends Property<V>> propertyClass) {
-        for (Property property : getProperties()) {
-            if (propertyClass.isInstance(property)) return property;
+    @SuppressWarnings("unchecked")
+	public <V> Property<V> getFirstProperty(java.lang.Class<? extends Property<V>> propertyClass) {
+        for (Property<?> property : getProperties()) {
+            if (propertyClass.isInstance(property)) return (Property<V>) property;
         }
         return null;
     }
 
-    public <V> Property<V> getLastProperty(java.lang.Class<? extends Property<V>> propertyClass) {
-        Property found = null;
-        for (Property property : getProperties()) {
-            if (propertyClass.isInstance(property)) found = property;
-        }
-        return found;
-    }
-
-    public <V> Property<V>[] getProperties(java.lang.Class<? extends Property<V>> propertyClass) {
-        List<Property<V>> list = new ArrayList<>();
-        for (Property property : getProperties()) {
+	@SuppressWarnings("unchecked")
+	public <V> Property<V> getLastProperty(java.lang.Class<? extends Property<V>> propertyClass) {
+        Property<?> found = null;
+        for (Property<?> property : getProperties()) {
             if (propertyClass.isInstance(property))
-                list.add(property);
+            {
+                found = property;
+                break;
+            }
         }
-        return list.toArray(new Property[list.size()]);
+        return (Property<V>) found;
     }
 
-    public <V> Property<V>[] getPropertiesByNamespace(java.lang.Class<? extends Property.NAMESPACE> namespace) {
+    @SuppressWarnings("unchecked")
+	public <V> List<Property<V>> getProperties(java.lang.Class<? extends Property<V>> propertyClass) {
         List<Property<V>> list = new ArrayList<>();
-        for (Property property : getProperties()) {
-            if (namespace.isInstance(property))
-                list.add(property);
+        for (Property<?> property : getProperties()) {
+            if (propertyClass.isInstance(property))
+                list.add((Property<V>) property);
         }
-        return list.toArray(new Property[list.size()]);
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+	public <V> List<Property<V>> getPropertiesByNamespace(java.lang.Class<? extends Property.NAMESPACE> namespace) {
+        List<Property<V>> list = new ArrayList<>();
+        for (Property<?> property : getProperties()) {
+            if (namespace.isInstance(property))
+                list.add((Property<V>) property);
+        }
+        return list;
     }
 
     public <V> V getFirstPropertyValue(java.lang.Class<? extends Property<V>> propertyClass) {
@@ -860,21 +857,21 @@ public abstract class DIDLObject {
 
     public <V> List<V> getPropertyValues(java.lang.Class<? extends Property<V>> propertyClass) {
         List<V> list = new ArrayList<>();
-        for (Property property : getProperties(propertyClass)) {
-            list.add((V) property.getValue());
+        for (Property<V> property : getProperties(propertyClass)) {
+            list.add(property.getValue());
         }
         return list;
     }
 
-    public List<DescMeta> getDescMetadata() {
+    public List<DescMeta<?>> getDescMetadata() {
         return descMetadata;
     }
 
-    public void setDescMetadata(List<DescMeta> descMetadata) {
+    public void setDescMetadata(List<DescMeta<?>> descMetadata) {
         this.descMetadata = descMetadata;
     }
 
-    public DIDLObject addDescMetadata(DescMeta descMetadata) {
+    public DIDLObject addDescMetadata(DescMeta<?> descMetadata) {
         getDescMetadata().add(descMetadata);
         return this;
     }

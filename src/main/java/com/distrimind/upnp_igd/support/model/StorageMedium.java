@@ -17,8 +17,7 @@ package com.distrimind.upnp_igd.support.model;
 
 import com.distrimind.upnp_igd.model.ModelUtil;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Christian Bauer
@@ -91,13 +90,13 @@ public enum StorageMedium {
         return sm != null ? sm : StorageMedium.VENDOR_SPECIFIC;
     }
 
-    public static StorageMedium[] valueOfCommaSeparatedList(String s) {
+    public static List<StorageMedium> valueOfCommaSeparatedList(String s) {
         String[] strings = ModelUtil.fromCommaSeparatedList(s);
-        if (strings == null) return new StorageMedium[0];
-        StorageMedium[] result = new StorageMedium[strings.length];
-        for (int i = 0; i < strings.length; i++) {
-            result[i] = valueOrVendorSpecificOf(strings[i]);
-        }
+        if (strings == null) return Collections.emptyList();
+        List<StorageMedium> result = new ArrayList<>(strings.length);
+		for (String string : strings) {
+			result.add(valueOrVendorSpecificOf(string));
+		}
         return result;
     }
 

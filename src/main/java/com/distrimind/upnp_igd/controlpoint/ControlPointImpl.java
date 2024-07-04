@@ -82,7 +82,7 @@ public class ControlPointImpl implements ControlPoint {
         search(new STAllHeader(), MXHeader.DEFAULT_VALUE);
     }
 
-    public void search(UpnpHeader searchType) {
+    public void search(UpnpHeader<?> searchType) {
         search(searchType, MXHeader.DEFAULT_VALUE);
     }
 
@@ -90,7 +90,7 @@ public class ControlPointImpl implements ControlPoint {
         search(new STAllHeader(), mxSeconds);
     }
 
-    public void search(UpnpHeader searchType, int mxSeconds) {
+    public void search(UpnpHeader<?> searchType, int mxSeconds) {
         log.fine("Sending asynchronous search for: " + searchType.getString());
         getConfiguration().getAsyncProtocolExecutor().execute(
                 getProtocolFactory().createSendingSearch(searchType, mxSeconds)
@@ -101,7 +101,7 @@ public class ControlPointImpl implements ControlPoint {
         execute(executeAction.getCallback());
     }
 
-    public Future execute(ActionCallback callback) {
+    public Future<?> execute(ActionCallback callback) {
         log.fine("Invoking action in background: " + callback);
         callback.setControlPoint(this);
         ExecutorService executor = getConfiguration().getSyncProtocolExecutorService();

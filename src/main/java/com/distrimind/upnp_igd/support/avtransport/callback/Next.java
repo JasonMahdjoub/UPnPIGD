@@ -31,25 +31,25 @@ public abstract class Next extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(Next.class.getName());
 
-    protected Next(ActionInvocation actionInvocation, ControlPoint controlPoint) {
+    protected Next(ActionInvocation<?> actionInvocation, ControlPoint controlPoint) {
         super(actionInvocation, controlPoint);
     }
 
-    protected Next(ActionInvocation actionInvocation) {
+    protected Next(ActionInvocation<?> actionInvocation) {
         super(actionInvocation);
     }
 
-    public Next(Service service) {
+    public Next(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);
     }
 
-    public Next(UnsignedIntegerFourBytes instanceId, Service service) {
-        super(new ActionInvocation(service.getAction("Next")));
+    public Next(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("Next")));
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         log.fine("Execution successful");
     }
 }

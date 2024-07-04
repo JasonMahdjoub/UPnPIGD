@@ -50,32 +50,32 @@ public class MockProtocolFactory implements ProtocolFactory {
     }
 
     @Override
-    public ReceivingAsync createReceivingAsync(IncomingDatagramMessage message) throws ProtocolCreationException {
+    public ReceivingAsync<?> createReceivingAsync(IncomingDatagramMessage<?> message) throws ProtocolCreationException {
         return null;
     }
 
     @Override
-    public ReceivingSync createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException {
+    public ReceivingSync<?, ?> createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException {
         return null;
     }
 
     @Override
-    public SendingNotificationAlive createSendingNotificationAlive(LocalDevice localDevice) {
+    public <T> SendingNotificationAlive createSendingNotificationAlive(LocalDevice<T> localDevice) {
         return null;
     }
 
     @Override
-    public SendingNotificationByebye createSendingNotificationByebye(LocalDevice localDevice) {
+    public <T> SendingNotificationByebye createSendingNotificationByebye(LocalDevice<T> localDevice) {
         return null;
     }
 
     @Override
-    public SendingSearch createSendingSearch(UpnpHeader searchTarget, int mxSeconds) {
+    public SendingSearch createSendingSearch(UpnpHeader<?> searchTarget, int mxSeconds) {
         return null;
     }
 
     @Override
-    public SendingAction createSendingAction(ActionInvocation actionInvocation, URL controlURL) {
+    public SendingAction createSendingAction(ActionInvocation<?> actionInvocation, URL controlURL) {
         return null;
     }
 
@@ -95,7 +95,7 @@ public class MockProtocolFactory implements ProtocolFactory {
     }
 
     @Override
-    public SendingEvent createSendingEvent(LocalGENASubscription subscription) {
+    public SendingEvent createSendingEvent(LocalGENASubscription<?> subscription) {
         return null;
     }
 }

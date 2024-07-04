@@ -16,7 +16,6 @@
 package com.distrimind.upnp_igd.support.lastchange;
 
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
-import com.distrimind.upnp_igd.support.lastchange.EventedValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +26,13 @@ import java.util.List;
 public class InstanceID {
 
     protected UnsignedIntegerFourBytes id;
-    protected List<EventedValue> values = new ArrayList<>();
+    protected List<EventedValue<?>> values = new ArrayList<>();
 
     public InstanceID(UnsignedIntegerFourBytes id) {
-        this(id, new ArrayList<EventedValue>());
+        this(id, new ArrayList<>());
     }
 
-    public InstanceID(UnsignedIntegerFourBytes id, List<EventedValue> values) {
+    public InstanceID(UnsignedIntegerFourBytes id, List<EventedValue<?>> values) {
         this.id = id;
         this.values = values;
     }
@@ -42,7 +41,7 @@ public class InstanceID {
         return id;
     }
 
-    public List<EventedValue> getValues() {
+    public List<EventedValue<?>> getValues() {
         return values;
     }
 }

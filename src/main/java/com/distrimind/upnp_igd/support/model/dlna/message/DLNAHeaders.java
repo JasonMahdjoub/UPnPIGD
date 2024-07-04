@@ -18,10 +18,7 @@ package com.distrimind.upnp_igd.support.model.dlna.message;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 
 import java.io.ByteArrayInputStream;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
@@ -37,7 +34,7 @@ public class DLNAHeaders extends UpnpHeaders {
 
     private static final Logger log = Logger.getLogger(DLNAHeaders.class.getName());
 
-    protected Map<DLNAHeader.Type, List<UpnpHeader>> parsedDLNAHeaders;
+    protected Map<DLNAHeader.Type, List<UpnpHeader<?>>> parsedDLNAHeaders;
 
     public DLNAHeaders() {
     }
@@ -68,7 +65,7 @@ public class DLNAHeaders extends UpnpHeaders {
             }
 
             for (String value : entry.getValue()) {
-                UpnpHeader upnpHeader = DLNAHeader.newInstance(type, value);
+                UpnpHeader<?> upnpHeader = DLNAHeader.newInstance(type, value);
                 if (upnpHeader == null || upnpHeader.getValue() == null) {
                     log.log(Level.FINE, "Ignoring known but non-parsable header (value violates the UDA specification?) '{0}': {1}", new Object[]{type.getHttpName(), value});
                 } else {
@@ -78,14 +75,10 @@ public class DLNAHeaders extends UpnpHeaders {
         }
     }
 
-    protected void addParsedValue(DLNAHeader.Type type, UpnpHeader value) {
+    protected void addParsedValue(DLNAHeader.Type type, UpnpHeader<?> value) {
         log.log(Level.FINE, "Adding parsed header: {0}", value);
-        List<UpnpHeader> list = parsedDLNAHeaders.get(type);
-        if (list == null) {
-            list = new LinkedList<>();
-            parsedDLNAHeaders.put(type, list);
-        }
-        list.add(value);
+		List<UpnpHeader<?>> list = parsedDLNAHeaders.computeIfAbsent(type, k -> new LinkedList<>());
+		list.add(value);
     }
 
     @Override
@@ -117,12 +110,12 @@ public class DLNAHeaders extends UpnpHeaders {
         return parsedDLNAHeaders.containsKey(type);
     }
 
-    public List<UpnpHeader> get(DLNAHeader.Type type) {
+    public List<UpnpHeader<?>> get(DLNAHeader.Type type) {
         if (parsedDLNAHeaders == null) parseHeaders();
         return parsedDLNAHeaders.get(type);
     }
 
-    public void add(DLNAHeader.Type type, UpnpHeader value) {
+    public void add(DLNAHeader.Type type, UpnpHeader<?> value) {
         super.add(type.getHttpName(), value.getString());
         if (parsedDLNAHeaders != null)
             addParsedValue(type, value);
@@ -134,23 +127,22 @@ public class DLNAHeaders extends UpnpHeaders {
             parsedDLNAHeaders.remove(type);
     }
 
-    public UpnpHeader[] getAsArray(DLNAHeader.Type type) {
+    public List<UpnpHeader<?>> getAsArray(DLNAHeader.Type type) {
         if (parsedDLNAHeaders == null) parseHeaders();
         return parsedDLNAHeaders.get(type) != null
-                ? parsedDLNAHeaders.get(type).toArray(new UpnpHeader[parsedDLNAHeaders.get(type).size()])
-                : new UpnpHeader[0];
+                ? parsedDLNAHeaders.get(type)
+                : Collections.emptyList();
     }
 
-    public UpnpHeader getFirstHeader(DLNAHeader.Type type) {
-        return getAsArray(type).length > 0
-                ? getAsArray(type)[0]
-                : null;
+    public UpnpHeader<?> getFirstHeader(DLNAHeader.Type type) {
+        return getAsArray(type).stream().findFirst().orElse(null);
     }
 
-    public <H extends UpnpHeader> H getFirstHeader(DLNAHeader.Type type, Class<H> subtype) {
-        UpnpHeader[] headers = getAsArray(type);
+    @SuppressWarnings("unchecked")
+	public <H extends UpnpHeader<?>> H getFirstHeader(DLNAHeader.Type type, Class<H> subtype) {
+        List<UpnpHeader<?>> headers = getAsArray(type);
 
-		for (UpnpHeader header : headers) {
+		for (UpnpHeader<?> header : headers) {
             if (subtype.isAssignableFrom(header.getClass())) {
                 return (H) header;
             }
@@ -162,11 +154,11 @@ public class DLNAHeaders extends UpnpHeaders {
     public void log() {
         if (log.isLoggable(Level.FINE)) {
             super.log();
-            if (parsedDLNAHeaders != null && parsedDLNAHeaders.size() > 0) {
+            if (parsedDLNAHeaders != null && !parsedDLNAHeaders.isEmpty()) {
                 log.fine("########################## PARSED DLNA HEADERS ##########################");
-                for (Map.Entry<DLNAHeader.Type, List<UpnpHeader>> entry : parsedDLNAHeaders.entrySet()) {
+                for (Map.Entry<DLNAHeader.Type, List<UpnpHeader<?>>> entry : parsedDLNAHeaders.entrySet()) {
                     log.log(Level.FINE, "=== TYPE: {0}", entry.getKey());
-                    for (UpnpHeader upnpHeader : entry.getValue()) {
+                    for (UpnpHeader<?> upnpHeader : entry.getValue()) {
                         log.log(Level.FINE, "HEADER: {0}", upnpHeader);
                     }
                 }

@@ -30,7 +30,7 @@ import java.net.URI;
 public abstract class DOM {
 
 	public static final URI XML_SCHEMA_NAMESPACE =
-			URI.create("http://www.w3.org/2001/xml.xsd");
+			URI.create("https://www.w3.org/2001/xml.xsd");
 
 	public static final String CDATA_BEGIN = "<![CDATA[";
 	public static final String CDATA_END = "]]>";
@@ -52,7 +52,7 @@ public abstract class DOM {
 	}
 
 	public abstract String getRootElementNamespace();
-	public abstract DOMElement getRoot(XPath xpath);
+	public abstract DOMElement<?, ?> getRoot(XPath xpath);
 	public abstract DOM copy();
 
 }

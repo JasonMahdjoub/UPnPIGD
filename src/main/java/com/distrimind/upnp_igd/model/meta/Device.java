@@ -66,8 +66,9 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
         this(identity, null, type, details, icons, services, embeddedDevices);
     }
 
-    public Device(DI identity, UDAVersion version, DeviceType type, DeviceDetails details,
-                  Collection<Icon> icons, Collection<S> services, List<D> embeddedDevices) throws ValidationException {
+    @SuppressWarnings("unchecked")
+	public Device(DI identity, UDAVersion version, DeviceType type, DeviceDetails details,
+				  Collection<Icon> icons, Collection<S> services, List<D> embeddedDevices) throws ValidationException {
 
         this.identity = identity;
         this.version = version == null ? new UDAVersion() : version;
@@ -98,7 +99,6 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
             for (S service : services) {
                 if (service != null) {
                     allNullServices = false;
-					//noinspection unchecked
 					service.setDevice((D)this);
                 }
             }
@@ -110,7 +110,6 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
             for (D embeddedDevice : embeddedDevices) {
                 if (embeddedDevice != null) {
                     allNullEmbedded = false;
-					//noinspection unchecked
 					embeddedDevice.setParentDevice((D)this);
                 }
             }

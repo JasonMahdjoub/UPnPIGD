@@ -114,7 +114,7 @@ public abstract class AbstractContentDirectoryService {
     final protected PropertyChangeSupport propertyChangeSupport;
 
     protected AbstractContentDirectoryService() {
-        this(new ArrayList<String>(), new ArrayList<String>(), null);
+        this(new ArrayList<>(), new ArrayList<>(), null);
     }
 
     protected AbstractContentDirectoryService(List<String> searchCapabilities, List<String> sortCapabilities) {
@@ -189,7 +189,7 @@ public abstract class AbstractContentDirectoryService {
             @UpnpInputArgument(name = "SortCriteria") String orderBy)
             throws ContentDirectoryException {
 
-        SortCriterion[] orderByCriteria;
+        List<SortCriterion> orderByCriteria;
         try {
             orderByCriteria = SortCriterion.valueOf(orderBy);
         } catch (Exception ex) {
@@ -224,7 +224,7 @@ public abstract class AbstractContentDirectoryService {
     public abstract BrowseResult browse(String objectID, BrowseFlag browseFlag,
                                         String filter,
                                         long firstResult, long maxResults,
-                                        SortCriterion[] orderby) throws ContentDirectoryException;
+                                        List<SortCriterion> orderby) throws ContentDirectoryException;
 
 
     @UpnpAction(out = {
@@ -250,7 +250,7 @@ public abstract class AbstractContentDirectoryService {
             @UpnpInputArgument(name = "SortCriteria") String orderBy)
             throws ContentDirectoryException {
 
-        SortCriterion[] orderByCriteria;
+        List<SortCriterion> orderByCriteria;
         try {
             orderByCriteria = SortCriterion.valueOf(orderBy);
         } catch (Exception ex) {
@@ -279,7 +279,7 @@ public abstract class AbstractContentDirectoryService {
    
      */
     public BrowseResult search(String containerId, String searchCriteria, String filter,
-                               long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
+                               long firstResult, long maxResults, List<SortCriterion> orderBy) throws ContentDirectoryException {
 
         try {
             return new BrowseResult(new DIDLParser().generate(new DIDLContent()), 0, 0);

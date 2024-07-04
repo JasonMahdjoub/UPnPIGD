@@ -22,6 +22,7 @@ import com.distrimind.upnp_igd.support.model.TransportInfo;
 import com.distrimind.upnp_igd.support.model.TransportState;
 
 import java.net.URI;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -51,11 +52,11 @@ public abstract class NoMediaPresent<T extends AVTransport> extends AbstractStat
         );
     }
 
-    public abstract Class<? extends AbstractState> setTransportURI(URI uri, String metaData);
+    public abstract Class<? extends AbstractState<?>> setTransportURI(URI uri, String metaData);
 
-    public TransportAction[] getCurrentTransportActions() {
-        return new TransportAction[] {
+    public List<TransportAction> getCurrentTransportActions() {
+        return List.of(
                 TransportAction.Stop
-        };
+        );
     }
 }

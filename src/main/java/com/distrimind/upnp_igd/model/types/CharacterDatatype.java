@@ -24,12 +24,12 @@ public class CharacterDatatype extends AbstractDatatype<Character> {
     }
 
     @Override
-    public boolean isHandlingJavaType(Class type) {
+    public boolean isHandlingJavaType(Class<?> type) {
         return type == Character.TYPE || Character.class.isAssignableFrom(type);
     }
 
     public Character valueOf(String s) throws InvalidValueException {
-        if (s.equals("")) return null;
+        if (s.isEmpty()) return null;
         return s.charAt(0);
     }
 

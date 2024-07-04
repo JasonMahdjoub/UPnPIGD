@@ -83,7 +83,7 @@ public class LogViewImpl extends JPanel implements LogView {
 
     final protected JLabel pauseLabel = new JLabel(" (Active)");
 
-    final protected JComboBox expirationComboBox = new JComboBox(LogController.Expiration.values());
+    final protected JComboBox<?> expirationComboBox = new JComboBox<>(LogController.Expiration.values());
 
     protected Presenter presenter;
 
@@ -262,9 +262,9 @@ public class LogViewImpl extends JPanel implements LogView {
         expirationComboBox.setMaximumSize(new Dimension(100, 32));
         expirationComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JComboBox cb = (JComboBox) e.getSource();
+                JComboBox<?> cb = (JComboBox<?>) e.getSource();
                 LogController.Expiration expiration = (LogController.Expiration) cb.getSelectedItem();
-                logTableModel.setMaxAgeSeconds(expiration.getSeconds());
+                logTableModel.setMaxAgeSeconds(expiration==null?0:expiration.getSeconds());
             }
         });
 

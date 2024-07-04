@@ -42,7 +42,7 @@ public class ReceivingUnsubscribe extends ReceivingSync<StreamRequestMessage, St
 
     protected StreamResponseMessage executeSync() throws RouterException {
 
-        ServiceEventSubscriptionResource resource =
+        ServiceEventSubscriptionResource<?> resource =
                 getUpnpService().getRegistry().getResource(
                         ServiceEventSubscriptionResource.class,
                         getInputMessage().getUri()
@@ -65,7 +65,7 @@ public class ReceivingUnsubscribe extends ReceivingSync<StreamRequestMessage, St
             return new StreamResponseMessage(UpnpResponse.Status.BAD_REQUEST);
         }
 
-        LocalGENASubscription subscription =
+        LocalGENASubscription<?> subscription =
                 getUpnpService().getRegistry().getLocalSubscription(requestMessage.getSubscriptionId());
 
         if (subscription == null) {

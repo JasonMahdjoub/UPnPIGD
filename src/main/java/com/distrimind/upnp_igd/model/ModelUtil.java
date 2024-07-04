@@ -17,10 +17,7 @@ package com.distrimind.upnp_igd.model;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Set;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Shared trivial procedures.
@@ -36,7 +33,7 @@ public class ModelUtil {
     static {
         boolean foundAndroid = false;
         try {
-            @SuppressWarnings("Java9ReflectionClassVisibility") Class<?> androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
+            Class<?> androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
             foundAndroid = androidBuild.getField("ID").get(null) != null;
         } catch (Exception ex) {
             // Ignore
@@ -51,7 +48,7 @@ public class ModelUtil {
     static {
         boolean foundEmulator = false;
         try {
-            @SuppressWarnings("Java9ReflectionClassVisibility") Class<?> androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
+            Class<?> androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
             String product = (String)androidBuild.getField("PRODUCT").get(null);
             if ("google_sdk".equals(product) || ("sdk".equals(product)))
                 foundEmulator = true;
@@ -103,7 +100,7 @@ public class ModelUtil {
      * Converts the given instances into comma-separated elements of a string,
      * escaping commas with backslashes.
      */
-    public static String toCommaSeparatedList(Object[] o) {
+    public static String toCommaSeparatedList(List<?> o) {
         return toCommaSeparatedList(o, true, false);
     }
 
@@ -111,7 +108,7 @@ public class ModelUtil {
      * Converts the given instances into comma-separated elements of a string,
      * optionally escapes commas and double quotes with backslahses.
      */
-    public static String toCommaSeparatedList(Object[] o, boolean escapeCommas, boolean escapeDoubleQuotes) {
+    public static String toCommaSeparatedList(List<?> o, boolean escapeCommas, boolean escapeDoubleQuotes) {
         if (o == null) {
             return "";
         }

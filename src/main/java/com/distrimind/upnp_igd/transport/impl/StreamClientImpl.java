@@ -37,7 +37,6 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLStreamHandlerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -66,7 +65,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public class StreamClientImpl implements StreamClient {
+public class StreamClientImpl implements StreamClient<StreamClientConfigurationImpl> {
 
     final static String HACK_STREAM_HANDLER_SYSTEM_PROPERTY = "hackStreamHandlerProperty";
 
@@ -269,14 +268,9 @@ public class StreamClientImpl implements StreamClient {
 
         // Body
         byte[] bodyBytes = null;
-        InputStream is = null;
-        try {
-            is = inputStream;
-            if (inputStream != null) bodyBytes = IO.readBytes(is);
-        } finally {
-            if (is != null)
-                is.close();
-        }
+		try (InputStream is = inputStream) {
+			if (inputStream != null) bodyBytes = IO.readBytes(is);
+		}
 
         if (bodyBytes != null && bodyBytes.length > 0 && responseMessage.isContentTypeMissingOrText()) {
 

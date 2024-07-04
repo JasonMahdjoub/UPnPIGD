@@ -24,17 +24,17 @@ import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
  */
 public class Search {
 
-    protected UpnpHeader searchType = new STAllHeader();
+    protected UpnpHeader<?> searchType = new STAllHeader();
     protected int mxSeconds = MXHeader.DEFAULT_VALUE;
 
     public Search() {
     }
 
-    public Search(UpnpHeader searchType) {
+    public Search(UpnpHeader<?> searchType) {
         this.searchType = searchType;
     }
 
-    public Search(UpnpHeader searchType, int mxSeconds) {
+    public Search(UpnpHeader<?> searchType, int mxSeconds) {
         this.searchType = searchType;
         this.mxSeconds = mxSeconds;
     }
@@ -43,7 +43,7 @@ public class Search {
         this.mxSeconds = mxSeconds;
     }
 
-    public UpnpHeader getSearchType() {
+    public UpnpHeader<?> getSearchType() {
         return searchType;
     }
 

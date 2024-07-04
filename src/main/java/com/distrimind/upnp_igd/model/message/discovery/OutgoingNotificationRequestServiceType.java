@@ -29,7 +29,7 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
 public class OutgoingNotificationRequestServiceType extends OutgoingNotificationRequest {
 
     public OutgoingNotificationRequestServiceType(Location location,
-												  LocalDevice device, NotificationSubtype type,
+												  LocalDevice<?> device, NotificationSubtype type,
 												  ServiceType serviceType) {
 
         super(location, device, type);

@@ -18,6 +18,8 @@ package com.distrimind.upnp_igd.support.model;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.support.lastchange.LastChange;
 
+import java.util.List;
+
 /**
  * State of one logical instance of the AV Transport service.
  *
@@ -34,10 +36,10 @@ public class AVTransport {
     protected TransportSettings transportSettings;
 
     public AVTransport(UnsignedIntegerFourBytes instanceID, LastChange lastChange, StorageMedium possiblePlayMedium) {
-        this(instanceID, lastChange, new StorageMedium[]{possiblePlayMedium});
+        this(instanceID, lastChange, List.of(possiblePlayMedium));
     }
 
-    public AVTransport(UnsignedIntegerFourBytes instanceID, LastChange lastChange, StorageMedium[] possiblePlayMedia) {
+    public AVTransport(UnsignedIntegerFourBytes instanceID, LastChange lastChange, List<StorageMedium> possiblePlayMedia) {
         this.instanceID = instanceID;
         this.lastChange = lastChange;
         setDeviceCapabilities(new DeviceCapabilities(possiblePlayMedia));

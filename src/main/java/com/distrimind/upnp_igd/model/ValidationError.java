@@ -21,22 +21,22 @@ package com.distrimind.upnp_igd.model;
  * @author Christian Bauer
  */
 public class ValidationError {
-    private final Class clazz;
+    private final Class<?> clazz;
     private String propertyName;
     private final String message;
 
-    public ValidationError(Class clazz, String message) {
+    public ValidationError(Class<?> clazz, String message) {
         this.clazz = clazz;
         this.message = message;
     }
 
-    public ValidationError(Class clazz, String propertyName, String message) {
+    public ValidationError(Class<?> clazz, String propertyName, String message) {
         this.clazz = clazz;
         this.propertyName = propertyName;
         this.message = message;
     }
 
-    public Class getClazz() {
+    public Class<?> getClazz() {
         return clazz;
     }
 

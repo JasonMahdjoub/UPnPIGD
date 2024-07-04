@@ -43,12 +43,11 @@ public class URIUtil {
 	public static URI createAbsoluteURI(URI base, URI relativeOrNot) throws IllegalArgumentException {
 		if (base == null && !relativeOrNot.isAbsolute()) {
 			throw new IllegalArgumentException("Base URI is null and given URI is not absolute");
-		} else if (base == null && relativeOrNot.isAbsolute()) {
+		} else if (base == null) {
 			return relativeOrNot;
 		} else {
-			assert base != null;
 			// If the given base URI has no path we give it a root path
-			if (base.getPath().length() == 0) {
+			if (base.getPath().isEmpty()) {
 				try {
 					base = new URI(base.getScheme(), base.getAuthority(), "/", base.getQuery(), base.getFragment());
 				} catch (Exception ex) {
@@ -67,7 +66,7 @@ public class URIUtil {
 
 		if (base == null && !relativeOrNot.isAbsolute()) {
 			throw new IllegalArgumentException("Base URL is null and given URI is not absolute");
-		} else if (base == null && relativeOrNot.isAbsolute()) {
+		} else if (base == null) {
 			try {
 				return relativeOrNot.toURL();
 			} catch (Exception ex) {
@@ -75,7 +74,6 @@ public class URIUtil {
 			}
 		} else {
 			try {
-				assert base != null;
 				URI baseURI = base.toURI();
 				URI absoluteURI = createAbsoluteURI(baseURI, relativeOrNot);
 				return absoluteURI.toURL();
@@ -205,7 +203,7 @@ public class URIUtil {
 
 	/**
 	 * Implementation of path/query/fragment encoding as explained here:
-	 * http://www.lunatech-research.com/archives/2009/02/03/what-every-web-developer-must-know-about-url-encoding
+	 * <a href="https://www.lunatech-research.com/archives/2009/02/03/what-every-web-developer-must-know-about-url-encoding">...</a>
 	 */
 
 	public final static BitSet ALLOWED = new BitSet() {{

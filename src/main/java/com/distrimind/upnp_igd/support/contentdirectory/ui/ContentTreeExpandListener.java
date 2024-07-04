@@ -18,7 +18,6 @@ package com.distrimind.upnp_igd.support.contentdirectory.ui;
 import com.distrimind.upnp_igd.controlpoint.ActionCallback;
 import com.distrimind.upnp_igd.controlpoint.ControlPoint;
 import com.distrimind.upnp_igd.model.meta.Service;
-import com.distrimind.upnp_igd.support.contentdirectory.ui.ContentBrowseActionCallbackCreator;
 
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
@@ -32,12 +31,12 @@ import javax.swing.tree.ExpandVetoException;
 public class ContentTreeExpandListener implements TreeWillExpandListener {
 
     final protected ControlPoint controlPoint;
-    final protected Service service;
+    final protected Service<?, ?, ?> service;
     final protected DefaultTreeModel treeModel;
     final protected ContentBrowseActionCallbackCreator actionCreator;
 
     public ContentTreeExpandListener(ControlPoint controlPoint,
-                                     Service service,
+                                     Service<?, ?, ?> service,
                                      DefaultTreeModel treeModel,
                                      ContentBrowseActionCallbackCreator actionCreator) {
         this.controlPoint = controlPoint;

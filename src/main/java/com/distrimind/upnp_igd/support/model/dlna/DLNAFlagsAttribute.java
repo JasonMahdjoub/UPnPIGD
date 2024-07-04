@@ -48,7 +48,7 @@ public class DLNAFlagsAttribute extends DLNAAttribute<EnumSet<DLNAFlags>> {
                     value.add(op);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         if (value.isEmpty())

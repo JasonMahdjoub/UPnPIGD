@@ -41,7 +41,7 @@ public class LocalActionInvocationNullTest {
     @Test
     public void invokeActions() throws Exception {
 
-        LocalDevice device = new LocalDevice(
+        LocalDevice<LocalTestServiceOne> device = new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
                 new UDADeviceType("SomeDevice", 1),
                 new DeviceDetails("Some Device"),
@@ -49,10 +49,10 @@ public class LocalActionInvocationNullTest {
         );
         LocalService<LocalTestServiceOne> svc = SampleData.getFirstService(device);
 
-        ActionInvocation invocation;
+        ActionInvocation<LocalService<LocalTestServiceOne>> invocation;
 
         // This succeeds
-        invocation = new ActionInvocation(svc.getAction("SetSomeValues"));
+        invocation = new ActionInvocation<>(svc.getAction("SetSomeValues"));
         invocation.setInput("One", "foo");
         invocation.setInput("Two", "bar");
         invocation.setInput("Three", "baz");
@@ -63,7 +63,7 @@ public class LocalActionInvocationNullTest {
         assertEquals(svc.getManager().getImplementation().three.toString(), "baz");
 
         // Empty string is fine, will be converted into "null"
-        invocation = new ActionInvocation(svc.getAction("SetSomeValues"));
+        invocation = new ActionInvocation<>(svc.getAction("SetSomeValues"));
         invocation.setInput("One", "foo");
         invocation.setInput("Two", "");
         invocation.setInput("Three", null);
@@ -74,7 +74,7 @@ public class LocalActionInvocationNullTest {
 		assertNull(svc.getManager().getImplementation().three);
 
         // Null is not fine for primitive input arguments
-        invocation = new ActionInvocation(svc.getAction("SetPrimitive"));
+        invocation = new ActionInvocation<>(svc.getAction("SetPrimitive"));
         invocation.setInput("Primitive", "");
         svc.getExecutor(invocation.getAction()).execute(invocation);
         assertEquals(invocation.getFailure().getErrorCode(), ErrorCode.ARGUMENT_VALUE_INVALID.getCode());
@@ -84,7 +84,7 @@ public class LocalActionInvocationNullTest {
         );
 
         // We forgot to set one and it's a local invocation (no string conversion)
-        invocation = new ActionInvocation(svc.getAction("SetSomeValues"));
+        invocation = new ActionInvocation<>(svc.getAction("SetSomeValues"));
         invocation.setInput("One", null);
         // OOPS! invocation.setInput("Two", null);
         invocation.setInput("Three", null);

@@ -16,6 +16,7 @@
 package com.distrimind.upnp_igd.support.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,14 +46,14 @@ public class SortCriterion {
         return propertyName;
     }
 
-    public static SortCriterion[] valueOf(String s) {
-        if (s == null || s.length() == 0) return new SortCriterion[0];
+    public static List<SortCriterion> valueOf(String s) {
+        if (s == null || s.isEmpty()) return Collections.emptyList();
         List<SortCriterion> list = new ArrayList<>();
         String[] criteria = s.split(",");
         for (String criterion : criteria) {
             list.add(new SortCriterion(criterion.trim()));
         }
-        return list.toArray(new SortCriterion[list.size()]);
+        return list;
     }
 
     public static String toString(SortCriterion[] criteria) {
@@ -67,8 +68,7 @@ public class SortCriterion {
 
     @Override
     public String toString() {
-		String sb = (ascending ? "+" : "-") +
+		return (ascending ? "+" : "-") +
 				propertyName;
-        return sb;
     }
 }

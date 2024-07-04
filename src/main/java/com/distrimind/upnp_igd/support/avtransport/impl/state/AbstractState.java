@@ -18,6 +18,8 @@ package com.distrimind.upnp_igd.support.avtransport.impl.state;
 import com.distrimind.upnp_igd.support.model.AVTransport;
 import com.distrimind.upnp_igd.support.model.TransportAction;
 
+import java.util.List;
+
 /**
  *
  */
@@ -33,6 +35,6 @@ public abstract class AbstractState<T extends AVTransport> {
         return transport;
     }
 
-    public abstract TransportAction[] getCurrentTransportActions();
+    public abstract List<TransportAction> getCurrentTransportActions();
 
 }

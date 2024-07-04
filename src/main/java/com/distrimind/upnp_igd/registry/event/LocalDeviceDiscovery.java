@@ -20,9 +20,9 @@ import com.distrimind.upnp_igd.model.meta.LocalDevice;
 /**
  * @author Christian Bauer
  */
-public class LocalDeviceDiscovery extends DeviceDiscovery<LocalDevice> {
+public class LocalDeviceDiscovery<T> extends DeviceDiscovery<LocalDevice<T>> {
 
-    public LocalDeviceDiscovery(LocalDevice device) {
+    public LocalDeviceDiscovery(LocalDevice<T> device) {
         super(device);
     }
 }

@@ -31,20 +31,20 @@ public abstract class GetDeviceCapabilities extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(GetDeviceCapabilities.class.getName());
 
-    public GetDeviceCapabilities(Service service) {
+    public GetDeviceCapabilities(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);
     }
 
-    public GetDeviceCapabilities(UnsignedIntegerFourBytes instanceId, Service service) {
-        super(new ActionInvocation(service.getAction("GetDeviceCapabilities")));
+    public GetDeviceCapabilities(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("GetDeviceCapabilities")));
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         DeviceCapabilities caps = new DeviceCapabilities(invocation.getOutputMap());
         received(invocation, caps);
     }
 
-    public abstract void received(ActionInvocation actionInvocation, DeviceCapabilities caps);
+    public abstract void received(ActionInvocation<?> actionInvocation, DeviceCapabilities caps);
 
 }

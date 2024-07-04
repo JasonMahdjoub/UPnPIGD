@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.support.model;
 import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.action.ActionArgumentValue;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,11 +26,11 @@ import java.util.Map;
  */
 public class DeviceCapabilities {
 
-    private final StorageMedium[] playMedia;
-    private StorageMedium[] recMedia = new StorageMedium[] {StorageMedium.NOT_IMPLEMENTED};
-    private RecordQualityMode[] recQualityModes = new RecordQualityMode[] {RecordQualityMode.NOT_IMPLEMENTED};
+    private final List<StorageMedium> playMedia;
+    private List<StorageMedium> recMedia = List.of(StorageMedium.NOT_IMPLEMENTED);
+    private List<RecordQualityMode> recQualityModes = List.of(RecordQualityMode.NOT_IMPLEMENTED);
 
-    public DeviceCapabilities(Map<String, ActionArgumentValue> args) {
+    public DeviceCapabilities(Map<String, ? extends ActionArgumentValue<?>> args) {
         this(
                 StorageMedium.valueOfCommaSeparatedList((String) args.get("PlayMedia").getValue()),
                 StorageMedium.valueOfCommaSeparatedList((String) args.get("RecMedia").getValue()),
@@ -37,25 +38,25 @@ public class DeviceCapabilities {
         );
     }
 
-    public DeviceCapabilities(StorageMedium[] playMedia) {
+    public DeviceCapabilities(List<StorageMedium> playMedia) {
         this.playMedia = playMedia;
     }
 
-    public DeviceCapabilities(StorageMedium[] playMedia, StorageMedium[] recMedia, RecordQualityMode[] recQualityModes) {
+    public DeviceCapabilities(List<StorageMedium> playMedia, List<StorageMedium> recMedia, List<RecordQualityMode> recQualityModes) {
         this.playMedia = playMedia;
         this.recMedia = recMedia;
         this.recQualityModes = recQualityModes;
     }
 
-    public StorageMedium[] getPlayMedia() {
+    public List<StorageMedium> getPlayMedia() {
         return playMedia;
     }
 
-    public StorageMedium[] getRecMedia() {
+    public List<StorageMedium> getRecMedia() {
         return recMedia;
     }
 
-    public RecordQualityMode[] getRecQualityModes() {
+    public List<RecordQualityMode> getRecQualityModes() {
         return recQualityModes;
     }
 

@@ -18,13 +18,11 @@ package example.localservice;
 import com.distrimind.upnp_igd.binding.LocalServiceBinder;
 import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
 import com.distrimind.upnp_igd.model.DefaultServiceManager;
-import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.action.RemoteActionInvocation;
 import com.distrimind.upnp_igd.model.message.Connection;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.model.message.header.UserAgentHeader;
-import com.distrimind.upnp_igd.model.meta.Action;
 import com.distrimind.upnp_igd.model.meta.DeviceDetails;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
@@ -71,13 +69,13 @@ import static org.testng.Assert.assertNull;
  */
 public class RemoteClientInfoTest {
 
-    public LocalDevice createTestDevice(Class serviceClass) throws Exception {
+    public <T> LocalDevice<T> createTestDevice(Class<T> serviceClass) throws Exception {
 
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
-        LocalService svc = binder.read(serviceClass);
-        svc.setManager(new DefaultServiceManager(svc, serviceClass));
+        LocalService<T> svc = binder.read(serviceClass);
+        svc.setManager(new DefaultServiceManager<>(svc, serviceClass));
 
-        return new LocalDevice(
+        return new LocalDevice<>(
             SampleData.createLocalDeviceIdentity(),
             new UDADeviceType("BinaryLight", 1),
             new DeviceDetails("Example Binary Light"),

@@ -46,12 +46,11 @@ public class MusicArtist extends PersonContainer {
         return getFirstPropertyValue(Property.UPNP.GENRE.class);
     }
 
-    public String[] getGenres() {
-        List<String> list = getPropertyValues(Property.UPNP.GENRE.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getGenres() {
+        return getPropertyValues(Property.UPNP.GENRE.class);
     }
 
-    public MusicArtist setGenres(String[] genres) {
+    public MusicArtist setGenres(List<String> genres) {
         removeProperties(Property.UPNP.GENRE.class);
         for (String genre : genres) {
             addProperty(new Property.UPNP.GENRE(genre));

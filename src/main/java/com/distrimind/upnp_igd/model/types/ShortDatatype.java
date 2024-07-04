@@ -22,12 +22,12 @@ package com.distrimind.upnp_igd.model.types;
 public class ShortDatatype extends AbstractDatatype<Short> {
 
     @Override
-    public boolean isHandlingJavaType(Class type) {
+    public boolean isHandlingJavaType(Class<?> type) {
         return type == Short.TYPE || Short.class.isAssignableFrom(type);
     }
 
     public Short valueOf(String s) throws InvalidValueException {
-        if (s.equals("")) return null;
+        if (s.isEmpty()) return null;
         try {
             Short value = Short.parseShort(s.trim());
             if (!isValid(value)) {

@@ -37,11 +37,11 @@ public class TransferModeHeader extends DLNAHeader<TransferModeHeader.Type> {
 
     @Override
     public void setString(String s) throws InvalidHeaderException {
-        if (s.length() != 0) {
+        if (!s.isEmpty()) {
             try {
                 setValue(Type.valueOf(s));
                 return;
-            } catch (Exception ex) {}
+            } catch (Exception ignored) {}
         }
         throw new InvalidHeaderException("Invalid TransferMode header value: " + s);
     }

@@ -280,7 +280,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
     protected void sendSearchResponseUDN(UDN udn, NetworkAddress activeStreamServer) throws RouterException {
         Device<?, ?, ?> device = getUpnpService().getRegistry().getDevice(udn, false);
-        if (device != null && device instanceof LocalDevice) {
+        if (device instanceof LocalDevice) {
 
             if (isAdvertisementDisabled((LocalDevice<?>)device))
                 return;

@@ -77,7 +77,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
         discoverNetworkInterfaces();
         discoverBindAddresses();
 
-        if ((networkInterfaces.size() == 0 || bindAddresses.size() == 0)) {
+        if ((networkInterfaces.isEmpty() || bindAddresses.isEmpty())) {
             log.warning("No usable network interface or addresses found");
         	if(requiresNetworkInterface()) {
         		throw new NoNetworkException(
@@ -154,7 +154,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
     }
 
     public boolean hasUsableNetwork() {
-        return networkInterfaces.size() > 0 && bindAddresses.size() > 0;
+        return !networkInterfaces.isEmpty() && !bindAddresses.isEmpty();
     }
 
     public byte[] getHardwareAddress(InetAddress inetAddress) {
@@ -278,7 +278,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
             prefix -= 8;
         }
         if(i == ip.length) return true;
-        final byte mask = (byte) ~((1 << 8 - prefix) - 1);
+        final byte mask = (byte) -(1 << 8 - prefix);
 
         return (ip[i] & mask) == (network[i] & mask);
     }
@@ -335,7 +335,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
             return false;
         }
 
-        if (getInetAddresses(iface).size() == 0) {
+        if (getInetAddresses(iface).isEmpty()) {
             log.finer("Skipping network interface without bound IP addresses: " + iface.getDisplayName());
             return false;
         }
@@ -371,7 +371,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
             return false;
         }
 
-        if (useInterfaces.size() > 0 && !useInterfaces.contains(iface.getName())) {
+        if (!useInterfaces.isEmpty() && !useInterfaces.contains(iface.getName())) {
             log.finer("Skipping unwanted network interface (-D" + SYSTEM_PROPERTY_NET_IFACES + "): " + iface.getName());
             return false;
         }
@@ -449,7 +449,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
             return false;
         }
 
-        if (useAddresses.size() > 0 && !useAddresses.contains(address.getHostAddress())) {
+        if (!useAddresses.isEmpty() && !useAddresses.contains(address.getHostAddress())) {
             log.finer("Skipping unwanted address: " + address);
             return false;
         }

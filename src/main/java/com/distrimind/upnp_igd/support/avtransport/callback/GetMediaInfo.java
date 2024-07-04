@@ -31,20 +31,20 @@ public abstract class GetMediaInfo extends ActionCallback {
 
     private static final Logger log = Logger.getLogger(GetMediaInfo.class.getName());
 
-    public GetMediaInfo(Service service) {
+    public GetMediaInfo(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);
     }
 
-    public GetMediaInfo(UnsignedIntegerFourBytes instanceId, Service service) {
-        super(new ActionInvocation(service.getAction("GetMediaInfo")));
+    public GetMediaInfo(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("GetMediaInfo")));
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
         MediaInfo mediaInfo = new MediaInfo(invocation.getOutputMap());
         received(invocation, mediaInfo);
     }
 
-    public abstract void received(ActionInvocation invocation, MediaInfo mediaInfo);
+    public abstract void received(ActionInvocation<?> invocation, MediaInfo mediaInfo);
 
 }

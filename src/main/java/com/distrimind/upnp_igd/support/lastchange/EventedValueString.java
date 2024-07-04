@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.support.lastchange;
 
 import com.distrimind.upnp_igd.model.types.Datatype;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -28,13 +29,14 @@ public class EventedValueString extends EventedValue<String> {
         super(value);
     }
 
-    public EventedValueString(Map.Entry<String, String>[] attributes) {
+    public EventedValueString(Collection<Map.Entry<String, String>> attributes) {
         super(attributes);
     }
 
-    @Override
-    protected Datatype getDatatype() {
-        return Datatype.Builtin.STRING.getDatatype();
+    @SuppressWarnings("unchecked")
+	@Override
+    protected Datatype<String> getDatatype() {
+        return (Datatype<String>)Datatype.Builtin.STRING.getDatatype();
     }
 
 }

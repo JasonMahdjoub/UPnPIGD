@@ -72,9 +72,8 @@ public class ImageItem extends Item{
         return getFirstPropertyValue(DIDLObject.Property.DC.PUBLISHER.class);
     }
 
-    public Person[] getPublishers() {
-        List<Person> list = getPropertyValues(DIDLObject.Property.DC.PUBLISHER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getPublishers() {
+        return getPropertyValues(DIDLObject.Property.DC.PUBLISHER.class);
     }
 
     public ImageItem setPublishers(Person[] publishers) {
@@ -116,9 +115,8 @@ public class ImageItem extends Item{
         return getFirstPropertyValue(DIDLObject.Property.DC.RIGHTS.class);
     }
 
-    public String[] getRights() {
-        List<String> list = getPropertyValues(DIDLObject.Property.DC.RIGHTS.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getRights() {
+        return getPropertyValues(DIDLObject.Property.DC.RIGHTS.class);
     }
 
     public ImageItem setRights(String[] rights) {

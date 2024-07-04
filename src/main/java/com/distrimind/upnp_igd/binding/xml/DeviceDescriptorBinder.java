@@ -32,7 +32,7 @@ public interface DeviceDescriptorBinder {
     <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml)
             throws DescriptorBindingException, ValidationException;
 
-    <T extends Device<?, T, ?>> T describe(T undescribedDevice, Document dom)
+    <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, Document dom)
             throws DescriptorBindingException, ValidationException;
 
     String generate(Device<?, ?, ?> device, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException;

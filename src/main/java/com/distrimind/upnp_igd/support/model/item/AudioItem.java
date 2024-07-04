@@ -53,9 +53,8 @@ public class AudioItem extends Item {
         return getFirstPropertyValue(Property.UPNP.GENRE.class);
     }
 
-    public String[] getGenres() {
-        List<String> list = getPropertyValues(Property.UPNP.GENRE.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getGenres() {
+        return getPropertyValues(Property.UPNP.GENRE.class);
     }
 
     public AudioItem setGenres(String[] genres) {
@@ -88,12 +87,11 @@ public class AudioItem extends Item {
         return getFirstPropertyValue(Property.DC.PUBLISHER.class);
     }
 
-    public Person[] getPublishers() {
-        List<Person> list = getPropertyValues(Property.DC.PUBLISHER.class);
-        return list.toArray(new Person[list.size()]);
+    public List<Person> getPublishers() {
+        return getPropertyValues(Property.DC.PUBLISHER.class);
     }
 
-    public AudioItem setPublishers(Person[] publishers) {
+    public AudioItem setPublishers(List<Person> publishers) {
         removeProperties(Property.DC.PUBLISHER.class);
         for (Person publisher : publishers) {
             addProperty(new Property.DC.PUBLISHER(publisher));
@@ -105,12 +103,11 @@ public class AudioItem extends Item {
         return getFirstPropertyValue(Property.DC.RELATION.class);
     }
 
-    public URI[] getRelations() {
-        List<URI> list = getPropertyValues(Property.DC.RELATION.class);
-        return list.toArray(new URI[list.size()]);
+    public List<URI> getRelations() {
+        return getPropertyValues(Property.DC.RELATION.class);
     }
 
-    public AudioItem setRelations(URI[] relations) {
+    public AudioItem setRelations(List<URI> relations) {
         removeProperties(Property.DC.RELATION.class);
         for (URI relation : relations) {
             addProperty(new Property.DC.RELATION(relation));
@@ -131,12 +128,11 @@ public class AudioItem extends Item {
         return getFirstPropertyValue(Property.DC.RIGHTS.class);
     }
 
-    public String[] getRights() {
-        List<String> list = getPropertyValues(Property.DC.RIGHTS.class);
-        return list.toArray(new String[list.size()]);
+    public List<String> getRights() {
+        return getPropertyValues(Property.DC.RIGHTS.class);
     }
 
-    public AudioItem setRights(String[] rights) {
+    public AudioItem setRights(List<String> rights) {
         removeProperties(Property.DC.RIGHTS.class);
         for (String right : rights) {
             addProperty(new Property.DC.RIGHTS(right));

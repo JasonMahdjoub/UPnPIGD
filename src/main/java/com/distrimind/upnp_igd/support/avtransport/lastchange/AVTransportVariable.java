@@ -28,11 +28,7 @@ import com.distrimind.upnp_igd.support.lastchange.EventedValueURI;
 import com.distrimind.upnp_igd.support.lastchange.EventedValueUnsignedIntegerFourBytes;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 
@@ -41,40 +37,40 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
  */
 public class AVTransportVariable {
 
-    public static Set<Class<? extends EventedValue>> ALL = new HashSet<Class<? extends EventedValue>>() {{
-        add(TransportState.class);
-        add(TransportStatus.class);
-        add(RecordStorageMedium.class);
-        add(PossibleRecordStorageMedia.class);
-        add(PossiblePlaybackStorageMedia.class);
-        add(CurrentPlayMode.class);
-        add(TransportPlaySpeed.class);
-        add(RecordMediumWriteStatus.class);
-        add(CurrentRecordQualityMode.class);
-        add(PossibleRecordQualityModes.class);
-        add(NumberOfTracks.class);
-        add(CurrentTrack.class);
-        add(CurrentTrackDuration.class);
-        add(CurrentMediaDuration.class);
-        add(CurrentTrackMetaData.class);
-        add(CurrentTrackURI.class);
-        add(AVTransportURI.class);
-        add(NextAVTransportURI.class);
-        add(AVTransportURIMetaData.class);
-        add(NextAVTransportURIMetaData.class);
-        add(CurrentTransportActions.class);
-        add(RelativeTimePosition.class);
-        add(AbsoluteTimePosition.class);
-        add(RelativeCounterPosition.class);
-        add(AbsoluteCounterPosition.class);
-    }};
+    public static Set<Class<? extends EventedValue<?>>> ALL = new HashSet<>() {{
+		add(TransportState.class);
+		add(TransportStatus.class);
+		add(RecordStorageMedium.class);
+		add(PossibleRecordStorageMedia.class);
+		add(PossiblePlaybackStorageMedia.class);
+		add(CurrentPlayMode.class);
+		add(TransportPlaySpeed.class);
+		add(RecordMediumWriteStatus.class);
+		add(CurrentRecordQualityMode.class);
+		add(PossibleRecordQualityModes.class);
+		add(NumberOfTracks.class);
+		add(CurrentTrack.class);
+		add(CurrentTrackDuration.class);
+		add(CurrentMediaDuration.class);
+		add(CurrentTrackMetaData.class);
+		add(CurrentTrackURI.class);
+		add(AVTransportURI.class);
+		add(NextAVTransportURI.class);
+		add(AVTransportURIMetaData.class);
+		add(NextAVTransportURIMetaData.class);
+		add(CurrentTransportActions.class);
+		add(RelativeTimePosition.class);
+		add(AbsoluteTimePosition.class);
+		add(RelativeCounterPosition.class);
+		add(AbsoluteCounterPosition.class);
+	}};
 
     public static class TransportState extends EventedValueEnum<com.distrimind.upnp_igd.support.model.TransportState> {
         public TransportState(com.distrimind.upnp_igd.support.model.TransportState avTransportState) {
             super(avTransportState);
         }
 
-        public TransportState(Map.Entry<String, String>[] attributes) {
+        public TransportState(List<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
@@ -89,7 +85,7 @@ public class AVTransportVariable {
             super(transportStatus);
         }
 
-        public TransportStatus(Map.Entry<String, String>[] attributes) {
+        public TransportStatus(List<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
@@ -105,7 +101,7 @@ public class AVTransportVariable {
             super(storageMedium);
         }
 
-        public RecordStorageMedium(Map.Entry<String, String>[] attributes) {
+        public RecordStorageMedium(List<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
@@ -116,30 +112,30 @@ public class AVTransportVariable {
     }
 
     public static class PossibleRecordStorageMedia extends EventedValueEnumArray<StorageMedium> {
-        public PossibleRecordStorageMedia(StorageMedium[] e) {
+        public PossibleRecordStorageMedia(List<StorageMedium> e) {
             super(e);
         }
 
-        public PossibleRecordStorageMedia(Map.Entry<String, String>[] attributes) {
+        public PossibleRecordStorageMedia(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
         @Override
-        protected StorageMedium[] enumValueOf(String[] names) {
+        protected List<StorageMedium> enumValueOf(String[] names) {
             List<StorageMedium> list = new ArrayList<>();
             for (String s : names) {
                 list.add(StorageMedium.valueOf(s));
             }
-            return list.toArray(new StorageMedium[list.size()]);
+            return list;
         }
     }
 
     public static class PossiblePlaybackStorageMedia extends PossibleRecordStorageMedia {
-        public PossiblePlaybackStorageMedia(StorageMedium[] e) {
+        public PossiblePlaybackStorageMedia(List<StorageMedium> e) {
             super(e);
         }
 
-        public PossiblePlaybackStorageMedia(Map.Entry<String, String>[] attributes) {
+        public PossiblePlaybackStorageMedia(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -149,7 +145,7 @@ public class AVTransportVariable {
             super(playMode);
         }
 
-        public CurrentPlayMode(Map.Entry<String, String>[] attributes) {
+        public CurrentPlayMode(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
@@ -169,7 +165,7 @@ public class AVTransportVariable {
             }
         }
 
-        public TransportPlaySpeed(Map.Entry<String, String>[] attributes) {
+        public TransportPlaySpeed(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -179,7 +175,7 @@ public class AVTransportVariable {
             super(recordMediumWriteStatus);
         }
 
-        public RecordMediumWriteStatus(Map.Entry<String, String>[] attributes) {
+        public RecordMediumWriteStatus(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
@@ -194,7 +190,7 @@ public class AVTransportVariable {
             super(recordQualityMode);
         }
 
-        public CurrentRecordQualityMode(Map.Entry<String, String>[] attributes) {
+        public CurrentRecordQualityMode(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
@@ -205,21 +201,21 @@ public class AVTransportVariable {
     }
 
     public static class PossibleRecordQualityModes extends EventedValueEnumArray<RecordQualityMode> {
-        public PossibleRecordQualityModes(RecordQualityMode[] e) {
+        public PossibleRecordQualityModes(List<RecordQualityMode> e) {
             super(e);
         }
 
-        public PossibleRecordQualityModes(Map.Entry<String, String>[] attributes) {
+        public PossibleRecordQualityModes(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
         @Override
-        protected RecordQualityMode[] enumValueOf(String[] names) {
+        protected List<RecordQualityMode> enumValueOf(String[] names) {
             List<RecordQualityMode> list = new ArrayList<>();
             for (String s : names) {
                 list.add(RecordQualityMode.valueOf(s));
             }
-            return list.toArray(new RecordQualityMode[list.size()]);
+            return list;
         }
     }
 
@@ -228,7 +224,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public NumberOfTracks(Map.Entry<String, String>[] attributes) {
+        public NumberOfTracks(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -238,7 +234,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public CurrentTrack(Map.Entry<String, String>[] attributes) {
+        public CurrentTrack(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -248,7 +244,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public CurrentTrackDuration(Map.Entry<String, String>[] attributes) {
+        public CurrentTrackDuration(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -258,7 +254,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public CurrentMediaDuration(Map.Entry<String, String>[] attributes) {
+        public CurrentMediaDuration(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -268,7 +264,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public CurrentTrackMetaData(Map.Entry<String, String>[] attributes) {
+        public CurrentTrackMetaData(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -278,7 +274,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public CurrentTrackURI(Map.Entry<String, String>[] attributes) {
+        public CurrentTrackURI(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -288,7 +284,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public AVTransportURI(Map.Entry<String, String>[] attributes) {
+        public AVTransportURI(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -298,7 +294,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public NextAVTransportURI(Map.Entry<String, String>[] attributes) {
+        public NextAVTransportURI(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -308,7 +304,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public AVTransportURIMetaData(Map.Entry<String, String>[] attributes) {
+        public AVTransportURIMetaData(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -318,28 +314,28 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public NextAVTransportURIMetaData(Map.Entry<String, String>[] attributes) {
+        public NextAVTransportURIMetaData(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
 
     public static class CurrentTransportActions extends EventedValueEnumArray<TransportAction>{
-        public CurrentTransportActions(TransportAction[] e) {
+        public CurrentTransportActions(List<TransportAction> e) {
             super(e);
         }
 
-        public CurrentTransportActions(Map.Entry<String, String>[] attributes) {
+        public CurrentTransportActions(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
 
         @Override
-        protected TransportAction[] enumValueOf(String[] names) {
-            if (names == null) return new TransportAction[0];
+        protected List<TransportAction> enumValueOf(String[] names) {
+            if (names == null) return Collections.emptyList();
             List<TransportAction> list = new ArrayList<>();
             for (String s : names) {
                 list.add(TransportAction.valueOf(s));
             }
-            return list.toArray(new TransportAction[list.size()]);
+            return list;
         }
     }
 
@@ -348,7 +344,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public RelativeTimePosition(Map.Entry<String, String>[] attributes) {
+        public RelativeTimePosition(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -358,7 +354,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public AbsoluteTimePosition(Map.Entry<String, String>[] attributes) {
+        public AbsoluteTimePosition(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -368,7 +364,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public RelativeCounterPosition(Map.Entry<String, String>[] attributes) {
+        public RelativeCounterPosition(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }
@@ -378,7 +374,7 @@ public class AVTransportVariable {
             super(value);
         }
 
-        public AbsoluteCounterPosition(Map.Entry<String, String>[] attributes) {
+        public AbsoluteCounterPosition(Collection<Map.Entry<String, String>> attributes) {
             super(attributes);
         }
     }

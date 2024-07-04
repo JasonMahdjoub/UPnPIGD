@@ -24,12 +24,12 @@ public class DoubleDatatype extends AbstractDatatype<Double> {
     }
 
     @Override
-    public boolean isHandlingJavaType(Class type) {
+    public boolean isHandlingJavaType(Class<?> type) {
         return type == Double.TYPE || Double.class.isAssignableFrom(type);
     }
 
     public Double valueOf(String s) throws InvalidValueException {
-        if (s.equals("")) return null;
+        if (s.isEmpty()) return null;
         try {
             return Double.parseDouble(s);
         } catch (NumberFormatException ex) {

@@ -22,9 +22,9 @@ import java.net.URI;
 /**
  * @author Christian Bauer
  */
-public class ServiceControlResource extends Resource<LocalService> {
+public class ServiceControlResource<T> extends Resource<LocalService<T>> {
 
-    public ServiceControlResource(URI localURI, LocalService model) {
+    public ServiceControlResource(URI localURI, LocalService<T> model) {
         super(localURI, model);
     }
 }

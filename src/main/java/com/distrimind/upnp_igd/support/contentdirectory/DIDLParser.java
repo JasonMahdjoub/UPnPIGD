@@ -87,16 +87,12 @@ public class DIDLParser extends SAXParser {
      *
      * @param resource The resource on the classpath.
      * @return The unmarshalled DIDL content model.
-     * @throws Exception
+     *
      */
     public DIDLContent parseResource(String resource) throws Exception {
-        InputStream is = null;
-        try {
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
-            return parse(IO.readLines(is));
-        } finally {
-            if (is != null) is.close();
-        }
+		try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
+			return parse(IO.readLines(is));
+		}
     }
 
     /**
@@ -108,7 +104,7 @@ public class DIDLParser extends SAXParser {
      */
     public DIDLContent parse(String xml) throws Exception {
 
-        if (xml == null || xml.length() == 0) {
+        if (xml == null || xml.isEmpty()) {
             throw new RuntimeException("Null or empty XML");
         }
 
@@ -124,19 +120,19 @@ public class DIDLParser extends SAXParser {
         return new RootHandler(instance, parser);
     }
 
-    protected ContainerHandler createContainerHandler(Container instance, Handler parent) {
+    protected ContainerHandler createContainerHandler(Container instance, Handler<?> parent) {
         return new ContainerHandler(instance, parent);
     }
 
-    protected ItemHandler createItemHandler(Item instance, Handler parent) {
+    protected ItemHandler createItemHandler(Item instance, Handler<?> parent) {
         return new ItemHandler(instance, parent);
     }
 
-    protected ResHandler createResHandler(Res instance, Handler parent) {
+    protected ResHandler createResHandler(Res instance, Handler<?> parent) {
         return new ResHandler(instance, parent);
     }
 
-    protected DescMetaHandler createDescMetaHandler(DescMeta instance, Handler parent) {
+    protected DescMetaHandler createDescMetaHandler(DescMeta<Document> instance, Handler<?> parent) {
         return new DescMetaHandler(instance, parent);
     }
 
@@ -245,8 +241,8 @@ public class DIDLParser extends SAXParser {
         }
     }
 
-    protected DescMeta createDescMeta(Attributes attributes) {
-        DescMeta desc = new DescMeta();
+    protected DescMeta<Document> createDescMeta(Attributes attributes) {
+        DescMeta<Document> desc = new DescMeta<>();
 
         desc.setId(attributes.getValue("id"));
 
@@ -272,7 +268,7 @@ public class DIDLParser extends SAXParser {
      *
      * @param content The content model.
      * @return An XML representation.
-     * @throws Exception
+     *
      */
     public String generate(DIDLContent content) throws Exception {
         return generate(content, false);
@@ -290,7 +286,7 @@ public class DIDLParser extends SAXParser {
      * @param content     The content model.
      * @param nestedItems <code>true</code> if nested item elements should be rendered for containers.
      * @return An XML representation.
-     * @throws Exception
+     *
      */
     public String generate(DIDLContent content, boolean nestedItems) throws Exception {
         return documentToString(buildDOM(content, nestedItems), true);
@@ -353,7 +349,7 @@ public class DIDLParser extends SAXParser {
             generateItem(item, descriptor, rootElement);
         }
 
-        for (DescMeta descMeta : content.getDescMetadata()) {
+        for (DescMeta<?> descMeta : content.getDescMetadata()) {
             if (descMeta == null) continue;
             generateDescMetadata(descMeta, descriptor, rootElement);
         }
@@ -437,7 +433,7 @@ public class DIDLParser extends SAXParser {
             generateResource(resource, descriptor, containerElement);
         }
 
-        for (DescMeta descMeta : container.getDescMetadata()) {
+        for (DescMeta<?> descMeta : container.getDescMetadata()) {
             if (descMeta == null) continue;
             generateDescMetadata(descMeta, descriptor, containerElement);
         }
@@ -504,7 +500,7 @@ public class DIDLParser extends SAXParser {
             generateResource(resource, descriptor, itemElement);
         }
 
-        for (DescMeta descMeta : item.getDescMetadata()) {
+        for (DescMeta<?> descMeta : item.getDescMetadata()) {
             if (descMeta == null) continue;
             generateDescMetadata(descMeta, descriptor, itemElement);
         }
@@ -543,7 +539,7 @@ public class DIDLParser extends SAXParser {
             resourceElement.setAttribute("resolution", resource.getResolution());
     }
 
-    protected void generateDescMetadata(DescMeta descMeta, Document descriptor, Element parent) {
+    protected void generateDescMetadata(DescMeta<?> descMeta, Document descriptor, Element parent) {
 
         if (descMeta.getId() == null) {
             throw new RuntimeException("Missing id of description metadata: " + descMeta);
@@ -571,7 +567,7 @@ public class DIDLParser extends SAXParser {
      * @param descElement The DIDL content {@code <desc>} element wrapping the final metadata.
      * @param descMeta    The metadata with a <code>org.w3c.Document</code> payload.
      */
-    protected void populateDescMetadata(Element descElement, DescMeta descMeta) {
+    protected void populateDescMetadata(Element descElement, DescMeta<?> descMeta) {
         if (descMeta.getMetadata() instanceof Document) {
             Document doc = (Document) descMeta.getMetadata();
 
@@ -608,7 +604,7 @@ public class DIDLParser extends SAXParser {
             clazz.getValue(),
             DIDLObject.Property.UPNP.NAMESPACE.URI
         );
-        if (clazz.getFriendlyName() != null && clazz.getFriendlyName().length() > 0)
+        if (clazz.getFriendlyName() != null && !clazz.getFriendlyName().isEmpty())
             classElement.setAttribute("name", clazz.getFriendlyName());
         if (appendDerivation)
             classElement.setAttribute("includeDerived", Boolean.toString(clazz.isIncludeDerived()));
@@ -635,9 +631,9 @@ public class DIDLParser extends SAXParser {
     /* ############################################################################################# */
 
 
-    public abstract class DIDLObjectHandler<I extends DIDLObject> extends Handler<I> {
+    public abstract static class DIDLObjectHandler<I extends DIDLObject> extends Handler<I> {
 
-        protected DIDLObjectHandler(I instance, Handler parent) {
+        protected DIDLObjectHandler(I instance, Handler<?> parent) {
             super(instance, parent);
         }
 
@@ -759,7 +755,7 @@ public class DIDLParser extends SAXParser {
                         new DIDLObject.Property.UPNP.TOC(getCharacters())
                     );
                 } else if ("albumArtURI".equals(localName)) {
-                    DIDLObject.Property albumArtURI = new DIDLObject.Property.UPNP.ALBUM_ART_URI(URI.create(getCharacters()));
+                    DIDLObject.Property<URI> albumArtURI = new DIDLObject.Property.UPNP.ALBUM_ART_URI(URI.create(getCharacters()));
 
                     Attributes albumArtURIAttributes = getAttributes();
                     for (int i = 0; i < albumArtURIAttributes.getLength(); i++) {
@@ -844,25 +840,29 @@ public class DIDLParser extends SAXParser {
 
             if (!DIDLContent.NAMESPACE_URI.equals(uri)) return;
 
-            if (localName.equals("container")) {
+			switch (localName) {
+				case "container":
 
-                Container container = createContainer(attributes);
-                getInstance().addContainer(container);
-                createContainerHandler(container, this);
+					Container container = createContainer(attributes);
+					getInstance().addContainer(container);
+					createContainerHandler(container, this);
 
-            } else if (localName.equals("item")) {
+					break;
+				case "item":
 
-                Item item = createItem(attributes);
-                getInstance().addItem(item);
-                createItemHandler(item, this);
+					Item item = createItem(attributes);
+					getInstance().addItem(item);
+					createItemHandler(item, this);
 
-            } else if (localName.equals("desc")) {
+					break;
+				case "desc":
 
-                DescMeta desc = createDescMeta(attributes);
-                getInstance().addDescMetadata(desc);
-                createDescMetaHandler(desc, this);
+					DescMeta<Document> desc = createDescMeta(attributes);
+					getInstance().addDescMetadata(desc);
+					createDescMetaHandler(desc, this);
 
-            }
+					break;
+			}
         }
 
         @Override
@@ -880,7 +880,7 @@ public class DIDLParser extends SAXParser {
     }
 
     public class ContainerHandler extends DIDLObjectHandler<Container> {
-        public ContainerHandler(Container instance, Handler parent) {
+        public ContainerHandler(Container instance, Handler<?> parent) {
             super(instance, parent);
         }
 
@@ -890,27 +890,31 @@ public class DIDLParser extends SAXParser {
 
             if (!DIDLContent.NAMESPACE_URI.equals(uri)) return;
 
-            if (localName.equals("item")) {
+			switch (localName) {
+				case "item":
 
-                Item item = createItem(attributes);
-                getInstance().addItem(item);
-                createItemHandler(item, this);
+					Item item = createItem(attributes);
+					getInstance().addItem(item);
+					createItemHandler(item, this);
 
-            } else if (localName.equals("desc")) {
+					break;
+				case "desc":
 
-                DescMeta desc = createDescMeta(attributes);
-                getInstance().addDescMetadata(desc);
-                createDescMetaHandler(desc, this);
+					DescMeta<Document> desc = createDescMeta(attributes);
+					getInstance().addDescMetadata(desc);
+					createDescMetaHandler(desc, this);
 
-            } else if (localName.equals("res")) {
+					break;
+				case "res":
 
-                Res res = createResource(attributes);
-                if (res != null) {
-                    getInstance().addResource(res);
-                    createResHandler(res, this);
-                }
+					Res res = createResource(attributes);
+					if (res != null) {
+						getInstance().addResource(res);
+						createResHandler(res, this);
+					}
 
-            }
+					break;
+			}
 
             // We do NOT support recursive container embedded in container! The schema allows it
             // but the spec doesn't:
@@ -962,7 +966,7 @@ public class DIDLParser extends SAXParser {
     }
 
     public class ItemHandler extends DIDLObjectHandler<Item> {
-        public ItemHandler(Item instance, Handler parent) {
+        public ItemHandler(Item instance, Handler<?> parent) {
             super(instance, parent);
         }
 
@@ -982,7 +986,7 @@ public class DIDLParser extends SAXParser {
 
             } else if (localName.equals("desc")) {
 
-                DescMeta desc = createDescMeta(attributes);
+                DescMeta<Document> desc = createDescMeta(attributes);
                 getInstance().addDescMetadata(desc);
                 createDescMetaHandler(desc, this);
 
@@ -1004,8 +1008,8 @@ public class DIDLParser extends SAXParser {
         }
     }
 
-    protected class ResHandler extends Handler<Res> {
-        public ResHandler(Res instance, Handler parent) {
+    protected static class ResHandler extends Handler<Res> {
+        public ResHandler(Res instance, Handler<?> parent) {
             super(instance, parent);
         }
 
@@ -1028,11 +1032,11 @@ public class DIDLParser extends SAXParser {
      * {@link com.distrimind.upnp_igd.support.model.DIDLContent#DESC_WRAPPER_NAMESPACE_URI}.
    
      */
-    public class DescMetaHandler extends Handler<DescMeta> {
+    public static class DescMetaHandler extends Handler<DescMeta<Document>> {
 
         protected Element current;
 
-        public DescMetaHandler(DescMeta instance, Handler parent) {
+        public DescMetaHandler(DescMeta<Document> instance, Handler<?> parent) {
             super(instance, parent);
             instance.setMetadata(instance.createMetadataDocument());
             current = getInstance().getMetadata().getDocumentElement();
@@ -1065,7 +1069,7 @@ public class DIDLParser extends SAXParser {
             if (isLastElement(uri, localName, qName)) return;
 
             // Ignore whitespace
-            if (getCharacters().length() > 0 && !getCharacters().matches("[\\t\\n\\x0B\\f\\r\\s]+"))
+            if (!getCharacters().isEmpty() && !getCharacters().matches("[\\t\\n\\x0B\\f\\r\\s]+"))
                 current.appendChild(getInstance().getMetadata().createTextNode(getCharacters()));
 
             current = (Element) current.getParentNode();

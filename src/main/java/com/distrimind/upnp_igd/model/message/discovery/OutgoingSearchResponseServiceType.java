@@ -28,9 +28,9 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
  */
 public class OutgoingSearchResponseServiceType extends OutgoingSearchResponse {
 
-    public OutgoingSearchResponseServiceType(IncomingDatagramMessage request,
+    public OutgoingSearchResponseServiceType(IncomingDatagramMessage<?> request,
 											 Location location,
-											 LocalDevice device,
+											 LocalDevice<?> device,
 											 ServiceType serviceType) {
         super(request, location, device);
 

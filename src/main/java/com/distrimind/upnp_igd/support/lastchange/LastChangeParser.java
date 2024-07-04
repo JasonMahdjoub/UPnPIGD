@@ -20,9 +20,7 @@ import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElement;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,15 +70,15 @@ public abstract class LastChangeParser extends SAXParser {
 
     abstract protected String getNamespace();
 
-    protected Set<Class<? extends EventedValue>> getEventedVariables() {
-        return Collections.EMPTY_SET;
+    protected Set<Class<? extends EventedValue<?>>> getEventedVariables() {
+        return Collections.emptySet();
     }
 
-    protected EventedValue createValue(String name, Map.Entry<String, String>[] attributes) throws Exception {
-        for (Class<? extends EventedValue> evType : getEventedVariables()) {
+    protected EventedValue<?> createValue(String name, List<Map.Entry<String, String>> attributes) throws Exception {
+        for (Class<? extends EventedValue<?>> evType : getEventedVariables()) {
             if (evType.getSimpleName().equals(name)) {
-                Constructor<? extends EventedValue> ctor = evType.getConstructor(Map.Entry[].class);
-                return ctor.newInstance(new Object[]{attributes});
+                Constructor<? extends EventedValue<?>> ctor = evType.getConstructor(List.class);
+                return ctor.newInstance(attributes);
             }
         }
         return null;
@@ -91,21 +89,16 @@ public abstract class LastChangeParser extends SAXParser {
      *
      * @param resource The resource on the classpath.
      * @return The unmarshalled Event model.
-     * @throws Exception
      */
     public Event parseResource(String resource) throws Exception {
-        InputStream is = null;
-        try {
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
-            return parse(IO.readLines(is));
-        } finally {
-            if (is != null) is.close();
-        }
+		try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
+			return parse(IO.readLines(is));
+		}
     }
 
     public Event parse(String xml) throws Exception {
 
-        if (xml == null || xml.length() == 0) {
+        if (xml == null || xml.isEmpty()) {
             throw new RuntimeException("Null or empty XML");
         }
 
@@ -124,7 +117,7 @@ public abstract class LastChangeParser extends SAXParser {
         if (log.isLoggable(Level.FINEST)) {
             for (InstanceID instanceID : event.getInstanceIDs()) {
                 log.finest("InstanceID '" + instanceID.getId() + "' has values: " + instanceID.getValues().size());
-                for (EventedValue eventedValue : instanceID.getValues()) {
+                for (EventedValue<?> eventedValue : instanceID.getValues()) {
                     log.finest(eventedValue.getName() + " => " + eventedValue.getValue());
                 }
             }
@@ -159,23 +152,24 @@ public abstract class LastChangeParser extends SAXParser {
 
     class InstanceIDHandler extends Handler<InstanceID> {
 
-        InstanceIDHandler(InstanceID instance, Handler parent) {
+        InstanceIDHandler(InstanceID instance, Handler<?> parent) {
             super(instance, parent);
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, final Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
-            Map.Entry[] attributeMap = new Map.Entry[attributes.getLength()];
-            for (int i = 0; i < attributeMap.length; i++) {
-                attributeMap[i] =
+            int s=attributes.getLength();
+            List<Map.Entry<String, String>> attributeMap = new ArrayList<>(s);
+            for (int i = 0; i < s; i++) {
+                attributeMap.add(
                         new AbstractMap.SimpleEntry<>(
                                 attributes.getLocalName(i),
                                 attributes.getValue(i)
-                        );
+                        ));
             }
             try {
-                EventedValue esv = createValue(localName, attributeMap);
+                EventedValue<?> esv = createValue(localName, attributeMap);
                 if (esv != null)
                     getInstance().getValues().add(esv);
             } catch (Exception ex) {
@@ -217,16 +211,16 @@ public abstract class LastChangeParser extends SAXParser {
             Element instanceIDElement = appendNewElement(descriptor, rootElement, CONSTANTS.InstanceID.name());
             instanceIDElement.setAttribute(CONSTANTS.val.name(), instanceID.getId().toString());
 
-            for (EventedValue eventedValue : instanceID.getValues()) {
+            for (EventedValue<?> eventedValue : instanceID.getValues()) {
                 generateEventedValue(eventedValue, descriptor, instanceIDElement);
             }
         }
     }
 
-    protected void generateEventedValue(EventedValue eventedValue, Document descriptor, Element parentElement) {
+    protected void generateEventedValue(EventedValue<?> eventedValue, Document descriptor, Element parentElement) {
         String name = eventedValue.getName();
-        Map.Entry<String, String>[] attributes = eventedValue.getAttributes();
-        if (attributes != null && attributes.length > 0) {
+        List<Map.Entry<String, String>> attributes = eventedValue.getAttributes();
+        if (attributes != null && !attributes.isEmpty()) {
             Element evElement = appendNewElement(descriptor, parentElement, name);
             for (Map.Entry<String, String> attr : attributes) {
                 evElement.setAttribute(attr.getKey(), DOMParser.escape(attr.getValue()));

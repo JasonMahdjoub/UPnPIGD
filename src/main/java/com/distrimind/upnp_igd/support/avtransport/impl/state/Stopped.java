@@ -23,6 +23,7 @@ import com.distrimind.upnp_igd.support.model.TransportInfo;
 import com.distrimind.upnp_igd.support.model.TransportState;
 
 import java.net.URI;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -59,13 +60,13 @@ public abstract class Stopped<T extends AVTransport> extends AbstractState<T> {
     public abstract Class<? extends AbstractState<?>> previous();
     public abstract Class<? extends AbstractState<?>> seek(SeekMode unit, String target);
 
-    public TransportAction[] getCurrentTransportActions() {
-        return new TransportAction[] {
+    public List<TransportAction> getCurrentTransportActions() {
+        return List.of(
                 TransportAction.Stop,
                 TransportAction.Play,
                 TransportAction.Next,
                 TransportAction.Previous,
                 TransportAction.Seek
-        };
+        );
     }
 }

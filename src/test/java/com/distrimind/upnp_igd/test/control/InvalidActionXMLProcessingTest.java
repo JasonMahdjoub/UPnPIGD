@@ -171,7 +171,7 @@ public class InvalidActionXMLProcessingTest {
 
     public StreamRequestMessage createRequestMessage(Action<?> action, String xmlFile) throws Exception {
         StreamRequestMessage message =
-            new StreamRequestMessage(UpnpRequest.Method.POST, URI.create("http://some.uri"));
+            new StreamRequestMessage(UpnpRequest.Method.POST, URI.create("https://some.uri"));
 
         message.getHeaders().add(
             UpnpHeader.Type.CONTENT_TYPE,

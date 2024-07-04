@@ -111,11 +111,11 @@ public class IncompatibilityTest {
                         "      <presentationURL>/</presentationURL>\n" +
                         "      <friendlyName>Network Light (CB-1CE8FF0B14FA)</friendlyName>\n" +
                         "      <manufacturer>OpenSource</manufacturer>\n" +
-                        "      <manufacturerURL>http://www.sourceforge.org</manufacturerURL>\n" +
+                        "      <manufacturerURL>https://www.sourceforge.org</manufacturerURL>\n" +
                         "      <modelDescription>Software Emulated Light Bulb</modelDescription>\n" +
                         "      <modelName>Network Light Bulb</modelName>\n" +
                         "      <modelNumber>XPC-L1</modelNumber>\n" +
-                        "      <modelURL>http://www.sourceforge.org/</modelURL>\n" +
+                        "      <modelURL>https://www.sourceforge.org/</modelURL>\n" +
                         "      <UDN>uuid:872843be-9fb4-4eb4-8250-0b629c047a27</UDN>\n" +
                         "      <iconList>\n" +
                         "         <icon>\n" +

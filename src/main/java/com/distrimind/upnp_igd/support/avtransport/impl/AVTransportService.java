@@ -37,6 +37,8 @@ import com.distrimind.upnp_igd.statemachine.StateMachineBuilder;
 import com.distrimind.upnp_igd.statemachine.TransitionException;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -260,12 +262,12 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
     }
 
     @Override
-    protected TransportAction[] getCurrentTransportActions(UnsignedIntegerFourBytes instanceId) throws Exception {
+    protected List<TransportAction> getCurrentTransportActions(UnsignedIntegerFourBytes instanceId) throws Exception {
         AVTransportStateMachine stateMachine = findStateMachine(instanceId);
         try {
             return stateMachine.getCurrentState().getCurrentTransportActions();
         } catch (TransitionException ex) {
-            return new TransportAction[0];
+            return Collections.emptyList();
         }
     }
 

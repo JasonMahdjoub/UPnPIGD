@@ -118,7 +118,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
         return genaEventProcessor;
     }
 
-    public StreamClient createStreamClient() {
+    public StreamClient<?> createStreamClient() {
         return new StreamClientImpl(
             new StreamClientConfigurationImpl(
                 getSyncProtocolExecutorService()
@@ -130,7 +130,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
             networkAddressFactory=createNetworkAddressFactory();
         return networkAddressFactory;
     }
-    public MulticastReceiver createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
+    public MulticastReceiver<?> createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
         return new MulticastReceiverImpl(
                 new MulticastReceiverConfigurationImpl(
                         networkAddressFactory.getMulticastGroup(),
@@ -139,11 +139,11 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
         );
     }
 
-    public DatagramIO createDatagramIO(NetworkAddressFactory networkAddressFactory) {
+    public DatagramIO<?> createDatagramIO(NetworkAddressFactory networkAddressFactory) {
         return new DatagramIOImpl(new DatagramIOConfigurationImpl());
     }
 
-    public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
+    public StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory) {
         return new StreamServerImpl(
                 new StreamServerConfigurationImpl(
                         networkAddressFactory.getStreamListenPort()

@@ -58,16 +58,16 @@ public abstract class Search extends ActionCallback {
     /**
      * Search with first result 0 and {@link #getDefaultMaxResults()}, filters with {@link #CAPS_WILDCARD}.
      */
-    public Search(Service service, String containerId, String searchCriteria) {
+    public Search(Service<?, ?, ?> service, String containerId, String searchCriteria) {
         this(service, containerId, searchCriteria, CAPS_WILDCARD, 0, null);
     }
 
     /**
      * @param maxResults Can be <code>null</code>, then {@link #getDefaultMaxResults()} is used.
      */
-    public Search(Service service, String containerId, String searchCriteria, String filter,
+    public Search(Service<?, ?, ?> service, String containerId, String searchCriteria, String filter,
                   long firstResult, Long maxResults, SortCriterion... orderBy) {
-        super(new ActionInvocation(service.getAction("Search")));
+        super(new ActionInvocation<>(service.getAction("Search")));
 
         log.fine("Creating browse action for container ID: " + containerId);
 
@@ -89,7 +89,7 @@ public abstract class Search extends ActionCallback {
     }
 
     @Override
-    public void success(ActionInvocation actionInvocation) {
+    public void success(ActionInvocation<?> actionInvocation) {
         log.fine("Successful search action, reading output argument values");
 
         SearchResult result = new SearchResult(
@@ -100,7 +100,7 @@ public abstract class Search extends ActionCallback {
 
         boolean proceed = receivedRaw(actionInvocation, result);
 
-        if (proceed && result.getCountLong() > 0 && result.getResult().length() > 0) {
+        if (proceed && result.getCountLong() > 0 && !result.getResult().isEmpty()) {
             try {
                 DIDLParser didlParser = new DIDLParser();
                 DIDLContent didl = didlParser.parse(result.getResult());
@@ -127,11 +127,11 @@ public abstract class Search extends ActionCallback {
         return 999L;
     }
 
-    public boolean receivedRaw(ActionInvocation actionInvocation, SearchResult searchResult) {
+    public boolean receivedRaw(ActionInvocation<?> actionInvocation, SearchResult searchResult) {
         return true;
     }
 
-    public abstract void received(ActionInvocation actionInvocation, DIDLContent didl);
+    public abstract void received(ActionInvocation<?> actionInvocation, DIDLContent didl);
 
     public abstract void updateStatus(Status status);
 }

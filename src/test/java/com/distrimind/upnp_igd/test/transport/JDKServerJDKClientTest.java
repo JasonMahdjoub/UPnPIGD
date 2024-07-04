@@ -28,14 +28,14 @@ import com.distrimind.upnp_igd.transport.spi.StreamServer;
 public class JDKServerJDKClientTest extends StreamServerClientTest {
 
     @Override
-    public StreamServer createStreamServer(int port) {
+    public StreamServer<?> createStreamServer(int port) {
         return new StreamServerImpl(
             new StreamServerConfigurationImpl(port)
         );
     }
 
     @Override
-    public StreamClient createStreamClient(UpnpServiceConfiguration configuration) {
+    public StreamClient<?> createStreamClient(UpnpServiceConfiguration configuration) {
         return new StreamClientImpl(
             new StreamClientConfigurationImpl(
                 configuration.getSyncProtocolExecutorService(),

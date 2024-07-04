@@ -28,12 +28,12 @@ import com.distrimind.upnp_igd.support.model.Connection;
  */
 public abstract class GetStatusInfo extends ActionCallback {
 
-    public GetStatusInfo(Service service) {
-        super(new ActionInvocation(service.getAction("GetStatusInfo")));
+    public GetStatusInfo(Service<?, ?, ?> service) {
+        super(new ActionInvocation<>(service.getAction("GetStatusInfo")));
     }
 
     @Override
-    public void success(ActionInvocation invocation) {
+    public void success(ActionInvocation<?> invocation) {
 
         try {
             Connection.Status status =

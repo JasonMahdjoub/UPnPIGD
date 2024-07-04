@@ -49,7 +49,7 @@ public class AVTransportLastChangeParser extends LastChangeParser {
     }
 
     @Override
-    protected Set<Class<? extends EventedValue>> getEventedVariables() {
+    protected Set<Class<? extends EventedValue<?>>> getEventedVariables() {
         return AVTransportVariable.ALL;
     }
 }

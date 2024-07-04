@@ -122,7 +122,7 @@ public class ServiceType {
                         + "' with: "
                         + cleanToken
                 );
-                return new ServiceType(matcher.group(1), cleanToken, Integer.valueOf(matcher.group(3)));
+                return new ServiceType(matcher.group(1), cleanToken, Integer.parseInt(matcher.group(3)));
             }
 
             // TODO: UPNP VIOLATION: Ceyton InfiniTV uses colons in service type token and 'serviceId' instead of 'service'

@@ -56,9 +56,4 @@ public abstract class SendingSync<IN extends StreamRequestMessage, OUT extends S
 
     protected abstract OUT executeSync() throws RouterException;
 
-    @Override
-    public String toString() {
-        return "(" + getClass().getSimpleName() + ")";
-    }
-
 }

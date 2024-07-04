@@ -27,8 +27,8 @@
     &lt;CurrentTrackDuration val=&quot;0:00:00&quot;/&gt;
     &lt;CurrentMediaDuration val=&quot;0:00:00&quot;/&gt;
     &lt;CurrentTrackMetaData val=&quot;&quot;/&gt;
-    &lt;CurrentTrackURI val=&quot;http://denon.vtuner.com/setupapp/denon/asp/func/dynamOD.asp?ex45v=E9C9F41C0C450447FF6B71610F3B6B6E&id=36894&quot;/&gt;
-    &lt;AVTransportURI val=&quot;http://denon.vtuner.com/setupapp/denon/asp/func/dynamOD.asp?ex45v=E9C9F41C0C450447FF6B71610F3B6B6E&id=36894&quot;/&gt;
+    &lt;CurrentTrackURI val=&quot;https://denon.vtuner.com/setupapp/denon/asp/func/dynamOD.asp?ex45v=E9C9F41C0C450447FF6B71610F3B6B6E&id=36894&quot;/&gt;
+    &lt;AVTransportURI val=&quot;https://denon.vtuner.com/setupapp/denon/asp/func/dynamOD.asp?ex45v=E9C9F41C0C450447FF6B71610F3B6B6E&id=36894&quot;/&gt;
     &lt;AVTransportURIMetaData val=&quot;&quot;/&gt;
     &lt;NextAVTransportURI val=&quot;NOT_IMPLEMENTED&quot;/&gt;
     &lt;NextAVTransportURIMetaData val=&quot;NOT_IMPLEMENTED&quot;/&gt;

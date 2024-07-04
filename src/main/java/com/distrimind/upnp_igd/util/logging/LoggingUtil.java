@@ -107,7 +107,7 @@ public class LoggingUtil {
         List<Handler> list = new ArrayList<>();
         for (String handlerName : handlerNames) {
             list.add(
-                    (Handler) Thread.currentThread().getContextClassLoader().loadClass(handlerName).newInstance()
+                    (Handler) Thread.currentThread().getContextClassLoader().loadClass(handlerName).getConstructor().newInstance()
             );
         }
         return list.toArray(new Handler[0]);

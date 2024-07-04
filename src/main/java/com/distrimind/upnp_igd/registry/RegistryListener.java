@@ -112,7 +112,7 @@ public interface RegistryListener {
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   The local device added to the {@link Registry}.
      */
-	void localDeviceAdded(Registry registry, LocalDevice device);
+	void localDeviceAdded(Registry registry, LocalDevice<?> device);
 
     /**
      * Called after you remove your own device from the {@link Registry}.
@@ -122,7 +122,7 @@ public interface RegistryListener {
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   The local device removed from the {@link Registry}.
      */
-	void localDeviceRemoved(Registry registry, LocalDevice device);
+	void localDeviceRemoved(Registry registry, LocalDevice<?> device);
 
     /**
      * Called after registry maintenance stops but before the registry is cleared.

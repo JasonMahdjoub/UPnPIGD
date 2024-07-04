@@ -147,7 +147,7 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
         }
     }
 
-    synchronized public void send(OutgoingDatagramMessage message) {
+    synchronized public void send(OutgoingDatagramMessage<?> message) {
         if (log.isLoggable(Level.FINE)) {
             log.fine("Sending message from address: " + localAddress);
         }

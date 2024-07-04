@@ -18,7 +18,6 @@ package com.distrimind.upnp_igd.model.types;
 import com.distrimind.upnp_igd.model.ModelUtil;
 
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.security.MessageDigest;

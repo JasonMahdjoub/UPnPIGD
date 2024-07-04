@@ -135,12 +135,12 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public <D extends Device<?, D, ?>> D describe(D undescribedDevice, Document dom) throws DescriptorBindingException, ValidationException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, Document dom) throws DescriptorBindingException, ValidationException {
         try {
             log.fine("Populating device from DOM: " + undescribedDevice);
 
             // Read the XML into a mutable descriptor graph
-            MutableDevice descriptor = new MutableDevice();
+            MutableDevice<D, S> descriptor = new MutableDevice<>();
             Element rootElement = dom.getDocumentElement();
             hydrateRoot(descriptor, rootElement);
 
@@ -154,15 +154,15 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public <D extends Device<?, D, ?>> D buildInstance(D undescribedDevice, MutableDevice descriptor) throws ValidationException {
-        @SuppressWarnings("unchecked") D res=(D) descriptor.build(undescribedDevice);
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D buildInstance(D undescribedDevice, MutableDevice<D, S> descriptor) throws ValidationException {
+        D res=descriptor.build(undescribedDevice);
         if (res.getDetails()!=null && isNotValidRemoteAddress(res.getDetails().getBaseURL(), networkAddressFactory))
             return null;
 
         return res;
     }
 
-    protected void hydrateRoot(MutableDevice descriptor, Element rootElement) throws DescriptorBindingException {
+    protected <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateRoot(MutableDevice<D, S> descriptor, Element rootElement) throws DescriptorBindingException {
 
         if (rootElement.getNamespaceURI() == null || !rootElement.getNamespaceURI().equals(Descriptor.Device.NAMESPACE_URI)) {
             log.warning("Wrong XML namespace declared on root element: " + rootElement.getNamespaceURI());
@@ -211,7 +211,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         hydrateDevice(descriptor, deviceNode);
     }
 
-    public void hydrateSpecVersion(MutableDevice descriptor, Node specVersionNode) throws DescriptorBindingException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateSpecVersion(MutableDevice<D,S> descriptor, Node specVersionNode) throws DescriptorBindingException {
 
         NodeList specVersionChildren = specVersionNode.getChildNodes();
         for (int i = 0; i < specVersionChildren.getLength(); i++) {
@@ -239,7 +239,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
     }
 
-    public void hydrateDevice(MutableDevice descriptor, Node deviceNode) throws DescriptorBindingException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateDevice(MutableDevice<D, S> descriptor, Node deviceNode) throws DescriptorBindingException {
 
         NodeList deviceNodeChildren = deviceNode.getChildNodes();
         for (int i = 0; i < deviceNodeChildren.getLength(); i++) {
@@ -293,7 +293,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public void hydrateIconList(MutableDevice descriptor, Node iconListNode) throws DescriptorBindingException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateIconList(MutableDevice<D, S> descriptor, Node iconListNode) throws DescriptorBindingException {
 
         NodeList iconListNodeChildren = iconListNode.getChildNodes();
         for (int i = 0; i < iconListNodeChildren.getLength(); i++) {
@@ -345,7 +345,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public void hydrateServiceList(MutableDevice descriptor, Node serviceListNode) {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateServiceList(MutableDevice<D, S> descriptor, Node serviceListNode) {
 
         NodeList serviceListNodeChildren = serviceListNode.getChildNodes();
         for (int i = 0; i < serviceListNodeChildren.getLength(); i++) {
@@ -359,7 +359,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                 NodeList serviceChildren = serviceListNodeChild.getChildNodes();
 
                 try {
-                    MutableService service = new MutableService();
+                    MutableService<D, S> service = new MutableService<>();
 
                     for (int x = 0; x < serviceChildren.getLength(); x++) {
                         Node serviceChild = serviceChildren.item(x);
@@ -391,7 +391,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         }
     }
 
-    public void hydrateDeviceList(MutableDevice descriptor, Node deviceListNode) throws DescriptorBindingException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateDeviceList(MutableDevice<D, S> descriptor, Node deviceListNode) throws DescriptorBindingException {
 
         NodeList deviceListNodeChildren = deviceListNode.getChildNodes();
         for (int i = 0; i < deviceListNodeChildren.getLength(); i++) {
@@ -401,7 +401,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
                 continue;
 
             if (ELEMENT.device.equals(deviceListNodeChild)) {
-                MutableDevice embeddedDevice = new MutableDevice();
+                MutableDevice<D, S> embeddedDevice = new MutableDevice<>();
                 embeddedDevice.parentDevice = descriptor;
                 descriptor.embeddedDevices.add(embeddedDevice);
                 hydrateDevice(embeddedDevice, deviceListNodeChild);

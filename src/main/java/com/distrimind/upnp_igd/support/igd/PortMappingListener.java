@@ -73,16 +73,16 @@ public class PortMappingListener extends DefaultRegistryListener {
     public static final ServiceType IP_SERVICE_TYPE = new UDAServiceType("WANIPConnection", 1);
     public static final ServiceType PPP_SERVICE_TYPE = new UDAServiceType("WANPPPConnection", 1);
 
-    protected PortMapping[] portMappings;
+    protected List<PortMapping> portMappings;
 
     // The key of the map is Service and equality is object identity, this is by-design
     protected Map<Service<?, ?, ?>, List<PortMapping>> activePortMappings = new HashMap<>();
 
     public PortMappingListener(PortMapping portMapping) {
-        this(new PortMapping[]{portMapping});
+        this(List.of(portMapping));
     }
 
-    public PortMappingListener(PortMapping[] portMappings) {
+    public PortMappingListener(List<PortMapping> portMappings) {
         this.portMappings = portMappings;
     }
 

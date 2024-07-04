@@ -51,7 +51,7 @@ abstract public class StreamServerClientTest {
     public MockProtocolFactory protocolFactory = new MockProtocolFactory() {
 
         @Override
-        public ReceivingSync createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException {
+        public TestProtocol createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException {
             String path = requestMessage.getUri().getPath();
             if (path.endsWith(OKEmptyResponse.PATH)) {
                 lastExecutedServerProtocol = new OKEmptyResponse(requestMessage);
@@ -81,8 +81,8 @@ abstract public class StreamServerClientTest {
         }
     };
 
-    public StreamServer server;
-    public StreamClient client;
+    public StreamServer<?> server;
+    public StreamClient<?> client;
     public TestProtocol lastExecutedServerProtocol;
 
 
@@ -244,11 +244,11 @@ abstract public class StreamServerClientTest {
         );
     }
 
-    abstract public StreamServer createStreamServer(int port);
+    abstract public StreamServer<?> createStreamServer(int port);
 
-    abstract public StreamClient createStreamClient(UpnpServiceConfiguration configuration);
+    abstract public StreamClient<?> createStreamClient(UpnpServiceConfiguration configuration);
 
-    public abstract class TestProtocol extends ReceivingSync<StreamRequestMessage, StreamResponseMessage> {
+    public abstract static class TestProtocol extends ReceivingSync<StreamRequestMessage, StreamResponseMessage> {
         volatile public boolean isComplete;
 
         public TestProtocol(StreamRequestMessage inputMessage) {
@@ -256,7 +256,7 @@ abstract public class StreamServerClientTest {
         }
     }
 
-    public class OKEmptyResponse extends TestProtocol {
+    public static class OKEmptyResponse extends TestProtocol {
 
         public static final String PATH = "/ok";
 
@@ -271,7 +271,7 @@ abstract public class StreamServerClientTest {
         }
     }
 
-    public class OKBodyResponse extends TestProtocol{
+    public static class OKBodyResponse extends TestProtocol{
 
         public static final String PATH = "/okbody";
 
@@ -286,7 +286,7 @@ abstract public class StreamServerClientTest {
         }
     }
 
-    public class NoResponse extends TestProtocol {
+    public static class NoResponse extends TestProtocol {
 
         public static final String PATH = "/noresponse";
 
@@ -300,7 +300,7 @@ abstract public class StreamServerClientTest {
         }
     }
 
-    public class DelayedResponse extends TestProtocol {
+    public static class DelayedResponse extends TestProtocol {
 
         public static final String PATH = "/delayed";
 
@@ -321,7 +321,7 @@ abstract public class StreamServerClientTest {
         }
     }
 
-    public class TooLongResponse extends TestProtocol {
+    public static class TooLongResponse extends TestProtocol {
 
         public static final String PATH = "/toolong";
 
@@ -342,7 +342,7 @@ abstract public class StreamServerClientTest {
         }
     }
 
-    public class CheckAliveResponse extends TestProtocol {
+    public static class CheckAliveResponse extends TestProtocol {
 
         public static final String PATH = "/checkalive";
 
@@ -371,7 +371,7 @@ abstract public class StreamServerClientTest {
         }
     }
 
-    public class CheckAliveLongResponse extends TestProtocol {
+    public static class CheckAliveLongResponse extends TestProtocol {
 
         public static final String PATH = "/checkalivelong";
 
