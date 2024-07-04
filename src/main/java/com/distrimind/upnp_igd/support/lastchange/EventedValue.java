@@ -62,7 +62,7 @@ public abstract class EventedValue<V> {
     }
 
 	protected V valueOf(String s) throws InvalidValueException {
-        return (V)getDatatype().valueOf(s);
+        return getDatatype().valueOf(s);
     }
 
 	@Override

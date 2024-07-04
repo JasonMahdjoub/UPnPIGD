@@ -69,7 +69,7 @@ public class RequestInfo {
 		if (names.hasMoreElements()) {
 			builder.append("Parameters:\n");
 			while (names.hasMoreElements()) {
-				String name = (String) names.nextElement();
+				String name = names.nextElement();
 				String[] values = req.getParameterValues(name);
 				if (values != null) {
 					for (String value : values) {
@@ -86,7 +86,7 @@ public class RequestInfo {
 		if (names.hasMoreElements()) {
 			builder.append("Headers:\n");
 			while (names.hasMoreElements()) {
-				String name = (String) names.nextElement();
+				String name = names.nextElement();
 				String value = req.getHeader(name);
 				builder.append("    ").append(name).append(": ").append(value).append('\n');
 			}
