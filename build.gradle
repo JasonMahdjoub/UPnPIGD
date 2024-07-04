@@ -75,7 +75,7 @@ repositories {
 
 dependencies {
     var cdiAPIVersion='4.1.0'
-    var jettyVersion='11+'
+    var jettyVersion='11.0.21'
     var slf4jVersion='2.0.13'
     var testngVersion='7.10.2'
     var beanShellVersion='2.0b6'
@@ -117,66 +117,6 @@ java {
 
 version='1.1.0-STABLE'
 
-
-/*task generateVersionsFile(type:JavaExec, dependsOn:classes) {
-    if (project.hasProperty('assemble') || project.hasProperty('build') || project.hasProperty('jar')) {
-        def versionBuildFile = new File(project.getProjectDir(), 'src/main/resources/com/distrimind/upnp_igd/build.txt')
-
-
-        if (versionBuildFile.canRead()) {
-            def line = 0
-            versionBuildFile.withReader { line = it.readLine() }
-            def buildNumber = line.toInteger() + 1
-            versionBuildFile.withWriter { out ->
-                out.println buildNumber
-            }
-        } else {
-            versionBuildFile.withWriter { out ->
-                out.println 1
-            }
-        }
-
-        getMainClass().set('com.distrimind.upnp_igd.UPnPIGD')
-        classpath = sourceSets.main.runtimeClasspath
-    }
-
-}
-task generateMDFiles (dependsOn: generateVersionsFile) {
-
-    if (project.hasProperty('assemble') || project.hasProperty('build') || project.hasProperty('jar')) {
-
-
-        doLast {
-            def lastVersionFile = new File(project.getProjectDir().getParentFile(), 'lastVersion.md')
-
-
-            project.version = lastVersionFile.getText('UTF-8').trim()
-
-            def mdFile = new File(project.getProjectDir().getParentFile(), 'README_TO_EDIT.md')
-            if (mdFile.canRead()) {
-                def mdFileDest = new File(project.getProjectDir().getParentFile(), 'README.md')
-
-                mdFileDest.newWriter().withWriter { w ->
-                    w << mdFile.getText('UTF-8').replaceAll("//PROJECT_VERSION//", version.toString())
-
-                }
-            }
-            ext.artifactVersion = String.valueOf(project.version)
-            def pomFile = new File(project.getProjectDir(), 'build/publications/mavenJava/pom-default.xml')
-            if (pomFile.canRead()) {
-                String t = pomFile.getText('UTF-8').replaceAll("\\?\\?.\\?\\?.\\?\\?ToDefine", version.toString())
-
-                pomFile.newWriter().withWriter { w ->
-                    w << t
-                }
-            }
-
-
-        }
-    }
-
-
-}*/
 
 allprojects {
 	group='com.distrimind.upnp_igd'
