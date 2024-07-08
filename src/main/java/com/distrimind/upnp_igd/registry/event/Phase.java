@@ -30,17 +30,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 public interface Phase {
 
-    AnnotationLiteral<Alive> ALIVE = new AnnotationLiteral<Alive>() {
-    };
+    AnnotationLiteral<Alive> ALIVE = new AnnotationLiteral<>() {
+	};
 
-    AnnotationLiteral<Complete> COMPLETE = new AnnotationLiteral<Complete>() {
-    };
+    AnnotationLiteral<Complete> COMPLETE = new AnnotationLiteral<>() {
+	};
 
-    AnnotationLiteral<Byebye> BYEBYE = new AnnotationLiteral<Byebye>() {
-    };
+    AnnotationLiteral<Byebye> BYEBYE = new AnnotationLiteral<>() {
+	};
 
-    AnnotationLiteral<Updated> UPDATED = new AnnotationLiteral<Updated>() {
-    };
+    AnnotationLiteral<Updated> UPDATED = new AnnotationLiteral<>() {
+	};
 
 
     @Qualifier

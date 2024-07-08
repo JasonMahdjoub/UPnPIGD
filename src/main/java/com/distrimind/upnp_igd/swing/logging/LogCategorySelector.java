@@ -24,10 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,54 +75,63 @@ public class LogCategorySelector extends JDialog {
         checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.Y_AXIS));
         for (final LogCategory.Group group : logCategory.getGroups()) {
 
-            final JCheckBox checkBox = new JCheckBox(group.getName());
-            checkBox.setSelected(group.isEnabled());
-            checkBox.setFocusable(false);
-            checkBox.addItemListener(new ItemListener() {
-                public void itemStateChanged(ItemEvent e) {
-                    if (e.getStateChange() == ItemEvent.DESELECTED) {
-                        disableLoggerGroup(group);
-                    } else if (e.getStateChange() == ItemEvent.SELECTED) {
-                        enableLoggerGroup(group);
-                    }
-                }
-            });
+            final JCheckBox checkBox = getjCheckBox(group);
             checkboxPanel.add(checkBox);
         }
 
         JToolBar buttonBar = new JToolBar();
         buttonBar.setFloatable(false);
 
-        JButton enableAllButton = new JButton("All");
-        enableAllButton.setFocusable(false);
-        enableAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                for (LogCategory.Group group : logCategory.getGroups()) {
-                    enableLoggerGroup(group);
-                }
-                categoryPanel.removeAll();
-                addLoggerGroups(logCategory, categoryPanel);
-                categoryPanel.revalidate();
-            }
-        });
+        JButton enableAllButton = getjButton(logCategory, categoryPanel);
         buttonBar.add(enableAllButton);
 
-        JButton disableAllButton = new JButton("None");
-        disableAllButton.setFocusable(false);
-        disableAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                for (LogCategory.Group group : logCategory.getGroups()) {
-                    disableLoggerGroup(group);
-                }
-                categoryPanel.removeAll();
-                addLoggerGroups(logCategory, categoryPanel);
-                categoryPanel.revalidate();
-            }
-        });
+        JButton disableAllButton = getButton(logCategory, categoryPanel);
         buttonBar.add(disableAllButton);
 
         categoryPanel.add(checkboxPanel, BorderLayout.CENTER);
         categoryPanel.add(buttonBar, BorderLayout.NORTH);
+    }
+
+    private JButton getButton(LogCategory logCategory, JPanel categoryPanel) {
+        JButton disableAllButton = new JButton("None");
+        disableAllButton.setFocusable(false);
+        disableAllButton.addActionListener(e -> {
+			for (LogCategory.Group group : logCategory.getGroups()) {
+				disableLoggerGroup(group);
+			}
+			categoryPanel.removeAll();
+			addLoggerGroups(logCategory, categoryPanel);
+			categoryPanel.revalidate();
+		});
+        return disableAllButton;
+    }
+
+    private JButton getjButton(LogCategory logCategory, JPanel categoryPanel) {
+        JButton enableAllButton = new JButton("All");
+        enableAllButton.setFocusable(false);
+        enableAllButton.addActionListener(e -> {
+			for (LogCategory.Group group : logCategory.getGroups()) {
+				enableLoggerGroup(group);
+			}
+			categoryPanel.removeAll();
+			addLoggerGroups(logCategory, categoryPanel);
+			categoryPanel.revalidate();
+		});
+        return enableAllButton;
+    }
+
+    private JCheckBox getjCheckBox(LogCategory.Group group) {
+        final JCheckBox checkBox = new JCheckBox(group.getName());
+        checkBox.setSelected(group.isEnabled());
+        checkBox.setFocusable(false);
+        checkBox.addItemListener(e -> {
+			if (e.getStateChange() == ItemEvent.DESELECTED) {
+				disableLoggerGroup(group);
+			} else if (e.getStateChange() == ItemEvent.SELECTED) {
+				enableLoggerGroup(group);
+			}
+		});
+        return checkBox;
     }
 
     protected void enableLoggerGroup(LogCategory.Group group) {

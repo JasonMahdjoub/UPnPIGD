@@ -97,17 +97,7 @@ public class UDN {
      * @return A global unique identifier, stable for the current system and salt.
      */
     public static UDN uniqueSystemIdentifier(String salt) {
-        StringBuilder systemSalt = new StringBuilder();
-
-        // Bug: On Android, NetworkInterface.isLoopback() isn't implemented
-        if (!ModelUtil.ANDROID_RUNTIME) {
-			systemSalt.append(new String(ModelUtil.getFirstNetworkInterfaceHardwareAddress(), StandardCharsets.UTF_8));
-		} else {
-            throw new RuntimeException(
-                "This method does not create a unique identifier on Android, see the Javadoc and " +
-                    "use new UDN(UUID) instead!"
-            );
-        }
+        StringBuilder systemSalt = getStringBuilder();
 
         try {
             byte[] hash = MessageDigest.getInstance("MD5").digest(systemSalt.toString().getBytes(StandardCharsets.UTF_8));
@@ -122,6 +112,21 @@ public class UDN {
         }
     }
 
+    private static StringBuilder getStringBuilder() {
+        StringBuilder systemSalt = new StringBuilder();
+
+        // Bug: On Android, NetworkInterface.isLoopback() isn't implemented
+        if (!ModelUtil.ANDROID_RUNTIME) {
+			systemSalt.append(new String(ModelUtil.getFirstNetworkInterfaceHardwareAddress(), StandardCharsets.UTF_8));
+		} else {
+            throw new RuntimeException(
+                "This method does not create a unique identifier on Android, see the Javadoc and " +
+                    "use new UDN(UUID) instead!"
+            );
+        }
+        return systemSalt;
+    }
+
     @Override
     public String toString() {
         return PREFIX + getIdentifierString();
@@ -130,7 +135,7 @@ public class UDN {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof UDN)) return false;
+        if (!(o instanceof UDN)) return false;
         UDN udn = (UDN) o;
         return identifierString.equals(udn.identifierString);
     }

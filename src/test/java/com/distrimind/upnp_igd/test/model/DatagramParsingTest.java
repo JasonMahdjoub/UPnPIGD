@@ -51,19 +51,7 @@ public class DatagramParsingTest {
     @Test
     public void readSource() throws Exception {
 
-        String source = "NOTIFY * HTTP/1.1\r\n" +
-                        "HOST: 239.255.255.250:1900\r\n" +
-                        "CACHE-CONTROL: max-age=2000\r\n" +
-                        "LOCATION: http://localhost:0/some/path/123/desc.xml\r\n" +
-                        "X-CLING-IFACE-MAC: 00:17:ab:e9:65:a0\r\n" +
-                        "NT: upnp:rootdevice\r\n" +
-                        "NTS: ssdp:alive\r\n" +
-                        "EXT:\r\n" +
-                        "SERVER: foo/1 UPnP/1.0" + // FOLDED HEADER LINE!
-                        " bar/2\r\n" +
-                        "USN: " + SampleDeviceRoot.getRootUDN() +"::upnp:rootdevice\r\n\r\n";
-
-        DatagramPacket packet = new DatagramPacket(source.getBytes(), source.getBytes().length, new InetSocketAddress("123.123.123.123", 1234));
+        DatagramPacket packet = getDatagramPacket();
 
         DatagramProcessor processor = new DefaultUpnpServiceConfiguration().getDatagramProcessor();
 
@@ -89,6 +77,22 @@ public class DatagramParsingTest {
 
         assertEquals(msg.getHeaders().getFirstHeader(UpnpHeader.Type.EXT_IFACE_MAC, InterfaceMacHeader.class).getString(), "00:17:AB:E9:65:A0");
 
+    }
+
+    private static DatagramPacket getDatagramPacket() {
+        String source = "NOTIFY * HTTP/1.1\r\n" +
+                        "HOST: 239.255.255.250:1900\r\n" +
+                        "CACHE-CONTROL: max-age=2000\r\n" +
+                        "LOCATION: http://localhost:0/some/path/123/desc.xml\r\n" +
+                        "X-CLING-IFACE-MAC: 00:17:ab:e9:65:a0\r\n" +
+                        "NT: upnp:rootdevice\r\n" +
+                        "NTS: ssdp:alive\r\n" +
+                        "EXT:\r\n" +
+                        "SERVER: foo/1 UPnP/1.0" + // FOLDED HEADER LINE!
+                        " bar/2\r\n" +
+                        "USN: " + SampleDeviceRoot.getRootUDN() +"::upnp:rootdevice\r\n\r\n";
+
+		return new DatagramPacket(source.getBytes(), source.getBytes().length, new InetSocketAddress("123.123.123.123", 1234));
     }
 
     @Test

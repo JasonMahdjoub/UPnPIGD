@@ -93,28 +93,7 @@ public class EventXMLProcessingTest {
         LocalDevice<GenaSampleData.LocalTestService> localDevice = GenaSampleData.createTestDevice(GenaSampleData.LocalTestService.class);
         LocalService<GenaSampleData.LocalTestService> localService = localDevice.getServices().iterator().next();
 
-        List<URL> urls = new ArrayList<URL>() {{
-            add(SampleData.getLocalBaseURL());
-        }};
-        
-        LocalGENASubscription<GenaSampleData.LocalTestService> subscription =
-                new LocalGENASubscription<>(localService, 1800, urls) {
-
-                    public void ended(CancelReason reason) {
-
-                    }
-
-                    public void established() {
-
-                    }
-
-                    public void eventReceived() {
-
-                    }
-                };
-
-        OutgoingEventRequestMessage outgoingCall =
-                new OutgoingEventRequestMessage(subscription, subscription.getCallbackURLs().get(0));
+        OutgoingEventRequestMessage outgoingCall = getOutgoingEventRequestMessage(localService);
 
         upnpService.getConfiguration().getGenaEventProcessor().writeBody(outgoingCall);
 
@@ -143,6 +122,30 @@ public class EventXMLProcessingTest {
             }
         }
         assertTrue(gotValueOne && gotValueTwo);
+    }
+
+    private static OutgoingEventRequestMessage getOutgoingEventRequestMessage(LocalService<GenaSampleData.LocalTestService> localService) throws Exception {
+        List<URL> urls = new ArrayList<>() {{
+			add(SampleData.getLocalBaseURL());
+		}};
+
+        LocalGENASubscription<GenaSampleData.LocalTestService> subscription =
+                new LocalGENASubscription<>(localService, 1800, urls) {
+
+                    public void ended(CancelReason reason) {
+
+                    }
+
+                    public void established() {
+
+                    }
+
+                    public void eventReceived() {
+
+                    }
+                };
+
+		return new OutgoingEventRequestMessage(subscription, subscription.getCallbackURLs().get(0));
     }
 
 

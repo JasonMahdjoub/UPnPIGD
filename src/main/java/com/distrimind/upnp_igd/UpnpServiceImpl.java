@@ -136,16 +136,13 @@ public class UpnpServiceImpl implements UpnpService {
     }
 
     protected void shutdown(boolean separateThread) {
-        Runnable shutdown = new Runnable() {
-            @Override
-            public void run() {
-                log.info(">>> Shutting down UPnP service...");
-                shutdownRegistry();
-                shutdownRouter();
-                shutdownConfiguration();
-                log.info("<<< UPnP service shutdown completed");
-            }
-        };
+        Runnable shutdown = () -> {
+			log.info(">>> Shutting down UPnP service...");
+			shutdownRegistry();
+			shutdownRouter();
+			shutdownConfiguration();
+			log.info("<<< UPnP service shutdown completed");
+		};
         if (separateThread) {
             // This is not a daemon thread, it has to complete!
             new Thread(shutdown).start();

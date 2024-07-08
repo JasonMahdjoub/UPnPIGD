@@ -135,11 +135,27 @@ public class ActionCancellationTest {
         LocalService<?> service = device.findService(new UDAServiceId("SwitchPower"));
         Action<?> action = service.getAction("SetTarget");
 
+        ActionCallback setTargetCallback = getActionCallback(action, tests);
+        // DOC:CALLBACK
+
+        // DOC:EXECUTE_CANCEL
+        Future<?> future = upnpService.getControlPoint().execute(setTargetCallback);
+        Thread.sleep(500); // DOC:WAIT_FOR_THREAD
+        future.cancel(true);
+        // DOC:EXECUTE_CANCEL
+
+        Thread.sleep(500);
+        for (boolean test : tests) {
+			assertTrue(test);
+        }
+    }
+
+    private static ActionCallback getActionCallback(Action<?> action, boolean[] tests) {
         ActionInvocation<?> setTargetInvocation = new ActionInvocation<>(action);
         setTargetInvocation.setInput("NewTargetValue", true);
 
         // DOC:CALLBACK
-        ActionCallback setTargetCallback = new ActionCallback(setTargetInvocation) {
+		return new ActionCallback(setTargetInvocation) {
 
             @Override
             public void success(ActionInvocation<?> invocation) {
@@ -156,17 +172,5 @@ public class ActionCancellationTest {
                 }
             }
         };
-        // DOC:CALLBACK
-
-        // DOC:EXECUTE_CANCEL
-        Future<?> future = upnpService.getControlPoint().execute(setTargetCallback);
-        Thread.sleep(500); // DOC:WAIT_FOR_THREAD
-        future.cancel(true);
-        // DOC:EXECUTE_CANCEL
-
-        Thread.sleep(500);
-        for (boolean test : tests) {
-			assertTrue(test);
-        }
     }
 }

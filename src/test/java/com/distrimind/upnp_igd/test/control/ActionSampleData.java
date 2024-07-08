@@ -16,9 +16,6 @@
 package com.distrimind.upnp_igd.test.control;
 
 import com.distrimind.upnp_igd.binding.annotations.*;
-import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
-import com.distrimind.upnp_igd.binding.annotations.UpnpAction;
-import com.distrimind.upnp_igd.binding.annotations.UpnpInputArgument;
 import com.distrimind.upnp_igd.model.meta.DeviceDetails;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;

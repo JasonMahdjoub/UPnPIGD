@@ -134,7 +134,13 @@
 	 }
 	 @Override
 	 public boolean equals(Object o) {
-		 return map.equals(o);
+		 if (o instanceof Headers)
+		 	return map.equals(((Headers)o).map);
+		 else if (o instanceof Map)
+			 return map.equals(o);
+		 else
+			 return false;
+
 	 }
 	 @Override
 	 public int hashCode() {

@@ -78,21 +78,13 @@ public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, I
             log.fine("Subscription renewal failed, response was: " + response);
             getUpnpService().getRegistry().removeRemoteSubscription(subscription);
             getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
-                    new Runnable() {
-                        public void run() {
-                            subscription.end(CancelReason.RENEWAL_FAILED,responseMessage.getOperation());
-                        }
-                    }
-            );
+					() -> subscription.end(CancelReason.RENEWAL_FAILED,responseMessage.getOperation())
+			);
         } else if (!responseMessage.isValidHeaders()) {
             log.severe("Subscription renewal failed, invalid or missing (SID, Timeout) response headers");
             getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
-                    new Runnable() {
-                        public void run() {
-                            subscription.end(CancelReason.RENEWAL_FAILED, responseMessage.getOperation());
-                        }
-                    }
-            );
+					() -> subscription.end(CancelReason.RENEWAL_FAILED, responseMessage.getOperation())
+			);
         } else {
             log.fine("Subscription renewed, updating in registry, response was: " + response);
             subscription.setActualSubscriptionDurationSeconds(responseMessage.getSubscriptionDurationSeconds());
@@ -106,11 +98,7 @@ public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, I
         log.fine("Subscription renewal failed, removing subscription from registry");
         getUpnpService().getRegistry().removeRemoteSubscription(subscription);
         getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
-                new Runnable() {
-                    public void run() {
-                        subscription.end(CancelReason.RENEWAL_FAILED, null);
-                    }
-                }
-        );
+				() -> subscription.end(CancelReason.RENEWAL_FAILED, null)
+		);
     }
 }

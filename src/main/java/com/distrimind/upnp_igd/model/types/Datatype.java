@@ -138,14 +138,14 @@ public interface Datatype<V> {
         URI("uri", new URIDatatype()),
         UUID("uuid", new StringDatatype());
 
-        private final static Map<String, Builtin> byName = new HashMap<String, Builtin>() {{
-            for (Builtin b : Builtin.values()) {
-                // Lowercase descriptor name!
-                if (containsKey(b.getDescriptorName().toLowerCase(Locale.ROOT)))
-                    continue; // Ignore double-declarations, take first one only
-                put(b.getDescriptorName().toLowerCase(Locale.ROOT), b);
-            }
-        }};
+        private final static Map<String, Builtin> byName = new HashMap<>() {{
+			for (Builtin b : Builtin.values()) {
+				// Lowercase descriptor name!
+				if (containsKey(b.getDescriptorName().toLowerCase(Locale.ROOT)))
+					continue; // Ignore double-declarations, take first one only
+				put(b.getDescriptorName().toLowerCase(Locale.ROOT), b);
+			}
+		}};
 
         private final String descriptorName;
         private final Datatype<?> datatype;

@@ -94,9 +94,5 @@ public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends
         return remoteClientInfo;
     }
 
-    @Override
-    public String toString() {
-        return "(" + getClass().getSimpleName() + ")";
-    }
 
 }

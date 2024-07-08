@@ -48,20 +48,12 @@ public class LogPresenter implements LogView.Presenter {
 
     @PreDestroy
     public void destroy() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                view.dispose();
-            }
-        });
+        SwingUtilities.invokeLater(() -> view.dispose());
     }
 
     @Override
     public void pushMessage(final LogMessage message) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                view.pushMessage(message);
-            }
-        });
+        SwingUtilities.invokeLater(() -> view.pushMessage(message));
     }
 
 }

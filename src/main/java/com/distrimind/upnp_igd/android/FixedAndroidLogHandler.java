@@ -70,26 +70,7 @@ public class FixedAndroidLogHandler extends Handler {
     public void publish(LogRecord record) {
         try {
             int level = getAndroidLevel(record.getLevel());
-            String tag = record.getLoggerName();
-
-            if (tag == null) {
-                // Anonymous logger.
-                tag = "null";
-            } else {
-                // Tags must be <= 23 characters.
-                int length = tag.length();
-                if (length > 23) {
-                    // Most loggers use the full class name. Try dropping the
-                    // package.
-                    int lastPeriod = tag.lastIndexOf(".");
-                    if (length - lastPeriod - 1 <= 23) {
-                        tag = tag.substring(lastPeriod + 1);
-                    } else {
-                        // Use last 23 chars.
-                        tag = tag.substring(tag.length() - 23);
-                    }
-                }
-            }
+            String tag = getTag(record);
 
             /* ############################################################################################
 
@@ -120,6 +101,30 @@ public class FixedAndroidLogHandler extends Handler {
         } catch (RuntimeException e) {
             Log.e("AndroidHandler", "Error logging message.", e);
         }
+    }
+
+    private static String getTag(LogRecord record) {
+        String tag = record.getLoggerName();
+
+        if (tag == null) {
+            // Anonymous logger.
+            tag = "null";
+        } else {
+            // Tags must be <= 23 characters.
+            int length = tag.length();
+            if (length > 23) {
+                // Most loggers use the full class name. Try dropping the
+                // package.
+                int lastPeriod = tag.lastIndexOf(".");
+                if (length - lastPeriod - 1 <= 23) {
+                    tag = tag.substring(lastPeriod + 1);
+                } else {
+                    // Use last 23 chars.
+                    tag = tag.substring(tag.length() - 23);
+                }
+            }
+        }
+        return tag;
     }
 
     /**

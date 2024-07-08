@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public abstract class ReceivingAsync<M extends UpnpMessage> implements Runnable {
+public abstract class ReceivingAsync<M extends UpnpMessage<?>> implements Runnable {
 
     final private static Logger log = Logger.getLogger(UpnpService.class.getName());
 
@@ -96,7 +96,7 @@ public abstract class ReceivingAsync<M extends UpnpMessage> implements Runnable 
 
     protected abstract void execute() throws RouterException;
 
-    protected <H extends UpnpHeader> H getFirstHeader(UpnpHeader.Type headerType, Class<H> subtype) {
+    protected <H extends UpnpHeader<?>> H getFirstHeader(UpnpHeader.Type headerType, Class<H> subtype) {
         return getInputMessage().getHeaders().getFirstHeader(headerType, subtype);
     }
 

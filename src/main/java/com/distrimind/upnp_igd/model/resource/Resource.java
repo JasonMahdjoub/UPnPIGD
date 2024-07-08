@@ -96,7 +96,7 @@ public class Resource<M> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Resource resource = (Resource) o;
+        Resource<?> resource = (Resource<?>) o;
 
 		return getPathQuery().equals(resource.getPathQuery());
 	}

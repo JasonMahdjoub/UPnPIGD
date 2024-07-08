@@ -19,7 +19,6 @@ package com.distrimind.upnp_igd.util.io;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +93,7 @@ public class IO {
 			destFile.createNewFile();
 		}
 
-		try (FileChannel source = new FileInputStream(sourceFile).getChannel(); FileChannel destination = new FileOutputStream(destFile).getChannel()) {
+		try (FileInputStream fis1=new FileInputStream(sourceFile); FileChannel source = fis1.getChannel(); FileOutputStream fis2=new FileOutputStream(destFile); FileChannel destination = fis2.getChannel()) {
 			destination.transferFrom(source, 0, source.size());
 		}
 	}
@@ -253,15 +252,6 @@ public class IO {
 	 * <p>
 	 * Origin of code: Excalibur.
 	 *
-	 * @author Peter Donald
-	 * @author Jeff Turner
-	 * @author Matthew Hawthorne
-	 * @author Stephen Colebourne
-	 * @author Gareth Davis
-	 * @author Ian Springer
-	 * @author Niall Pemberton
-	 * @author Sandy McArthur
-	 * @version $Id: IOUtils.java 481854 2006-12-03 18:30:07Z scolebourne $
 	 */
 	public static final String LINE_SEPARATOR;
 

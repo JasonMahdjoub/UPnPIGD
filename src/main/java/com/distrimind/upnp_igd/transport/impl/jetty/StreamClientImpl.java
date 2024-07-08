@@ -133,10 +133,6 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
                 if (log.isLoggable(Level.FINE))
                     log.fine("Writing textual request body: " + requestMessage);
 
-                /*MimeType contentType =
-                        requestMessage.getContentTypeHeader() != null
-                                ? requestMessage.getContentTypeHeader().getValue()
-                                : ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8;*/
 
                 String charset =
                         requestMessage.getContentTypeCharset() != null
@@ -166,87 +162,84 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
     @Override
     protected Callable<StreamResponseMessage> createCallable(final StreamRequestMessage requestMessage,
                                                              final HttpRequest exchange) {
-        return new Callable<StreamResponseMessage>() {
-            public StreamResponseMessage call() throws Exception {
+        return new Callable<>() {
+			public StreamResponseMessage call() throws Exception {
 
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Sending HTTP request: " + requestMessage);
-                final Callable<StreamResponseMessage> callable=this;
-                final AtomicReference<StreamResponseMessage> result=new AtomicReference<>(null);
-                final AtomicBoolean responseOK=new AtomicBoolean(false);
-                exchange.onResponseSuccess((response)->{
-                    // Status
-                    UpnpResponse.Status s=UpnpResponse.Status.getByStatusCode(response.getStatus());
-                    UpnpResponse responseOperation =
-                            new UpnpResponse(
-                                    response.getStatus(),
-                                    s==null?null:s.getStatusMsg()
-                            );
+				if (log.isLoggable(Level.FINE))
+					log.fine("Sending HTTP request: " + requestMessage);
+				final Callable<StreamResponseMessage> callable = this;
+				final AtomicReference<StreamResponseMessage> result = new AtomicReference<>(null);
+				final AtomicBoolean responseOK = new AtomicBoolean(false);
+				exchange.onResponseSuccess((response) -> {
+					// Status
+					UpnpResponse.Status s = UpnpResponse.Status.getByStatusCode(response.getStatus());
+					UpnpResponse responseOperation =
+							new UpnpResponse(
+									response.getStatus(),
+									s == null ? null : s.getStatusMsg()
+							);
 
-                    if (log.isLoggable(Level.FINE))
-                        log.fine("Received response: " + responseOperation);
+					if (log.isLoggable(Level.FINE))
+						log.fine("Received response: " + responseOperation);
 
-                    StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
+					StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
 
-                    // Headers
-                    UpnpHeaders headers = new UpnpHeaders();
-                    HttpFields responseFields = response.getHeaders();
-                    for (String name : responseFields.getFieldNamesCollection()) {
-                        for (Enumeration<String> e = responseFields.getValues(name);e.hasMoreElements();) {
-                            headers.add(name, e.nextElement());
-                        }
-                    }
-                    responseMessage.setHeaders(headers);
+					// Headers
+					UpnpHeaders headers = new UpnpHeaders();
+					HttpFields responseFields = response.getHeaders();
+					for (String name : responseFields.getFieldNamesCollection()) {
+						for (Enumeration<String> e = responseFields.getValues(name); e.hasMoreElements(); ) {
+							headers.add(name, e.nextElement());
+						}
+					}
+					responseMessage.setHeaders(headers);
 
-                    // Body
-                    byte[] bytes = ((HttpContentResponse)response).getContent();
-                    if (bytes != null && bytes.length > 0 && responseMessage.isContentTypeMissingOrText()) {
+					// Body
+					byte[] bytes = ((HttpContentResponse) response).getContent();
+					if (bytes != null && bytes.length > 0 && responseMessage.isContentTypeMissingOrText()) {
 
-                        if (log.isLoggable(Level.FINE))
-                            log.fine("Response contains textual entity body, converting then setting string on message");
-                        try {
-                            responseMessage.setBodyCharacters(bytes);
-                        } catch (UnsupportedEncodingException ex) {
-                            throw new RuntimeException("Unsupported character encoding: " + ex, ex);
-                        }
+						if (log.isLoggable(Level.FINE))
+							log.fine("Response contains textual entity body, converting then setting string on message");
+						try {
+							responseMessage.setBodyCharacters(bytes);
+						} catch (UnsupportedEncodingException ex) {
+							throw new RuntimeException("Unsupported character encoding: " + ex, ex);
+						}
 
-                    } else if (bytes != null && bytes.length > 0) {
+					} else if (bytes != null && bytes.length > 0) {
 
-                        if (log.isLoggable(Level.FINE))
-                            log.fine("Response contains binary entity body, setting bytes on message");
-                        responseMessage.setBody(UpnpMessage.BodyType.BYTES, bytes);
+						if (log.isLoggable(Level.FINE))
+							log.fine("Response contains binary entity body, setting bytes on message");
+						responseMessage.setBody(UpnpMessage.BodyType.BYTES, bytes);
 
-                    } else {
-                        if (log.isLoggable(Level.FINE))
-                            log.fine("Response did not contain entity body");
-                    }
+					} else {
+						if (log.isLoggable(Level.FINE))
+							log.fine("Response did not contain entity body");
+					}
 
-                    if (log.isLoggable(Level.FINE))
-                        log.fine("Response message complete: " + responseMessage);
-                    result.set(responseMessage);
-                    synchronized (callable)
-                    {
-                        responseOK.set(true);
-                        callable.notifyAll();
-                    }
-                });
-                exchange.onResponseFailure(((response, failure) -> {
-                    synchronized (callable)
-                    {
-                        responseOK.set(true);
-                        callable.notifyAll();
-                    }
-                }));
-                synchronized (callable)
-                {
-                    while(!responseOK.get()) {
-                        callable.wait();
-                    }
-                }
-                return result.get();
+					if (log.isLoggable(Level.FINE))
+						log.fine("Response message complete: " + responseMessage);
+					result.set(responseMessage);
+					synchronized (callable) {
+						responseOK.set(true);
+						callable.notifyAll();
+					}
+				});
+				exchange.onResponseFailure(((response, failure) -> {
+					synchronized (callable) {
+						responseOK.set(true);
+						callable.notifyAll();
+					}
+				}));
+				synchronized (callable) {
+					while (!responseOK.get()) {
+						callable.wait();
+					}
+				}
+				return result.get();
 
-            }
-        };
+			}
+		};
     }
 
     @Override

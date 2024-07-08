@@ -31,7 +31,7 @@ public class CallbackHeader extends UpnpHeader<List<URL>> {
     final private static Logger log = Logger.getLogger(CallbackHeader.class.getName());
 
     public CallbackHeader() {
-        setValue(new ArrayList<URL>());
+        setValue(new ArrayList<>());
     }
 
     public CallbackHeader(List<URL> urls) {

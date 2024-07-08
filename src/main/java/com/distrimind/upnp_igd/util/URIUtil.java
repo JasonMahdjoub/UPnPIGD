@@ -18,8 +18,6 @@ package com.distrimind.upnp_igd.util;
 
 
 import java.net.*;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 

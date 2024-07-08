@@ -19,7 +19,6 @@ import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**

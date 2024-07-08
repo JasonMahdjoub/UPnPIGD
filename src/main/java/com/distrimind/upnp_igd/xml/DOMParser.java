@@ -99,7 +99,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 				SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
 				schemaFactory.setResourceResolver(new CatalogResourceResolver(
-						new HashMap<URI, URL>() {{
+						new HashMap<>() {{
 							put(DOM.XML_SCHEMA_NAMESPACE, XML_SCHEMA_RESOURCE);
 						}}
 				));
@@ -496,9 +496,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 			while (matcher.find()) {
 				String group = matcher.group(2);
 				StringBuilder spaces = new StringBuilder();
-				for (int i = 0; i < group.length(); i++) {
-					spaces.append("&#160;");
-				}
+				spaces.append("&#160;".repeat(group.length()));
 				matcher.appendReplacement(temp, "$1" + spaces + "$3");
 			}
 			matcher.appendTail(temp);

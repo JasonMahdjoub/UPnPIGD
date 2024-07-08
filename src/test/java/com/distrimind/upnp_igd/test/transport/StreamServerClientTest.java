@@ -135,32 +135,26 @@ abstract public class StreamServerClientTest {
     public void cancelled() throws Exception {
         final boolean[] tests = new boolean[1];
 
-        final Thread requestThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    client.sendRequest(createRequestMessage(DelayedResponse.PATH));
-                } catch (InterruptedException ex) {
-                    // We expect this thread to be interrupted
-                    tests[0] = true;
-                }
-            }
-        });
+        final Thread requestThread = new Thread(() -> {
+			try {
+				client.sendRequest(createRequestMessage(DelayedResponse.PATH));
+			} catch (InterruptedException ex) {
+				// We expect this thread to be interrupted
+				tests[0] = true;
+			}
+		});
 
         requestThread.start();
 
         // Cancel the request after 250ms
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException ex) {
-                    // Ignore
-                }
-                requestThread.interrupt();
-            }
-        }).start();
+        new Thread(() -> {
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException ex) {
+				// Ignore
+			}
+			requestThread.interrupt();
+		}).start();
 
         Thread.sleep(3000);
         for (boolean test : tests) {
@@ -203,32 +197,26 @@ abstract public class StreamServerClientTest {
     public void checkAliveCancelled() throws Exception {
         final boolean[] tests = new boolean[1];
 
-        final Thread requestThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    client.sendRequest(createRequestMessage(CheckAliveResponse.PATH));
-                } catch (InterruptedException ex) {
-                    // We expect this thread to be interrupted
-                    tests[0] = true;
-                }
-            }
-        });
+        final Thread requestThread = new Thread(() -> {
+			try {
+				client.sendRequest(createRequestMessage(CheckAliveResponse.PATH));
+			} catch (InterruptedException ex) {
+				// We expect this thread to be interrupted
+				tests[0] = true;
+			}
+		});
 
         requestThread.start();
 
         // Cancel the request after 1 second
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    // Ignore
-                }
-                requestThread.interrupt();
-            }
-        }).start();
+        new Thread(() -> {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ex) {
+				// Ignore
+			}
+			requestThread.interrupt();
+		}).start();
 
         Thread.sleep(3000);
         for (boolean test : tests) {

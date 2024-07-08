@@ -62,13 +62,10 @@ public abstract class MainController extends AbstractController<JFrame> {
         System.setProperty("sun.awt.exception.handler", AWTExceptionHandler.class.getName());
 
         // Shutdown behavior
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                if (getUpnpService() != null)
-                    getUpnpService().shutdown();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			if (getUpnpService() != null)
+				getUpnpService().shutdown();
+		}));
 
         // Logging UI
         logController = new LogController(this, logCategories) {
@@ -121,12 +118,7 @@ public abstract class MainController extends AbstractController<JFrame> {
     public void dispose() {
         super.dispose();
         ShutdownWindow.INSTANCE.setVisible(true);
-        new Thread() {
-            @Override
-            public void run() {
-                System.exit(0);
-            }
-        }.start();
+        new Thread(() -> System.exit(0)).start();
     }
 
     public static class ShutdownWindow extends JWindow {
