@@ -105,12 +105,8 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
                 getUpnpService().getRegistry().getRemoteSubscription(requestMessage.getSubscrptionId());
             if (subscription != null) {
                 getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
-                    new Runnable() {
-                        public void run() {
-                            subscription.invalidMessage(ex);
-                        }
-                    }
-                );
+						() -> subscription.invalidMessage(ex)
+				);
             }
 
             return new OutgoingEventResponseMessage(new UpnpResponse(UpnpResponse.Status.INTERNAL_SERVER_ERROR));
@@ -127,16 +123,14 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
         }
 
         getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
-                new Runnable() {
-                    public void run() {
-                        log.fine("Calling active subscription with event state variable values");
-                        subscription.receive(
-                                requestMessage.getSequence(),
-                                requestMessage.getStateVariableValues()
-                        );
-                    }
-                }
-        );
+				() -> {
+					log.fine("Calling active subscription with event state variable values");
+					subscription.receive(
+							requestMessage.getSequence(),
+							requestMessage.getStateVariableValues()
+					);
+				}
+		);
 
         return new OutgoingEventResponseMessage();
 

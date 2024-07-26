@@ -800,7 +800,7 @@ public class Base64Coder
 		return encoded;
     }   // end encodeBytes
     
-    
+
 
     /**
      * Encodes a byte array into Base64 notation.
@@ -956,10 +956,6 @@ public class Base64Coder
         else {
             boolean breakLines = (options & DO_BREAK_LINES) != 0;
 
-            //int    len43   = len * 4 / 3;
-            //byte[] outBuff = new byte[   ( len43 )                      // Main 4:3
-            //                           + ( (len % 3) > 0 ? 4 : 0 )      // Account for padding
-            //                           + (breakLines ? ( len43 / MAX_LINE_LENGTH ) : 0) ]; // New lines
             // Try to determine more precisely how big the array needs to be.
             // If we get it right, we don't have to do an array copy, and
             // we save a bunch of memory.
@@ -1413,23 +1409,13 @@ public class Base64Coder
         if( dataToEncode == null ){
             throw new NullPointerException( "Data to encode was null." );
         }   // end iff
-        
-        Base64Coder.OutputStream bos = null;
-        try {
-            bos = new Base64Coder.OutputStream(
-                  new java.io.FileOutputStream( filename ), Base64Coder.ENCODE );
-            bos.write( dataToEncode );
-        }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and throw to execute finally{} block
-        }   // end catch: java.io.IOException
-        finally {
-            try{
-				if (bos != null) {
-					bos.close();
-				}
-			} catch(Exception ignored){}
-        }   // end finally
+
+		try (OutputStream bos = new OutputStream(
+				new java.io.FileOutputStream(filename), Base64Coder.ENCODE)) {
+			bos.write(dataToEncode);
+		} catch (IOException e) {
+			throw e; // Catch and throw to execute finally{} block
+		}
         
     }   // end encodeToFile
     
@@ -1449,23 +1435,13 @@ public class Base64Coder
      */
     public static void decodeToFile( String dataToDecode, String filename )
     throws java.io.IOException {
-        
-        Base64Coder.OutputStream bos = null;
-        try{
-            bos = new Base64Coder.OutputStream(
-                      new java.io.FileOutputStream( filename ), Base64Coder.DECODE );
-            bos.write( dataToDecode.getBytes( PREFERRED_ENCODING ) );
-        }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and throw to execute finally{} block
-        }   // end catch: java.io.IOException
-        finally {
-                try{
-					if (bos != null) {
-						bos.close();
-					}
-				} catch(Exception ignored){}
-        }   // end finally
+
+		try (OutputStream bos = new OutputStream(
+				new java.io.FileOutputStream(filename), Base64Coder.DECODE)) {
+			bos.write(dataToDecode.getBytes(PREFERRED_ENCODING));
+		} catch (IOException e) {
+			throw e; // Catch and throw to execute finally{} block
+		}
         
     }   // end decodeToFile
     
@@ -1604,23 +1580,12 @@ public class Base64Coder
     throws java.io.IOException {
         
         String encoded = Base64Coder.encodeFromFile(infile);
-        java.io.OutputStream out = null;
-        try{
-            out = new java.io.BufferedOutputStream(
-                  new java.io.FileOutputStream( outfile ) );
-            out.write( encoded.getBytes(StandardCharsets.US_ASCII) ); // Strict, 7-bit output.
-        }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and release to execute finally{}
-        }   // end catch
-        finally {
-            try {
-				if (out != null) {
-					out.close();
-				}
-			}
-            catch( Exception ignored){}
-        }   // end finally    
+		try (java.io.OutputStream out = new java.io.BufferedOutputStream(
+				new java.io.FileOutputStream(outfile))) {
+			out.write(encoded.getBytes(StandardCharsets.US_ASCII)); // Strict, 7-bit output.
+		} catch (IOException e) {
+			throw e; // Catch and release to execute finally{}
+		}
     }   // end encodeFileToFile
 
 

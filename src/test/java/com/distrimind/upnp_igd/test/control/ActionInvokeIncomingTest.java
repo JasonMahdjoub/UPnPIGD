@@ -108,6 +108,34 @@ public class ActionInvokeIncomingTest {
         Action<LocalService<T>> action = service.getAction("GetTarget");
 
         URI controlURI = upnpService.getConfiguration().getNamespace().getControlPath(service);
+        StreamRequestMessage request = getStreamRequestMessage(controlURI);
+        addMandatoryRequestHeaders(service, action, request);
+        request.setBody(UpnpMessage.BodyType.STRING, GET_REQUEST);
+
+        ReceivingAction prot = new ReceivingAction(upnpService, request);
+
+        prot.run();
+
+        StreamResponseMessage response = prot.getOutputMessage();
+
+        assertNotNull(response);
+        assertFalse(response.getOperation().isFailed());
+        assertTrue(response.getHeaders().getFirstHeader(UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class).isUDACompliantXML());
+        assertNotNull(response.getHeaders().getFirstHeader(UpnpHeader.Type.EXT, EXTHeader.class));
+        assertEquals(
+            response.getHeaders().getFirstHeader(UpnpHeader.Type.SERVER, ServerHeader.class).getValue(),
+            new ServerHeader().getValue()
+        );
+
+        IncomingActionResponseMessage responseMessage = new IncomingActionResponseMessage(response);
+        ActionInvocation<?> responseInvocation = new ActionInvocation<>(action);
+        upnpService.getConfiguration().getSoapActionProcessor().readBody(responseMessage, responseInvocation);
+
+        assertNotNull(responseInvocation.getOutput("RetTargetValue"));
+        return responseMessage;
+    }
+
+    private static StreamRequestMessage getStreamRequestMessage(URI controlURI) {
         StreamRequestMessage request = new StreamRequestMessage(UpnpRequest.Method.POST, controlURI);
         request.setConnection(new Connection() {
             @Override
@@ -133,30 +161,7 @@ public class ActionInvokeIncomingTest {
                 }
             }
         });
-        addMandatoryRequestHeaders(service, action, request);
-        request.setBody(UpnpMessage.BodyType.STRING, GET_REQUEST);
-
-        ReceivingAction prot = new ReceivingAction(upnpService, request);
-
-        prot.run();
-
-        StreamResponseMessage response = prot.getOutputMessage();
-
-        assertNotNull(response);
-        assertFalse(response.getOperation().isFailed());
-        assertTrue(response.getHeaders().getFirstHeader(UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class).isUDACompliantXML());
-        assertNotNull(response.getHeaders().getFirstHeader(UpnpHeader.Type.EXT, EXTHeader.class));
-        assertEquals(
-            response.getHeaders().getFirstHeader(UpnpHeader.Type.SERVER, ServerHeader.class).getValue(),
-            new ServerHeader().getValue()
-        );
-
-        IncomingActionResponseMessage responseMessage = new IncomingActionResponseMessage(response);
-        ActionInvocation<?> responseInvocation = new ActionInvocation<>(action);
-        upnpService.getConfiguration().getSoapActionProcessor().readBody(responseMessage, responseInvocation);
-
-        assertNotNull(responseInvocation.getOutput("RetTargetValue"));
-        return responseMessage;
+        return request;
     }
 
     @Test

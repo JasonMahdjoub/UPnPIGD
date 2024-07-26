@@ -30,7 +30,6 @@ import com.distrimind.upnp_igd.model.gena.RemoteGENASubscription;
 import com.distrimind.upnp_igd.model.message.IncomingDatagramMessage;
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
-import com.distrimind.upnp_igd.protocol.sync.SendingUnsubscribe;
 
 import java.net.URL;
 

@@ -18,7 +18,6 @@ package com.distrimind.upnp_igd;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.model.UserConstants;
-import com.distrimind.upnp_igd.model.meta.DeviceIdentity;
 import com.distrimind.upnp_igd.model.profile.ClientInfo;
 import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.transport.Router;
@@ -153,7 +152,7 @@ public interface UpnpServiceConfiguration {
      * Optional setting for flooding alive NOTIFY messages for local devices.
      * <p>
      * Use this to advertise local devices at the specified interval, independent of its
-     * {@link DeviceIdentity#maxAgeSeconds} value. Note
+     *  value. Note
      * that this will increase network traffic.
    
      * <p>

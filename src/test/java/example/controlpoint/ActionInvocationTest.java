@@ -179,35 +179,7 @@ public class ActionInvocationTest {
 
         Action<?> action = service.getAction("SetTarget");                                 // DOC: SETTARGET
 
-        ActionInvocation<?> setTargetInvocation = new ActionInvocation<>(action);
-
-        setTargetInvocation.setInput("NewTargetValue", true); // Can throw InvalidValueException
-
-        // Alternative:
-        //
-        // setTargetInvocation.setInput(
-        //         new ActionArgumentValue(
-        //                 action.getInputArgument("NewTargetValue"),
-        //                 true
-        //         )
-        // );
-
-        ActionCallback setTargetCallback = new ActionCallback(setTargetInvocation) {
-
-            @Override
-            public void success(ActionInvocation<?> invocation) {
-                Collection<? extends ActionArgumentValue<?>> output = invocation.getOutput();
-                assertEquals(output.size(), 0);
-                tests[1] = true; // DOC: EXC2
-            }
-
-            @Override
-            public void failure(ActionInvocation<?> invocation,
-                                UpnpResponse operation,
-                                String defaultMsg) {
-                System.err.println(defaultMsg);
-            }
-        };
+        ActionCallback setTargetCallback = getActionCallback(action, tests);
 
         upnpService.getControlPoint().execute(setTargetCallback);                       // DOC: SETTARGET
 
@@ -243,6 +215,38 @@ public class ActionInvocationTest {
 
     }
 
+    private static ActionCallback getActionCallback(Action<?> action, boolean[] tests) {
+        ActionInvocation<?> setTargetInvocation = new ActionInvocation<>(action);
+
+        setTargetInvocation.setInput("NewTargetValue", true); // Can throw InvalidValueException
+
+        // Alternative:
+        //
+        // setTargetInvocation.setInput(
+        //         new ActionArgumentValue(
+        //                 action.getInputArgument("NewTargetValue"),
+        //                 true
+        //         )
+        // );
+
+		return new ActionCallback(setTargetInvocation) {
+
+            @Override
+            public void success(ActionInvocation<?> invocation) {
+                Collection<? extends ActionArgumentValue<?>> output = invocation.getOutput();
+                assertEquals(output.size(), 0);
+                tests[1] = true; // DOC: EXC2
+            }
+
+            @Override
+            public void failure(ActionInvocation<?> invocation,
+                                UpnpResponse operation,
+                                String defaultMsg) {
+                System.err.println(defaultMsg);
+            }
+        };
+    }
+
     @Test(dataProvider = "devices")
     public void invokeActionsWithAlias(LocalDevice<?> device) throws Exception {
 
@@ -254,24 +258,7 @@ public class ActionInvocationTest {
         final boolean[] tests = new boolean[1];
 
         Action<? extends LocalService<?>> action = service.getAction("SetTarget");
-        ActionInvocation<? extends LocalService<?>> setTargetInvocation = new ActionInvocation<>(action);
-        setTargetInvocation.setInput("NewTargetValue1", true);
-        ActionCallback setTargetCallback = new ActionCallback(setTargetInvocation) {
-
-            @Override
-            public void success(ActionInvocation<?> invocation) {
-                Collection<? extends ActionArgumentValue<?>> output = invocation.getOutput();
-                assertEquals(output.size(), 0);
-                tests[0] = true;
-            }
-
-            @Override
-            public void failure(ActionInvocation<?> invocation,
-                                UpnpResponse operation,
-                                String defaultMsg) {
-                System.err.println(defaultMsg);
-            }
-        };
+        ActionCallback setTargetCallback = getCallback(action, tests);
         upnpService.getControlPoint().execute(setTargetCallback);
 
         for (boolean test : tests) {
@@ -296,6 +283,27 @@ public class ActionInvocationTest {
         assertEquals(getMyStringInvocation.getOutput().size(), 1);
         assertEquals(getMyStringInvocation.getOutput().iterator().next().toString(), "foo");
 
+    }
+
+    private static ActionCallback getCallback(Action<? extends LocalService<?>> action, boolean[] tests) {
+        ActionInvocation<? extends LocalService<?>> setTargetInvocation = new ActionInvocation<>(action);
+        setTargetInvocation.setInput("NewTargetValue1", true);
+		return new ActionCallback(setTargetInvocation) {
+
+            @Override
+            public void success(ActionInvocation<?> invocation) {
+                Collection<? extends ActionArgumentValue<?>> output = invocation.getOutput();
+                assertEquals(output.size(), 0);
+                tests[0] = true;
+            }
+
+            @Override
+            public void failure(ActionInvocation<?> invocation,
+                                UpnpResponse operation,
+                                String defaultMsg) {
+                System.err.println(defaultMsg);
+            }
+        };
     }
 
     /* ####################################################################################################### */
@@ -383,7 +391,7 @@ public class ActionInvocationTest {
         }
 
         public static class StatusHolder {
-            boolean st;
+            final boolean st;
 
             public StatusHolder(boolean st) {
                 this.st = st;
@@ -395,7 +403,7 @@ public class ActionInvocationTest {
         }
 
         public static class MyStringHolder {
-            MyString myString;
+            final MyString myString;
 
             public MyStringHolder(MyString myString) {
                 this.myString = myString;

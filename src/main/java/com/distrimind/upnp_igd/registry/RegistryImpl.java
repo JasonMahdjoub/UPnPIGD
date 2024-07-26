@@ -129,12 +129,8 @@ public class RegistryImpl implements Registry {
         }
         for (final RegistryListener listener : getListeners()) {
             getConfiguration().getRegistryListenerExecutor().execute(
-                    new Runnable() {
-                        public void run() {
-                            listener.remoteDeviceDiscoveryStarted(RegistryImpl.this, device);
-                        }
-                    }
-            );
+					() -> listener.remoteDeviceDiscoveryStarted(RegistryImpl.this, device)
+			);
         }
         return true;
     }
@@ -142,12 +138,8 @@ public class RegistryImpl implements Registry {
     synchronized public void notifyDiscoveryFailure(final RemoteDevice device, final Exception ex) {
         for (final RegistryListener listener : getListeners()) {
             getConfiguration().getRegistryListenerExecutor().execute(
-                    new Runnable() {
-                        public void run() {
-                            listener.remoteDeviceDiscoveryFailed(RegistryImpl.this, device, ex);
-                        }
-                    }
-            );
+					() -> listener.remoteDeviceDiscoveryFailed(RegistryImpl.this, device, ex)
+			);
         }
     }
 

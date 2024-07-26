@@ -64,7 +64,7 @@ public class NamedServiceType {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof NamedServiceType)) return false;
+        if (!(o instanceof NamedServiceType)) return false;
 
         NamedServiceType that = (NamedServiceType) o;
 

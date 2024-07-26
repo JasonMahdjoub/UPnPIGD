@@ -115,28 +115,16 @@ public abstract class ContentBrowseActionCallback extends Browse {
             failure(actionInvocation, null);
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateTreeModel(childNodes);
-            }
-        });
+        SwingUtilities.invokeLater(() -> updateTreeModel(childNodes));
     }
 
     public void updateStatus(final Status status) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                updateStatusUI(status, treeNode, treeModel);
-            }
-        });
+        SwingUtilities.invokeLater(() -> updateStatusUI(status, treeNode, treeModel));
     }
 
     @Override
     public void failure(ActionInvocation<?> invocation, UpnpResponse operation, final String defaultMsg) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                failureUI(defaultMsg);
-            }
-        });
+        SwingUtilities.invokeLater(() -> failureUI(defaultMsg));
     }
 
     protected void updateTreeModel(final List<DefaultMutableTreeNode> childNodes) {

@@ -27,12 +27,7 @@ public class BinaryLightServer implements Runnable {
 
             final UpnpService upnpService = new UpnpServiceImpl();
 
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    upnpService.shutdown();
-                }
-            });
+            Runtime.getRuntime().addShutdownHook(new Thread(upnpService::shutdown));
 
             // Add the bound local device to the registry
             upnpService.getRegistry().addDevice(

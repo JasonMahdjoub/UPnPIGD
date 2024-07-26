@@ -41,7 +41,7 @@ public class DLNACaps {
     static public DLNACaps valueOf(String s) throws InvalidValueException {
         if (s == null || s.isEmpty()) return new DLNACaps(Collections.emptyList());
         String[] caps = s.split(",");
-        List<String> trimmed = new ArrayList<String>(caps.length);
+        List<String> trimmed = new ArrayList<>(caps.length);
 		for (String cap : caps) {
 			trimmed.add(cap.trim());
 		}

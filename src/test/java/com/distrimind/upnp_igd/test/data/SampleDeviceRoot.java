@@ -24,7 +24,6 @@ import com.distrimind.upnp_igd.model.meta.ModelDetails;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.meta.Service;
-import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import com.distrimind.upnp_igd.model.profile.DeviceDetailsProvider;
 import com.distrimind.upnp_igd.model.resource.Resource;
 import com.distrimind.upnp_igd.model.resource.ServiceEventCallbackResource;
@@ -78,11 +77,7 @@ public class SampleDeviceRoot<D extends Device<?, D, S>, S extends Service<?, D,
     }
 
     public DeviceDetailsProvider getDeviceDetailsProvider() {
-        return new DeviceDetailsProvider() {
-            public DeviceDetails provide(RemoteClientInfo info) {
-                return getDeviceDetails();
-            }
-        };
+        return info -> getDeviceDetails();
     }
 
     @Override

@@ -228,8 +228,6 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         return false;
     }
 
-    public abstract Set<Entry<K, V>> entrySet();
-
     /**
      * {@inheritDoc}
      *
@@ -327,33 +325,36 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      */
     public Set<K> keySet() {
         if (keySet == null) {
-            keySet = new AbstractSet<K>() {
-                @Override public boolean contains(Object object) {
-                    return containsKey(object);
-                }
+            keySet = new AbstractSet<>() {
+				@Override
+				public boolean contains(Object object) {
+					return containsKey(object);
+				}
 
-                @Override public int size() {
-                    return AbstractMap.this.size();
-                }
+				@Override
+				public int size() {
+					return AbstractMap.this.size();
+				}
 
-                @Override public Iterator<K> iterator() {
-                    return new Iterator<K>() {
-                        final Iterator<Entry<K, V>> setIterator = entrySet().iterator();
+				@Override
+				public Iterator<K> iterator() {
+					return new Iterator<>() {
+						final Iterator<Entry<K, V>> setIterator = entrySet().iterator();
 
-                        public boolean hasNext() {
-                            return setIterator.hasNext();
-                        }
+						public boolean hasNext() {
+							return setIterator.hasNext();
+						}
 
-                        public K next() {
-                            return setIterator.next().getKey();
-                        }
+						public K next() {
+							return setIterator.next().getKey();
+						}
 
-                        public void remove() {
-                            setIterator.remove();
-                        }
-                    };
-                }
-            };
+						public void remove() {
+							setIterator.remove();
+						}
+					};
+				}
+			};
         }
         return keySet;
     }
@@ -462,33 +463,36 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      */
     public Collection<V> values() {
         if (valuesCollection == null) {
-            valuesCollection = new AbstractCollection<V>() {
-                @Override public int size() {
-                    return AbstractMap.this.size();
-                }
+            valuesCollection = new AbstractCollection<>() {
+				@Override
+				public int size() {
+					return AbstractMap.this.size();
+				}
 
-                @Override public boolean contains(Object object) {
-                    return containsValue(object);
-                }
+				@Override
+				public boolean contains(Object object) {
+					return containsValue(object);
+				}
 
-                @Override public Iterator<V> iterator() {
-                    return new Iterator<V>() {
-                        final Iterator<Entry<K, V>> setIterator = entrySet().iterator();
+				@Override
+				public Iterator<V> iterator() {
+					return new Iterator<>() {
+						final Iterator<Entry<K, V>> setIterator = entrySet().iterator();
 
-                        public boolean hasNext() {
-                            return setIterator.hasNext();
-                        }
+						public boolean hasNext() {
+							return setIterator.hasNext();
+						}
 
-                        public V next() {
-                            return setIterator.next().getValue();
-                        }
+						public V next() {
+							return setIterator.next().getValue();
+						}
 
-                        public void remove() {
-                            setIterator.remove();
-                        }
-                    };
-                }
-            };
+						public void remove() {
+							setIterator.remove();
+						}
+					};
+				}
+			};
         }
         return valuesCollection;
     }

@@ -40,7 +40,7 @@ public class MusicAlbum extends Album {
     }
 
     public MusicAlbum(String id, Container parent, String title, String creator, Integer childCount) {
-        this(id, parent.getId(), title, creator, childCount, new ArrayList<MusicTrack>());
+        this(id, parent.getId(), title, creator, childCount, new ArrayList<>());
     }
 
     public MusicAlbum(String id, Container parent, String title, String creator, Integer childCount, List<MusicTrack> musicTracks) {
@@ -48,7 +48,7 @@ public class MusicAlbum extends Album {
     }
 
     public MusicAlbum(String id, String parentID, String title, String creator, Integer childCount) {
-        this(id, parentID, title, creator, childCount, new ArrayList<MusicTrack>());
+        this(id, parentID, title, creator, childCount, new ArrayList<>());
     }
 
     public MusicAlbum(String id, String parentID, String title, String creator, Integer childCount, List<MusicTrack> musicTracks) {

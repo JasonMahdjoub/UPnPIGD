@@ -115,7 +115,8 @@ public class ServerClientTokens {
     }
 
     public String getHttpToken() {
-		String sb = (osName.indexOf(' ') != -1 ? osName.replace(' ', '_') : osName) +
+
+		return (osName.indexOf(' ') != -1 ? osName.replace(' ', '_') : osName) +
 				'/' +
 				(osVersion.indexOf(' ') != -1 ? osVersion.replace(' ', '_') : osVersion) +
 				" UPnP/" +
@@ -126,8 +127,6 @@ public class ServerClientTokens {
 				(productName.indexOf(' ') != -1 ? productName.replace(' ', '_') : productName) +
 				'/' +
 				(productVersion.indexOf(' ') != -1 ? productVersion.replace(' ', '_') : productVersion);
-
-        return sb;
     }
 
     public String getOsToken() {

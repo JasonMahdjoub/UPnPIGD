@@ -116,12 +116,8 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
 
         for (final RegistryListener listener : registry.getListeners()) {
             registry.getConfiguration().getRegistryListenerExecutor().execute(
-                new Runnable() {
-                    public void run() {
-                        listener.localDeviceAdded(registry, localDevice);
-                    }
-                }
-            );
+					() -> listener.localDeviceAdded(registry, localDevice)
+			);
         }
 
     }
@@ -167,12 +163,8 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
                     it.remove();
                     if (!shuttingDown) {
                         registry.getConfiguration().getRegistryListenerExecutor().execute(
-                                new Runnable() {
-                                    public void run() {
-                                        incomingSubscription.getItem().end(CancelReason.DEVICE_WAS_REMOVED);
-                                    }
-                                }
-                        );
+								() -> incomingSubscription.getItem().end(CancelReason.DEVICE_WAS_REMOVED)
+						);
                     }
                 }
             }
@@ -183,12 +175,8 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
             if (!shuttingDown) {
                 for (final RegistryListener listener : registry.getListeners()) {
                     registry.getConfiguration().getRegistryListenerExecutor().execute(
-                            new Runnable() {
-                                public void run() {
-                                    listener.localDeviceRemoved(registry, localDevice);
-                                }
-                            }
-                    );
+							() -> listener.localDeviceRemoved(registry, localDevice)
+					);
                 }
             }
 
@@ -286,17 +274,15 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
     protected Random randomGenerator = new Random();
 
     protected void advertiseAlive(final LocalDevice<?> localDevice) {
-        registry.executeAsyncProtocol(new Runnable() {
-            public void run() {
-                try {
-                    log.finer("Sleeping some milliseconds to avoid flooding the network with ALIVE msgs");
-                    Thread.sleep(randomGenerator.nextInt(100));
-                } catch (InterruptedException ex) {
-                    log.severe("Background execution interrupted: " + ex.getMessage());
-                }
-                registry.getProtocolFactory().createSendingNotificationAlive(localDevice).run();
-            }
-        });
+        registry.executeAsyncProtocol(() -> {
+			try {
+				log.finer("Sleeping some milliseconds to avoid flooding the network with ALIVE msgs");
+				Thread.sleep(randomGenerator.nextInt(100));
+			} catch (InterruptedException ex) {
+				log.severe("Background execution interrupted: " + ex.getMessage());
+			}
+			registry.getProtocolFactory().createSendingNotificationAlive(localDevice).run();
+		});
     }
 
     protected void advertiseByebye(final LocalDevice<?> localDevice, boolean asynchronous) {

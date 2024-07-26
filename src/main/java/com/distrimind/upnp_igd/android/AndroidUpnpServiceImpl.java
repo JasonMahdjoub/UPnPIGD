@@ -42,7 +42,7 @@ import com.distrimind.upnp_igd.transport.Router;
 public class AndroidUpnpServiceImpl extends Service {
 
     protected UpnpService upnpService;
-    protected Binder binder = new Binder();
+    protected final Binder binder = new Binder();
 
     /**
      * Starts the UPnP service.

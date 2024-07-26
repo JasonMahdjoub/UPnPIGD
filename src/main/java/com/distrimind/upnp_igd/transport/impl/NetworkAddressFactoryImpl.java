@@ -132,25 +132,25 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
     }
 
     public Iterator<NetworkInterface> getNetworkInterfaces() {
-        return new Iterators.Synchronized<NetworkInterface>(networkInterfaces) {
-            @Override
-            protected void synchronizedRemove(int index) {
-                synchronized (networkInterfaces) {
-                    networkInterfaces.remove(index);
-                }
-            }
-        };
+        return new Iterators.Synchronized<>(networkInterfaces) {
+			@Override
+			protected void synchronizedRemove(int index) {
+				synchronized (networkInterfaces) {
+					networkInterfaces.remove(index);
+				}
+			}
+		};
     }
 
     public Iterator<InetAddress> getBindAddresses() {
-        return new Iterators.Synchronized<InetAddress>(bindAddresses) {
-            @Override
-            protected void synchronizedRemove(int index) {
-                synchronized (bindAddresses) {
-                    bindAddresses.remove(index);
-                }
-            }
-        };
+        return new Iterators.Synchronized<>(bindAddresses) {
+			@Override
+			protected void synchronizedRemove(int index) {
+				synchronized (bindAddresses) {
+					bindAddresses.remove(index);
+				}
+			}
+		};
     }
 
     public boolean hasUsableNetwork() {

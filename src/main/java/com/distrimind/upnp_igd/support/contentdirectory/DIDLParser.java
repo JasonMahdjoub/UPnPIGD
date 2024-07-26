@@ -100,8 +100,7 @@ public class DIDLParser extends SAXParser {
      *
      * @param xml The XML representation.
      * @return A DIDL content model.
-     * @throws Exception
-     */
+	 */
     public DIDLContent parse(String xml) throws Exception {
 
         if (xml == null || xml.isEmpty()) {

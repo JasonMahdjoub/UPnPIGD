@@ -98,19 +98,15 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
         log.fine("Completely hydrated remote device graph available, calling listeners: " + device);
         for (final RegistryListener listener : registry.getListeners()) {
             registry.getConfiguration().getRegistryListenerExecutor().execute(
-                    new Runnable() {
-                        public void run() {
-                            listener.remoteDeviceAdded(registry, device);
-                        }
-                    }
-            );
+					() -> listener.remoteDeviceAdded(registry, device)
+			);
         }
 
     }
 
     boolean update(RemoteDeviceIdentity rdIdentity) {
 
-        for (LocalDevice localDevice : registry.getLocalDevices()) {
+        for (LocalDevice<?> localDevice : registry.getLocalDevices()) {
             if (localDevice.findDevice(rdIdentity.getUdn()) != null) {
                 log.fine("Ignoring update, a local device graph contains UDN");
                 return true;
@@ -141,12 +137,8 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
             log.fine("Remote device updated, calling listeners: " + registeredRemoteDevice);
             for (final RegistryListener listener : registry.getListeners()) {
                 registry.getConfiguration().getRegistryListenerExecutor().execute(
-                        new Runnable() {
-                            public void run() {
-                                listener.remoteDeviceUpdated(registry, item.getItem());
-                            }
-                        }
-                );
+						() -> listener.remoteDeviceUpdated(registry, item.getItem())
+				);
             }
 
             return true;
@@ -191,12 +183,8 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
                     it.remove();
                     if (!shuttingDown) {
                         registry.getConfiguration().getRegistryListenerExecutor().execute(
-                                new Runnable() {
-                                    public void run() {
-                                        outgoingSubscription.getItem().end(CancelReason.DEVICE_WAS_REMOVED, null);
-                                    }
-                                }
-                        );
+								() -> outgoingSubscription.getItem().end(CancelReason.DEVICE_WAS_REMOVED, null)
+						);
                     }
                 }
             }
@@ -205,12 +193,8 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
             if (!shuttingDown) {
                 for (final RegistryListener listener : registry.getListeners()) {
                     registry.getConfiguration().getRegistryListenerExecutor().execute(
-                            new Runnable() {
-                                public void run() {
-                                    listener.remoteDeviceRemoved(registry, registeredDevice);
-                                }
-                            }
-                    );
+							() -> listener.remoteDeviceRemoved(registry, registeredDevice)
+					);
                 }
             }
 

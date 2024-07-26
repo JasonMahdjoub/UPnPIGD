@@ -99,8 +99,7 @@ public class RequestInfo {
 		int l = cookies.length;
 		if (l > 0) {
 			builder.append("Cookies:\n");
-			for (int i = 0; i < l; ++i) {
-				Cookie cookie = cookies[i];
+			for (Cookie cookie : cookies) {
 				builder.append("    ").append(cookie.getName()).append(" = ").append(cookie.getValue()).append('\n');
 			}
 		}
@@ -164,7 +163,7 @@ public class RequestInfo {
 	public static void dumpRequestHeaders(long timestamp, String text, HttpServletRequest request) {
 		log.info(text);
 		dumpRequestString(timestamp, request);
-		Enumeration headers = request.getHeaderNames();
+		Enumeration<String> headers = request.getHeaderNames();
 		if (headers != null) {
 			while (headers.hasMoreElements()) {
 				String headerName = (String) headers.nextElement();
@@ -195,7 +194,7 @@ public class RequestInfo {
 		String queryString = req.getQueryString();   // d=789
 
 		// Reconstruct original requesting URL
-		StringBuffer url = new StringBuffer();
+		StringBuilder url = new StringBuilder();
 		url.append(scheme).append("://").append(serverName);
 
 		if ((serverPort != 80) && (serverPort != 443)) {

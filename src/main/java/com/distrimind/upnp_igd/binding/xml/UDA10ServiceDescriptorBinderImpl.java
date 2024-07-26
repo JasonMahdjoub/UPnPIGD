@@ -97,7 +97,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
             log.fine("Populating service from DOM: " + undescribedService);
 
             // Read the XML into a mutable descriptor graph
-            MutableService<D, S> descriptor = new MutableService<D, S>();
+            MutableService<D, S> descriptor = new MutableService<>();
 
             hydrateBasic(descriptor, undescribedService);
 

@@ -44,11 +44,11 @@ public class XMLUtil {
 
     public static String documentToString(Document document, boolean standalone) throws Exception {
         String prol = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"" + (standalone ? "yes" : "no") + "\"?>";
-        return prol + nodeToString(document.getDocumentElement(), new HashSet<String>(), document.getDocumentElement().getNamespaceURI());
+        return prol + nodeToString(document.getDocumentElement(), new HashSet<>(), document.getDocumentElement().getNamespaceURI());
     }
 
     public static String documentToFragmentString(Document document) throws Exception {
-        return nodeToString(document.getDocumentElement(), new HashSet<String>(), document.getDocumentElement().getNamespaceURI());
+        return nodeToString(document.getDocumentElement(), new HashSet<>(), document.getDocumentElement().getNamespaceURI());
     }
 
     protected static String nodeToString(Node node, Set<String> parentPrefixes, String namespaceURI) throws Exception {

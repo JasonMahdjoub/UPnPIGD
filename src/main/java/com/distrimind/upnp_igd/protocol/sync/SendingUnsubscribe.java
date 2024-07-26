@@ -72,20 +72,18 @@ public class SendingUnsubscribe extends SendingSync<OutgoingUnsubscribeRequestMe
         getUpnpService().getRegistry().removeRemoteSubscription(subscription);
 
         getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
-            new Runnable() {
-                public void run() {
-                    if (response == null) {
-                        log.fine("Unsubscribe failed, no response received");
-                        subscription.end(CancelReason.UNSUBSCRIBE_FAILED, null);
-                    } else if (response.getOperation().isFailed()) {
-                        log.fine("Unsubscribe failed, response was: " + response);
-                        subscription.end(CancelReason.UNSUBSCRIBE_FAILED, response.getOperation());
-                    } else {
-                        log.fine("Unsubscribe successful, response was: " + response);
-                        subscription.end(null, response.getOperation());
-                    }
-                }
-            }
-        );
+				() -> {
+					if (response == null) {
+						log.fine("Unsubscribe failed, no response received");
+						subscription.end(CancelReason.UNSUBSCRIBE_FAILED, null);
+					} else if (response.getOperation().isFailed()) {
+						log.fine("Unsubscribe failed, response was: " + response);
+						subscription.end(CancelReason.UNSUBSCRIBE_FAILED, response.getOperation());
+					} else {
+						log.fine("Unsubscribe successful, response was: " + response);
+						subscription.end(null, response.getOperation());
+					}
+				}
+		);
     }
 }

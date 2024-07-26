@@ -325,7 +325,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
                   Integer.MAX_VALUE,
                   60L,
                   TimeUnit.SECONDS,
-                  new SynchronousQueue<Runnable>(),
+					new SynchronousQueue<>(),
                   threadFactory,
                   rejectedHandler
             );

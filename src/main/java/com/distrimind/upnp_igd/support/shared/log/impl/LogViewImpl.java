@@ -38,13 +38,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,30 +118,28 @@ public class LogViewImpl extends JPanel implements LogView {
         logTable.setCellSelectionEnabled(false);
         logTable.setRowSelectionAllowed(true);
         logTable.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent e) {
+				e -> {
 
-                        if (e.getValueIsAdjusting()) return;
+					if (e.getValueIsAdjusting()) return;
 
-                        if (e.getSource() == logTable.getSelectionModel()) {
-                            int[] rows = logTable.getSelectedRows();
+					if (e.getSource() == logTable.getSelectionModel()) {
+						int[] rows = logTable.getSelectedRows();
 
-                            if (rows == null || rows.length == 0) {
-                                copyButton.setEnabled(false);
-                                expandButton.setEnabled(false);
-                            } else if (rows.length == 1) {
-                                copyButton.setEnabled(true);
-                                LogMessage msg = (LogMessage) logTableModel.getValueAt(rows[0], 0);
-                                // TODO: This setting should be injected
-								expandButton.setEnabled(msg.getMessage().length() > getExpandMessageCharacterLimit());
-                            } else {
-                                copyButton.setEnabled(true);
-                                expandButton.setEnabled(false);
-                            }
-                        }
-                    }
-                }
-        );
+						if (rows == null || rows.length == 0) {
+							copyButton.setEnabled(false);
+							expandButton.setEnabled(false);
+						} else if (rows.length == 1) {
+							copyButton.setEnabled(true);
+							LogMessage msg = (LogMessage) logTableModel.getValueAt(rows[0], 0);
+							// TODO: This setting should be injected
+							expandButton.setEnabled(msg.getMessage().length() > getExpandMessageCharacterLimit());
+						} else {
+							copyButton.setEnabled(true);
+							expandButton.setEnabled(false);
+						}
+					}
+				}
+		);
 
         adjustTableUI();
         initializeToolBar(defaultExpiration);
@@ -209,64 +203,50 @@ public class LogViewImpl extends JPanel implements LogView {
 
     protected void initializeToolBar(LogController.Expiration expiration) {
         configureButton.setFocusable(false);
-        configureButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                centerWindowEvent.fire(new CenterWindow(logCategorySelector));
-                logCategorySelector.setVisible(!logCategorySelector.isVisible());
-            }
-        });
+        configureButton.addActionListener(e -> {
+			centerWindowEvent.fire(new CenterWindow(logCategorySelector));
+			logCategorySelector.setVisible(!logCategorySelector.isVisible());
+		});
 
         clearButton.setFocusable(false);
-        clearButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logTableModel.clearMessages();
-            }
-        });
+        clearButton.addActionListener(e -> logTableModel.clearMessages());
 
         copyButton.setFocusable(false);
         copyButton.setEnabled(false);
-        copyButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                StringBuilder sb = new StringBuilder();
-                List<LogMessage> messages = getSelectedMessages();
-                for (LogMessage message : messages) {
-                    sb.append(message.toString()).append("\n");
-                }
-                Application.copyToClipboard(sb.toString());
-            }
-        });
+        copyButton.addActionListener(e -> {
+			StringBuilder sb = new StringBuilder();
+			List<LogMessage> messages = getSelectedMessages();
+			for (LogMessage message : messages) {
+				sb.append(message.toString()).append("\n");
+			}
+			Application.copyToClipboard(sb.toString());
+		});
 
         expandButton.setFocusable(false);
         expandButton.setEnabled(false);
-        expandButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                List<LogMessage> messages = getSelectedMessages();
-                if (messages.size() != 1) return;
-                presenter.onExpand(messages.get(0));
-            }
-        });
+        expandButton.addActionListener(e -> {
+			List<LogMessage> messages = getSelectedMessages();
+			if (messages.size() != 1) return;
+			presenter.onExpand(messages.get(0));
+		});
 
         pauseButton.setFocusable(false);
-        pauseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                logTableModel.setPaused(!logTableModel.isPaused());
-                if (logTableModel.isPaused()) {
-                    pauseLabel.setText(" (Paused)");
-                } else {
-                    pauseLabel.setText(" (Active)");
-                }
-            }
-        });
+        pauseButton.addActionListener(e -> {
+			logTableModel.setPaused(!logTableModel.isPaused());
+			if (logTableModel.isPaused()) {
+				pauseLabel.setText(" (Paused)");
+			} else {
+				pauseLabel.setText(" (Active)");
+			}
+		});
 
         expirationComboBox.setSelectedItem(expiration);
         expirationComboBox.setMaximumSize(new Dimension(100, 32));
-        expirationComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JComboBox<?> cb = (JComboBox<?>) e.getSource();
-                LogController.Expiration expiration = (LogController.Expiration) cb.getSelectedItem();
-                logTableModel.setMaxAgeSeconds(expiration==null?0:expiration.getSeconds());
-            }
-        });
+        expirationComboBox.addActionListener(e -> {
+			JComboBox<?> cb = (JComboBox<?>) e.getSource();
+			LogController.Expiration expiration1 = (LogController.Expiration) cb.getSelectedItem();
+			logTableModel.setMaxAgeSeconds(expiration1 ==null?0: expiration1.getSeconds());
+		});
 
         toolBar.setFloatable(false);
         toolBar.add(copyButton);

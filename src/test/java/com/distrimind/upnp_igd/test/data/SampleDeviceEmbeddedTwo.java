@@ -17,7 +17,6 @@ package com.distrimind.upnp_igd.test.data;
 
 import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.DeviceDetails;
-import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import com.distrimind.upnp_igd.model.profile.DeviceDetailsProvider;
 import com.distrimind.upnp_igd.model.meta.DeviceIdentity;
 import com.distrimind.upnp_igd.model.meta.Icon;
@@ -58,11 +57,7 @@ public class SampleDeviceEmbeddedTwo<D extends Device<?, D, S>, S extends Servic
 
     @Override
     public DeviceDetailsProvider getDeviceDetailsProvider() {
-        return new DeviceDetailsProvider() {
-            public DeviceDetails provide(RemoteClientInfo info) {
-                return getDeviceDetails();
-            }
-        };
+        return info -> getDeviceDetails();
     }
 
     @Override

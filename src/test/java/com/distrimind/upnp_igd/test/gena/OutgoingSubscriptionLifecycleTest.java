@@ -236,54 +236,12 @@ public class OutgoingSubscriptionLifecycleTest {
         };
 
         // send subscription request is a separate thread
-        Thread subscribeThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                upnpService.getControlPoint().execute(callback);
-            }
-        });
+        Thread subscribeThread = new Thread(() -> upnpService.getControlPoint().execute(callback));
         subscribeThread.start();
 
         // generate notification in a separate thread
         // use a dummy GENASubscription for that to have a valid subscriptionId
-       final GENASubscription<?> subscription = new RemoteGENASubscription(service, 180) {
-            @Override
-            public void established() {
-            }
-            @Override
-            public void eventReceived() {
-            }
-            @Override
-            public void invalidMessage(UnsupportedDataException ex) {
-            }
-            @Override
-            public void failed(UpnpResponse responseStatus) {
-            }
-            @Override
-            public void ended(CancelReason reason, UpnpResponse responseStatus) {
-
-            }
-            @Override
-            public void eventsMissed(int numberOfMissedEvents) {
-            }
-        };
-        subscription.setSubscriptionId("uuid:1234");
-
-        Thread notifyThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // Simulate received event before the subscription response
-                try {
-                    upnpService.getProtocolFactory().createReceivingSync(
-                            createEventRequestMessage(upnpService, service, subscription)
-                    ).run();
-                } catch (ProtocolCreationException e) {
-                    testAssertions.add(false);
-                }
-
-            }
-        });
-        notifyThread.start();
+        Thread notifyThread = getThread(service, upnpService, testAssertions);
 
         // give time to process notification
         Thread.sleep(1000);
@@ -305,6 +263,49 @@ public class OutgoingSubscriptionLifecycleTest {
         }
     }
 
+    private Thread getThread(RemoteService service, MockUpnpService upnpService, List<Boolean> testAssertions) {
+        final GENASubscription<?> subscription = getGenaSubscription(service);
+
+        Thread notifyThread = new Thread(() -> {
+			// Simulate received event before the subscription response
+			try {
+				upnpService.getProtocolFactory().createReceivingSync(
+						createEventRequestMessage(upnpService, service, subscription)
+				).run();
+			} catch (ProtocolCreationException e) {
+				testAssertions.add(false);
+			}
+
+		});
+        notifyThread.start();
+        return notifyThread;
+    }
+
+    private static GENASubscription<?> getGenaSubscription(RemoteService service) {
+        final GENASubscription<?> subscription = new RemoteGENASubscription(service, 180) {
+             @Override
+             public void established() {
+             }
+             @Override
+             public void eventReceived() {
+             }
+             @Override
+             public void invalidMessage(UnsupportedDataException ex) {
+             }
+             @Override
+             public void failed(UpnpResponse responseStatus) {
+             }
+             @Override
+             public void ended(CancelReason reason, UpnpResponse responseStatus) {
+
+             }
+             @Override
+             public void eventsMissed(int numberOfMissedEvents) {
+             }
+         };
+        subscription.setSubscriptionId("uuid:1234");
+        return subscription;
+    }
 
 
     protected StreamResponseMessage createSubscribeResponseMessage() {

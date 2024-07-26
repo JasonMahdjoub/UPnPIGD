@@ -51,13 +51,13 @@ public abstract class DLNAAttribute<T> {
         DLNA_ORG_CI("DLNA.ORG_CI", DLNAConversionIndicatorAttribute.class),
         DLNA_ORG_FLAGS("DLNA.ORG_FLAGS", DLNAFlagsAttribute.class);
     
-        private static final Map<String, Type> byName = new HashMap<String, Type>() {
-            {
-                for (Type t : Type.values()) {
-                    put(t.getAttributeName().toUpperCase(Locale.ROOT), t);
-                }
-            }
-        };
+        private static final Map<String, Type> byName = new HashMap<>() {
+			{
+				for (Type t : Type.values()) {
+					put(t.getAttributeName().toUpperCase(Locale.ROOT), t);
+				}
+			}
+		};
 
         private final String attributeName;
         private final List<Class<? extends DLNAAttribute<?>>> attributeTypes;

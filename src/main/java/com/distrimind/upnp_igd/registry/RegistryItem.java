@@ -54,7 +54,7 @@ class RegistryItem<K, I> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RegistryItem that = (RegistryItem) o;
+        RegistryItem<?, ?> that = (RegistryItem<?, ?>) o;
 
         return key.equals(that.key);
     }

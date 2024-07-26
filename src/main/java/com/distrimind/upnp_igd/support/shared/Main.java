@@ -25,8 +25,6 @@ import com.distrimind.upnp_igd.util.logging.LoggingUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.PrintWriter;
@@ -80,14 +78,11 @@ public abstract class Main implements ShutdownHandler, Thread.UncaughtExceptionH
         Thread.setDefaultUncaughtExceptionHandler(this);
 
         // Shutdown behavior
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                if (!isRegularShutdown) { // Don't run the hook if everything is already stopped
-                    shutdown();
-                }
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			if (!isRegularShutdown) { // Don't run the hook if everything is already stopped
+				shutdown();
+			}
+		}));
 
         // Wire logging UI into JUL, don't reset JUL root logger but
         // add our handler if there is a JUL config file
@@ -101,11 +96,7 @@ public abstract class Main implements ShutdownHandler, Thread.UncaughtExceptionH
     @Override
     public void shutdown() {
         isRegularShutdown = true;
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                errorWindow.dispose();
-            }
-        });
+        SwingUtilities.invokeLater(errorWindow::dispose);
     }
 
     @Override
@@ -114,43 +105,35 @@ public abstract class Main implements ShutdownHandler, Thread.UncaughtExceptionH
         System.err.println("In thread '" + thread + "' uncaught exception: " + throwable);
         throwable.printStackTrace(System.err);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                errorWindow.getContentPane().removeAll();
+        SwingUtilities.invokeLater(() -> {
+			errorWindow.getContentPane().removeAll();
 
-                JTextArea textArea = new JTextArea();
-                textArea.setEditable(false);
-                StringBuilder text = new StringBuilder();
+			JTextArea textArea = new JTextArea();
+			textArea.setEditable(false);
+			StringBuilder text = new StringBuilder();
 
-                text.append("An exceptional error occurred!\nYou can try to continue or exit the application.\n\n");
-                text.append("Please tell us about this here:\nhttp://www.4thline.org/projects/mailinglists-cling.html\n\n");
-                text.append("-------------------------------------------------------------------------------------------------------------\n\n");
-                Writer stackTrace = new StringWriter();
-                throwable.printStackTrace(new PrintWriter(stackTrace));
-                text.append(stackTrace);
+			text.append("An exceptional error occurred!\nYou can try to continue or exit the application.\n\n");
+			text.append("Please tell us about this here:\nhttp://www.4thline.org/projects/mailinglists-cling.html\n\n");
+			text.append("-------------------------------------------------------------------------------------------------------------\n\n");
+			Writer stackTrace = new StringWriter();
+			throwable.printStackTrace(new PrintWriter(stackTrace));
+			text.append(stackTrace);
 
-                textArea.setText(text.toString());
-                JScrollPane pane = new JScrollPane(textArea);
-                errorWindow.getContentPane().add(pane, BorderLayout.CENTER);
+			textArea.setText(text.toString());
+			JScrollPane pane = new JScrollPane(textArea);
+			errorWindow.getContentPane().add(pane, BorderLayout.CENTER);
 
-                JButton exitButton = new JButton("Exit Application");
-                exitButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.exit(1);
-                    }
-                });
+			JButton exitButton = new JButton("Exit Application");
+			exitButton.addActionListener(e -> System.exit(1));
 
-                errorWindow.getContentPane().add(exitButton, BorderLayout.SOUTH);
+			errorWindow.getContentPane().add(exitButton, BorderLayout.SOUTH);
 
-                errorWindow.pack();
-                Application.center(errorWindow);
-                textArea.setCaretPosition(0);
+			errorWindow.pack();
+			Application.center(errorWindow);
+			textArea.setCaretPosition(0);
 
-                errorWindow.setVisible(true);
-            }
-        });
+			errorWindow.setVisible(true);
+		});
     }
 
     protected void removeLoggingHandler() {
