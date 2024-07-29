@@ -65,7 +65,7 @@ public abstract class UpnpStream implements Runnable {
      * passed to the HTTP client as it is.
    
      * @param requestMsg The TCP (HTTP) stream request message.
-     * @return The TCP (HTTP) stream response message, or <code>null</code> if a 404 should be send to the client.
+     * @return The TCP (HTTP) stream response message, or <code>null</code> if a 404 should be sent to the client.
      */
     public StreamResponseMessage process(StreamRequestMessage requestMsg) {
         log.fine("Processing stream request message: " + requestMsg);

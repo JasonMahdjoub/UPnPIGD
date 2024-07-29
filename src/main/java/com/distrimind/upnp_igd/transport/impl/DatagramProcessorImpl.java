@@ -90,7 +90,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
             );
         }
 
-        // UDA 1.0, 1.1.2: No body but message must have a blank line after header
+        // UDA 1.0, 1.1.2: Nobody but message must have a blank line after header
         StringBuilder messageData = new StringBuilder();
         messageData.append(statusLine);
 

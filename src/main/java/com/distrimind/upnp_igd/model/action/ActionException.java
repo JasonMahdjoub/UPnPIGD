@@ -18,12 +18,13 @@ package com.distrimind.upnp_igd.model.action;
 import com.distrimind.upnp_igd.model.types.ErrorCode;
 
 /**
- * Thrown (or encapsulated in {@link ActionInvocation} when an action execution failed.
+ * Thrown (encapsulated in {@link ActionInvocation}) when an action execution failed.
  *
  * @author Christian Bauer
  */
 public class ActionException extends Exception {
 
+    private static final long serialVersionUID = 1L;
     private final int errorCode;
 
     public ActionException(int errorCode, String message) {

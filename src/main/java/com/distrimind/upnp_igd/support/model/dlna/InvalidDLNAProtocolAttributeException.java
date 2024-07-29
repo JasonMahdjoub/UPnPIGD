@@ -21,7 +21,7 @@ package com.distrimind.upnp_igd.support.model.dlna;
  * @author Mario Franco
  */
 public class InvalidDLNAProtocolAttributeException extends RuntimeException {
-
+    private static final long serialVersionUID = 1L;
     public InvalidDLNAProtocolAttributeException(String s) {
         super(s);
     }

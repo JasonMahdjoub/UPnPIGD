@@ -22,7 +22,7 @@ import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
  * @author Christian Bauer
  */
 public class CSVUnsignedIntegerFourBytes extends CSV<UnsignedIntegerFourBytes> {
-
+    private static final long serialVersionUID = 1L;
     public CSVUnsignedIntegerFourBytes() {
     }
 

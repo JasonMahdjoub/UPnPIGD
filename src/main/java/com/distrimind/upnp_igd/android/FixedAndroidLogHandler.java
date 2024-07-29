@@ -84,7 +84,7 @@ public class FixedAndroidLogHandler extends Handler {
             your device. By default, if you do not have that file and if you do not execute some magic
             "setprop" commands on your device, only INFO/WARN/ERROR is loggable. So whatever you do with
             java.util.logging.Logger.setLevel(...) doesn't have any effect. The debug messages might arrive
-            here but they are dropped because you _also_ have to set the Android internal logging level with
+            here, but they are dropped because you _also_ have to set the Android internal logging level with
             the aforementioned magic switches.
 
             Also, consider that you have to understand how a JUL logger name is mapped to the "tag" of

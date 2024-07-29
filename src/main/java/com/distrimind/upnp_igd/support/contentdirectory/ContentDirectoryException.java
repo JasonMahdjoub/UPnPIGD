@@ -22,6 +22,7 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
  * @author Alessio Gaeta
  */
 public class ContentDirectoryException extends ActionException {
+    private static final long serialVersionUID = 1L;
 
     public ContentDirectoryException(int errorCode, String message) {
         super(errorCode, message);

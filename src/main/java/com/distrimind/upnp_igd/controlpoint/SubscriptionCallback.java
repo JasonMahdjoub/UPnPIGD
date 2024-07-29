@@ -298,7 +298,7 @@ public abstract class SubscriptionCallback implements Runnable {
      *
      * @param subscription   The ended subscription instance.
      * @param reason         If the subscription ended regularly (through <code>end()</code>), this is <code>null</code>.
-     * @param responseStatus For a remote subscription, if the cause implies a remopte response and it was
+     * @param responseStatus For a remote subscription, if the cause implies a remote response, and it was
      *                       received, this is it (e.g. renewal failure response).
      */
     protected abstract void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus);

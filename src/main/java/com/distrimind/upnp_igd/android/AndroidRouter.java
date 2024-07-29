@@ -89,7 +89,7 @@ public class AndroidRouter extends RouterImpl {
         try {
             boolean enabled=super.enable();
             if (enabled) {
-                // Enable multicast on the WiFi network interface,
+                // Enable multicast on the Wi-Fi network interface,
                 // requires android.permission.CHANGE_WIFI_MULTICAST_STATE
                 if (isWifi()) {
                     setWiFiMulticastLock(true);
@@ -106,7 +106,7 @@ public class AndroidRouter extends RouterImpl {
     public boolean disable() throws RouterException {
         lock(writeLock);
         try {
-            // Disable multicast on WiFi network interface,
+            // Disable multicast on Wi-Fi network interface,
             // requires android.permission.CHANGE_WIFI_MULTICAST_STATE
             if (isWifi()) {
                 setWiFiMulticastLock(false);
@@ -261,13 +261,15 @@ public class AndroidRouter extends RouterImpl {
 
             NetworkInfo newNetworkInfo = NetworkUtils.getConnectedNetworkInfo(context);
 
-            // When Android switches WiFI => MOBILE, sometimes we may have a short transition
-            // with no network: WIFI => NONE, NONE => MOBILE
-            // The code below attempts to make it look like a single WIFI => MOBILE
-            // transition, retrying up to 3 times getting the current network.
-            //
-            // Note: this can block the UI thread for up to 3s
-            if (networkInfo != null && newNetworkInfo == null) {
+            /*
+             When Android switches Wi-Fi => MOBILE, sometimes we may have a short transition
+             with no network: WI-FI => NONE, NONE => MOBILE
+             The code below attempts to make it look like a single WIFI => MOBILE
+             transition, retrying up to 3 times getting the current network.
+
+             Note: this can block the UI thread for up to 3s
+            */
+			if (networkInfo != null && newNetworkInfo == null) {
                 for (int i = 1; i <= 3; i++) {
                     try {
                         Thread.sleep(1000);

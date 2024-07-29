@@ -24,7 +24,7 @@ import java.awt.event.WindowListener;
  * HMVC works with a tree of triads, these triads are a Model (usually several
  * JavaBeans and their binding models for the UI), a View (usually several Swing
  * UI components), and a Controller. This is a basic interface of a controller
- * that has a pointer to a parent controller (can be null if its the root of the
+ * that has a pointer to a parent controller (can be null if it's the root of the
  * tree) and a collection of subcontrollers (can be empty, usually isn't empty).
  * The hierarchy of controller supports propagation of action execution and
  * propagation of events.

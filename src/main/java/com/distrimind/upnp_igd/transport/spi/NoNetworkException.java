@@ -24,6 +24,7 @@ import com.distrimind.upnp_igd.transport.Router;
  * @author Christian Bauer
  */
 public class NoNetworkException extends InitializationException {
+    private static final long serialVersionUID = 1L;
 
     public NoNetworkException(String s) {
         super(s);

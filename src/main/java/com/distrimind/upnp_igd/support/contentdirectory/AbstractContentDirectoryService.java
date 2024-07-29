@@ -217,14 +217,14 @@ public abstract class AbstractContentDirectoryService {
      * This is a required action defined by <em>ContentDirectory:1</em>.
    
      * <p>
-     * You should wrap any exception into a {@link ContentDirectoryException}, so a propery
+     * You should wrap any exception into a {@link ContentDirectoryException}, so a property
      * error message can be returned to control points.
    
      */
     public abstract BrowseResult browse(String objectID, BrowseFlag browseFlag,
                                         String filter,
                                         long firstResult, long maxResults,
-                                        List<SortCriterion> orderby) throws ContentDirectoryException;
+                                        List<SortCriterion> orderBy) throws ContentDirectoryException;
 
 
     @UpnpAction(out = {

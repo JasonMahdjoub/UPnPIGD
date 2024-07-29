@@ -63,7 +63,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
                 getInputMessage().getHeaders().getFirstHeader(UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class);
 
         // Special rules for action messages! UDA 1.0 says:
-        // 'If the CONTENT-TYPE header specifies an unsupported value (other then "text/xml") the
+        // 'If the CONTENT-TYPE header specifies an unsupported value (other than "text/xml") the
         // device must return an HTTP status code "415 Unsupported Media Type".'
         if (contentTypeHeader != null && !contentTypeHeader.isUDACompliantXML()) {
             log.warning("Received invalid Content-Type '" + contentTypeHeader + "': " + getInputMessage());
@@ -88,7 +88,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
         log.fine("Found local action resource matching relative request URI: " + getInputMessage().getUri());
 
         RemoteActionInvocation<? extends LocalService<?>> invocation;
-        OutgoingActionResponseMessage responseMessage = null;
+        OutgoingActionResponseMessage responseMessage;
 
         try {
 
@@ -113,7 +113,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 
                 if (invocation.getFailure() instanceof ActionCancelledException) {
                     log.fine("Action execution was cancelled, returning 404 to client");
-                    // A 404 status is appropriate for this situation: The resource is gone/not available and it's
+                    // A 404 status is appropriate for this situation: The resource is gone/not available, and it's
                     // a temporary condition. Most likely the cancellation happened because the client connection
                     // has been dropped, so it doesn't really matter what we return here anyway.
                     return null;

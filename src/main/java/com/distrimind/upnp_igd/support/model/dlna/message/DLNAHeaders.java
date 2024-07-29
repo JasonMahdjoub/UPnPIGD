@@ -25,7 +25,7 @@ import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.support.model.dlna.message.header.DLNAHeader;
 
 /**
- * Provides UPnP header API in addition to plain multi-map HTTP header access.
+ * Provides UPnP header API in addition to plain multimap HTTP header access.
  *
  * @author Mario Franco
  * @author Christian Bauer

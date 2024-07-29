@@ -29,7 +29,7 @@ public class DiscoveryOptions {
 
     /**
      * @param advertised If <code>false</code>, no alive notifications will be announced for
-     *                   this device and it will not appear in search responses.
+     *                   this device, and it will not appear in search responses.
      */
     public DiscoveryOptions(boolean advertised) {
         this.advertised = advertised;
@@ -38,8 +38,8 @@ public class DiscoveryOptions {
     /**
      *
      * @param advertised If <code>false</code>, no alive notifications will be announced for
-     *                   this device and it will not appear in search responses.
-     * @param byeByeBeforeFirstAlive If <code>true</code>, a byebye NOTIFY message will be send before the
+     *                   this device, and it will not appear in search responses.
+     * @param byeByeBeforeFirstAlive If <code>true</code>, a byebye NOTIFY message will be sent before the
      *                               first alive NOTIFY message.
      */
     public DiscoveryOptions(boolean advertised, boolean byeByeBeforeFirstAlive) {
@@ -56,7 +56,7 @@ public class DiscoveryOptions {
     }
 
     /**
-     * @return true if a byebye NOTIFY message will be send before the
+     * @return true if a byebye NOTIFY message will be sent before the
      *         first alive NOTIFY message.
      */
     public boolean isByeByeBeforeFirstAlive() {

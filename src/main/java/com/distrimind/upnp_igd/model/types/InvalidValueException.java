@@ -21,7 +21,7 @@ package com.distrimind.upnp_igd.model.types;
  * @author Christian Bauer
  */
 public class InvalidValueException extends RuntimeException {
-
+    private static final long serialVersionUID = 1L;
     public InvalidValueException(String s) {
         super(s);
     }

@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Locale;
 
 /**
- * The type of a state variable value, able to convert to/from string representation.
+ * The type of state variable value, able to convert to/from string representation.
  *
  * @param <V> The Java type of the value handled by this datatype.
  * @author Christian Bauer
@@ -32,7 +32,7 @@ public interface Datatype<V> {
      * Mapping from Java type to UPnP built-in type.
      * <p>
      * This map is used for service binding, when we have to figure out
-     * the type of a UPnP state variable by reflecting on a method or field of
+     * the type of UPnP state variable by reflecting on a method or field of
      * a service class. From a known Java type we default to a UPnP built-in type.
      * This is just a list of default mappings between Java and UPnP types. There
      * might be more than this/more than one UPnP type that can handle a given
@@ -138,7 +138,9 @@ public interface Datatype<V> {
         URI("uri", new URIDatatype()),
         UUID("uuid", new StringDatatype());
 
-        private final static Map<String, Builtin> byName = new HashMap<>() {{
+        private final static Map<String, Builtin> byName = new HashMap<>() {
+            private static final long serialVersionUID = 1L;
+            {
 			for (Builtin b : Builtin.values()) {
 				// Lowercase descriptor name!
 				if (containsKey(b.getDescriptorName().toLowerCase(Locale.ROOT)))
@@ -166,7 +168,7 @@ public interface Datatype<V> {
 
         public static Builtin getByDescriptorName(String descriptorName) {
             // The UPnP spec clearly says "must be one of these values", so I'm assuming
-            // they are case sensitive. But we want to work with broken devices, which of
+            // they are case-sensitive. But we want to work with broken devices, which of
             // course produce mixed upper/lowercase values.
             if (descriptorName == null) return null;
             return byName.get(descriptorName.toLowerCase(Locale.ROOT));

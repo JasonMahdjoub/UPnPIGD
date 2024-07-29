@@ -25,6 +25,7 @@ import java.util.List;
  * @author Christian Bauer
  */
 public class RegistrationException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
     public List<ValidationError> errors;
 

@@ -84,7 +84,7 @@ public interface RegistryListener {
     /**
      * Called when a discovered device's expiration timestamp is updated.
      * <p>
-     * This is a signal that a device is still alive and you typically don't have to react to this
+     * This is a signal that a device is still alive, and you typically don't have to react to this
      * event. You will be notified when a device disappears through timeout.
    
      *
@@ -97,7 +97,7 @@ public interface RegistryListener {
      * Called when a previously discovered device disappears.
      * <p>
      * This method will also be called when a discovered device did not update its expiration timeout
-     * and has been been removed automatically by the local registry. This method will not be called
+     * and has been removed automatically by the local registry. This method will not be called
      * when the UPnP stack is shutting down.
    
      *

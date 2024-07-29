@@ -150,7 +150,7 @@ public final class HexBin {
         if (binaryData == null)
             return null;
 
-        byte[] decoded = null;
+        byte[] decoded;
 		decoded = decode(binaryData.getBytes(StandardCharsets.UTF_8));
 		return decoded == null ? null : new String(decoded);
     }
@@ -165,7 +165,7 @@ public final class HexBin {
         if (binaryData == null)
             return null;
 
-        byte[] encoded = null;
+        byte[] encoded;
 		encoded = encode(binaryData.getBytes(StandardCharsets.UTF_8));
 		return encoded == null ? null : new String(encoded);
     }

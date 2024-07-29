@@ -145,7 +145,7 @@ public class MethodActionExecutor extends AbstractActionExecutor {
                         "Primitive action method argument '" + argument.getName() + "' requires input value, can't be null or empty string"
                 );
 
-            // It's not primitive and we have no value, that's fine too
+            // It's not primitive, and we have no value, that's fine too
             if (inputValue == null) {
                 values.add(i++, null);
                 continue;

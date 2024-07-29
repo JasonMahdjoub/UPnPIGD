@@ -75,7 +75,7 @@ public class ReceivingUnsubscribe extends ReceivingSync<StreamRequestMessage, St
 
         log.fine("Unregistering subscription: " + subscription);
         if (getUpnpService().getRegistry().removeLocalSubscription(subscription)) {
-            subscription.end(null); // No reason, just an unsubscribe
+            subscription.end(null); // No reason, just an unsubscribed
         } else {
             log.fine("Subscription was already removed from registry");
         }

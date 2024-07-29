@@ -56,7 +56,7 @@ public class ConnectionInfo {
     final protected int peerConnectionID;
 
     final protected Direction direction;
-    protected Status connectionStatus = Status.Unknown;
+    protected Status connectionStatus;
 
     /**
      * Creates a default instance with values expected for the default connection ID "0".

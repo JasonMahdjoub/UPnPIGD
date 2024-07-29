@@ -21,6 +21,7 @@ package com.distrimind.upnp_igd.protocol;
  * @author Christian Bauer
  */
 public class ProtocolCreationException extends Exception {
+    private static final long serialVersionUID = 1L;
 
     public ProtocolCreationException(String s) {
         super(s);

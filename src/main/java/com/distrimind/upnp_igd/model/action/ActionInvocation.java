@@ -33,7 +33,7 @@ public class ActionInvocation<S extends Service<?, ?, ?>> {
     final protected Action<S> action;
     final protected ClientInfo clientInfo;
 
-    // We don't necessarily have to preserve insertion order but it's nicer if the arrays returned
+    // We don't necessarily have to preserve insertion order, but it's nicer if the arrays returned
     // by the getters are reliable
     protected Map<String, ActionArgumentValue<S>> input = new LinkedHashMap<>();
     protected Map<String, ActionArgumentValue<S>> output = new LinkedHashMap<>();

@@ -23,7 +23,7 @@ import java.util.Date;
  * @author Christian Bauer
  */
 public class CSVDate extends CSV<Date> {
-
+    private static final long serialVersionUID = 1L;
     public CSVDate() {
     }
 

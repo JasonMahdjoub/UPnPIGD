@@ -24,7 +24,7 @@ import java.util.List;
  * @author Christian Bauer
  */
 public class LogTableModel extends AbstractTableModel {
-
+    private static final long serialVersionUID = 1L;
     protected int maxAgeSeconds;
     protected boolean paused = false;
 

@@ -258,7 +258,7 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
 
     protected Collection<D> find(DeviceType deviceType, D current) {
         Collection<D> devices = new HashSet<>();
-        // Type might be null if we just discovered the device and it hasn't yet been hydrated
+        // Type might be null if we just discovered the device, and it hasn't yet been hydrated
         if (current.getType() != null && current.getType().implementsVersion(deviceType)) {
             devices.add(current);
         }

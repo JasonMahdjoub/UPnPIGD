@@ -247,7 +247,7 @@ public class IO {
 	 * <p>
 	 * Wherever possible, the methods in this class do <em>not</em> flush or close
 	 * the stream. This is to avoid making non-portable assumptions about the
-	 * streams' origin and further use. Thus the caller is still responsible for
+	 * streams' origin and further use. Thus, the caller is still responsible for
 	 * closing streams after use.
 	 * <p>
 	 * Origin of code: Excalibur.
@@ -938,7 +938,7 @@ public class IO {
 			throws IOException {
 		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		long count = 0;
-		int n = 0;
+		int n;
 		while (-1 != (n = input.read(buffer))) {
 			output.write(buffer, 0, n);
 			count += n;
@@ -1042,7 +1042,7 @@ public class IO {
 	public static long copyLarge(Reader input, Writer output) throws IOException {
 		char[] buffer = new char[DEFAULT_BUFFER_SIZE];
 		long count = 0;
-		int n = 0;
+		int n;
 		while (-1 != (n = input.read(buffer))) {
 			output.write(buffer, 0, n);
 			count += n;

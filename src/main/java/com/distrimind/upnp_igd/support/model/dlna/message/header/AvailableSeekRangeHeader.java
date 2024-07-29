@@ -38,7 +38,7 @@ public class AvailableSeekRangeHeader extends DLNAHeader<AvailableSeekRangeType>
             String[] params = s.split(" ");
             if (params.length > 1) {
                 try {
-                    AvailableSeekRangeType.Mode mode = null;
+                    AvailableSeekRangeType.Mode mode;
                     NormalPlayTimeRange timeRange = null;
                     BytesRange byteRange = null;
 

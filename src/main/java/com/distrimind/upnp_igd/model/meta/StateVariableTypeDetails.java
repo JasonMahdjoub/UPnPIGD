@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Type of a state variable, its default value, and integrity rules for allowed values and ranges.
+ * Type of state variable, its default value, and integrity rules for allowed values and ranges.
  *
  * @author Christian Bauer
  */

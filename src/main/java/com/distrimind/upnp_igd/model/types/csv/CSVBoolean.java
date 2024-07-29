@@ -21,6 +21,7 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
  * @author Christian Bauer
  */
 public class CSVBoolean extends CSV<Boolean> {
+    private static final long serialVersionUID = 1L;
 
     public CSVBoolean() {
     }

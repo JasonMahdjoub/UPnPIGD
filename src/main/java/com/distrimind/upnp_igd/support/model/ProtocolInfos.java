@@ -26,6 +26,7 @@ import java.util.List;
  * @author Christian Bauer
  */
 public class ProtocolInfos extends ArrayList<ProtocolInfo> {
+    private static final long serialVersionUID = 1L;
 
     public ProtocolInfos(ProtocolInfo... info) {
 		this.addAll(Arrays.asList(info));

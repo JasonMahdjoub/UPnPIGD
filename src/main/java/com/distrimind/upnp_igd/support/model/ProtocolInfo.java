@@ -27,9 +27,9 @@ public class ProtocolInfo {
 
     public static final String WILDCARD = "*";
 
-    protected Protocol protocol = Protocol.ALL;
+    protected Protocol protocol;
     protected String network = WILDCARD;
-    protected String contentFormat = WILDCARD;
+    protected String contentFormat;
     protected String additionalInfo = WILDCARD;
 
     public ProtocolInfo(String s) throws InvalidValueException {

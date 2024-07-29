@@ -67,7 +67,7 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
     public AndroidUpnpServiceConfiguration(int streamListenPort, int multicastPort) {
         super(streamListenPort, multicastPort, false);
 
-        // This should be the default on Android 2.1 but it's not set by default
+        // This should be the default on Android 2.1, but it's not set by default
         System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
     }
 

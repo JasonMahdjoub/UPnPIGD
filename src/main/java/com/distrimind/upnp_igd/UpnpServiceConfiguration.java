@@ -113,12 +113,12 @@ public interface UpnpServiceConfiguration {
 	ExecutorService getStreamServerExecutorService();
 
     /**
-     * @return The shared implementation of {@link DeviceDescriptorBinder} for the UPnP 1.0 Device Architecture..
+     * @return The shared implementation of {@link DeviceDescriptorBinder} for the UPnP 1.0 Device Architecture.
      */
 	DeviceDescriptorBinder getDeviceDescriptorBinderUDA10();
 
     /**
-     * @return The shared implementation of {@link ServiceDescriptorBinder} for the UPnP 1.0 Device Architecture..
+     * @return The shared implementation of {@link ServiceDescriptorBinder} for the UPnP 1.0 Device Architecture.
      */
 	ServiceDescriptorBinder getServiceDescriptorBinderUDA10();
 
@@ -186,7 +186,7 @@ public interface UpnpServiceConfiguration {
      * <p>
      * This setting is useful on systems which do not support multicast networking
      * (Android on HTC phones, for example). On such a system you will not receive messages when a
-     * remote device disappears from the network and you will not receive its periodic heartbeat
+     * remote device disappears from the network, and you will not receive its periodic heartbeat
      * alive messages. Only an initial search response (UDP unicast) has been received from the
      * remote device, with its proposed maximum age. To avoid (early) expiration of the remote
      * device, you can override its maximum age with this configuration setting, ignoring the

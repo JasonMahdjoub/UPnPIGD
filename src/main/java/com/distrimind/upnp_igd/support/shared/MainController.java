@@ -85,7 +85,7 @@ public abstract class MainController extends AbstractController<JFrame> {
         logPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
         // Wire UI into JUL
-        // Don't reset JUL root logger but add if there is a JUL config file)
+        // Don't reset JUL root logger but add if there is a JUL config file
         Handler handler = new LoggingHandler() {
             protected void log(LogMessage msg) {
                 logController.pushMessage(msg);

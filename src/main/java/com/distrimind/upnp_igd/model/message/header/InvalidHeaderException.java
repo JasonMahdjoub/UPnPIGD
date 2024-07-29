@@ -21,7 +21,7 @@ package com.distrimind.upnp_igd.model.message.header;
  * @author Christian Bauer
  */
 public class InvalidHeaderException extends RuntimeException {
-
+    private static final long serialVersionUID = 1L;
     public InvalidHeaderException(String s) {
         super(s);
     }

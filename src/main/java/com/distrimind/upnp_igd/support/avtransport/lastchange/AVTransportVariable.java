@@ -37,7 +37,9 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
  */
 public class AVTransportVariable {
 
-    public static Set<Class<? extends EventedValue<?>>> ALL = new HashSet<>() {{
+    public static Set<Class<? extends EventedValue<?>>> ALL = new HashSet<>() {
+        private static final long serialVersionUID = 1L;
+        {
 		add(TransportState.class);
 		add(TransportStatus.class);
 		add(RecordStorageMedium.class);

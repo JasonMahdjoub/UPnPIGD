@@ -50,7 +50,7 @@ public class ServerHeader extends UpnpHeader<ServerClientTokens> {
             throw new InvalidHeaderException("Missing 'UPnP/1.' in server information: " + s);
         }
 
-        // We might be lucky and the vendor has implemented other tokens correctly. so let's at least try
+        // We might be lucky and the vendor has implemented other tokens correctly. so lets at least try
         try {
 
             int numberOfSpaces = 0;

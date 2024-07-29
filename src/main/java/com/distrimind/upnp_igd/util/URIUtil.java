@@ -204,7 +204,9 @@ public class URIUtil {
 	 * <a href="https://www.lunatech-research.com/archives/2009/02/03/what-every-web-developer-must-know-about-url-encoding">...</a>
 	 */
 
-	public final static BitSet ALLOWED = new BitSet() {{
+	public final static BitSet ALLOWED = new BitSet() {
+		private static final long serialVersionUID = 1L;
+		{
 		int i;
 		for (i = 'a'; i <= 'z'; i++) {
 			set(i);
@@ -234,23 +236,31 @@ public class URIUtil {
 		set('@');
 	}};
 
-	public final static BitSet PATH_SEGMENT = new BitSet() {{
+	public final static BitSet PATH_SEGMENT = new BitSet() {
+		private static final long serialVersionUID = 1L;
+		{
 		or(ALLOWED);
 		clear(';');
 	}};
 
-	public final static BitSet PATH_PARAM_NAME = new BitSet() {{
+	public final static BitSet PATH_PARAM_NAME = new BitSet() {
+		private static final long serialVersionUID = 1L;
+		{
 		or(ALLOWED);
 		clear(';');
 		clear('=');
 	}};
 
-	public final static BitSet PATH_PARAM_VALUE = new BitSet() {{
+	public final static BitSet PATH_PARAM_VALUE = new BitSet() {
+		private static final long serialVersionUID = 1L;
+		{
 		or(ALLOWED);
 		clear(';');
 	}};
 
-	public final static BitSet QUERY = new BitSet() {{
+	public final static BitSet QUERY = new BitSet() {
+		private static final long serialVersionUID = 1L;
+		{
 		or(ALLOWED);
 		set('/');
 		set('?');
@@ -259,7 +269,9 @@ public class URIUtil {
 		clear('+');
 	}};
 
-	public final static BitSet FRAGMENT = new BitSet() {{
+	public final static BitSet FRAGMENT = new BitSet() {
+		private static final long serialVersionUID = 1L;
+		{
 		or(ALLOWED);
 		set('/');
 		set('?');

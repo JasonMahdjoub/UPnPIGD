@@ -78,6 +78,7 @@ public abstract class ContentBrowseActionCallback extends Browse {
             // Containers first
             for (Container childContainer : didl.getContainers()) {
                 DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(childContainer) {
+                    private static final long serialVersionUID = 1L;
                     @Override
                     public boolean isLeaf() {
                         return false;
@@ -99,6 +100,7 @@ public abstract class ContentBrowseActionCallback extends Browse {
             // Now items
             for (Item childItem : didl.getItems()) {
                 DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(childItem) {
+                    private static final long serialVersionUID = 1L;
                     @Override
                     public boolean isLeaf() {
                         return true;

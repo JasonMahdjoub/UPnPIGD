@@ -232,10 +232,10 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * {@inheritDoc}
      *
      * <p>This implementation first checks the structure of {@code object}. If
-     * it is not a map or of a different size, this returns false. Otherwise it
+     * it is not a map or of a different size, this returns false. Otherwise, it
      * iterates its own entry set, looking up each entry's key in {@code
      * object}. If any value does not equal the other map's value for the same
-     * key, this returns false. Otherwise it returns true.
+     * key, this returns false. Otherwise, it returns true.
      */
     @Override public boolean equals(Object object) {
         if (this == object) {

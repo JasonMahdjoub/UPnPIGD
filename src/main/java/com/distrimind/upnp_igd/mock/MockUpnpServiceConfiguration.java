@@ -23,6 +23,7 @@ import jakarta.enterprise.inject.Alternative;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Executor;
@@ -106,7 +107,7 @@ public class MockUpnpServiceConfiguration extends DefaultUpnpServiceConfiguratio
 
             public List<Runnable> shutdownNow() {
                 shutdown();
-                return null;
+                return Collections.emptyList();
             }
 
             public boolean isShutdown() {

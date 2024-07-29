@@ -148,7 +148,7 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
         } catch (Throwable t) {
 
             // You definitely want to catch all Exceptions here, otherwise the server will
-            // simply close the socket and you get an "unexpected end of file" on the client.
+            // simply close the socket, and you get an "unexpected end of file" on the client.
             // The same is true if you just rethrow an IOException - it is a mystery why it
             // is declared then on the HttpHandler interface if it isn't handled in any
             // way... so we always do error handling here.

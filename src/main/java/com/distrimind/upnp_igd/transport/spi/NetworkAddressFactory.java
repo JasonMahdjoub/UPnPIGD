@@ -92,7 +92,7 @@ public interface NetworkAddressFactory {
      * Best-effort attempt finding a reachable local address for a given remote host.
      * <p>
      * This method is called whenever a multicast datagram has been received. We need to be
-     * able to communicate with the sender using UDP unicast and we need to tell the sender
+     * able to communicate with the sender using UDP unicast, and we need to tell the sender
      * how we are reachable with TCP requests. We need a local address that is in the same
      * subnet as the senders address, that is reachable from the senders point of view.
    

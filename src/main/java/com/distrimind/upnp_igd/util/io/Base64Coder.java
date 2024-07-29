@@ -182,7 +182,7 @@ public class Base64Coder
      * in Section 4 of RFC3548: 
      * <a href="http://www.faqs.org/rfcs/rfc3548.html">http://www.faqs.org/rfcs/rfc3548.html</a>.
      * It is important to note that data encoded this way is <em>not</em> officially valid Base64, 
-     * or at the very least should not be called Base64 without also specifying that is
+     * or at the very least should not be called Base64 without also specifying that it
      * was encoded using the URL- and Filename-safe dialect.
      */
      public final static int URL_SAFE = 16;
@@ -549,8 +549,8 @@ public class Base64Coder
     /**
      * Performs Base64 encoding on the <code>raw</code> ByteBuffer,
      * writing it to the <code>encoded</code> ByteBuffer.
-     * This is an experimental feature. Currently it does not
-     * pass along any options (such as {@link #DO_BREAK_LINES}
+     * This is an experimental feature. Currently, it does not
+     * pass along any options, such as {@link #DO_BREAK_LINES}
      * or {@link #GZIP}.
      *
      * @param raw input buffer
@@ -573,8 +573,8 @@ public class Base64Coder
     /**
      * Performs Base64 encoding on the <code>raw</code> ByteBuffer,
      * writing it to the <code>encoded</code> CharBuffer.
-     * This is an experimental feature. Currently it does not
-     * pass along any options (such as {@link #DO_BREAK_LINES}
+     * This is an experimental feature. Currently, it does not
+     * pass along any options, such as {@link #DO_BREAK_LINES}
      * or {@link #GZIP}.
      *
      * @param raw input buffer
@@ -1132,7 +1132,7 @@ public class Base64Coder
      */
     public static byte[] decode( byte[] source )
     throws java.io.IOException {
-        byte[] decoded = null;
+        byte[] decoded;
 //        try {
             decoded = decode( source, 0, source.length, Base64Coder.NO_OPTIONS );
 //        } catch( java.io.IOException ex ) {
@@ -1187,8 +1187,8 @@ public class Base64Coder
         
         byte[] b4        = new byte[4];     // Four byte buffer from source, eliminating white space
         int    b4Posn    = 0;               // Keep track of four byte input buffer
-        int    i         = 0;               // Source array counter
-        byte   sbiDecode = 0;               // Special value from DECODABET
+        int    i;               // Source array counter
+        byte   sbiDecode;               // Special value from DECODABET
         
         for( i = off; i < off+len; i++ ) {  // Loop through source
             
@@ -1278,7 +1278,7 @@ public class Base64Coder
             int head = ((int)bytes[0] & 0xff) | ((bytes[1] << 8) & 0xff00);
             if( java.util.zip.GZIPInputStream.GZIP_MAGIC == head )  {
 				byte[] buffer = new byte[2048];
-                int    length = 0;
+                int    length;
 
 				try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream(); java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes); java.util.zip.GZIPInputStream gzis = new java.util.zip.GZIPInputStream(bais)) {
 
@@ -1345,7 +1345,7 @@ public class Base64Coder
         
         java.io.ByteArrayInputStream  bais = null;
         java.io.ObjectInputStream     ois  = null;
-        Object obj = null;
+        Object obj;
         
         try {
             bais = new java.io.ByteArrayInputStream( objBytes );
@@ -1369,8 +1369,6 @@ public class Base64Coder
         
             obj = ois.readObject();
         }   // end try
-		// end catch
-        // end catch
         finally {
             try{
 				if (bais != null) {
@@ -1465,15 +1463,15 @@ public class Base64Coder
     public static byte[] decodeFromFile( String filename )
     throws java.io.IOException {
         
-        byte[] decodedData = null;
+        byte[] decodedData;
         Base64Coder.InputStream bis = null;
         try
         {
             // Set up some useful variables
             java.io.File file = new java.io.File( filename );
-            byte[] buffer = null;
+            byte[] buffer;
             int length   = 0;
-            int numBytes = 0;
+            int numBytes;
             
             // Check for size of file
             if( file.length() > Integer.MAX_VALUE )
@@ -1530,7 +1528,7 @@ public class Base64Coder
     public static String encodeFromFile( String filename )
     throws java.io.IOException {
         
-        String encodedData = null;
+        String encodedData;
         Base64Coder.InputStream bis = null;
         try
         {
@@ -1538,7 +1536,7 @@ public class Base64Coder
             java.io.File file = new java.io.File( filename );
             byte[] buffer = new byte[ Math.max((int)(file.length() * 1.4+1),40) ]; // Need max() for math on small files (v2.2.1); Need +1 for a few corner cases (v2.3.5)
             int length   = 0;
-            int numBytes = 0;
+            int numBytes;
             
             // Open a stream
             bis = new Base64Coder.InputStream(
@@ -1718,10 +1716,10 @@ public class Base64Coder
                 // Else decoding
                 else {
                     byte[] b4 = new byte[4];
-                    int i = 0;
+                    int i;
                     for( i = 0; i < 4; i++ ) {
                         // Read four "meaningful" bytes:
-                        int b = 0;
+                        int b;
                         do{ b = in.read(); }
                         while( b >= 0 && decodabet[ b & 0x7f ] <= WHITE_SPACE_ENC );
                         

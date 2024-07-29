@@ -65,11 +65,14 @@ public class DateTimeDatatype extends AbstractDatatype<Calendar> {
     protected String normalizeTimeZone(String value) {
         if (value.endsWith("Z")) {
             value = value.substring(0, value.length() - 1) + "+0000";
-        } else if ((value.length() > 7)
-                && (value.charAt(value.length() - 3) == ':')
-                && ((value.charAt(value.length() - 6) == '-') || (value.charAt(value.length() - 6) == '+'))) {
+        } else {
+            char c = value.charAt(value.length() - 6);
+            if ((value.length() > 7)
+                    && (value.charAt(value.length() - 3) == ':')
+                    && ((c == '-') || (c == '+'))) {
 
-            value = value.substring(0, value.length() - 3) + value.substring(value.length() - 2);
+                value = value.substring(0, value.length() - 3) + value.substring(value.length() - 2);
+            }
         }
         return value;
     }

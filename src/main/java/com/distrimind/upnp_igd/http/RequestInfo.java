@@ -166,7 +166,7 @@ public class RequestInfo {
 		Enumeration<String> headers = request.getHeaderNames();
 		if (headers != null) {
 			while (headers.hasMoreElements()) {
-				String headerName = (String) headers.nextElement();
+				String headerName = headers.nextElement();
 				log.info(String.format("%s: %s", headerName, request.getHeader(headerName)));
 			}
 		}

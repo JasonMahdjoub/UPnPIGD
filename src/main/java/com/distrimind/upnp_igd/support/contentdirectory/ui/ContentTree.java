@@ -50,6 +50,7 @@ public abstract class ContentTree extends JTree implements ContentBrowseActionCa
     public void init(ControlPoint controlPoint, Service<?, ?, ?> service) {
         rootContainer = createRootContainer(service);
         rootNode = new DefaultMutableTreeNode(rootContainer) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isLeaf() {
                 return false;

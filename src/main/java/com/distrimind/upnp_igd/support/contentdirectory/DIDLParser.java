@@ -259,7 +259,7 @@ public class DIDLParser extends SAXParser {
 
 
     /**
-     * Generates a XML representation of the content model.
+     * Generates an XML representation of the content model.
      * <p>
      * Items inside a container will <em>not</em> be represented in the XML, the containers
      * will be rendered flat without children.

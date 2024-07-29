@@ -118,7 +118,7 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
      * Handle processing errors while reading of XML messages.
      *
      * <p>
-     * Typically you want to log this problem or create an error report, and in any
+     * Typically, you want to log this problem or create an error report, and in any
      * case, throw an {@link UnsupportedDataException} to notify the caller of the
      * processor of this failure.
    

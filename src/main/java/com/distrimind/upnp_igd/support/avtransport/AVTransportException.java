@@ -22,6 +22,7 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
  *
  */
 public class AVTransportException extends ActionException {
+    private static final long serialVersionUID = 1L;
 
     public AVTransportException(int errorCode, String message) {
         super(errorCode, message);

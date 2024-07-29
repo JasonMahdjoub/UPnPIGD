@@ -52,6 +52,7 @@ public abstract class DLNAAttribute<T> {
         DLNA_ORG_FLAGS("DLNA.ORG_FLAGS", DLNAFlagsAttribute.class);
     
         private static final Map<String, Type> byName = new HashMap<>() {
+            private static final long serialVersionUID = 1L;
 			{
 				for (Type t : Type.values()) {
 					put(t.getAttributeName().toUpperCase(Locale.ROOT), t);

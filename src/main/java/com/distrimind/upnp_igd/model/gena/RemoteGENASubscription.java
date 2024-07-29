@@ -67,7 +67,7 @@ public abstract class RemoteGENASubscription extends GENASubscription<RemoteServ
     }
 
     /* The following four methods should always be called in an independent thread, not within the
-       message receiving thread. Otherwise the user who implements the abstract delegate methods can
+       message receiving thread. Otherwise, the user who implements the abstract delegate methods can
        block the network communication.
      */
 

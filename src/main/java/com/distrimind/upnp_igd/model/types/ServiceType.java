@@ -43,7 +43,7 @@ public class ServiceType {
 
     private final String namespace;
     private final String type;
-    private int version = 1;
+    private final int version;
 
     public ServiceType(String namespace, String type) {
         this(namespace, type, 1);

@@ -152,7 +152,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
             if (ELEMENT.specVersion.equals(rootChild)) {
                 // We don't care about UDA major/minor specVersion anymore - whoever had the brilliant idea that
                 // the spec versions can be declared on devices _AND_ on their services should have their fingers
-                // broken so they never touch a keyboard again.
+                // broken, so they never touch a keyboard again.
                 // hydrateSpecVersion(descriptor, rootChild);
             } else if (ELEMENT.actionList.equals(rootChild)) {
                 hydrateActionList(descriptor, rootChild);
@@ -492,15 +492,15 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
 
     }
-
+    @Override
     public void warning(SAXParseException e) throws SAXException {
         log.warning(e.toString());
     }
-
+    @Override
     public void error(SAXParseException e) throws SAXException {
         throw e;
     }
-
+    @Override
     public void fatalError(SAXParseException e) throws SAXException {
         throw e;
     }

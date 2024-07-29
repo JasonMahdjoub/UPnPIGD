@@ -40,6 +40,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.distrimind.upnp_igd.binding.xml.Descriptor.Device.ELEMENT;
@@ -65,7 +66,8 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
 
         try {
-            log.fine("Populating device from XML descriptor: " + undescribedDevice);
+            if (log.isLoggable(Level.FINE))
+                log.fine("Populating device from XML descriptor: " + undescribedDevice);
 
             // Read the XML into a mutable descriptor graph
 
@@ -137,11 +139,11 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
 
         @Override
-        public void endElement(ELEMENT element) throws SAXException {
+        public void endElement(ELEMENT element) {
             switch (element) {
                 case major:
                     String majorVersion = getCharacters().trim();
-                    if (!majorVersion.equals("1")) {
+                    if (!"1".equals(majorVersion)) {
                         log.warning("Unsupported UDA major version, ignoring: " + majorVersion);
                         majorVersion = "1";
                     }
@@ -149,8 +151,8 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                     break;
                 case minor:
                     String minorVersion = getCharacters().trim();
-                    if (!minorVersion.equals("0")) {
-                        log.warning("Unsupported UDA minor version, ignoring: " + minorVersion);
+                    if (!"0".equals(minorVersion)) {
+                        if (log.isLoggable(Level.WARNING)) log.warning("Unsupported UDA minor version, ignoring: " + minorVersion);
                     }
                     getInstance().minor = 0;
                     break;
@@ -194,7 +196,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
 
         @Override
-        public void endElement(ELEMENT element) throws SAXException {
+        public void endElement(ELEMENT element) {
             switch (element) {
                 case deviceType:
                     getInstance().deviceType = getCharacters();
@@ -237,7 +239,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                     try {
                         getInstance().dlnaDocs.add(DLNADoc.valueOf(txt));
                     } catch (InvalidValueException ex) {
-                        log.info("Invalid X_DLNADOC value, ignoring value: " + txt);
+                        if (log.isLoggable(Level.INFO)) log.info("Invalid X_DLNADOC value, ignoring value: " + txt);
                     }
                     break;
                 case X_DLNACAP:
@@ -284,7 +286,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
 
         @Override
-        public void endElement(ELEMENT element) throws SAXException {
+        public void endElement(ELEMENT element)  {
             switch (element) {
                 case width:
                     getInstance().width = Integer.parseInt(getCharacters());
@@ -296,7 +298,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                 	try {
                 		getInstance().depth = Integer.parseInt(getCharacters());
                 	} catch(NumberFormatException ex) {
-                		log.warning("Invalid icon depth '" + getCharacters() + "', using 16 as default: " + ex);
+                        if (log.isLoggable(Level.WARNING)) log.warning("Invalid icon depth '" + getCharacters() + "', using 16 as default: " + ex);
                 		getInstance().depth = 16;
                 	}
                     break;
@@ -308,7 +310,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                         getInstance().mimeType = getCharacters();
                         MimeType.valueOf(getInstance().mimeType);
                     } catch(IllegalArgumentException ex) {
-                        log.warning("Ignoring invalid icon mime type: " + getInstance().mimeType);
+                        if (log.isLoggable(Level.WARNING)) log.warning("Ignoring invalid icon mime type: " + getInstance().mimeType);
                         getInstance().mimeType = "";
                     }
                     break;
@@ -357,7 +359,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
 
         @Override
-        public void endElement(ELEMENT element) throws SAXException {
+        public void endElement(ELEMENT element) {
             try {
                 switch (element) {
                     case serviceType:
@@ -377,7 +379,8 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                         break;
                 }
             } catch (InvalidValueException ex) {
-                log.warning(
+
+                if (log.isLoggable(Level.WARNING)) log.warning(
                     "UPnP specification violation, skipping invalid service declaration. " + ex.getMessage()
                 );
             }

@@ -24,7 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Provides UPnP header API in addition to plain multi-map HTTP header access.
+ * Provides UPnP header API in addition to plain multimap HTTP header access.
  *
  * @author Christian Bauer
  */

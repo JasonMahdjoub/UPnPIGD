@@ -64,7 +64,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
     }
 
     /**
-     * Subclass is completely dependend on the given view and is a subcontroller.
+     * Subclass is completely dependent on the given view and is a subcontroller.
      *
      *
      */
@@ -136,7 +136,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
     /**
      * Register an event listener that is being executed when an event is intercepted by this controller.
      *
-     * @param eventClass    The actual event class this listeners is interested in.
+     * @param eventClass    The actual event class these listeners is interested in.
      * @param eventListener The listener implementation.
      */
     @Override
@@ -166,7 +166,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
      * Fire an event and pass it into the hierarchy of controllers.
 
      * The event is propagated to the controller instance, its subcontrollers, and upwards into the controller
-     * hierarchy. This operation effectively propagats the event to every controller in the whole hierarchy.
+     * hierarchy. This operation effectively propagates the event to every controller in the whole hierarchy.
      *
      * @param event The event to be propagated.
      */
@@ -194,7 +194,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
                 && !event.alreadyFired(getParentController())
                 && global) {
             log.fine("Passing event: " + event.getClass().getName() + " UP in the controller hierarchy");
-            getParentController().fireEvent(event, global);
+            getParentController().fireEvent(event, true);
         } else {
             log.finest("Event does not propagate up the tree from here");
         }
@@ -205,7 +205,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
      * Executes an action if it has been registered for this controller, otherwise passes it up the chain.
 
      * This method extracts the source of the action (an <code>AbstractButton</code>) and gets the action
-     * command. If the controller has this command registered, the registered action is executed. Otherwise
+     * command. If the controller has this command registered, the registered action is executed. Otherwise,
      * the action is passed upwards in the hierarchy of controllers.
      *
      * @param actionEvent the action
@@ -245,7 +245,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
             }
         }
         catch (ClassCastException e) {
-            throw new IllegalArgumentException("Action source is not an Abstractbutton: " + actionEvent);
+            throw new IllegalArgumentException("Action source is not an AbstractButton: " + actionEvent);
         }
     }
 

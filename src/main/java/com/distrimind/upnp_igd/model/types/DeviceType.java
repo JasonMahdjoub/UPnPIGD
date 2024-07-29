@@ -41,7 +41,7 @@ public class DeviceType {
 
     private final String namespace;
     private final String type;
-    private int version = 1;
+    private final int version;
 
     public DeviceType(String namespace, String type) {
         this(namespace, type, 1);

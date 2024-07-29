@@ -93,7 +93,9 @@ public class SAXParser {
 		try {
 			SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			schemaFactory.setResourceResolver(new CatalogResourceResolver(
-					new HashMap<>() {{
+					new HashMap<>() {
+						private static final long serialVersionUID = 1L;
+						{
 						put(XML_SCHEMA_NAMESPACE, XML_SCHEMA_RESOURCE);
 					}}
 			));

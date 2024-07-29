@@ -167,7 +167,7 @@ public abstract class UpnpHeader<T> {
     public static UpnpHeader<?> newInstance(UpnpHeader.Type type, String headerValue) {
 
         // Try all the UPnP headers and see if one matches our value parsers
-        UpnpHeader<?> upnpHeader = null;
+        UpnpHeader<?> upnpHeader;
         for (Class<? extends UpnpHeader<?>> headerClass : type.getHeaderTypes()) {
             try {
                 log.finest("Trying to parse '" + type + "' with class: " + headerClass.getSimpleName());

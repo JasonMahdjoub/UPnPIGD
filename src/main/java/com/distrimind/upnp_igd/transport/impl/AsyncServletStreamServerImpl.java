@@ -106,6 +106,7 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
 
     protected Servlet createServlet(final Router router) {
         return new HttpServlet() {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

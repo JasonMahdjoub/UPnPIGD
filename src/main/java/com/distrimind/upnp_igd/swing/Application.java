@@ -66,14 +66,6 @@ public class Application {
         JOptionPane.showMessageDialog(parent, scrollPane, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
-/*
-    public static void showWarning(Component parent, InvalidValue[] invalidValues) {
-        String[] warnings = new String[invalidValues.length];
-        int i = 0;
-        for (InvalidValue invalidValue : invalidValues) warnings[i++] = invalidValue.getMessage();
-        showWarning(parent, warnings);
-    }
-    */
 
     public static void increaseFontSize(JComponent l) {
         l.setFont(new Font(l.getFont().getFontName(), l.getFont().getStyle(), l.getFont().getSize() + 2));

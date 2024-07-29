@@ -114,14 +114,14 @@ public interface Registry {
      * <p>
      * Secondly, a remote device registration might not have expired but some of your
      * outbound GENA subscriptions to its services have not been renewed within the expected renewal
-     * period. Therefore your outbound subscriptions might be invalid, because the remote
+     * period. Therefore, your outbound subscriptions might be invalid, because the remote
      * service can drop subscriptions when you don't renew them. On resume, the registry
      * will attempt to send renewals for all outbound GENA subscriptions that require
      * renewal, on devices that still haven't expired. If renewal fails, your subscription will
      * end with {@link CancelReason#RENEWAL_FAILED}. Although
      * you then might conclude that the remote device is no longer available, a GENA renewal
      * can also fail for other reasons. The remote device will be kept and maintained in the
-     * registry until it announces itself or it expires, even after a failed GENA renewal.
+     * registry until it announces itself, or it expires, even after a failed GENA renewal.
    
      * <p>
      * If you are providing local devices and services, resuming registry maintenance has

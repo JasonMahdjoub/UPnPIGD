@@ -58,7 +58,9 @@ public enum StorageMedium {
     NOT_IMPLEMENTED,
     VENDOR_SPECIFIC;
 
-    private static final Map<String, StorageMedium> byProtocolString = new HashMap<>() {{
+    private static final Map<String, StorageMedium> byProtocolString = new HashMap<>() {
+        private static final long serialVersionUID = 1L;
+        {
 		for (StorageMedium e : StorageMedium.values()) {
 			put(e.protocolString, e);
 		}

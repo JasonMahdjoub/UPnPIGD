@@ -21,8 +21,6 @@ import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.protocol.ProtocolFactory;
 import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.registry.RegistryListener;
-import com.distrimind.upnp_igd.registry.event.After;
-import com.distrimind.upnp_igd.registry.event.Before;
 import com.distrimind.upnp_igd.registry.event.FailedRemoteDeviceDiscovery;
 import com.distrimind.upnp_igd.registry.event.LocalDeviceDiscovery;
 import com.distrimind.upnp_igd.registry.event.Phase;
@@ -219,7 +217,8 @@ public class ManagedUpnpService implements UpnpService {
 
         @Override
         public void beforeShutdown(Registry registry) {
-            registryShutdownEvent.select(new AnnotationLiteral<Before>() {
+            registryShutdownEvent.select(new AnnotationLiteral<>() {
+                private static final long serialVersionUID = 1L;
             }).fire(
                     new RegistryShutdown()
             );
@@ -227,7 +226,8 @@ public class ManagedUpnpService implements UpnpService {
 
         @Override
         public void afterShutdown() {
-            registryShutdownEvent.select(new AnnotationLiteral<After>() {
+            registryShutdownEvent.select(new AnnotationLiteral<>() {
+                private static final long serialVersionUID = 1L;
             }).fire(
                     new RegistryShutdown()
             );

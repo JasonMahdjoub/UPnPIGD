@@ -26,7 +26,7 @@ import java.util.List;
 public class InstanceID {
 
     protected UnsignedIntegerFourBytes id;
-    protected List<EventedValue<?>> values = new ArrayList<>();
+    protected List<EventedValue<?>> values;
 
     public InstanceID(UnsignedIntegerFourBytes id) {
         this(id, new ArrayList<>());

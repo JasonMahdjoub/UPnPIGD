@@ -20,6 +20,7 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
  * @author Christian Bauer
  */
 public class ActionCancelledException extends ActionException {
+    private static final long serialVersionUID = 1L;
 
     public ActionCancelledException(InterruptedException cause) {
         super(ErrorCode.ACTION_FAILED, "Action execution interrupted", cause);

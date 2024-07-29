@@ -102,7 +102,7 @@ public class NormalPlayTime {
     public static NormalPlayTime valueOf(String s) throws InvalidValueException {
         Matcher matcher = pattern.matcher(s);
         if (matcher.matches()) {
-            int msMultiplier = 0;
+            int msMultiplier;
             try {
                 if (matcher.group(1) != null) {
                     msMultiplier = (int) Math.pow(10, 3 - matcher.group(5).length());

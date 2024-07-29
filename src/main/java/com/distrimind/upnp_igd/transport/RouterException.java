@@ -28,6 +28,7 @@ package com.distrimind.upnp_igd.transport;
  * @author Christian Bauer
  */
 public class RouterException extends Exception {
+    private static final long serialVersionUID = 1L;
 
     public RouterException() {
         super();

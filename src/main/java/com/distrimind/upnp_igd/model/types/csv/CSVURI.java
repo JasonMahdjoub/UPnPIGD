@@ -23,7 +23,7 @@ import java.net.URI;
  * @author Christian Bauer
  */
 public class CSVURI extends CSV<URI> {
-
+    private static final long serialVersionUID = 1L;
     public CSVURI() {
     }
 

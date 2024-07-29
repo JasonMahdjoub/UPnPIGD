@@ -22,7 +22,7 @@ import com.distrimind.upnp_igd.model.types.UnsignedIntegerTwoBytes;
  * @author Christian Bauer
  */
 public class CSVUnsignedIntegerTwoBytes extends CSV<UnsignedIntegerTwoBytes> {
-
+    private static final long serialVersionUID = 1L;
     public CSVUnsignedIntegerTwoBytes() {
     }
 

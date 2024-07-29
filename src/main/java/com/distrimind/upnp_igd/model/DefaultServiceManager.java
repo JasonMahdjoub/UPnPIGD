@@ -184,7 +184,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
     protected void init() {
         log.fine("No service implementation instance available, initializing...");
         try {
-            // The actual instance we ware going to use and hold a reference to (1:1 instance for manager)
+            // The actual instance we were going to use and hold a reference to (1:1 instance for manager)
             serviceImpl = createServiceInstance();
 
             // How the implementation instance will tell us about property changes

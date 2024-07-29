@@ -86,7 +86,7 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
             // registration result.
             getUpnpService().getRegistry().registerPendingRemoteSubscription(subscription);
 
-            StreamResponseMessage response = null;
+            StreamResponseMessage response;
             try {
                 response = getUpnpService().getRouter().send(getInputMessage());
             } catch (RouterException ex) {

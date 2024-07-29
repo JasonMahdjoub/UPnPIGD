@@ -114,7 +114,7 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
                     );
             if (receivedOnLocalAddress==null)
                 return;
-            // And we pass control to the service, which will (hopefully) start a new thread immediately so we can
+            // And we pass control to the service, which will (hopefully) start a new thread immediately, so we can
             // continue the receiving thread ASAP
             log.fine("Received HTTP exchange: " + httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI());
             router.received(

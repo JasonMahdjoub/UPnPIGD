@@ -125,7 +125,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
         log.fine("Attempting to retrieve output argument values using accessor: " + action.getOutputArguments().size());
 
         for (ActionArgument<LocalService<T>> outputArgument : action.getOutputArguments()) {
-            log.finer("Calling acccessor method for: " + outputArgument);
+            log.finer("Calling accessor method for: " + outputArgument);
 
             StateVariableAccessor accessor = getOutputArgumentAccessors().get(outputArgument);
             if (accessor != null) {

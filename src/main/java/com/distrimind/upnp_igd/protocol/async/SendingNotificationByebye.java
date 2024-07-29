@@ -39,7 +39,7 @@ public class SendingNotificationByebye extends SendingNotification {
     // it's not clear if that means the "required" messages according to the tables only or if
     // it includes the triple (or whatever) repeated messages that have been sent to protect
     // against networking problems. It also says, a little later, that "each of the messages should
-    // be send more than once". So we are also sending them three times - hell, why not pollute the
+    // be sent more than once". So we are also sending them three times - hell, why not pollute the
     // network with useless stuff, that is going to make this more reliable for sure...
 
     // In other words: The superclass method is fine even for byebye.

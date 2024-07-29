@@ -87,7 +87,7 @@ public class UpnpResponse extends UpnpOperation {
     }
 
     /**
-     * @return The concatenated string of status code and status message (same as {@link #toString()}.
+     * @return The concatenated string of status code and status message same as {@link #toString()}.
      */
     public String getResponseDetails() {
         return getStatusCode() + " " + getStatusMessage();

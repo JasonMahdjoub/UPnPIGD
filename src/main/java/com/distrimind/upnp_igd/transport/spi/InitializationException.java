@@ -26,6 +26,7 @@ package com.distrimind.upnp_igd.transport.spi;
  * @author Christian Bauer
  */
 public class InitializationException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
     public InitializationException(String s) {
         super(s);

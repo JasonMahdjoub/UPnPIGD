@@ -24,7 +24,7 @@ import java.awt.event.ActionEvent;
  * @author Christian Bauer
  */
 public abstract class DefaultAction extends AbstractAction {
-    
+    private static final long serialVersionUID = 1L;
     public <V extends Container> void executeInController(Controller<V> controller, ActionEvent event) {
         actionPerformed(event);
     }

@@ -24,6 +24,7 @@ import java.util.logging.Level;
  * @author Christian Bauer
  */
 public class CoreLogCategories extends ArrayList<LogCategory> {
+    private static final long serialVersionUID = 1L;
 
     public CoreLogCategories() {
         super(10);

@@ -22,7 +22,7 @@ import com.distrimind.upnp_igd.model.state.StateVariableAccessor;
 import com.distrimind.upnp_igd.model.types.ErrorCode;
 
 /**
- * Special executor for one action, the deprecated "query the value of the any state variable" action.
+ * Special executor for one action, the deprecated "query the value of any state variable" action.
  * 
  * @author Christian Bauer
  */

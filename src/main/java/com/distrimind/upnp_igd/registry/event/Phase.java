@@ -31,15 +31,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public interface Phase {
 
     AnnotationLiteral<Alive> ALIVE = new AnnotationLiteral<>() {
+		private static final long serialVersionUID = 1L;
 	};
 
     AnnotationLiteral<Complete> COMPLETE = new AnnotationLiteral<>() {
+		private static final long serialVersionUID = 1L;
 	};
 
     AnnotationLiteral<Byebye> BYEBYE = new AnnotationLiteral<>() {
+		private static final long serialVersionUID = 1L;
 	};
 
     AnnotationLiteral<Updated> UPDATED = new AnnotationLiteral<>() {
+		private static final long serialVersionUID = 1L;
 	};
 
 

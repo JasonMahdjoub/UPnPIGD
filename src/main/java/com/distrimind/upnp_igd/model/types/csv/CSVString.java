@@ -21,7 +21,7 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
  * @author Christian Bauer
  */
 public class CSVString extends CSV<String> {
-
+    private static final long serialVersionUID = 1L;
     public CSVString() {
     }
 

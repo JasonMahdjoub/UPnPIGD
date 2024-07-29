@@ -99,7 +99,9 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 				SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
 				schemaFactory.setResourceResolver(new CatalogResourceResolver(
-						new HashMap<>() {{
+						new HashMap<>() {
+							private static final long serialVersionUID = 1L;
+							{
 							put(DOM.XML_SCHEMA_NAMESPACE, XML_SCHEMA_RESOURCE);
 						}}
 				));
@@ -352,10 +354,10 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 	public String printHTML(Document dom, int indent, boolean standalone, boolean doctype) throws ParserException {
 
-		// Make a copy so we can remove stuff from the DOM that violates W3C when rendered as HTML (go figure!)
+		// Make a copy, so we can remove stuff from the DOM that violates W3C when rendered as HTML (go figure!)
 		dom = (Document) dom.cloneNode(true);
 
-		// CDATA will be escaped by the transformer for HTML output but we
+		// CDATA will be escaped by the transformer for HTML output, but we
 		// need to copy it into text nodes (yes, I know XML is fantastic...)
 		accept(dom.getDocumentElement(), new NodeVisitor(Node.CDATA_SECTION_NODE) {
 			@Override
@@ -440,7 +442,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 	// =================================================================================================
 
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-		// By default this builds an EntityResolver that _stays offline_.
+		// By default, this builds an EntityResolver that _stays offline_.
 		// Damn you XML clowns, just because a URI looks like a URL does NOT mean you should fetch it!
 		InputSource is;
 		if (systemId.startsWith("file://")) {
@@ -495,9 +497,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 			StringBuilder temp = new StringBuilder();
 			while (matcher.find()) {
 				String group = matcher.group(2);
-				StringBuilder spaces = new StringBuilder();
-				spaces.append("&#160;".repeat(group.length()));
-				matcher.appendReplacement(temp, "$1" + spaces + "$3");
+				matcher.appendReplacement(temp, "$1" + "&#160;".repeat(group.length()) + "$3");
 			}
 			matcher.appendTail(temp);
 			result = temp.toString();

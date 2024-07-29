@@ -18,7 +18,7 @@
  * @author Christian Bauer
  */
 public class TransitionException extends RuntimeException {
-
+    private static final long serialVersionUID = 1L;
     public TransitionException(String s) {
         super(s);
     }

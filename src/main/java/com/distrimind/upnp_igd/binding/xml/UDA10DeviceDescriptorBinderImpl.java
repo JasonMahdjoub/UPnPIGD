@@ -113,7 +113,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
             // constrain the UDA 1.0 device descriptor documents: Any unknown element or attribute must be ignored, order of elements
             // is not guaranteed. Try to write a schema for that! No combination of <xsd:any namespace="##any"> and <xsd:choice>
             // works with that... But hey, MSFT sure has great tech guys! So what we do here is just parsing out the known elements
-            // and ignoring the other shit. We'll also do some very very basic validation of required elements, but that's it.
+            // and ignoring the other shit. We'll also do some very basic validation of required elements, but that's it.
 
             // And by the way... try this with JAXB instead of manual DOM processing! And you thought it couldn't get worse....
 

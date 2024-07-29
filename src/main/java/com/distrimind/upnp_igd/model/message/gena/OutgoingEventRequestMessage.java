@@ -50,7 +50,7 @@ public class OutgoingEventRequestMessage extends StreamRequestMessage {
         getHeaders().add(UpnpHeader.Type.NTS, new NTSHeader(NotificationSubtype.PROPCHANGE));
         getHeaders().add(UpnpHeader.Type.SID, new SubscriptionIdHeader(subscription.getSubscriptionId()));
 
-        // Important! Pass by value so that we can safely increment it afterwards and before this is send!
+        // Important! Pass by value so that we can safely increment it afterward and before this is send!
         getHeaders().add(UpnpHeader.Type.SEQ, new EventSequenceHeader(sequence.getValue()));
 
         this.stateVariableValues = values;
