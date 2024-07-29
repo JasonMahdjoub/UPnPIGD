@@ -22,6 +22,7 @@ import org.w3c.dom.Node;
  *
  * @author Christian Bauer
  */
+@SuppressWarnings({"PMD.ConstantsInInterface", "PMD.SuspiciousEqualsMethodName"})
 public abstract class Descriptor {
 
     public interface Device {

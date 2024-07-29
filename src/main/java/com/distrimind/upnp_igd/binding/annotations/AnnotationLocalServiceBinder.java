@@ -41,6 +41,7 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -52,8 +53,10 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
 
     private static final Logger log = Logger.getLogger(AnnotationLocalServiceBinder.class.getName());
 
+    @Override
     public <T> LocalService<T> read(Class<T> clazz) throws LocalServiceBindingException {
-        log.fine("Reading and binding annotations of service implementation class: " + clazz);
+        if (log.isLoggable(Level.FINE))
+            log.fine("Reading and binding annotations of service implementation class: " + clazz);
 
         // Read the service ID and service type from the annotation
         if (clazz.isAnnotationPresent(UpnpService.class)) {
@@ -62,11 +65,11 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
             UpnpServiceId idAnnotation = annotation.serviceId();
             UpnpServiceType typeAnnotation = annotation.serviceType();
 
-            ServiceId serviceId = idAnnotation.namespace().equals(UDAServiceId.DEFAULT_NAMESPACE)
+            ServiceId serviceId = UDAServiceId.DEFAULT_NAMESPACE.equals(idAnnotation.namespace())
                     ? new UDAServiceId(idAnnotation.value())
                     : new ServiceId(idAnnotation.namespace(), idAnnotation.value());
 
-            ServiceType serviceType = typeAnnotation.namespace().equals(UDAServiceType.DEFAULT_NAMESPACE)
+            ServiceType serviceType = UDAServiceType.DEFAULT_NAMESPACE.equals(typeAnnotation.namespace())
                     ? new UDAServiceType(typeAnnotation.value(), typeAnnotation.version())
                     : new ServiceType(typeAnnotation.namespace(), typeAnnotation.value(), typeAnnotation.version());
 
@@ -85,6 +88,7 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
 		Set<Class<?>> set = new HashSet<>(stringConvertibleTypes);
         return read(clazz, id, type, supportsQueryStateVariables, set);
     }
+    @Override
     public <T> LocalService<T> read(Class<T> clazz, ServiceId id, ServiceType type,
                                    boolean supportsQueryStateVariables, Set<Class<?>> stringConvertibleTypes)
             throws LocalServiceBindingException {
@@ -101,9 +105,11 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
             return new LocalService<>(type, id, actions, stateVariables, stringConvertibleTypes, supportsQueryStateVariables);
 
         } catch (ValidationException ex) {
-            log.severe("Could not validate device model: " + ex);
+            if (log.isLoggable(Level.SEVERE))
+                log.severe("Could not validate device model: " + ex);
             for (ValidationError validationError : ex.getErrors()) {
-                log.severe(validationError.toString());
+                if (log.isLoggable(Level.SEVERE))
+                    log.severe(validationError.toString());
             }
             throw new LocalServiceBindingException("Validation of model failed, check the log");
         }
@@ -163,7 +169,8 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
                 } else if (getter != null) {
                     accessor = new GetterStateVariableAccessor(getter);
                 } else {
-                    log.finer("No field or getter found for state variable, skipping accessor: " + v.name());
+                    if (log.isLoggable(Level.FINER))
+                        log.finer("No field or getter found for state variable, skipping accessor: " + v.name());
                 }
 
                 @SuppressWarnings("unchecked") StateVariable<LocalService<T>> stateVar =(StateVariable<LocalService<T>>)

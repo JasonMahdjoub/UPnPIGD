@@ -68,10 +68,11 @@ public class UpnpServiceImpl implements UpnpService {
 
     public UpnpServiceImpl(UpnpServiceConfiguration configuration, RegistryListener... registryListeners) {
         this.configuration = configuration;
+        if (log.isLoggable(Level.INFO)) {
+            log.info(">>> Starting UPnP service...");
 
-        log.info(">>> Starting UPnP service...");
-
-        log.info("Using configuration: " + getConfiguration().getClass().getName());
+            log.info("Using configuration: " + getConfiguration().getClass().getName());
+        }
 
         // Instantiation order is important: Router needs to start its network services after registry is ready
 
@@ -111,26 +112,32 @@ public class UpnpServiceImpl implements UpnpService {
         return new ControlPointImpl(getConfiguration(), protocolFactory, registry);
     }
 
+    @Override
     public UpnpServiceConfiguration getConfiguration() {
         return configuration;
     }
 
+    @Override
     public ControlPoint getControlPoint() {
         return controlPoint;
     }
 
+    @Override
     public ProtocolFactory getProtocolFactory() {
         return protocolFactory;
     }
 
+    @Override
     public Registry getRegistry() {
         return registry;
     }
 
+    @Override
     public Router getRouter() {
         return router;
     }
 
+    @Override
     synchronized public void shutdown() {
         shutdown(false);
     }
@@ -161,9 +168,11 @@ public class UpnpServiceImpl implements UpnpService {
         } catch (RouterException ex) {
             Throwable cause = Exceptions.unwrap(ex);
             if (cause instanceof InterruptedException) {
-                log.log(Level.INFO, "Router shutdown was interrupted: " + ex, cause);
+                if (log.isLoggable(Level.INFO))
+                    log.log(Level.INFO, "Router shutdown was interrupted: " + ex, cause);
             } else {
-                log.log(Level.SEVERE, "Router error on shutdown: " + ex, cause);
+                if (log.isLoggable(Level.SEVERE))
+                    log.log(Level.SEVERE, "Router error on shutdown: " + ex, cause);
             }
         }
     }

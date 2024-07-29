@@ -50,6 +50,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -132,14 +133,17 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         networkAddressFactory=null;
     }
 
+    @Override
     public DatagramProcessor getDatagramProcessor() {
         return datagramProcessor;
     }
 
+    @Override
     public SOAPActionProcessor getSoapActionProcessor() {
         return soapActionProcessor;
     }
 
+    @Override
     public GENAEventProcessor getGenaEventProcessor() {
         return genaEventProcessor;
     }
@@ -148,6 +152,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         return multicastPort;
     }
 
+    @Override
     public StreamClient<?> createStreamClient() {
         return new StreamClientImpl(
             new StreamClientConfigurationImpl(
@@ -156,6 +161,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         );
     }
 
+    @Override
     public MulticastReceiver<?> createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
         return new MulticastReceiverImpl(
                 new MulticastReceiverConfigurationImpl(
@@ -165,10 +171,12 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         );
     }
 
+    @Override
     public DatagramIO<?> createDatagramIO(NetworkAddressFactory networkAddressFactory) {
         return new DatagramIOImpl(new DatagramIOConfigurationImpl());
     }
 
+    @Override
     public StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory) {
         return new StreamServerImpl(
                 new StreamServerConfigurationImpl(
@@ -177,26 +185,32 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         );
     }
 
+    @Override
     public Executor getMulticastReceiverExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public Executor getDatagramIOExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public ExecutorService getStreamServerExecutorService() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10() {
         return deviceDescriptorBinderUDA10;
     }
 
+    @Override
     public ServiceDescriptorBinder getServiceDescriptorBinderUDA10() {
         return serviceDescriptorBinderUDA10;
     }
 
+    @Override
     public ServiceType[] getExclusiveServiceTypes() {
         return new ServiceType[0];
     }
@@ -204,14 +218,19 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * @return Defaults to <code>false</code>.
      */
+    @Override
 	public boolean isReceivedSubscriptionTimeoutIgnored() {
 		return false;
 	}
 
+    @Override
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity) {
         return null;
     }
 
+    @Override
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public UpnpHeaders getEventSubscriptionHeaders(RemoteService service) {
         return null;
     }
@@ -219,6 +238,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * @return Defaults to 1000 milliseconds.
      */
+    @Override
     public int getRegistryMaintenanceIntervalMillis() {
         return 1000;
     }
@@ -226,38 +246,47 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * @return Defaults to zero, disabling ALIVE flooding.
      */
+    @Override
     public int getAliveIntervalMillis() {
     	return 0;
     }
 
+    @Override
     public Integer getRemoteDeviceMaxAgeSeconds() {
         return null;
     }
 
+    @Override
     public Executor getAsyncProtocolExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public ExecutorService getSyncProtocolExecutorService() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public Namespace getNamespace() {
         return namespace;
     }
 
+    @Override
     public Executor getRegistryMaintainerExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public Executor getRegistryListenerExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public NetworkAddressFactory createNetworkAddressFactory() {
         return createNetworkAddressFactory(streamListenPort, multicastPort);
     }
 
+    @Override
     public void shutdown() {
         log.fine("Shutting down default executor service");
         getDefaultExecutorService().shutdownNow();
@@ -267,6 +296,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
             networkAddressFactory=createNetworkAddressFactory();
         return networkAddressFactory;
     }
+
     protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multicastPort) {
         return new NetworkAddressFactoryImpl(streamListenPort, multicastPort);
     }
@@ -312,7 +342,8 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
                      @Override
                      public void rejectedExecution(Runnable runnable, ThreadPoolExecutor threadPoolExecutor) {
                          // Log and discard
-                         log.info("Thread pool rejected execution of " + runnable.getClass());
+                         if (log.isLoggable(Level.INFO))
+                            log.info("Thread pool rejected execution of " + runnable.getClass());
                          super.rejectedExecution(runnable, threadPoolExecutor);
                      }
                  }
@@ -342,9 +373,11 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
                     // if it's a CDI component).
                     return;
                 }
-                // Log only
-                log.warning("Thread terminated " + runnable + " abruptly with exception: " + throwable);
-                log.warning("Root cause: " + cause);
+                if (log.isLoggable(Level.WARNING)) {
+                    // Log only
+                    log.warning("Thread terminated " + runnable + " abruptly with exception: " + throwable);
+                    log.warning("Root cause: " + cause);
+                }
             }
         }
     }
@@ -361,6 +394,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
             group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
         }
 
+        @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(
                     group, r,

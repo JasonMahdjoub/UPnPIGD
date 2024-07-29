@@ -54,8 +54,8 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
             // http://4thline.org/projects/mailinglists.html#nabble-td3011461
             String hostName = address.getHostAddress();
 
-	    Field field0 = null;
-	    Object target = null;
+	    Field field0;
+	    Object target;
 
 	    try {
 
@@ -78,12 +78,13 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
 		    }
 
 	    } catch (Exception ex) {
-                log.log(Level.SEVERE,
-                    "Failed injecting hostName to work around Android InetAddress DNS bug: " + address,
-                    ex
-                );
-                return false;
-            }
+			if (log.isLoggable(Level.SEVERE))
+				log.log(Level.SEVERE,
+						"Failed injecting hostName to work around Android InetAddress DNS bug: " + address,
+						ex
+				);
+			return false;
+		}
         }
         return result;
     }
@@ -109,7 +110,8 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
         } catch (Exception ex) {
             // TODO: ICS bug on some models with network interface disappearing while enumerated
             // http://code.google.com/p/android/issues/detail?id=33661
-            log.warning("Exception while enumerating network interfaces, trying once more: " + ex);
+			if (log.isLoggable(Level.WARNING))
+            	log.warning("Exception while enumerating network interfaces, trying once more: " + ex);
             super.discoverNetworkInterfaces();
         }
     }

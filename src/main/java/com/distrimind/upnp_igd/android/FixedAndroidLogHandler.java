@@ -57,6 +57,11 @@ public class FixedAndroidLogHandler extends Handler {
     }
 
     @Override
+    public final void setFormatter(Formatter newFormatter) throws SecurityException {
+        super.setFormatter(newFormatter);
+    }
+
+    @Override
     public void close() {
         // No need to close, but must implement abstract method.
     }

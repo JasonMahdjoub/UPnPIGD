@@ -21,6 +21,7 @@ package com.distrimind.upnp_igd.binding.xml;
  * @author Christian Bauer
  */
 public class DescriptorBindingException extends Exception {
+    private static final long serialVersionUID = 1L;
 
     public DescriptorBindingException(String s) {
         super(s);

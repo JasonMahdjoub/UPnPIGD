@@ -102,18 +102,22 @@ public class AndroidUpnpServiceImpl extends Service {
 
     protected class Binder extends android.os.Binder implements AndroidUpnpService {
 
+        @Override
         public UpnpService get() {
             return upnpService;
         }
 
+        @Override
         public UpnpServiceConfiguration getConfiguration() {
             return upnpService.getConfiguration();
         }
 
+        @Override
         public Registry getRegistry() {
             return upnpService.getRegistry();
         }
 
+        @Override
         public ControlPoint getControlPoint() {
             return upnpService.getControlPoint();
         }

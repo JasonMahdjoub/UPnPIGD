@@ -25,6 +25,7 @@ import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 import org.xml.sax.SAXParseException;
 
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,7 +54,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                 device = super.describe(undescribedDevice, descriptorXml);
                 return device;
             } catch (DescriptorBindingException ex) {
-                log.warning("Regular parsing failed: " + Exceptions.unwrap(ex).getMessage());
+                if (log.isLoggable(Level.WARNING))
+                    log.warning("Regular parsing failed: " + Exceptions.unwrap(ex).getMessage());
                 originalException = ex;
             }
 
@@ -66,7 +68,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                     device = super.describe(undescribedDevice, fixedXml);
                     return device;
                 } catch (DescriptorBindingException ex) {
-                    log.warning("Removing leading garbage didn't work: " + Exceptions.unwrap(ex).getMessage());
+                    if (log.isLoggable(Level.WARNING))
+                        log.warning("Removing leading garbage didn't work: " + Exceptions.unwrap(ex).getMessage());
                 }
             }
 
@@ -76,7 +79,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                     device = super.describe(undescribedDevice, fixedXml);
                     return device;
                 } catch (DescriptorBindingException ex) {
-                    log.warning("Removing trailing garbage didn't work: " + Exceptions.unwrap(ex).getMessage());
+                    if (log.isLoggable(Level.WARNING))
+                        log.warning("Removing trailing garbage didn't work: " + Exceptions.unwrap(ex).getMessage());
                 }
             }
 
@@ -90,7 +94,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                         device = super.describe(undescribedDevice, fixedXml);
                         return device;
                     } catch (DescriptorBindingException ex) {
-                        log.warning("Fixing namespace prefix didn't work: " + Exceptions.unwrap(ex).getMessage());
+                        if (log.isLoggable(Level.WARNING))
+                            log.warning("Fixing namespace prefix didn't work: " + Exceptions.unwrap(ex).getMessage());
                         lastException = ex;
                     }
                 } else {
@@ -104,7 +109,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                     device = super.describe(undescribedDevice, fixedXml);
                     return device;
                 } catch (DescriptorBindingException ex) {
-                    log.warning("Fixing XML entities didn't work: " + Exceptions.unwrap(ex).getMessage());
+                    if (log.isLoggable(Level.WARNING))
+                        log.warning("Fixing XML entities didn't work: " + Exceptions.unwrap(ex).getMessage());
                 }
             }
 
@@ -148,11 +154,13 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
             return null;
         int index = descriptorXml.indexOf("</root>");
         if (index == -1) {
-            log.warning("No closing </root> element in descriptor");
+            if (log.isLoggable(Level.WARNING))
+                log.warning("No closing </root> element in descriptor");
             return null;
         }
         if (descriptorXml.length() != index + "</root>".length()) {
-            log.warning("Detected garbage characters after <root> node, removing"+(ex==null?"":ex.getMessage()));
+            if (log.isLoggable(Level.WARNING))
+                log.warning("Detected garbage characters after <root> node, removing"+(ex==null?"":ex.getMessage()));
             return descriptorXml.substring(0, index) + "</root>";
         }
         return null;
@@ -180,18 +188,21 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
         }
 
         String missingNS = matcher.group(1);
-        log.warning("Fixing missing namespace declaration for: " + missingNS);
+        if (log.isLoggable(Level.WARNING))
+            log.warning("Fixing missing namespace declaration for: " + missingNS);
 
         // Extract <root> attributes
         pattern = Pattern.compile("<root([^>]*)");
         matcher = pattern.matcher(descriptorXml);
         if (!matcher.find() || matcher.groupCount() != 1) {
-            log.fine("Could not find <root> element attributes");
+            if (log.isLoggable(Level.FINE))
+                log.fine("Could not find <root> element attributes");
             return null;
         }
 
         String rootAttributes = matcher.group(1);
-        log.fine("Preserving existing <root> element attributes/namespace declarations: " + matcher.group(0));
+        if (log.isLoggable(Level.FINE))
+            log.fine("Preserving existing <root> element attributes/namespace declarations: " + matcher.group(0));
 
         // Extract <root> body
         pattern = Pattern.compile("<root[^>]*>(.*)</root>", Pattern.DOTALL);

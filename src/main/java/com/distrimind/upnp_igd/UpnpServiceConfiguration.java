@@ -213,6 +213,7 @@ public interface UpnpServiceConfiguration {
      * @param identity The (so far) discovered identity of the remote device.
      * @return <code>null</code> or extra HTTP headers.
      */
+	@SuppressWarnings("PMD.LooseCoupling")
 	UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity);
 
     /**
@@ -225,6 +226,7 @@ public interface UpnpServiceConfiguration {
      *
      * @return <code>null</code> or extra HTTP headers.
      */
+	@SuppressWarnings("PMD.LooseCoupling")
 	UpnpHeaders getEventSubscriptionHeaders(RemoteService service);
 
     /**

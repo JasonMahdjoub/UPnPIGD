@@ -24,6 +24,8 @@ import com.distrimind.upnp_igd.model.meta.LocalService;
  */
 public class LocalServiceBindingException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     public LocalServiceBindingException(String s) {
         super(s);
     }

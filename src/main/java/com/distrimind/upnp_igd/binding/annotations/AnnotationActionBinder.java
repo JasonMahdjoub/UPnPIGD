@@ -33,6 +33,7 @@ import com.distrimind.upnp_igd.util.Reflections;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -78,8 +79,8 @@ public class AnnotationActionBinder<T> {
         } else {
             name = AnnotationLocalServiceBinder.toUpnpActionName(getMethod().getName());
         }
-
-        log.fine("Creating action and executor: " + name);
+        if (log.isLoggable(Level.FINE))
+            log.fine("Creating action and executor: " + name);
 
         List<ActionArgument<LocalService<T>>> inputArguments = createInputArguments();
         Map<ActionArgument<LocalService<T>>, StateVariableAccessor> outputArguments = createOutputArguments();
@@ -187,8 +188,8 @@ public class AnnotationActionBinder<T> {
                     outputArgumentAnnotation.getterName(),
                     hasMultipleOutputArguments
             );
-
-            log.finer("Found related state variable for output argument '" + argumentName + "': " + stateVariable);
+            if (log.isLoggable(Level.FINER))
+                log.finer("Found related state variable for output argument '" + argumentName + "': " + stateVariable);
 
             ActionArgument<LocalService<T>> outputArgument = new ActionArgument<>(
                     argumentName,
@@ -211,7 +212,8 @@ public class AnnotationActionBinder<T> {
         if (isVoid) {
 
             if (getterName != null && !getterName.isEmpty()) {
-                log.finer("Action method is void, will use getter method named: " + getterName);
+                if (log.isLoggable(Level.FINER))
+                    log.finer("Action method is void, will use getter method named: " + getterName);
 
                 // Use the same class as the action method
                 Method getter = Reflections.getMethod(getMethod().getDeclaringClass(), getterName);
@@ -225,13 +227,15 @@ public class AnnotationActionBinder<T> {
                 return new GetterStateVariableAccessor(getter);
 
             } else {
-                log.finer("Action method is void, trying to find existing accessor of related: " + stateVariable);
+                if (log.isLoggable(Level.FINER))
+                    log.finer("Action method is void, trying to find existing accessor of related: " + stateVariable);
                 return getStateVariables().get(stateVariable);
             }
 
 
         } else if (getterName != null && !getterName.isEmpty()) {
-            log.finer("Action method is not void, will use getter method on returned instance: " + getterName);
+            if (log.isLoggable(Level.FINER))
+                log.finer("Action method is not void, will use getter method on returned instance: " + getterName);
 
             // Use the returned class
             Method getter = Reflections.getMethod(getMethod().getReturnType(), getterName);
@@ -245,7 +249,8 @@ public class AnnotationActionBinder<T> {
             return new GetterStateVariableAccessor(getter);
 
         } else if (!multipleArguments) {
-            log.finer("Action method is not void, will use the returned instance: " + getMethod().getReturnType());
+            if (log.isLoggable(Level.FINER))
+                log.finer("Action method is not void, will use the returned instance: " + getMethod().getReturnType());
             validateType(stateVariable, getMethod().getReturnType());
         }
 
@@ -263,7 +268,8 @@ public class AnnotationActionBinder<T> {
 
         if (relatedStateVariable == null && argumentName != null && !argumentName.isEmpty()) {
             String actualName = AnnotationLocalServiceBinder.toUpnpStateVariableName(argumentName);
-            log.finer("Finding related state variable with argument name (converted to UPnP name): " + actualName);
+            if (log.isLoggable(Level.FINER))
+                log.finer("Finding related state variable with argument name (converted to UPnP name): " + actualName);
             relatedStateVariable = getStateVariable(argumentName);
         }
 
@@ -271,7 +277,8 @@ public class AnnotationActionBinder<T> {
             // Try with A_ARG_TYPE prefix
             String actualName = AnnotationLocalServiceBinder.toUpnpStateVariableName(argumentName);
             actualName = Constants.ARG_TYPE_PREFIX + actualName;
-            log.finer("Finding related state variable with prefixed argument name (converted to UPnP name): " + actualName);
+            if (log.isLoggable(Level.FINER))
+                log.finer("Finding related state variable with prefixed argument name (converted to UPnP name): " + actualName);
             relatedStateVariable = getStateVariable(actualName);
         }
 
@@ -279,7 +286,8 @@ public class AnnotationActionBinder<T> {
             // TODO: Well, this is often a nice shortcut but sometimes might have false positives
             String methodPropertyName = Reflections.getMethodPropertyName(methodName);
             if (methodPropertyName != null) {
-                log.finer("Finding related state variable with method property name: " + methodPropertyName);
+                if (log.isLoggable(Level.FINER))
+                    log.finer("Finding related state variable with method property name: " + methodPropertyName);
                 relatedStateVariable =
                         getStateVariable(
                                 AnnotationLocalServiceBinder.toUpnpStateVariableName(methodPropertyName)
@@ -299,8 +307,8 @@ public class AnnotationActionBinder<T> {
                 ModelUtil.isStringConvertibleType(getStringConvertibleTypes(), type)
                         ? Datatype.Default.STRING
                         : Datatype.Default.getByJavaType(type);
-
-        log.finer("Expecting '" + stateVariable + "' to match default mapping: " + expectedDefaultMapping);
+        if (log.isLoggable(Level.FINER))
+            log.finer("Expecting '" + stateVariable + "' to match default mapping: " + expectedDefaultMapping);
 
         if (expectedDefaultMapping != null &&
                 !stateVariable.getTypeDetails().getDatatype().isHandlingJavaType(expectedDefaultMapping.getJavaType())) {

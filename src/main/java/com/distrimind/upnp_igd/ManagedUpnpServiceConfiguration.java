@@ -106,18 +106,22 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
         return multicastPort;
     }
 
+    @Override
     public DatagramProcessor getDatagramProcessor() {
         return datagramProcessor;
     }
 
+    @Override
     public SOAPActionProcessor getSoapActionProcessor() {
         return soapActionProcessor;
     }
 
+    @Override
     public GENAEventProcessor getGenaEventProcessor() {
         return genaEventProcessor;
     }
 
+    @Override
     public StreamClient<?> createStreamClient() {
         return new StreamClientImpl(
             new StreamClientConfigurationImpl(
@@ -130,6 +134,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
             networkAddressFactory=createNetworkAddressFactory();
         return networkAddressFactory;
     }
+    @Override
     public MulticastReceiver<?> createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
         return new MulticastReceiverImpl(
                 new MulticastReceiverConfigurationImpl(
@@ -139,10 +144,12 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
         );
     }
 
+    @Override
     public DatagramIO<?> createDatagramIO(NetworkAddressFactory networkAddressFactory) {
         return new DatagramIOImpl(new DatagramIOConfigurationImpl());
     }
 
+    @Override
     public StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory) {
         return new StreamServerImpl(
                 new StreamServerConfigurationImpl(
@@ -151,26 +158,32 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
         );
     }
 
+    @Override
     public Executor getMulticastReceiverExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public Executor getDatagramIOExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public ExecutorService getStreamServerExecutorService() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public DeviceDescriptorBinder getDeviceDescriptorBinderUDA10() {
         return deviceDescriptorBinderUDA10;
     }
 
+    @Override
     public ServiceDescriptorBinder getServiceDescriptorBinderUDA10() {
         return serviceDescriptorBinderUDA10;
     }
 
+    @Override
     public ServiceType[] getExclusiveServiceTypes() {
         return new ServiceType[0];
     }
@@ -178,14 +191,19 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * @return Defaults to <code>false</code>.
      */
+    @Override
 	public boolean isReceivedSubscriptionTimeoutIgnored() {
 		return false;
 	}
 
+    @Override
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity) {
         return null;
     }
 
+    @Override
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public UpnpHeaders getEventSubscriptionHeaders(RemoteService service) {
         return null;
     }
@@ -193,6 +211,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * @return Defaults to 1000 milliseconds.
      */
+    @Override
     public int getRegistryMaintenanceIntervalMillis() {
         return 1000;
     }
@@ -200,38 +219,47 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * @return Defaults to zero, disabling ALIVE flooding.
      */
+    @Override
     public int getAliveIntervalMillis() {
     	return 0;
     }
 
+    @Override
     public Integer getRemoteDeviceMaxAgeSeconds() {
         return null;
     }
 
+    @Override
     public Executor getAsyncProtocolExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public ExecutorService getSyncProtocolExecutorService() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public Namespace getNamespace() {
         return namespace;
     }
 
+    @Override
     public Executor getRegistryMaintainerExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public Executor getRegistryListenerExecutor() {
         return getDefaultExecutorService();
     }
 
+    @Override
     public NetworkAddressFactory createNetworkAddressFactory() {
         return createNetworkAddressFactory(streamListenPort, multicastPort);
     }
 
+    @Override
     public void shutdown() {
         log.fine("Shutting down default executor service");
         getDefaultExecutorService().shutdownNow();

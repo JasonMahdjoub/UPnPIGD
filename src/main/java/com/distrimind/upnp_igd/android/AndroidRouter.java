@@ -208,25 +208,28 @@ public class AndroidRouter extends RouterImpl {
      * @param oldNetwork <code>null</code> when first called by constructor.
      */
     protected void onNetworkTypeChange(NetworkInfo oldNetwork, NetworkInfo newNetwork) throws RouterException {
-        log.info(String.format("Network type changed %s => %s",
-            oldNetwork == null ? "" : oldNetwork.getTypeName(),
-            newNetwork == null ? "NONE" : newNetwork.getTypeName()));
+        if (log.isLoggable(Level.INFO))
+            log.info(String.format("Network type changed %s => %s",
+                    oldNetwork == null ? "" : oldNetwork.getTypeName(),
+                    newNetwork == null ? "NONE" : newNetwork.getTypeName()));
 
         if (disable()) {
-            log.info(String.format(
-                "Disabled router on network type change (old network: %s)",
-                oldNetwork == null ? "NONE" : oldNetwork.getTypeName()
-            ));
+            if (log.isLoggable(Level.INFO))
+                log.info(String.format(
+                        "Disabled router on network type change (old network: %s)",
+                        oldNetwork == null ? "NONE" : oldNetwork.getTypeName()
+                ));
         }
 
         networkInfo = newNetwork;
         if (enable()) {
             // Can return false (via earlier InitializationException thrown by NetworkAddressFactory) if
             // no bindable network address found!
-            log.info(String.format(
-                "Enabled router on network type change (new network: %s)",
-                newNetwork == null ? "NONE" : newNetwork.getTypeName()
-            ));
+            if (log.isLoggable(Level.INFO))
+                log.info(String.format(
+                        "Enabled router on network type change (new network: %s)",
+                        newNetwork == null ? "NONE" : newNetwork.getTypeName()
+                ));
         }
     }
 
@@ -238,9 +241,11 @@ public class AndroidRouter extends RouterImpl {
     protected void handleRouterExceptionOnNetworkTypeChange(RouterException ex) {
         Throwable cause = Exceptions.unwrap(ex);
         if (cause instanceof InterruptedException) {
-            log.log(Level.INFO, "Router was interrupted: " + ex, cause);
+            if (log.isLoggable(Level.INFO))
+                log.log(Level.INFO, "Router was interrupted: " + ex, cause);
         } else {
-            log.log(Level.WARNING, "Router error on network change: " + ex, ex);
+            if (log.isLoggable(Level.WARNING))
+                log.log(Level.WARNING, "Router error on network change: " + ex, ex);
         }
     }
 
@@ -249,7 +254,7 @@ public class AndroidRouter extends RouterImpl {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if (!intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION))
+            if (!ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction()))
                 return;
 
             displayIntentInfo(intent);
@@ -269,10 +274,11 @@ public class AndroidRouter extends RouterImpl {
                     } catch (InterruptedException e) {
                         return;
                     }
-                    log.warning(String.format(
-                        "%s => NONE network transition, waiting for new network... retry #%d",
-                        networkInfo.getTypeName(), i
-                    ));
+                    if (log.isLoggable(Level.WARNING))
+                        log.warning(String.format(
+                            "%s => NONE network transition, waiting for new network... retry #%d",
+                            networkInfo.getTypeName(), i
+                        ));
                     newNetworkInfo = NetworkUtils.getConnectedNetworkInfo(context);
                     if (newNetworkInfo != null)
                         break;
@@ -305,14 +311,15 @@ public class AndroidRouter extends RouterImpl {
 
             NetworkInfo currentNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
             NetworkInfo otherNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-
-            log.info("Connectivity change detected...");
-            log.info("EXTRA_NO_CONNECTIVITY: " + noConnectivity);
-            log.info("EXTRA_REASON: " + reason);
-            log.info("EXTRA_IS_FAILOVER: " + isFailover);
-            log.info("EXTRA_NETWORK_INFO: " + (currentNetworkInfo == null ? "none" : currentNetworkInfo));
-            log.info("EXTRA_OTHER_NETWORK_INFO: " + (otherNetworkInfo == null ? "none" : otherNetworkInfo));
-            log.info("EXTRA_EXTRA_INFO: " + intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
+            if (log.isLoggable(Level.INFO)) {
+                log.info("Connectivity change detected...");
+                log.info("EXTRA_NO_CONNECTIVITY: " + noConnectivity);
+                log.info("EXTRA_REASON: " + reason);
+                log.info("EXTRA_IS_FAILOVER: " + isFailover);
+                log.info("EXTRA_NETWORK_INFO: " + (currentNetworkInfo == null ? "none" : currentNetworkInfo));
+                log.info("EXTRA_OTHER_NETWORK_INFO: " + (otherNetworkInfo == null ? "none" : otherNetworkInfo));
+                log.info("EXTRA_EXTRA_INFO: " + intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
+            }
         }
 
     }
