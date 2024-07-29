@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.model.message.control;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
@@ -89,7 +90,9 @@ public class OutgoingActionRequestMessage extends StreamRequestMessage implement
         if (getOperation().getMethod().equals(UpnpRequest.Method.POST)) {
 
             getHeaders().add(UpnpHeader.Type.SOAPACTION, soapActionHeader);
-            log.fine("Added SOAP action header: " + soapActionHeader);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Added SOAP action header: " + soapActionHeader);
+			}
 
         /* TODO: Finish the M-POST crap (or not)
         } else if (getOperation().getMethod().equals(UpnpRequest.Method.MPOST)) {

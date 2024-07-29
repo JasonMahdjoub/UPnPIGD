@@ -91,14 +91,18 @@ public class RetrieveRemoteDescriptors implements Runnable {
         // processing this several times concurrently.
 
         if (activeRetrievals.contains(deviceURL)) {
-            log.finer("Exiting early, active retrieval for URL already in progress: " + deviceURL);
-            return;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Exiting early, active retrieval for URL already in progress: " + deviceURL);
+			}
+			return;
         }
 
         // Exit if it has been discovered already, could be we have been waiting in the executor queue too long
         if (getUpnpService().getRegistry().getRemoteDevice(rd.getIdentity().getUdn(), true) != null) {
-            log.finer("Exiting early, already discovered: " + deviceURL);
-            return;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Exiting early, already discovered: " + deviceURL);
+			}
+			return;
         }
 
         try {
@@ -140,8 +144,10 @@ public class RetrieveRemoteDescriptors implements Runnable {
             if (headers != null)
                 deviceDescRetrievalMsg.getHeaders().putAll(headers);
 
-    		log.fine("Sending device descriptor retrieval message: " + deviceDescRetrievalMsg);
-            deviceDescMsg = getUpnpService().getRouter().send(deviceDescRetrievalMsg);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Sending device descriptor retrieval message: " + deviceDescRetrievalMsg);
+			}
+			deviceDescMsg = getUpnpService().getRouter().send(deviceDescRetrievalMsg);
 
     	} catch(IllegalArgumentException ex) {
     		// UpnpRequest constructor can throw IllegalArgumentException on invalid URI
@@ -171,10 +177,12 @@ public class RetrieveRemoteDescriptors implements Runnable {
         }
 
         if (!deviceDescMsg.isContentTypeTextUDA()) {
-            log.fine(
-                "Received device descriptor without or with invalid Content-Type: "
-                    + rd.getIdentity().getDescriptorURL());
-            // We continue despite the invalid UPnP message because we can still hope to convert the content
+			if (log.isLoggable(Level.FINE)) {
+				log.fine(
+					"Received device descriptor without or with invalid Content-Type: "
+						+ rd.getIdentity().getDescriptorURL());
+			}
+			// We continue despite the invalid UPnP message because we can still hope to convert the content
         }
 
         String descriptorContent = deviceDescMsg.getBodyString();
@@ -183,8 +191,10 @@ public class RetrieveRemoteDescriptors implements Runnable {
             return;
         }
 
-        log.fine("Received root device descriptor: " + deviceDescMsg);
-        describe(descriptorContent);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Received root device descriptor: " + deviceDescMsg);
+		}
+		describe(descriptorContent);
     }
 
     protected void describe(String descriptorXML) throws RouterException {
@@ -201,11 +211,15 @@ public class RetrieveRemoteDescriptors implements Runnable {
                     descriptorXML
             );
 
-            log.fine("Remote device described (without services) notifying listeners: " + describedDevice);
-            notifiedStart = getUpnpService().getRegistry().notifyDiscoveryStart(describedDevice);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Remote device described (without services) notifying listeners: " + describedDevice);
+			}
+			notifiedStart = getUpnpService().getRegistry().notifyDiscoveryStart(describedDevice);
 
-            log.fine("Hydrating described device's services: " + describedDevice);
-            RemoteDevice hydratedDevice = describeServices(describedDevice);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Hydrating described device's services: " + describedDevice);
+			}
+			RemoteDevice hydratedDevice = describeServices(describedDevice);
             if (hydratedDevice == null) {
             	if(!errorsAlreadyLogged.contains(rd.getIdentity().getUdn())) {
             		errorsAlreadyLogged.add(rd.getIdentity().getUdn());
@@ -217,8 +231,10 @@ public class RetrieveRemoteDescriptors implements Runnable {
                             new DescriptorBindingException("Device service description failed: " + rd)
                     );
 			} else {
-                log.fine("Adding fully hydrated remote device to registry: " + hydratedDevice);
-                // The registry will do the right thing: A new root device is going to be added, if it's
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Adding fully hydrated remote device to registry: " + hydratedDevice);
+				}
+				// The registry will do the right thing: A new root device is going to be added, if it's
                 // already present or we just received the descriptor again (because we got an embedded
                 // devices' notification), it will simply update the expiration timestamp of the root
                 // device.
@@ -316,8 +332,10 @@ public class RetrieveRemoteDescriptors implements Runnable {
         if (headers != null)
             serviceDescRetrievalMsg.getHeaders().putAll(headers);
 
-        log.fine("Sending service descriptor retrieval message: " + serviceDescRetrievalMsg);
-        StreamResponseMessage serviceDescMsg = getUpnpService().getRouter().send(serviceDescRetrievalMsg);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Sending service descriptor retrieval message: " + serviceDescRetrievalMsg);
+		}
+		StreamResponseMessage serviceDescMsg = getUpnpService().getRouter().send(serviceDescRetrievalMsg);
 
         if (serviceDescMsg == null) {
             log.warning("Could not retrieve service descriptor, no response: " + service);
@@ -333,8 +351,10 @@ public class RetrieveRemoteDescriptors implements Runnable {
         }
 
         if (!serviceDescMsg.isContentTypeTextUDA()) {
-            log.fine("Received service descriptor without or with invalid Content-Type: " + descriptorURL);
-            // We continue despite the invalid UPnP message because we can still hope to convert the content
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Received service descriptor without or with invalid Content-Type: " + descriptorURL);
+			}
+			// We continue despite the invalid UPnP message because we can still hope to convert the content
         }
 
         String descriptorContent = serviceDescMsg.getBodyString();
@@ -343,8 +363,10 @@ public class RetrieveRemoteDescriptors implements Runnable {
             return null;
         }
 
-        log.fine("Received service descriptor, hydrating service model: " + serviceDescMsg);
-        ServiceDescriptorBinder serviceDescriptorBinder =
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Received service descriptor, hydrating service model: " + serviceDescMsg);
+		}
+		ServiceDescriptorBinder serviceDescriptorBinder =
                 getUpnpService().getConfiguration().getServiceDescriptorBinderUDA10();
 
         return serviceDescriptorBinder.describe(service, descriptorContent);
@@ -360,11 +382,15 @@ public class RetrieveRemoteDescriptors implements Runnable {
         for (RemoteService discoveredService : services) {
             for (ServiceType exclusiveType : exclusiveTypes) {
                 if (discoveredService.getServiceType().implementsVersion(exclusiveType)) {
-                    log.fine("Including exclusive service: " + discoveredService);
-                    exclusiveServices.add(discoveredService);
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Including exclusive service: " + discoveredService);
+					}
+					exclusiveServices.add(discoveredService);
                 } else {
-                    log.fine("Excluding unwanted service: " + exclusiveType);
-                }
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Excluding unwanted service: " + exclusiveType);
+					}
+				}
             }
         }
         return exclusiveServices;

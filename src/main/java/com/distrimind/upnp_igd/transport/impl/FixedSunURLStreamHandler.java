@@ -22,6 +22,7 @@ import java.net.*;
 import java.security.Permission;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -44,8 +45,10 @@ public class FixedSunURLStreamHandler implements URLStreamHandlerFactory {
 
     @Override
 	public URLStreamHandler createURLStreamHandler(String protocol) {
-        log.fine("Creating new URLStreamHandler for protocol: " + protocol);
-        if ("http".equals(protocol)) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating new URLStreamHandler for protocol: " + protocol);
+		}
+		if ("http".equals(protocol)) {
             return new URLStreamHandler() {
 
                 @Override

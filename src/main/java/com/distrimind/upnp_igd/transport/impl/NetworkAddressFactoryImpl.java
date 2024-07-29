@@ -301,15 +301,21 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
             for (NetworkInterface iface : Collections.list(interfaceEnumeration)) {
                 //displayInterfaceInformation(iface);
 
-                log.finer("Analyzing network interface: " + iface.getDisplayName());
-                if (isUsableNetworkInterface(iface)) {
-                    log.fine("Discovered usable network interface: " + iface.getDisplayName());
-                    synchronized (networkInterfaces) {
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Analyzing network interface: " + iface.getDisplayName());
+				}
+				if (isUsableNetworkInterface(iface)) {
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Discovered usable network interface: " + iface.getDisplayName());
+					}
+					synchronized (networkInterfaces) {
                         networkInterfaces.add(iface);
                     }
                 } else {
-                    log.finer("Ignoring non-usable network interface: " + iface.getDisplayName());
-                }
+					if (log.isLoggable(Level.FINER)) {
+						log.finer("Ignoring non-usable network interface: " + iface.getDisplayName());
+					}
+				}
             }
 
         } catch (Exception ex) {
@@ -342,49 +348,67 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
      */
     protected boolean isUsableNetworkInterface(NetworkInterface iface) throws Exception {
         if (!iface.isUp()) {
-            log.finer("Skipping network interface (down): " + iface.getDisplayName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping network interface (down): " + iface.getDisplayName());
+			}
+			return false;
         }
 
         if (getInetAddresses(iface).isEmpty()) {
-            log.finer("Skipping network interface without bound IP addresses: " + iface.getDisplayName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping network interface without bound IP addresses: " + iface.getDisplayName());
+			}
+			return false;
         }
 
         if (iface.getName().toLowerCase(Locale.ROOT).startsWith("vmnet") ||
         		(iface.getDisplayName() != null &&  iface.getDisplayName().toLowerCase(Locale.ROOT).contains("vmnet"))) {
-            log.finer("Skipping network interface (VMWare): " + iface.getDisplayName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping network interface (VMWare): " + iface.getDisplayName());
+			}
+			return false;
         }
 
         if (iface.getName().toLowerCase(Locale.ROOT).startsWith("vnic")) {
-            log.finer("Skipping network interface (Parallels): " + iface.getDisplayName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping network interface (Parallels): " + iface.getDisplayName());
+			}
+			return false;
         }
 
         if (iface.getName().toLowerCase(Locale.ROOT).startsWith("vboxnet")) {
-            log.finer("Skipping network interface (Virtual Box): " + iface.getDisplayName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping network interface (Virtual Box): " + iface.getDisplayName());
+			}
+			return false;
         }
 
         if (iface.getName().toLowerCase(Locale.ROOT).contains("virtual")) {
-            log.finer("Skipping network interface (named '*virtual*'): " + iface.getDisplayName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping network interface (named '*virtual*'): " + iface.getDisplayName());
+			}
+			return false;
         }
 
         if (iface.getName().toLowerCase(Locale.ROOT).startsWith("ppp")) {
-            log.finer("Skipping network interface (PPP): " + iface.getDisplayName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping network interface (PPP): " + iface.getDisplayName());
+			}
+			return false;
         }
 
         if (iface.isLoopback()) {
-            log.finer("Skipping network interface (ignoring loopback): " + iface.getDisplayName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping network interface (ignoring loopback): " + iface.getDisplayName());
+			}
+			return false;
         }
 
         if (!useInterfaces.isEmpty() && !useInterfaces.contains(iface.getName())) {
-            log.finer("Skipping unwanted network interface (-D" + SYSTEM_PROPERTY_NET_IFACES + "): " + iface.getName());
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping unwanted network interface (-D" + SYSTEM_PROPERTY_NET_IFACES + "): " + iface.getName());
+			}
+			return false;
         }
 
         if (!iface.supportsMulticast())
@@ -401,8 +425,10 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
                 while (it.hasNext()) {
                     NetworkInterface networkInterface = it.next();
 
-                    log.finer("Discovering addresses of interface: " + networkInterface.getDisplayName());
-                    int usableAddresses = 0;
+					if (log.isLoggable(Level.FINER)) {
+						log.finer("Discovering addresses of interface: " + networkInterface.getDisplayName());
+					}
+					int usableAddresses = 0;
                     for (InetAddress inetAddress : getInetAddresses(networkInterface)) {
                         if (inetAddress == null) {
                             log.warning("Network has a null address: " + networkInterface.getDisplayName());
@@ -410,19 +436,25 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
                         }
 
                         if (isUsableAddress(networkInterface, inetAddress)) {
-                            log.fine("Discovered usable network interface address: " + inetAddress.getHostAddress());
-                            usableAddresses++;
+							if (log.isLoggable(Level.FINE)) {
+								log.fine("Discovered usable network interface address: " + inetAddress.getHostAddress());
+							}
+							usableAddresses++;
                             synchronized (bindAddresses) {
                                 bindAddresses.add(inetAddress);
                             }
                         } else {
-                            log.finer("Ignoring non-usable network interface address: " + inetAddress.getHostAddress());
-                        }
+							if (log.isLoggable(Level.FINER)) {
+								log.finer("Ignoring non-usable network interface address: " + inetAddress.getHostAddress());
+							}
+						}
                     }
 
                     if (usableAddresses == 0) {
-                        log.finer("Network interface has no usable addresses, removing: " + networkInterface.getDisplayName());
-                        it.remove();
+						if (log.isLoggable(Level.FINER)) {
+							log.finer("Network interface has no usable addresses, removing: " + networkInterface.getDisplayName());
+						}
+						it.remove();
                     }
                 }
             }
@@ -451,18 +483,24 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
      */
     protected boolean isUsableAddress(NetworkInterface networkInterface, InetAddress address) {
         if (!(address instanceof Inet4Address)) {
-            log.finer("Skipping unsupported non-IPv4 address: " + address);
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping unsupported non-IPv4 address: " + address);
+			}
+			return false;
         }
 
         if (address.isLoopbackAddress()) {
-            log.finer("Skipping loopback address: " + address);
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping loopback address: " + address);
+			}
+			return false;
         }
 
         if (!useAddresses.isEmpty() && !useAddresses.contains(address.getHostAddress())) {
-            log.finer("Skipping unwanted address: " + address);
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Skipping unwanted address: " + address);
+			}
+			return false;
         }
 
         return true;

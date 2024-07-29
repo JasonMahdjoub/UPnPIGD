@@ -31,6 +31,7 @@ import com.distrimind.upnp_igd.protocol.SendingAsync;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -86,8 +87,10 @@ public abstract class SendingNotification extends SendingAsync {
                 }
 
                 // UDA 1.0 is silent about this but UDA 1.1 recomments "a few hundred milliseconds"
-                log.finer("Sleeping " + getBulkIntervalMilliseconds() + " milliseconds");
-                Thread.sleep(getBulkIntervalMilliseconds());
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Sleeping " + getBulkIntervalMilliseconds() + " milliseconds");
+				}
+				Thread.sleep(getBulkIntervalMilliseconds());
 
             } catch (InterruptedException ex) {
                 log.warning("Advertisement thread was interrupted: " + ex);
@@ -104,8 +107,10 @@ public abstract class SendingNotification extends SendingAsync {
     }
 
     public void sendMessages(Location descriptorLocation) throws RouterException {
-        log.finer("Sending root device messages: " + getDevice());
-        List<OutgoingNotificationRequest> rootDeviceMsgs =
+		if (log.isLoggable(Level.FINER)) {
+			log.finer("Sending root device messages: " + getDevice());
+		}
+		List<OutgoingNotificationRequest> rootDeviceMsgs =
                 createDeviceMessages(getDevice(), descriptorLocation);
         for (OutgoingNotificationRequest upnpMessage : rootDeviceMsgs) {
             getUpnpService().getRouter().send(upnpMessage);
@@ -113,8 +118,10 @@ public abstract class SendingNotification extends SendingAsync {
 
         if (getDevice().hasEmbeddedDevices()) {
             for (LocalDevice<?> embeddedDevice : getDevice().findEmbeddedDevices()) {
-                log.finer("Sending embedded device messages: " + embeddedDevice);
-                List<OutgoingNotificationRequest> embeddedDeviceMsgs =
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Sending embedded device messages: " + embeddedDevice);
+				}
+				List<OutgoingNotificationRequest> embeddedDeviceMsgs =
                         createDeviceMessages(embeddedDevice, descriptorLocation);
                 for (OutgoingNotificationRequest upnpMessage : embeddedDeviceMsgs) {
                     getUpnpService().getRouter().send(upnpMessage);

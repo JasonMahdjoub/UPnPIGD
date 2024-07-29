@@ -14,6 +14,7 @@
  */
  package com.distrimind.upnp_igd.statemachine;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import java.lang.reflect.InvocationHandler;
@@ -41,9 +42,11 @@ public class StateMachineInvocationHandler implements InvocationHandler {
                                   Class<?>[] constructorArgumentTypes,
                                   Object[] constructorArguments) {
 
-        log.fine("Creating state machine with initial state: " + initialStateClass);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating state machine with initial state: " + initialStateClass);
+		}
 
-        this.initialStateClass = initialStateClass;
+		this.initialStateClass = initialStateClass;
 
         for (Class<?> stateClass : stateClasses) {
             try {
@@ -55,8 +58,10 @@ public class StateMachineInvocationHandler implements InvocationHandler {
                                 .newInstance(constructorArguments)
                         : stateClass.getConstructor().newInstance();
 
-                log.fine("Adding state instance: " + state.getClass().getName());
-                stateObjects.put(stateClass, state);
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Adding state instance: " + state.getClass().getName());
+				}
+				stateObjects.put(stateClass, state);
 
             } catch (NoSuchMethodException ex) {
                 throw new RuntimeException(
@@ -95,22 +100,28 @@ public class StateMachineInvocationHandler implements InvocationHandler {
                 if (forcedState == null) {
                     throw new TransitionException("Can't force to invalid state: " + args[0]);
                 }
-                log.finer("Forcing state machine into state: " + forcedState.getClass().getName());
-                invokeExitMethod(currentState);
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Forcing state machine into state: " + forcedState.getClass().getName());
+				}
+				invokeExitMethod(currentState);
                 currentState = forcedState;
                 invokeEntryMethod(forcedState);
                 return null;
             }
 
             Method signalMethod = getMethodOfCurrentState(method);
-            log.fine("Invoking signal method of current state: " + signalMethod);
-            Object methodReturn = signalMethod.invoke(currentState, args);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Invoking signal method of current state: " + signalMethod);
+			}
+			Object methodReturn = signalMethod.invoke(currentState, args);
 
             if (methodReturn instanceof Class) {
                 Class<?> nextStateClass = (Class<?>) methodReturn;
                 if (stateObjects.containsKey(nextStateClass)) {
-                    log.fine("Executing transition to next state: " + nextStateClass.getName());
-                    invokeExitMethod(currentState);
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Executing transition to next state: " + nextStateClass.getName());
+					}
+					invokeExitMethod(currentState);
                     currentState = stateObjects.get(nextStateClass);
                     invokeEntryMethod(currentState);
                 }
@@ -133,13 +144,17 @@ public class StateMachineInvocationHandler implements InvocationHandler {
     }
 
     private void invokeEntryMethod(Object state) {
-        log.fine("Trying to invoke entry method of state: " + state.getClass().getName());
-        try {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Trying to invoke entry method of state: " + state.getClass().getName());
+		}
+		try {
             Method onEntryMethod = state.getClass().getMethod(METHOD_ON_ENTRY);
             onEntryMethod.invoke(state);
         } catch (NoSuchMethodException ex) {
-            log.finer("No entry method found on state: " + state.getClass().getName());
-            // That's OK, just don't call it
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("No entry method found on state: " + state.getClass().getName());
+			}
+			// That's OK, just don't call it
         } catch (Exception ex) {
             throw new TransitionException(
                     "State '" + state.getClass().getName() + "' entry method threw exception: " + ex, ex
@@ -148,13 +163,17 @@ public class StateMachineInvocationHandler implements InvocationHandler {
     }
 
     private void invokeExitMethod(Object state) {
-        log.finer("Trying to invoking exit method of state: " + state.getClass().getName());
-        try {
+		if (log.isLoggable(Level.FINER)) {
+			log.finer("Trying to invoking exit method of state: " + state.getClass().getName());
+		}
+		try {
             Method onExitMethod = state.getClass().getMethod(METHOD_ON_EXIT);
             onExitMethod.invoke(state);
         } catch (NoSuchMethodException ex) {
-            log.finer("No exit method found on state: " + state.getClass().getName());
-            // That's OK, just don't call it
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("No exit method found on state: " + state.getClass().getName());
+			}
+			// That's OK, just don't call it
         } catch (Exception ex) {
             throw new TransitionException(
                     "State '" + state.getClass().getName() + "' exit method threw exception: " + ex, ex

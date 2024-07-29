@@ -62,9 +62,11 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
 	public void run() {
 
         try {
-            log.fine("Processing HTTP request: " + getHttpExchange().getRequestMethod() + " " + getHttpExchange().getRequestURI());
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Processing HTTP request: " + getHttpExchange().getRequestMethod() + " " + getHttpExchange().getRequestURI());
+			}
 
-            // Status
+			// Status
             StreamRequestMessage requestMessage =
                     new StreamRequestMessage(
                             UpnpRequest.Method.getByHttpName(getHttpExchange().getRequestMethod()),
@@ -72,8 +74,10 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
                     );
 
             if (requestMessage.getOperation().getMethod().equals(UpnpRequest.Method.UNKNOWN)) {
-                log.fine("Method not supported by UPnP stack: " + getHttpExchange().getRequestMethod());
-                throw new RuntimeException("Method not supported: " + getHttpExchange().getRequestMethod());
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Method not supported by UPnP stack: " + getHttpExchange().getRequestMethod());
+				}
+				throw new RuntimeException("Method not supported: " + getHttpExchange().getRequestMethod());
             }
 
             // Protocol
@@ -81,9 +85,11 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
                     getHttpExchange().getProtocol().toUpperCase(Locale.ROOT).equals("HTTP/1.1") ? 1 : 0
             );
 
-            log.fine("Created new request message: " + requestMessage);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Created new request message: " + requestMessage);
+			}
 
-            // Connection wrapper
+			// Connection wrapper
             requestMessage.setConnection(createConnection());
 
             // Headers
@@ -95,9 +101,11 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
 				bodyBytes = IO.readBytes(is);
 			}
 
-            log.fine("Reading request body bytes: " + bodyBytes.length);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Reading request body bytes: " + bodyBytes.length);
+			}
 
-            if (bodyBytes.length > 0 && requestMessage.isContentTypeMissingOrText()) {
+			if (bodyBytes.length > 0 && requestMessage.isContentTypeMissingOrText()) {
 
                 log.fine("Request contains textual entity body, converting then setting string on message");
                 requestMessage.setBodyCharacters(bodyBytes);
@@ -116,9 +124,11 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
 
             // Return the response
             if (responseMessage != null) {
-                log.fine("Preparing HTTP response message: " + responseMessage);
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Preparing HTTP response message: " + responseMessage);
+				}
 
-                // Headers
+				// Headers
                 getHttpExchange().getResponseHeaders().putAll(
                         responseMessage.getHeaders()
                 );
@@ -127,8 +137,10 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
                 byte[] responseBodyBytes = responseMessage.hasBody() ? responseMessage.getBodyBytes() : null;
                 int contentLength = responseBodyBytes != null ? responseBodyBytes.length : -1;
 
-                log.fine("Sending HTTP response message: " + responseMessage + " with content length: " + contentLength);
-                getHttpExchange().sendResponseHeaders(responseMessage.getOperation().getStatusCode(), contentLength);
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Sending HTTP response message: " + responseMessage + " with content length: " + contentLength);
+				}
+				getHttpExchange().sendResponseHeaders(responseMessage.getOperation().getStatusCode(), contentLength);
 
                 if (contentLength > 0) {
                     log.fine("Response message has body, writing bytes to stream...");
@@ -157,8 +169,10 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
             // TODO: We should only send an error if the problem was on our side
             // You don't have to catch Throwable unless, like we do here in unit tests,
             // you might run into Errors as well (assertions).
-            log.fine("Exception occured during UPnP stream processing: " + t);
-            if (log.isLoggable(Level.FINE)) {
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Exception occured during UPnP stream processing: " + t);
+			}
+			if (log.isLoggable(Level.FINE)) {
                 log.log(Level.FINE, "Cause: " + Exceptions.unwrap(t), Exceptions.unwrap(t));
             }
             try {

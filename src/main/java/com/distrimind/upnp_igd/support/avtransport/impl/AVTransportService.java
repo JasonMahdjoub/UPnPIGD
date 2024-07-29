@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -315,8 +316,10 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
             } else if (stateMachine == null) {
                 throw new AVTransportException(AVTransportErrorCode.INVALID_INSTANCE_ID);
             }
-            log.fine("Found transport control with ID '" + id + "'");
-            return stateMachine;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Found transport control with ID '" + id + "'");
+			}
+			return stateMachine;
         }
     }
 

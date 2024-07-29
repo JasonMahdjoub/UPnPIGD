@@ -25,6 +25,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -50,10 +51,14 @@ public class CatalogResourceResolver implements LSResourceResolver {
 
 	@Override
 	public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
-		log.finest("Trying to resolve system identifier URI in catalog: " + systemId);
+		if (log.isLoggable(Level.FINEST)) {
+			log.finest("Trying to resolve system identifier URI in catalog: " + systemId);
+		}
 		URL systemURL;
 		if ((systemURL = catalog.get(URI.create(systemId))) != null) {
-			log.finest("Loading catalog resource: " + systemURL);
+			if (log.isLoggable(Level.FINEST)) {
+				log.finest("Loading catalog resource: " + systemURL);
+			}
 			try {
 				Input i = new Input(systemURL.openStream());
 				i.setBaseURI(baseURI);

@@ -169,20 +169,26 @@ public class RouterImpl implements Router {
                 }
 
                 for (Map.Entry<InetAddress, StreamServer<?>> entry : streamServers.entrySet()) {
-                    log.fine("Stopping stream server on address: " + entry.getKey());
-                    entry.getValue().stop();
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Stopping stream server on address: " + entry.getKey());
+					}
+					entry.getValue().stop();
                 }
                 streamServers.clear();
 
                 for (Map.Entry<NetworkInterface, MulticastReceiver<?>> entry : multicastReceivers.entrySet()) {
-                    log.fine("Stopping multicast receiver on interface: " + entry.getKey().getDisplayName());
-                    entry.getValue().stop();
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Stopping multicast receiver on interface: " + entry.getKey().getDisplayName());
+					}
+					entry.getValue().stop();
                 }
                 multicastReceivers.clear();
 
                 for (Map.Entry<InetAddress, DatagramIO<?>> entry : datagramIOs.entrySet()) {
-                    log.fine("Stopping datagram I/O on address: " + entry.getKey());
-                    entry.getValue().stop();
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Stopping datagram I/O on address: " + entry.getKey());
+					}
+					entry.getValue().stop();
                 }
                 datagramIOs.clear();
 
@@ -267,8 +273,10 @@ public class RouterImpl implements Router {
     @Override
 	public void received(IncomingDatagramMessage<?> msg) {
         if (!enabled) {
-            log.fine("Router disabled, ignoring incoming message: " + msg);
-            return;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Router disabled, ignoring incoming message: " + msg);
+			}
+			return;
         }
         try {
             ReceivingAsync<?> protocol = getProtocolFactory().createReceivingAsync(msg);
@@ -294,11 +302,15 @@ public class RouterImpl implements Router {
     @Override
 	public void received(UpnpStream stream) {
         if (!enabled) {
-            log.fine("Router disabled, ignoring incoming: " + stream);
-            return;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Router disabled, ignoring incoming: " + stream);
+			}
+			return;
         }
-        log.fine("Received synchronous stream: " + stream);
-        getConfiguration().getSyncProtocolExecutorService().execute(stream);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Received synchronous stream: " + stream);
+		}
+		getConfiguration().getSyncProtocolExecutorService().execute(stream);
     }
 
     /**
@@ -315,8 +327,10 @@ public class RouterImpl implements Router {
                     datagramIO.send(msg);
                 }
             } else {
-                log.fine("Router disabled, not sending datagram: " + msg);
-            }
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Router disabled, not sending datagram: " + msg);
+				}
+			}
         } finally {
             unlock(readLock);
         }
@@ -335,18 +349,24 @@ public class RouterImpl implements Router {
         try {
             if (enabled) {
                 if (streamClient == null) {
-                    log.fine("No StreamClient available, not sending: " + msg);
-                    return null;
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("No StreamClient available, not sending: " + msg);
+					}
+					return null;
                 }
-                log.fine("Sending via TCP unicast stream: " + msg);
-                try {
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Sending via TCP unicast stream: " + msg);
+				}
+				try {
                     return streamClient.sendRequest(msg);
                 } catch (InterruptedException ex) {
                     throw new RouterException("Sending stream request was interrupted", ex);
                 }
             } else {
-                log.fine("Router disabled, not sending stream request: " + msg);
-                return null;
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Router disabled, not sending stream request: " + msg);
+				}
+				return null;
             }
         } finally {
             unlock(readLock);
@@ -370,14 +390,18 @@ public class RouterImpl implements Router {
                 for (Map.Entry<InetAddress, DatagramIO<?>> entry : datagramIOs.entrySet()) {
                     InetAddress broadcast = networkAddressFactory.getBroadcastAddress(entry.getKey());
                     if (broadcast != null) {
-                        log.fine("Sending UDP datagram to broadcast address: " + broadcast.getHostAddress());
-                        DatagramPacket packet = new DatagramPacket(bytes, bytes.length, broadcast, 9);
+						if (log.isLoggable(Level.FINE)) {
+							log.fine("Sending UDP datagram to broadcast address: " + broadcast.getHostAddress());
+						}
+						DatagramPacket packet = new DatagramPacket(bytes, bytes.length, broadcast, 9);
                         entry.getValue().send(packet);
                     }
                 }
             } else {
-                log.fine("Router disabled, not broadcasting bytes: " + bytes.length);
-            }
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Router disabled, not broadcasting bytes: " + bytes.length);
+				}
+			}
         } finally {
             unlock(readLock);
         }
@@ -498,10 +522,14 @@ public class RouterImpl implements Router {
 
     protected void lock(Lock lock, int timeoutMilliseconds) throws RouterException {
         try {
-            log.finest("Trying to obtain lock with timeout milliseconds '" + timeoutMilliseconds + "': " + lock.getClass().getSimpleName());
-            if (lock.tryLock(timeoutMilliseconds, TimeUnit.MILLISECONDS)) {
-                log.finest("Acquired router lock: " + lock.getClass().getSimpleName());
-            } else {
+			if (log.isLoggable(Level.FINEST)) {
+				log.finest("Trying to obtain lock with timeout milliseconds '" + timeoutMilliseconds + "': " + lock.getClass().getSimpleName());
+			}
+			if (lock.tryLock(timeoutMilliseconds, TimeUnit.MILLISECONDS)) {
+				if (log.isLoggable(Level.FINEST)) {
+					log.finest("Acquired router lock: " + lock.getClass().getSimpleName());
+				}
+			} else {
                 throw new RouterException(
                     "Router wasn't available exclusively after waiting " + timeoutMilliseconds + "ms, lock failed: "
                         + lock.getClass().getSimpleName()
@@ -519,8 +547,10 @@ public class RouterImpl implements Router {
     }
 
     protected void unlock(Lock lock) {
-        log.finest("Releasing router lock: " + lock.getClass().getSimpleName());
-        lock.unlock();
+		if (log.isLoggable(Level.FINEST)) {
+			log.finest("Releasing router lock: " + lock.getClass().getSimpleName());
+		}
+		lock.unlock();
     }
 
     /**

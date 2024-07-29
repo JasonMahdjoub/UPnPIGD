@@ -170,15 +170,19 @@ public abstract class UpnpHeader<T> {
         UpnpHeader<?> upnpHeader;
         for (Class<? extends UpnpHeader<?>> headerClass : type.getHeaderTypes()) {
             try {
-                log.finest("Trying to parse '" + type + "' with class: " + headerClass.getSimpleName());
-                upnpHeader = headerClass.getConstructor().newInstance();
+				if (log.isLoggable(Level.FINEST)) {
+					log.finest("Trying to parse '" + type + "' with class: " + headerClass.getSimpleName());
+				}
+				upnpHeader = headerClass.getConstructor().newInstance();
                 if (headerValue != null) {
                     upnpHeader.setString(headerValue);
                 }
                 return upnpHeader;
             } catch (InvalidHeaderException ex) {
-                log.finest("Invalid header value for tested type: " + headerClass.getSimpleName() + " - " + ex.getMessage());
-            } catch (Exception ex) {
+				if (log.isLoggable(Level.FINEST)) {
+					log.finest("Invalid header value for tested type: " + headerClass.getSimpleName() + " - " + ex.getMessage());
+				}
+			} catch (Exception ex) {
                 log.severe("Error instantiating header of type '" + type + "' with value: " + headerValue);
                 log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));
             }

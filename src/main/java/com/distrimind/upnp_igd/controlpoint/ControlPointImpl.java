@@ -30,6 +30,7 @@ import jakarta.inject.Inject;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -55,9 +56,11 @@ public class ControlPointImpl implements ControlPoint {
 
     @Inject
     public ControlPointImpl(UpnpServiceConfiguration configuration, ProtocolFactory protocolFactory, Registry registry) {
-        log.fine("Creating ControlPoint: " + getClass().getName());
-        
-        this.configuration = configuration;
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating ControlPoint: " + getClass().getName());
+		}
+
+		this.configuration = configuration;
         this.protocolFactory = protocolFactory;
         this.registry = registry;
     }
@@ -98,8 +101,10 @@ public class ControlPointImpl implements ControlPoint {
 
     @Override
 	public void search(UpnpHeader<?> searchType, int mxSeconds) {
-        log.fine("Sending asynchronous search for: " + searchType.getString());
-        getConfiguration().getAsyncProtocolExecutor().execute(
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Sending asynchronous search for: " + searchType.getString());
+		}
+		getConfiguration().getAsyncProtocolExecutor().execute(
                 getProtocolFactory().createSendingSearch(searchType, mxSeconds)
         );
     }
@@ -110,16 +115,20 @@ public class ControlPointImpl implements ControlPoint {
 
     @Override
 	public Future<?> execute(ActionCallback callback) {
-        log.fine("Invoking action in background: " + callback);
-        callback.setControlPoint(this);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Invoking action in background: " + callback);
+		}
+		callback.setControlPoint(this);
         ExecutorService executor = getConfiguration().getSyncProtocolExecutorService();
         return executor.submit(callback);
     }
 
     @Override
 	public void execute(SubscriptionCallback callback) {
-        log.fine("Invoking subscription in background: " + callback);
-        callback.setControlPoint(this);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Invoking subscription in background: " + callback);
+		}
+		callback.setControlPoint(this);
         getConfiguration().getSyncProtocolExecutorService().execute(callback);
     }
 }

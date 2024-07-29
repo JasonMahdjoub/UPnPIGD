@@ -21,6 +21,7 @@ import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -64,8 +65,10 @@ public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends
         outputMessage = executeSync();
 
         if (outputMessage != null && !getRemoteClientInfo().getExtraResponseHeaders().isEmpty()) {
-            log.fine("Setting extra headers on response message: " + getRemoteClientInfo().getExtraResponseHeaders().size());
-            outputMessage.getHeaders().putAll(getRemoteClientInfo().getExtraResponseHeaders());
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Setting extra headers on response message: " + getRemoteClientInfo().getExtraResponseHeaders().size());
+			}
+			outputMessage.getHeaders().putAll(getRemoteClientInfo().getExtraResponseHeaders());
         }
     }
 

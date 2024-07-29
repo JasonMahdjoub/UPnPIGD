@@ -82,13 +82,17 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
                 );
 
         if (resource == null) {
-            log.fine("No local resource found: " + getInputMessage());
-            return null;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("No local resource found: " + getInputMessage());
+			}
+			return null;
         }
 
-        log.fine("Found local action resource matching relative request URI: " + getInputMessage().getUri());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Found local action resource matching relative request URI: " + getInputMessage().getUri());
+		}
 
-        RemoteActionInvocation<? extends LocalService<?>> invocation;
+		RemoteActionInvocation<? extends LocalService<?>> invocation;
         OutgoingActionResponseMessage responseMessage;
 
         try {
@@ -97,15 +101,19 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             IncomingActionRequestMessage requestMessage =
                     new IncomingActionRequestMessage(getInputMessage(), resource.getModel());
 
-            log.finer("Created incoming action request message: " + requestMessage);
-            invocation = new RemoteActionInvocation<>(requestMessage.getAction(), getRemoteClientInfo());
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Created incoming action request message: " + requestMessage);
+			}
+			invocation = new RemoteActionInvocation<>(requestMessage.getAction(), getRemoteClientInfo());
 
             // Throws UnsupportedDataException if the body can't be read
             log.fine("Reading body of request message");
             getUpnpService().getConfiguration().getSoapActionProcessor().readBody(requestMessage, invocation);
 
-            log.fine("Executing on local service: " + invocation);
-            resource.getModel().getExecutor(invocation.getAction()).executeWithUntypedGeneric(invocation);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Executing on local service: " + invocation);
+			}
+			resource.getModel().getExecutor(invocation.getAction()).executeWithUntypedGeneric(invocation);
 
             if (invocation.getFailure() == null) {
                 responseMessage =
@@ -128,9 +136,11 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             }
 
         } catch (ActionException ex) {
-            log.finer("Error executing local action: " + ex);
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Error executing local action: " + ex);
+			}
 
-            invocation = new RemoteActionInvocation<>(ex, getRemoteClientInfo());
+			invocation = new RemoteActionInvocation<>(ex, getRemoteClientInfo());
             responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
 
         } catch (UnsupportedDataException ex) {
@@ -152,8 +162,10 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             log.fine("Writing body of response message");
             getUpnpService().getConfiguration().getSoapActionProcessor().writeBody(responseMessage, invocation);
 
-            log.fine("Returning finished response message: " + responseMessage);
-            return responseMessage;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Returning finished response message: " + responseMessage);
+			}
+			return responseMessage;
 
         } catch (UnsupportedDataException ex) {
             log.warning("Failure writing body of response message, sending '500 Internal Server Error' without body");

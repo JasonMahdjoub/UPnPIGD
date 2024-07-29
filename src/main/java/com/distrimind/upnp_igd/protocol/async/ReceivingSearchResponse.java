@@ -28,6 +28,7 @@ import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.model.types.UDN;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -52,22 +53,30 @@ public class ReceivingSearchResponse extends ReceivingAsync<IncomingSearchRespon
 	protected void execute() throws RouterException {
 
         if (!getInputMessage().isSearchResponseMessage()) {
-            log.fine("Ignoring invalid search response message: " + getInputMessage());
-            return;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Ignoring invalid search response message: " + getInputMessage());
+			}
+			return;
         }
 
         UDN udn = getInputMessage().getRootDeviceUDN();
         if (udn == null) {
-            log.fine("Ignoring search response message without UDN: " + getInputMessage());
-            return;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Ignoring search response message without UDN: " + getInputMessage());
+			}
+			return;
         }
 
         RemoteDeviceIdentity rdIdentity = new RemoteDeviceIdentity(getInputMessage());
-        log.fine("Received device search response: " + rdIdentity);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Received device search response: " + rdIdentity);
+		}
 
-        if (getUpnpService().getRegistry().update(rdIdentity)) {
-            log.fine("Remote device was already known: " + udn);
-            return;
+		if (getUpnpService().getRegistry().update(rdIdentity)) {
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Remote device was already known: " + udn);
+			}
+			return;
         }
 
         RemoteDevice rd;
@@ -82,13 +91,17 @@ public class ReceivingSearchResponse extends ReceivingAsync<IncomingSearchRespon
         }
 
         if (rdIdentity.getDescriptorURL() == null) {
-            log.finer("Ignoring message without location URL header: " + getInputMessage());
-            return;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Ignoring message without location URL header: " + getInputMessage());
+			}
+			return;
         }
 
         if (rdIdentity.getMaxAgeSeconds() == null) {
-            log.finer("Ignoring message without max-age header: " + getInputMessage());
-            return;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Ignoring message without max-age header: " + getInputMessage());
+			}
+			return;
         }
 
         // Unfortunately, we always have to retrieve the descriptor because at this point we

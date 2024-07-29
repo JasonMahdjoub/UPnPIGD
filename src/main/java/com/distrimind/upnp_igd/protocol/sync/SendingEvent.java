@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.protocol.sync;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.protocol.SendingSync;
@@ -73,24 +74,32 @@ public class SendingEvent extends SendingSync<OutgoingEventRequestMessage, Strea
     @Override
 	protected StreamResponseMessage executeSync() throws RouterException {
 
-        log.fine("Sending event for subscription: " + subscriptionId);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Sending event for subscription: " + subscriptionId);
+		}
 
-        StreamResponseMessage lastResponse = null;
+		StreamResponseMessage lastResponse = null;
 
         for (OutgoingEventRequestMessage requestMessage : requestMessages) {
 
             if (currentSequence.getValue() == 0) {
-                log.fine("Sending initial event message to callback URL: " + requestMessage.getUri());
-            } else {
-                log.fine("Sending event message '"+currentSequence+"' to callback URL: " + requestMessage.getUri());
-            }
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Sending initial event message to callback URL: " + requestMessage.getUri());
+				}
+			} else {
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Sending event message '"+currentSequence+"' to callback URL: " + requestMessage.getUri());
+				}
+			}
 
 
             // Send request
             lastResponse = getUpnpService().getRouter().send(requestMessage);
-            log.fine("Received event callback response: " + lastResponse);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Received event callback response: " + lastResponse);
+			}
 
-        }
+		}
 
         // It's not really used, so just return the last one - we have only one callback URL most of the
         // time anyway

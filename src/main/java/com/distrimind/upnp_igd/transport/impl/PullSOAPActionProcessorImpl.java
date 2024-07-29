@@ -16,6 +16,7 @@
 package com.distrimind.upnp_igd.transport.impl;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.model.action.ActionArgumentValue;
@@ -209,8 +210,10 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
                             "Could not find argument '" + arg.getName() + "' node");
                 }
 
-                log.fine("Reading action argument: " + arg.getName());
-                values.add(createValue(arg, value));
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Reading action argument: " + arg.getName());
+				}
+				values.add(createValue(arg, value));
             }
             return values;
         }
@@ -270,11 +273,15 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
                 int numericCode = Integer.parseInt(errorCode.toString());
                 ErrorCode standardErrorCode = ErrorCode.getByCode(numericCode);
                 if (standardErrorCode != null) {
-                    log.fine("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
-                    return new ActionException(standardErrorCode, errorDescription.toString(), false);
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
+					}
+					return new ActionException(standardErrorCode, errorDescription.toString(), false);
                 } else {
-                    log.fine("Reading fault element: " + numericCode + " - " + errorDescription);
-                    return new ActionException(numericCode, errorDescription.toString());
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Reading fault element: " + numericCode + " - " + errorDescription);
+					}
+					return new ActionException(numericCode, errorDescription.toString());
                 }
             } catch (NumberFormatException ex) {
                 throw new RuntimeException("Error code was not a number");

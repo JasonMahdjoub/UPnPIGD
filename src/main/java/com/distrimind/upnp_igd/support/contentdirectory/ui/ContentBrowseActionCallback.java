@@ -27,6 +27,7 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.support.model.container.Container;
 import com.distrimind.upnp_igd.support.model.item.Item;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.tree.MutableTreeNode;
@@ -111,8 +112,10 @@ public abstract class ContentBrowseActionCallback extends Browse {
             }
 
         } catch (Exception ex) {
-            log.fine("Creating DIDL tree nodes failed: " + ex);
-            actionInvocation.setFailure(
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Creating DIDL tree nodes failed: " + ex);
+			}
+			actionInvocation.setFailure(
                     new ActionException(ErrorCode.ACTION_FAILED, "Can't create tree child nodes: " + ex, ex)
             );
             failure(actionInvocation, null);
@@ -132,8 +135,10 @@ public abstract class ContentBrowseActionCallback extends Browse {
     }
 
     protected void updateTreeModel(final List<DefaultMutableTreeNode> childNodes) {
-        log.fine("Adding nodes to tree: " + childNodes.size());
-        // Remove all "old" children such as the loading/progress messages
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Adding nodes to tree: " + childNodes.size());
+		}
+		// Remove all "old" children such as the loading/progress messages
         removeChildren();
 
         // Insert new children

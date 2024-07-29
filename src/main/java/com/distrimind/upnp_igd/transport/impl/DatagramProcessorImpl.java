@@ -109,7 +109,9 @@ public class DatagramProcessorImpl implements DatagramProcessor {
 		// TODO: Probably should look into escaping rules, too
 		byte[] data = messageData.toString().getBytes(StandardCharsets.US_ASCII);
 
-		log.fine("Writing new datagram packet with " + data.length + " bytes for: " + message);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Writing new datagram packet with " + data.length + " bytes for: " + message);
+		}
 		return new DatagramPacket(data, data.length, message.getDestinationAddress(), message.getDestinationPort());
 
 	}

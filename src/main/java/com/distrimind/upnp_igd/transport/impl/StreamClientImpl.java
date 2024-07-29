@@ -95,8 +95,10 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
             );
         }
 
-        log.fine("Using persistent HTTP stream client connections: " + configuration.isUsePersistentConnections());
-        System.setProperty("http.keepAlive", Boolean.toString(configuration.isUsePersistentConnections()));
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Using persistent HTTP stream client connections: " + configuration.isUsePersistentConnections());
+		}
+		System.setProperty("http.keepAlive", Boolean.toString(configuration.isUsePersistentConnections()));
 
         // Hack the environment to allow additional HTTP methods
         /*if (System.getProperty(HACK_STREAM_HANDLER_SYSTEM_PROPERTY) == null) {
@@ -128,9 +130,11 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
     public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) {
 
         final UpnpRequest requestOperation = requestMessage.getOperation();
-        log.fine("Preparing HTTP request message with method '" + requestOperation.getHttpMethodName() + "': " + requestMessage);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Preparing HTTP request message with method '" + requestOperation.getHttpMethodName() + "': " + requestMessage);
+		}
 
-        URL url = URIUtil.toURL(requestOperation.getURI());
+		URL url = URIUtil.toURL(requestOperation.getURI());
 
         HttpURLConnection urlConnection = null;
         InputStream inputStream;
@@ -147,8 +151,10 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
             applyRequestProperties(urlConnection, requestMessage);
             applyRequestBody(urlConnection, requestMessage);
 
-            log.fine("Sending HTTP request: " + requestMessage);
-            inputStream = urlConnection.getInputStream();
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Sending HTTP request: " + requestMessage);
+			}
+			inputStream = urlConnection.getInputStream();
             return createResponse(urlConnection, inputStream);
 
         } catch (ProtocolException ex) {
@@ -218,12 +224,16 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
     }
 
     protected void applyHeaders(HttpURLConnection urlConnection, Headers headers) {
-        log.fine("Writing headers on HttpURLConnection: " + headers.size());
-        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Writing headers on HttpURLConnection: " + headers.size());
+		}
+		for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             for (String v : entry.getValue()) {
                 String headerName = entry.getKey();
-                log.fine("Setting header '" + headerName + "': " + v);
-                urlConnection.setRequestProperty(headerName, v);
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Setting header '" + headerName + "': " + v);
+				}
+				urlConnection.setRequestProperty(headerName, v);
             }
         }
     }
@@ -258,9 +268,11 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
         // Status
         UpnpResponse responseOperation = new UpnpResponse(urlConnection.getResponseCode(), urlConnection.getResponseMessage());
 
-        log.fine("Received response: " + responseOperation);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Received response: " + responseOperation);
+		}
 
-        // Message
+		// Message
         StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
 
         // Headers
@@ -286,8 +298,10 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
             log.fine("Response did not contain entity body");
         }
 
-        log.fine("Response message complete: " + responseMessage);
-        return responseMessage;
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Response message complete: " + responseMessage);
+		}
+		return responseMessage;
     }
 
 }

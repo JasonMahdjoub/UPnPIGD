@@ -85,15 +85,19 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         }
 
         if (!getInputMessage().isMANSSDPDiscover()) {
-            log.fine("Invalid search request, no or invalid MAN ssdp:discover header: " + getInputMessage());
-            return;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Invalid search request, no or invalid MAN ssdp:discover header: " + getInputMessage());
+			}
+			return;
         }
 
         UpnpHeader<?> searchTarget = getInputMessage().getSearchTarget();
 
         if (searchTarget == null) {
-            log.fine("Invalid search request, did not contain ST header: " + getInputMessage());
-            return;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Invalid search request, did not contain ST header: " + getInputMessage());
+			}
+			return;
         }
 
         List<NetworkAddress> activeStreamServers =
@@ -114,8 +118,10 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         Integer mx = getInputMessage().getMX();
 
         if (mx == null) {
-            log.fine("Invalid search request, did not contain MX header: " + getInputMessage());
-            return false;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Invalid search request, did not contain MX header: " + getInputMessage());
+			}
+			return false;
         }
 
         // Spec says we should assume "less" if it's 120 or more
@@ -126,8 +132,10 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         // Only wait if there is something to wait for
         if (!getUpnpService().getRegistry().getLocalDevices().isEmpty()) {
             int sleepTime = randomGenerator.nextInt(mx * 1000);
-            log.fine("Sleeping " + sleepTime + " milliseconds to avoid flooding with search responses");
-            Thread.sleep(sleepTime);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Sleeping " + sleepTime + " milliseconds to avoid flooding with search responses");
+			}
+			Thread.sleep(sleepTime);
         }
 
         return true;
@@ -170,8 +178,10 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
             // We are re-using the regular notification messages here but override the NT with the ST header
             if (LOG_ENABLED) {
-                log.finer("Sending root device messages: " + localDevice);
-            }
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Sending root device messages: " + localDevice);
+				}
+			}
             List<OutgoingSearchResponse> rootDeviceMsgs =
                     createDeviceMessages(localDevice, activeStreamServer);
             for (OutgoingSearchResponse upnpMessage : rootDeviceMsgs) {
@@ -181,8 +191,10 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             if (localDevice.hasEmbeddedDevices()) {
                 for (LocalDevice<?> embeddedDevice : localDevice.findEmbeddedDevices()) {
                     if (LOG_ENABLED) {
-                        log.finer("Sending embedded device messages: " + embeddedDevice);
-                    }
+						if (log.isLoggable(Level.FINER)) {
+							log.finer("Sending embedded device messages: " + embeddedDevice);
+						}
+					}
                     List<OutgoingSearchResponse> embeddedDeviceMsgs =
                             createDeviceMessages(embeddedDevice, activeStreamServer);
                     for (OutgoingSearchResponse upnpMessage : embeddedDeviceMsgs) {
@@ -286,8 +298,10 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             if (isAdvertisementDisabled((LocalDevice<?>)device))
                 return;
 
-            log.fine("Responding to UDN device search: " + udn);
-            OutgoingSearchResponse message =
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Responding to UDN device search: " + udn);
+			}
+			OutgoingSearchResponse message =
                 new OutgoingSearchResponseUDN(
                         getInputMessage(),
                         getDescriptorLocation(activeStreamServer, (LocalDevice<?>) device),
@@ -299,16 +313,20 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
     }
 
     protected void sendSearchResponseDeviceType(DeviceType deviceType, NetworkAddress activeStreamServer) throws RouterException{
-        log.fine("Responding to device type search: " + deviceType);
-        Collection<Device<?, ?, ?>> devices = getUpnpService().getRegistry().getDevices(deviceType);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Responding to device type search: " + deviceType);
+		}
+		Collection<Device<?, ?, ?>> devices = getUpnpService().getRegistry().getDevices(deviceType);
         for (Device<?, ?, ?> device : devices) {
             if (device instanceof LocalDevice) {
 
                 if (isAdvertisementDisabled((LocalDevice<?>)device))
                     continue;
 
-                log.finer("Sending matching device type search result for: " + device);
-                OutgoingSearchResponse message =
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Sending matching device type search result for: " + device);
+				}
+				OutgoingSearchResponse message =
                     new OutgoingSearchResponseDeviceType(
                             getInputMessage(),
                             getDescriptorLocation(activeStreamServer, (LocalDevice<?>) device),
@@ -321,16 +339,20 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
     }
 
     protected void sendSearchResponseServiceType(ServiceType serviceType, NetworkAddress activeStreamServer) throws RouterException {
-        log.fine("Responding to service type search: " + serviceType);
-        Collection<Device<?, ?, ?>> devices = getUpnpService().getRegistry().getDevices(serviceType);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Responding to service type search: " + serviceType);
+		}
+		Collection<Device<?, ?, ?>> devices = getUpnpService().getRegistry().getDevices(serviceType);
         for (Device<?, ?, ?> device : devices) {
             if (device instanceof LocalDevice) {
 
                 if (isAdvertisementDisabled((LocalDevice<?>)device))
                     continue;
 
-                log.finer("Sending matching service type search result: " + device);
-                OutgoingSearchResponse message =
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Sending matching service type search result: " + device);
+				}
+				OutgoingSearchResponse message =
                     new OutgoingSearchResponseServiceType(
                             getInputMessage(),
                             getDescriptorLocation(activeStreamServer, (LocalDevice<?>) device),

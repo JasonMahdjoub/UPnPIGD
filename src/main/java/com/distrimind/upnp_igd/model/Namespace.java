@@ -18,6 +18,7 @@ package com.distrimind.upnp_igd.model;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.registry.Registry;
@@ -159,8 +160,10 @@ public class Namespace {
         log.fine("Discovering local resources of device graph");
         Collection<Resource<?>> discoveredResources = device.discoverResources(this);
         for (Resource<?> resource : discoveredResources) {
-            log.finer("Discovered: " + resource);
-            if (!resources.add(resource)) {
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Discovered: " + resource);
+			}
+			if (!resources.add(resource)) {
                 log.finer("Local resource already exists, queueing validation error");
                 errors.add(new ValidationError(
                     getClass(),

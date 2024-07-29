@@ -66,8 +66,10 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
 	protected StreamResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().hasHostHeader()) {
-            log.fine("Ignoring message, missing HOST header: " + getInputMessage());
-            return new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.PRECONDITION_FAILED));
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Ignoring message, missing HOST header: " + getInputMessage());
+			}
+			return new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.PRECONDITION_FAILED));
         }
 
         URI requestedURI = getInputMessage().getOperation().getURI();
@@ -77,8 +79,10 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
         if (foundResource == null) {
             foundResource = onResourceNotFound(requestedURI);
             if (foundResource == null) {
-                log.fine("No local resource found: " + getInputMessage());
-                return null;
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("No local resource found: " + getInputMessage());
+				}
+				return null;
             }
         }
 
@@ -93,8 +97,10 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
 
             if (DeviceDescriptorResource.class.isAssignableFrom(resource.getClass())) {
 
-                log.fine("Found local device matching relative request URI: " + requestedURI);
-                LocalDevice<?> device = (LocalDevice<?>) resource.getModel();
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Found local device matching relative request URI: " + requestedURI);
+				}
+				LocalDevice<?> device = (LocalDevice<?>) resource.getModel();
 
                 DeviceDescriptorBinder deviceDescriptorBinder =
                         getUpnpService().getConfiguration().getDeviceDescriptorBinderUDA10();
@@ -110,8 +116,10 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
             } else if (ServiceDescriptorResource.class.isAssignableFrom(resource.getClass())) {
 
 
-                log.fine("Found local service matching relative request URI: " + requestedURI);
-                LocalService<?> service = (LocalService<?>) resource.getModel();
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Found local service matching relative request URI: " + requestedURI);
+				}
+				LocalService<?> service = (LocalService<?>) resource.getModel();
 
                 ServiceDescriptorBinder serviceDescriptorBinder =
                         getUpnpService().getConfiguration().getServiceDescriptorBinderUDA10();
@@ -123,14 +131,18 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
 
             } else if (IconResource.class.isAssignableFrom(resource.getClass())) {
 
-                log.fine("Found local icon matching relative request URI: " + requestedURI);
-                Icon icon = (Icon) resource.getModel();
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Found local icon matching relative request URI: " + requestedURI);
+				}
+				Icon icon = (Icon) resource.getModel();
                 response = new StreamResponseMessage(icon.getData(), icon.getMimeType());
 
             } else {
 
-                log.fine("Ignoring GET for found local resource: " + resource);
-                return null;
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Ignoring GET for found local resource: " + resource);
+				}
+				return null;
             }
 
         } catch (DescriptorBindingException ex) {

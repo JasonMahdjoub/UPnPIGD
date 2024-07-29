@@ -26,6 +26,7 @@ import com.distrimind.upnp_igd.support.model.DIDLContent;
 import com.distrimind.upnp_igd.support.model.SearchResult;
 import com.distrimind.upnp_igd.support.model.SortCriterion;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -69,9 +70,11 @@ public abstract class Search extends ActionCallback {
                   long firstResult, Long maxResults, SortCriterion... orderBy) {
         super(new ActionInvocation<>(service.getAction("Search")));
 
-        log.fine("Creating browse action for container ID: " + containerId);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating browse action for container ID: " + containerId);
+		}
 
-        getActionInvocation().setInput("ContainerID", containerId);
+		getActionInvocation().setInput("ContainerID", containerId);
         getActionInvocation().setInput("SearchCriteria", searchCriteria);
         getActionInvocation().setInput("Filter", filter);
         getActionInvocation().setInput("StartingIndex", new UnsignedIntegerFourBytes(firstResult));

@@ -28,6 +28,7 @@ import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.model.types.UDN;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -82,14 +83,18 @@ public class ReceivingNotification extends ReceivingAsync<IncomingNotificationRe
 
         UDN udn = getInputMessage().getUDN();
         if (udn == null) {
-            log.fine("Ignoring notification message without UDN: " + getInputMessage());
-            return;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Ignoring notification message without UDN: " + getInputMessage());
+			}
+			return;
         }
 
         RemoteDeviceIdentity rdIdentity = new RemoteDeviceIdentity(getInputMessage());
-        log.fine("Received device notification: " + rdIdentity);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Received device notification: " + rdIdentity);
+		}
 
-        RemoteDevice rd;
+		RemoteDevice rd;
         try {
             rd = new RemoteDevice(rdIdentity);
         } catch (ValidationException ex) {
@@ -102,21 +107,29 @@ public class ReceivingNotification extends ReceivingAsync<IncomingNotificationRe
 
         if (getInputMessage().isAliveMessage()) {
 
-            log.fine("Received device ALIVE advertisement, descriptor location is: " + rdIdentity.getDescriptorURL());
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Received device ALIVE advertisement, descriptor location is: " + rdIdentity.getDescriptorURL());
+			}
 
-            if (rdIdentity.getDescriptorURL() == null) {
-                log.finer("Ignoring message without location URL header: " + getInputMessage());
-                return;
+			if (rdIdentity.getDescriptorURL() == null) {
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Ignoring message without location URL header: " + getInputMessage());
+				}
+				return;
             }
 
             if (rdIdentity.getMaxAgeSeconds() == null) {
-                log.finer("Ignoring message without max-age header: " + getInputMessage());
-                return;
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Ignoring message without max-age header: " + getInputMessage());
+				}
+				return;
             }
 
             if (getUpnpService().getRegistry().update(rdIdentity)) {
-                log.finer("Remote device was already known: " + udn);
-                return;
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Remote device was already known: " + udn);
+				}
+				return;
             }
 
             // Unfortunately, we always have to retrieve the descriptor because at this point we
@@ -130,12 +143,16 @@ public class ReceivingNotification extends ReceivingAsync<IncomingNotificationRe
             log.fine("Received device BYEBYE advertisement");
             boolean removed = getUpnpService().getRegistry().removeDevice(rd);
             if (removed) {
-                log.fine("Removed remote device from registry: " + rd);
-            }
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Removed remote device from registry: " + rd);
+				}
+			}
 
         } else {
-            log.finer("Ignoring unknown notification message: " + getInputMessage());
-        }
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Ignoring unknown notification message: " + getInputMessage());
+			}
+		}
 
     }
 

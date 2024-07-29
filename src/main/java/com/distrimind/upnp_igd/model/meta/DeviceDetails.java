@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -205,13 +206,17 @@ public class DeviceDetails implements Validatable {
         if (getUpc() != null) {
             // This is broken in more than half of the devices I've tested, so let's not even bother with a warning
             if (getUpc().length() != 12) {
-                log.fine("UPnP specification violation, UPC must be 12 digits: " + getUpc());
-            } else {
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("UPnP specification violation, UPC must be 12 digits: " + getUpc());
+				}
+			} else {
                 try {
                     Long.parseLong(getUpc());
                 } catch (NumberFormatException ex) {
-                    log.fine("UPnP specification violation, UPC must be 12 digits all-numeric: " + getUpc());
-                }
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("UPnP specification violation, UPC must be 12 digits all-numeric: " + getUpc());
+					}
+				}
             }
         }
 

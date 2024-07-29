@@ -53,8 +53,10 @@ public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 
 	@Override
 	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
-        log.fine("Reading body of: " + requestMessage);
-        if (log.isLoggable(Level.FINER)) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Reading body of: " + requestMessage);
+		}
+		if (log.isLoggable(Level.FINER)) {
             log.finer("===================================== GENA BODY BEGIN ============================================");
             log.finer(requestMessage.getBody() != null ? requestMessage.getBody().toString() : null);
             log.finer("-===================================== GENA BODY END ============================================");
@@ -124,7 +126,9 @@ public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 		String stateVariableName = element.tagName();
 		for (StateVariable<RemoteService> stateVariable : stateVariables) {
 			if (stateVariable.getName().equals(stateVariableName)) {
-				log.fine("Reading state variable value: " + stateVariableName);
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Reading state variable value: " + stateVariableName);
+				}
 				String value = getAllText(element);
 				message.getStateVariableValues().add(new StateVariableValue<>(stateVariable, value));
 				break;

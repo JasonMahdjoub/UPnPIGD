@@ -58,9 +58,11 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
     @Override
 	public <T> void execute(final ActionInvocation<LocalService<T>> actionInvocation) {
 
-        log.fine("Invoking on local service: " + actionInvocation);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Invoking on local service: " + actionInvocation);
+		}
 
-        final LocalService<T> service = actionInvocation.getAction().getService();
+		final LocalService<T> service = actionInvocation.getAction().getService();
 
         try {
 
@@ -124,15 +126,21 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
      */
     protected <T> Object readOutputArgumentValues(Action<LocalService<T>> action, Object instance) throws Exception {
         List<Object> results = new ArrayList<>(action.getOutputArguments().size());
-        log.fine("Attempting to retrieve output argument values using accessor: " + action.getOutputArguments().size());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Attempting to retrieve output argument values using accessor: " + action.getOutputArguments().size());
+		}
 
-        for (ActionArgument<LocalService<T>> outputArgument : action.getOutputArguments()) {
-            log.finer("Calling accessor method for: " + outputArgument);
+		for (ActionArgument<LocalService<T>> outputArgument : action.getOutputArguments()) {
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Calling accessor method for: " + outputArgument);
+			}
 
-            StateVariableAccessor accessor = getOutputArgumentAccessors().get(outputArgument);
+			StateVariableAccessor accessor = getOutputArgumentAccessors().get(outputArgument);
             if (accessor != null) {
-                log.fine("Calling accessor to read output argument value: " + accessor);
-                results.add(accessor.read(instance));
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Calling accessor to read output argument value: " + accessor);
+				}
+				results.add(accessor.read(instance));
             } else {
                 throw new IllegalStateException("No accessor bound for: " + outputArgument);
             }

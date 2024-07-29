@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -122,8 +123,10 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
                 return;
             // And we pass control to the service, which will (hopefully) start a new thread immediately, so we can
             // continue the receiving thread ASAP
-            log.fine("Received HTTP exchange: " + httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI());
-            router.received(
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Received HTTP exchange: " + httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI());
+			}
+			router.received(
                 new HttpExchangeUpnpStream(router.getProtocolFactory(), httpExchange) {
                     @Override
                     protected Connection createConnection() {

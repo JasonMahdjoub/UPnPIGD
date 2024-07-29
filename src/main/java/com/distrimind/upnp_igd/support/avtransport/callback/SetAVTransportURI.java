@@ -20,6 +20,7 @@ import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -43,8 +44,10 @@ public abstract class SetAVTransportURI extends ActionCallback {
 
     public SetAVTransportURI(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service, String uri, String metadata) {
         super(new ActionInvocation<>(service.getAction("SetAVTransportURI")));
-        log.fine("Creating SetAVTransportURI action for URI: " + uri);
-        getActionInvocation().setInput("InstanceID", instanceId);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating SetAVTransportURI action for URI: " + uri);
+		}
+		getActionInvocation().setInput("InstanceID", instanceId);
         getActionInvocation().setInput("CurrentURI", uri);
         getActionInvocation().setInput("CurrentURIMetaData", metadata);
     }

@@ -102,9 +102,11 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
 
     @Override
 	public void run() {
-        log.fine("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
+		}
 
-        while (true) {
+		while (true) {
 
             try {
                 byte[] buf = new byte[getConfiguration().getMaxDatagramBytes()];
@@ -119,15 +121,17 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
                         );
                 if (receivedOnLocalAddress==null)
                     continue;
-                log.fine(
-                        "UDP datagram received from: "
-                                + datagram.getAddress().getHostAddress()
-                                + ":" + datagram.getPort()
-                                + " on: " + localAddress
-                );
+				if (log.isLoggable(Level.FINE)) {
+					log.fine(
+							"UDP datagram received from: "
+									+ datagram.getAddress().getHostAddress()
+									+ ":" + datagram.getPort()
+									+ " on: " + localAddress
+					);
+				}
 
 
-                IncomingDatagramMessage<?> idm= Common.getValidIncomingDatagramMessage(datagramProcessor.read(localAddress.getAddress(), datagram), networkAddressFactory);
+				IncomingDatagramMessage<?> idm= Common.getValidIncomingDatagramMessage(datagramProcessor.read(localAddress.getAddress(), datagram), networkAddressFactory);
                 if (idm==null)
                     continue;
                 router.received(idm);
@@ -174,8 +178,10 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
         try {
             socket.send(datagram);
         } catch (SocketException ex) {
-            log.fine("Socket closed, aborting datagram send to: " + datagram.getAddress());
-        } catch (RuntimeException ex) {
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Socket closed, aborting datagram send to: " + datagram.getAddress());
+			}
+		} catch (RuntimeException ex) {
             throw ex;
         } catch (Exception ex) {
             log.log(Level.SEVERE, "Exception sending datagram to: " + datagram.getAddress() + ": " + ex, ex);

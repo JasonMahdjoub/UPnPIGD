@@ -23,6 +23,7 @@ import com.distrimind.upnp_igd.model.message.header.MXHeader;
 import com.distrimind.upnp_igd.model.message.header.STAllHeader;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -81,9 +82,11 @@ public class SendingSearch extends SendingAsync {
     @Override
 	protected void execute() throws RouterException {
 
-        log.fine("Executing search for target: " + searchTarget.getString() + " with MX seconds: " + getMxSeconds());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Executing search for target: " + searchTarget.getString() + " with MX seconds: " + getMxSeconds());
+		}
 
-        OutgoingSearchRequest msg = new OutgoingSearchRequest(searchTarget, getMxSeconds());
+		OutgoingSearchRequest msg = new OutgoingSearchRequest(searchTarget, getMxSeconds());
         prepareOutgoingSearchRequest(msg);
 
         for (int i = 0; i < getBulkRepeat(); i++) {
@@ -92,8 +95,10 @@ public class SendingSearch extends SendingAsync {
                 getUpnpService().getRouter().send(msg);
 
                 // UDA 1.0 is silent about this but UDA 1.1 recommends "a few hundred milliseconds"
-                log.finer("Sleeping " + getBulkIntervalMilliseconds() + " milliseconds");
-                Thread.sleep(getBulkIntervalMilliseconds());
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Sleeping " + getBulkIntervalMilliseconds() + " milliseconds");
+				}
+				Thread.sleep(getBulkIntervalMilliseconds());
 
             } catch (InterruptedException ex) {
                 // Interruption means we stop sending search messages, e.g. on shutdown of thread pool

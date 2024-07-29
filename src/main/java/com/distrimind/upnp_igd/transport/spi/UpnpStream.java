@@ -24,6 +24,7 @@ import com.distrimind.upnp_igd.protocol.ProtocolFactory;
 import com.distrimind.upnp_igd.protocol.ReceivingSync;
 import com.distrimind.upnp_igd.util.Exceptions;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -68,9 +69,11 @@ public abstract class UpnpStream implements Runnable {
      * @return The TCP (HTTP) stream response message, or <code>null</code> if a 404 should be sent to the client.
      */
     public StreamResponseMessage process(StreamRequestMessage requestMsg) {
-        log.fine("Processing stream request message: " + requestMsg);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Processing stream request message: " + requestMsg);
+		}
 
-        try {
+		try {
             // Try to get a protocol implementation that matches the request message
             syncProtocol = getProtocolFactory().createReceivingSync(requestMsg);
         } catch (ProtocolCreationException ex) {
@@ -79,8 +82,10 @@ public abstract class UpnpStream implements Runnable {
         }
 
         // Run it
-        log.fine("Running protocol for synchronous message processing: " + syncProtocol);
-        syncProtocol.run();
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Running protocol for synchronous message processing: " + syncProtocol);
+		}
+		syncProtocol.run();
 
         // ... then grab the response
         StreamResponseMessage responseMsg = syncProtocol.getOutputMessage();
@@ -90,8 +95,10 @@ public abstract class UpnpStream implements Runnable {
             log.finer("Protocol did not return any response message");
             return null;
         }
-        log.finer("Protocol returned response: " + responseMsg);
-        return responseMsg;
+		if (log.isLoggable(Level.FINER)) {
+			log.finer("Protocol returned response: " + responseMsg);
+		}
+		return responseMsg;
     }
 
     /**

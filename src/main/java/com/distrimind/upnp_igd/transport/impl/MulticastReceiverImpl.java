@@ -31,6 +31,7 @@ import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -100,8 +101,10 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
                 socket.leaveGroup(multicastAddress, multicastInterface);
                 // Well this doesn't work and I have no idea why I get "java.net.SocketException: Can't assign requested address"
             } catch (Exception ex) {
-                log.fine("Could not leave multicast group: " + ex);
-            }
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Could not leave multicast group: " + ex);
+				}
+			}
             // So... just close it and ignore the log messages
             socket.close();
         }
@@ -110,8 +113,10 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
     @Override
 	public void run() {
 
-        log.fine("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
-        while (true) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
+		}
+		while (true) {
 
             try {
                 byte[] buf = new byte[getConfiguration().getMaxDatagramBytes()];
@@ -127,14 +132,16 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
                         );
                 if (receivedOnLocalAddress==null)
                     continue;
-                log.fine(
-                        "UDP datagram received from: " + datagram.getAddress().getHostAddress() 
-                                + ":" + datagram.getPort()
-                                + " on local interface: " + multicastInterface.getDisplayName()
-                                + " and address: " + receivedOnLocalAddress.getHostAddress()
-                );
+				if (log.isLoggable(Level.FINE)) {
+					log.fine(
+							"UDP datagram received from: " + datagram.getAddress().getHostAddress()
+									+ ":" + datagram.getPort()
+									+ " on local interface: " + multicastInterface.getDisplayName()
+									+ " and address: " + receivedOnLocalAddress.getHostAddress()
+					);
+				}
 
-                IncomingDatagramMessage<?> idm=Common.getValidIncomingDatagramMessage(datagramProcessor.read(receivedOnLocalAddress, datagram),networkAddressFactory);
+				IncomingDatagramMessage<?> idm=Common.getValidIncomingDatagramMessage(datagramProcessor.read(receivedOnLocalAddress, datagram),networkAddressFactory);
                 if (idm==null)
                     continue;
                 router.received(idm);

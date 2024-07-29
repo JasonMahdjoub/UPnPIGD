@@ -75,8 +75,10 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
 
     @Inject
     public ProtocolFactoryImpl(UpnpService upnpService) {
-        log.fine("Creating ProtocolFactory: " + getClass().getName());
-        this.upnpService = upnpService;
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating ProtocolFactory: " + getClass().getName());
+		}
+		this.upnpService = upnpService;
     }
 
     @Override
@@ -146,17 +148,23 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
                     return true;
             }
         } catch (InvalidValueException ex) {
-            log.finest("Not a named service type header value: " + usnHeader);
-        }
-        log.fine("Service advertisement not supported, dropping it: " + usnHeader);
-        return false;
+			if (log.isLoggable(Level.FINEST)) {
+				log.finest("Not a named service type header value: " + usnHeader);
+			}
+		}
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Service advertisement not supported, dropping it: " + usnHeader);
+		}
+		return false;
     }
 
     @Override
 	public ReceivingSync<?, ?> createReceivingSync(StreamRequestMessage message) throws ProtocolCreationException {
-        log.fine("Creating protocol for incoming synchronous: " + message);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating protocol for incoming synchronous: " + message);
+		}
 
-        if (message.getOperation().getMethod().equals(UpnpRequest.Method.GET)) {
+		if (message.getOperation().getMethod().equals(UpnpRequest.Method.GET)) {
 
             return createReceivingRetrieval(message);
 

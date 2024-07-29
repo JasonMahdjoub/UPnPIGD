@@ -59,9 +59,11 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
     @Override
 	public void writeBody(OutgoingEventRequestMessage requestMessage) throws UnsupportedDataException {
-        log.fine("Writing body of: " + requestMessage);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Writing body of: " + requestMessage);
+		}
 
-        try {
+		try {
 
             DocumentBuilderFactory factory = createDocumentBuilderFactory();
             factory.setNamespaceAware(true);
@@ -86,8 +88,10 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     @Override
 	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
 
-        log.fine("Reading body of: " + requestMessage);
-        if (log.isLoggable(Level.FINER)) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Reading body of: " + requestMessage);
+		}
+		if (log.isLoggable(Level.FINER)) {
             log.finer("===================================== GENA BODY BEGIN ============================================");
             log.finer(requestMessage.getBody() != null ? requestMessage.getBody().toString() : "null");
             log.finer("-===================================== GENA BODY END ============================================");
@@ -170,8 +174,10 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
                     String stateVariableName = getUnprefixedNodeName(propertyChild);
                     for (StateVariable<RemoteService> stateVariable : stateVariables) {
                         if (stateVariable.getName().equals(stateVariableName)) {
-                            log.fine("Reading state variable value: " + stateVariableName);
-                            String value = XMLUtil.getTextContent(propertyChild);
+							if (log.isLoggable(Level.FINE)) {
+								log.fine("Reading state variable value: " + stateVariableName);
+							}
+							String value = XMLUtil.getTextContent(propertyChild);
                             message.getStateVariableValues().add(
                                     new StateVariableValue<>(stateVariable, value)
                             );

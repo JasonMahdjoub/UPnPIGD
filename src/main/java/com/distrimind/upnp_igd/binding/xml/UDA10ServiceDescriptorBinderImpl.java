@@ -42,6 +42,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ATTRIBUTE;
@@ -69,9 +70,11 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
 
         try {
-            log.fine("Populating service from XML descriptor: " + undescribedService);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Populating service from XML descriptor: " + undescribedService);
+			}
 
-            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
             documentBuilder.setErrorHandler(this);
@@ -95,9 +98,11 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     @Override
     public <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, Document dom) throws DescriptorBindingException, ValidationException {
         try {
-            log.fine("Populating service from DOM: " + undescribedService);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Populating service from DOM: " + undescribedService);
+			}
 
-            // Read the XML into a mutable descriptor graph
+			// Read the XML into a mutable descriptor graph
             MutableService<D, S> descriptor = new MutableService<>();
 
             hydrateBasic(descriptor, undescribedService);
@@ -160,8 +165,10 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
             } else if (ELEMENT.serviceStateTable.equals(rootChild)) {
                 hydrateServiceStateTableList(descriptor, rootChild);
             } else {
-                log.finer("Ignoring unknown element: " + rootChild.getNodeName());
-            }
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Ignoring unknown element: " + rootChild.getNodeName());
+				}
+			}
         }
 
     }
@@ -355,9 +362,11 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     @Override
 	public String generate(Service<?, ?, ?> service) throws DescriptorBindingException {
         try {
-            log.fine("Generating XML descriptor from service model: " + service);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Generating XML descriptor from service model: " + service);
+			}
 
-            return XMLUtil.documentToString(buildDOM(service));
+			return XMLUtil.documentToString(buildDOM(service));
 
         } catch (Exception ex) {
             throw new DescriptorBindingException("Could not build DOM: " + ex.getMessage(), ex);
@@ -368,9 +377,11 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
 	public Document buildDOM(Service<?, ?, ?> service) throws DescriptorBindingException {
 
         try {
-            log.fine("Generating XML descriptor from service model: " + service);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Generating XML descriptor from service model: " + service);
+			}
 
-            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
             factory.setNamespaceAware(true);
 
             Document d = factory.newDocumentBuilder().newDocument();

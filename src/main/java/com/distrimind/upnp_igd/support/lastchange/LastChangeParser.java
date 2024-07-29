@@ -113,8 +113,10 @@ public abstract class LastChangeParser extends SAXParser {
         }
         parse(new InputSource(new StringReader(xml)));
 
-        log.fine("Parsed event with instances IDs: " + event.getInstanceIDs().size());
-        if (log.isLoggable(Level.FINEST)) {
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Parsed event with instances IDs: " + event.getInstanceIDs().size());
+		}
+		if (log.isLoggable(Level.FINEST)) {
             for (InstanceID instanceID : event.getInstanceIDs()) {
                 log.finest("InstanceID '" + instanceID.getId() + "' has values: " + instanceID.getValues().size());
                 for (EventedValue<?> eventedValue : instanceID.getValues()) {

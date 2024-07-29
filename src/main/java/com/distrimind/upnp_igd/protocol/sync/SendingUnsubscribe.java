@@ -24,6 +24,7 @@ import com.distrimind.upnp_igd.model.gena.RemoteGENASubscription;
 import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.model.message.gena.OutgoingUnsubscribeRequestMessage;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -57,9 +58,11 @@ public class SendingUnsubscribe extends SendingSync<OutgoingUnsubscribeRequestMe
     @Override
 	protected StreamResponseMessage executeSync() throws RouterException {
 
-        log.fine("Sending unsubscribe request: " + getInputMessage());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Sending unsubscribe request: " + getInputMessage());
+		}
 
-        StreamResponseMessage response = null;
+		StreamResponseMessage response = null;
         try {
             response = getUpnpService().getRouter().send(getInputMessage());
             return response;
@@ -78,10 +81,14 @@ public class SendingUnsubscribe extends SendingSync<OutgoingUnsubscribeRequestMe
 						log.fine("Unsubscribe failed, no response received");
 						subscription.end(CancelReason.UNSUBSCRIBE_FAILED, null);
 					} else if (response.getOperation().isFailed()) {
-						log.fine("Unsubscribe failed, response was: " + response);
+						if (log.isLoggable(Level.FINE)) {
+							log.fine("Unsubscribe failed, response was: " + response);
+						}
 						subscription.end(CancelReason.UNSUBSCRIBE_FAILED, response.getOperation());
 					} else {
-						log.fine("Unsubscribe successful, response was: " + response);
+						if (log.isLoggable(Level.FINE)) {
+							log.fine("Unsubscribe successful, response was: " + response);
+						}
 						subscription.end(null, response.getOperation());
 					}
 				}

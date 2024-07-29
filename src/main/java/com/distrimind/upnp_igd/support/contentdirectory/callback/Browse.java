@@ -27,6 +27,7 @@ import com.distrimind.upnp_igd.support.model.BrowseResult;
 import com.distrimind.upnp_igd.support.model.DIDLContent;
 import com.distrimind.upnp_igd.support.model.SortCriterion;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -71,9 +72,11 @@ public abstract class Browse extends ActionCallback {
 
         super(new ActionInvocation<>(service.getAction("Browse")));
 
-        log.fine("Creating browse action for object ID: " + objectID);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating browse action for object ID: " + objectID);
+		}
 
-        getActionInvocation().setInput("ObjectID", objectID);
+		getActionInvocation().setInput("ObjectID", objectID);
         getActionInvocation().setInput("BrowseFlag", flag.toString());
         getActionInvocation().setInput("Filter", filter);
         getActionInvocation().setInput("StartingIndex", new UnsignedIntegerFourBytes(firstResult));

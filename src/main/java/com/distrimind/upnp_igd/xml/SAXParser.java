@@ -35,6 +35,7 @@ import javax.xml.validation.SchemaFactory;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -199,7 +200,9 @@ public class SAXParser {
 								 Attributes attributes) throws SAXException {
 			this.characters = new StringBuilder();
 			this.attributes = new AttributesImpl(attributes); // see https://docstore.mik.ua/orelly/xml/sax2/ch05_01.htm, section 5.1.1
-			log.finer(getClass().getSimpleName() + " starting: " + localName);
+			if (log.isLoggable(Level.FINER)) {
+				log.finer(getClass().getSimpleName() + " starting: " + localName);
+			}
 		}
 
 		@Override
@@ -212,12 +215,16 @@ public class SAXParser {
 							   String qName) throws SAXException {
 
 			if (isLastElement(uri, localName, qName)) {
-				log.finer(getClass().getSimpleName() + ": last element, switching to parent: " + localName);
+				if (log.isLoggable(Level.FINER)) {
+					log.finer(getClass().getSimpleName() + ": last element, switching to parent: " + localName);
+				}
 				switchToParent();
 				return;
 			}
 
-			log.finer(getClass().getSimpleName() + " ending: " + localName);
+			if (log.isLoggable(Level.FINER)) {
+				log.finer(getClass().getSimpleName() + " ending: " + localName);
+			}
 		}
 
 		protected boolean isLastElement(String uri, String localName, String qName) {

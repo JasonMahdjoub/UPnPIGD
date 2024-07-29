@@ -57,6 +57,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -240,13 +241,17 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 	public void validate(URL url) throws ParserException {
 		if (url == null) throw new IllegalArgumentException("Can't validate null URL");
-		log.fine("Validating XML of URL: " + url);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Validating XML of URL: " + url);
+		}
 		validate(new StreamSource(url.toString()));
 	}
 
 	public void validate(String string) throws ParserException {
 		if (string == null) throw new IllegalArgumentException("Can't validate null string");
-		log.fine("Validating XML string characters: " + string.length());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Validating XML string characters: " + string.length());
+		}
 		validate(new SAXSource(new InputSource(new StringReader(string))));
 	}
 
@@ -296,7 +301,9 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 	public Object getXPathResult(Node context, XPath xpath, String expr, QName result) {
 		try {
-			log.fine("Evaluating xpath query: " + expr);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Evaluating xpath query: " + expr);
+			}
 			return xpath.evaluate(expr, context, result);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);

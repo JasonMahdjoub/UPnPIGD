@@ -26,6 +26,7 @@ import com.distrimind.upnp_igd.model.message.gena.OutgoingSubscribeRequestMessag
 import com.distrimind.upnp_igd.UpnpService;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -80,9 +81,11 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
             return null;
         }
 
-        log.fine("Sending subscription request: " + getInputMessage());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Sending subscription request: " + getInputMessage());
+		}
 
-        try {
+		try {
             // register this pending Subscription to bloc if the notification is received before the
             // registration result.
             getUpnpService().getRegistry().registerPendingRemoteSubscription(subscription);
@@ -103,8 +106,10 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
             final IncomingSubscribeResponseMessage responseMessage = new IncomingSubscribeResponseMessage(response);
 
             if (response.getOperation().isFailed()) {
-                log.fine("Subscription failed, response was: " + responseMessage);
-                getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Subscription failed, response was: " + responseMessage);
+				}
+				getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
 						() -> subscription.fail(responseMessage.getOperation())
 				);
             } else if (!responseMessage.isValidHeaders()) {
@@ -114,8 +119,10 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
 				);
             } else {
 
-                log.fine("Subscription established, adding to registry, response was: " + response);
-                subscription.setSubscriptionId(responseMessage.getSubscriptionId());
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Subscription established, adding to registry, response was: " + response);
+				}
+				subscription.setSubscriptionId(responseMessage.getSubscriptionId());
                 subscription.setActualSubscriptionDurationSeconds(responseMessage.getSubscriptionDurationSeconds());
 
                 getUpnpService().getRegistry().addRemoteSubscription(subscription);

@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -68,15 +69,19 @@ public class MethodActionExecutor extends AbstractActionExecutor {
 
         // Simple case: no output arguments
         if (!actionInvocation.getAction().hasOutputArguments()) {
-            log.fine("Calling local service method with no output arguments: " + method);
-            Reflections.invoke(method, serviceImpl, inputArgumentValues);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Calling local service method with no output arguments: " + method);
+			}
+			Reflections.invoke(method, serviceImpl, inputArgumentValues);
             return;
         }
 
         boolean isVoid = method.getReturnType().equals(Void.TYPE);
 
-        log.fine("Calling local service method with output arguments: " + method);
-        Object result;
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Calling local service method with output arguments: " + method);
+		}
+		Object result;
         boolean isArrayResultProcessed = true;
         if (isVoid) {
 
@@ -101,8 +106,10 @@ public class MethodActionExecutor extends AbstractActionExecutor {
 
         if (isArrayResultProcessed && result instanceof List) {
             @SuppressWarnings("unchecked") List<Object> results = (List<Object>) result;
-            log.fine("Accessors returned Object[], setting output argument values: " + results.size());
-            for (int i = 0; i < outputArgs.size(); i++) {
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Accessors returned Object[], setting output argument values: " + results.size());
+			}
+			for (int i = 0; i < outputArgs.size(); i++) {
                 setOutputArgumentValue(actionInvocation, outputArgs.get(i), results.get(i));
             }
         } else if (outputArgs.size() == 1) {
@@ -157,8 +164,10 @@ public class MethodActionExecutor extends AbstractActionExecutor {
             if (!inputCallValueString.isEmpty() && service.isStringConvertibleType(methodParameterType) && !methodParameterType.isEnum()) {
                 try {
                     Constructor<?> ctor = methodParameterType.getConstructor(String.class);
-                    log.finer("Creating new input argument value instance with String.class constructor of type: " + methodParameterType);
-                    Object o = ctor.newInstance(inputCallValueString);
+					if (log.isLoggable(Level.FINER)) {
+						log.finer("Creating new input argument value instance with String.class constructor of type: " + methodParameterType);
+					}
+					Object o = ctor.newInstance(inputCallValueString);
                     values.add(i++, o);
                 } catch (Exception ex) {
                     log.warning("Error preparing action method call: " + method);
@@ -177,8 +186,10 @@ public class MethodActionExecutor extends AbstractActionExecutor {
             && RemoteClientInfo.class.isAssignableFrom(method.getParameterTypes()[method.getParameterTypes().length-1])) {
             if (actionInvocation instanceof RemoteActionInvocation &&
                 ((RemoteActionInvocation<?>)actionInvocation).getRemoteClientInfo() != null) {
-                log.finer("Providing remote client info as last action method input argument: " + method);
-                values.add(i, ((RemoteActionInvocation<?>)actionInvocation).getRemoteClientInfo());
+				if (log.isLoggable(Level.FINER)) {
+					log.finer("Providing remote client info as last action method input argument: " + method);
+				}
+				values.add(i, ((RemoteActionInvocation<?>)actionInvocation).getRemoteClientInfo());
             } else {
                 // Local call, no client info available
                 values.add(i, null);

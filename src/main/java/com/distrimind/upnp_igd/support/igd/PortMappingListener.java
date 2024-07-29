@@ -30,6 +30,7 @@ import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.support.model.PortMapping;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -92,16 +93,20 @@ public class PortMappingListener extends DefaultRegistryListener {
         Service<?, ?, ?> connectionService;
         if ((connectionService = discoverConnectionService(device)) == null) return;
 
-        log.fine("Activating port mappings on: " + connectionService);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Activating port mappings on: " + connectionService);
+		}
 
-        final List<PortMapping> activeForService = new ArrayList<>();
+		final List<PortMapping> activeForService = new ArrayList<>();
         for (final PortMapping pm : portMappings) {
             new PortMappingAdd(connectionService, registry.getUpnpService().getControlPoint(), pm) {
 
                 @Override
                 public void success(ActionInvocation<?> invocation) {
-                    log.fine("Port mapping added: " + pm);
-                    activeForService.add(pm);
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Port mapping added: " + pm);
+					}
+					activeForService.add(pm);
                 }
 
                 @Override
@@ -138,13 +143,17 @@ public class PortMappingListener extends DefaultRegistryListener {
             final Iterator<PortMapping> it = activeEntry.getValue().iterator();
             while (it.hasNext()) {
                 final PortMapping pm = it.next();
-                log.fine("Trying to delete port mapping on IGD: " + pm);
-                new PortMappingDelete(activeEntry.getKey(), registry.getUpnpService().getControlPoint(), pm) {
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Trying to delete port mapping on IGD: " + pm);
+				}
+				new PortMappingDelete(activeEntry.getKey(), registry.getUpnpService().getControlPoint(), pm) {
 
                     @Override
                     public void success(ActionInvocation<?> invocation) {
-                        log.fine("Port mapping deleted: " + pm);
-                        it.remove();
+						if (log.isLoggable(Level.FINE)) {
+							log.fine("Port mapping deleted: " + pm);
+						}
+						it.remove();
                     }
 
                     @Override
@@ -165,19 +174,25 @@ public class PortMappingListener extends DefaultRegistryListener {
 
         Collection<? extends Device<?, ?, ?>> connectionDevices = device.findDevices(CONNECTION_DEVICE_TYPE);
         if (connectionDevices.isEmpty()) {
-            log.fine("IGD doesn't support '" + CONNECTION_DEVICE_TYPE + "': " + device);
-            return null;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("IGD doesn't support '" + CONNECTION_DEVICE_TYPE + "': " + device);
+			}
+			return null;
         }
 
         Device<?, ?, ?> connectionDevice = connectionDevices.iterator().next();
-        log.fine("Using first discovered WAN connection device: " + connectionDevice);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Using first discovered WAN connection device: " + connectionDevice);
+		}
 
-        Service<?, ?, ?> ipConnectionService = connectionDevice.findService(IP_SERVICE_TYPE);
+		Service<?, ?, ?> ipConnectionService = connectionDevice.findService(IP_SERVICE_TYPE);
         Service<?, ?, ?> pppConnectionService = connectionDevice.findService(PPP_SERVICE_TYPE);
 
         if (ipConnectionService == null && pppConnectionService == null) {
-            log.fine("IGD doesn't support IP or PPP WAN connection service: " + device);
-        }
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("IGD doesn't support IP or PPP WAN connection service: " + device);
+			}
+		}
 
         return ipConnectionService != null ? ipConnectionService : pppConnectionService;
     }

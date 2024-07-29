@@ -25,6 +25,7 @@ import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.model.message.gena.IncomingSubscribeResponseMessage;
 import com.distrimind.upnp_igd.model.message.gena.OutgoingRenewalRequestMessage;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -58,9 +59,11 @@ public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, I
 
     @Override
 	protected IncomingSubscribeResponseMessage executeSync() throws RouterException {
-        log.fine("Sending subscription renewal request: " + getInputMessage());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Sending subscription renewal request: " + getInputMessage());
+		}
 
-        StreamResponseMessage response;
+		StreamResponseMessage response;
         try {
             response = getUpnpService().getRouter().send(getInputMessage());
         } catch (RouterException ex) {
@@ -76,8 +79,10 @@ public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, I
         final IncomingSubscribeResponseMessage responseMessage = new IncomingSubscribeResponseMessage(response);
 
         if (response.getOperation().isFailed()) {
-            log.fine("Subscription renewal failed, response was: " + response);
-            getUpnpService().getRegistry().removeRemoteSubscription(subscription);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Subscription renewal failed, response was: " + response);
+			}
+			getUpnpService().getRegistry().removeRemoteSubscription(subscription);
             getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
 					() -> subscription.end(CancelReason.RENEWAL_FAILED,responseMessage.getOperation())
 			);
@@ -87,8 +92,10 @@ public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, I
 					() -> subscription.end(CancelReason.RENEWAL_FAILED, responseMessage.getOperation())
 			);
         } else {
-            log.fine("Subscription renewed, updating in registry, response was: " + response);
-            subscription.setActualSubscriptionDurationSeconds(responseMessage.getSubscriptionDurationSeconds());
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Subscription renewed, updating in registry, response was: " + response);
+			}
+			subscription.setActualSubscriptionDurationSeconds(responseMessage.getSubscriptionDurationSeconds());
             getUpnpService().getRegistry().updateRemoteSubscription(subscription);
         }
 

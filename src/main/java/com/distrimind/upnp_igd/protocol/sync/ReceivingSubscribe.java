@@ -31,6 +31,7 @@ import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -73,20 +74,26 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
         );
 
         if (resource == null) {
-            log.fine("No local resource found: " + getInputMessage());
-            return null;
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("No local resource found: " + getInputMessage());
+			}
+			return null;
         }
 
-        log.fine("Found local event subscription matching relative request URI: " + getInputMessage().getUri());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Found local event subscription matching relative request URI: " + getInputMessage().getUri());
+		}
 
-        IncomingSubscribeRequestMessage requestMessage =
+		IncomingSubscribeRequestMessage requestMessage =
                 new IncomingSubscribeRequestMessage(getInputMessage(), resource.getModel());
 
         // Error conditions UDA 1.0 section 4.1.1 and 4.1.2
         if (requestMessage.getSubscriptionId() != null &&
                 (requestMessage.hasNotificationHeader() || requestMessage.getCallbackURLs() != null)) {
-            log.fine("Subscription ID and NT or Callback in subscribe request: " + getInputMessage());
-            return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.BAD_REQUEST);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Subscription ID and NT or Callback in subscribe request: " + getInputMessage());
+			}
+			return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.BAD_REQUEST);
         }
 
         if (requestMessage.getSubscriptionId() != null) {
@@ -94,8 +101,10 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
         } else if (requestMessage.hasNotificationHeader() && requestMessage.getCallbackURLs() != null){
             return processNewSubscription(resource.getModel(), requestMessage);
         } else {
-            log.fine("No subscription ID, no NT or Callback, neither subscription or renewal: " + getInputMessage());
-            return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("No subscription ID, no NT or Callback, neither subscription or renewal: " + getInputMessage());
+			}
+			return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
         }
 
     }
@@ -107,17 +116,23 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
 
         // Error conditions UDA 1.0 section 4.1.1 and 4.1.2
         if (subscription == null) {
-            log.fine("Invalid subscription ID for renewal request: " + getInputMessage());
-            return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Invalid subscription ID for renewal request: " + getInputMessage());
+			}
+			return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
         }
 
-        log.fine("Renewing subscription: " + subscription);
-        subscription.setSubscriptionDuration(requestMessage.getRequestedTimeoutSeconds());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Renewing subscription: " + subscription);
+		}
+		subscription.setSubscriptionDuration(requestMessage.getRequestedTimeoutSeconds());
         if (getUpnpService().getRegistry().updateLocalSubscription(subscription)) {
             return new OutgoingSubscribeResponseMessage(subscription);
         } else {
-            log.fine("Subscription went away before it could be renewed: " + getInputMessage());
-            return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Subscription went away before it could be renewed: " + getInputMessage());
+			}
+			return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
         }
     }
 
@@ -127,13 +142,17 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
 
         // Error conditions UDA 1.0 section 4.1.1 and 4.1.2
         if (callbackURLs == null || callbackURLs.isEmpty()) {
-            log.fine("Missing or invalid Callback URLs in subscribe request: " + getInputMessage());
-            return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Missing or invalid Callback URLs in subscribe request: " + getInputMessage());
+			}
+			return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
         }
 
         if (!requestMessage.hasNotificationHeader()) {
-            log.fine("Missing or invalid NT header in subscribe request: " + getInputMessage());
-            return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Missing or invalid NT header in subscribe request: " + getInputMessage());
+			}
+			return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
         }
 
         Integer timeoutSeconds; 
@@ -166,8 +185,10 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
             return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
         }
 
-        log.fine("Adding subscription to registry: " + subscription);
-        getUpnpService().getRegistry().addLocalSubscription(subscription);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Adding subscription to registry: " + subscription);
+		}
+		getUpnpService().getRegistry().addLocalSubscription(subscription);
 
         log.fine("Returning subscription response, waiting to send initial event");
         return new OutgoingSubscribeResponseMessage(subscription);
@@ -199,17 +220,23 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
             if (responseMessage == null) {
                 log.fine("Reason: No response at all from subscriber");
             } else {
-                log.fine("Reason: " + responseMessage.getOperation());
-            }
-            log.fine("Removing subscription from registry: " + subscription);
-            getUpnpService().getRegistry().removeLocalSubscription(subscription);
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Reason: " + responseMessage.getOperation());
+				}
+			}
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Removing subscription from registry: " + subscription);
+			}
+			getUpnpService().getRegistry().removeLocalSubscription(subscription);
         }
     }
 
     @Override
     public void responseException(Throwable t) {
         if (subscription == null) return; // Nothing to do, we didn't get that far
-        log.fine("Response could not be send to subscriber, removing local GENA subscription: " + subscription);
-        getUpnpService().getRegistry().removeLocalSubscription(subscription);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Response could not be send to subscriber, removing local GENA subscription: " + subscription);
+		}
+		getUpnpService().getRegistry().removeLocalSubscription(subscription);
     }
 }

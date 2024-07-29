@@ -168,8 +168,10 @@ public abstract class SubscriptionCallback implements Runnable {
                         @Override
 						public void eventReceived() {
                             synchronized (SubscriptionCallback.this) {
-                                log.fine("Local service state updated, notifying callback, sequence is: " + getCurrentSequence());
-                                SubscriptionCallback.this.eventReceived(this);
+								if (log.isLoggable(Level.FINE)) {
+									log.fine("Local service state updated, notifying callback, sequence is: " + getCurrentSequence());
+								}
+								SubscriptionCallback.this.eventReceived(this);
                                 incrementSequence();
                             }
                         }
@@ -181,16 +183,20 @@ public abstract class SubscriptionCallback implements Runnable {
             log.fine("Notifying subscription callback of local subscription availablity");
             localSubscription.establish();
 
-            log.fine("Simulating first initial event for local subscription callback, sequence: " + localSubscription.getCurrentSequence());
-            eventReceived(localSubscription);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Simulating first initial event for local subscription callback, sequence: " + localSubscription.getCurrentSequence());
+			}
+			eventReceived(localSubscription);
             localSubscription.incrementSequence();
 
             log.fine("Starting to monitor state changes of local service");
             localSubscription.registerOnService();
 
         } catch (Exception ex) {
-            log.fine("Local callback creation failed: " + ex);
-            log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Local callback creation failed: " + ex);
+			}
+			log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
             if (localSubscription != null)
                 getControlPoint().getRegistry().removeLocalSubscription(localSubscription);
             failed(localSubscription, null, ex);
@@ -267,14 +273,18 @@ public abstract class SubscriptionCallback implements Runnable {
     }
 
     private void endLocalSubscription(LocalGENASubscription<?> subscription) {
-        log.fine("Removing local subscription and ending it in callback: " + subscription);
-        getControlPoint().getRegistry().removeLocalSubscription(subscription);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Removing local subscription and ending it in callback: " + subscription);
+		}
+		getControlPoint().getRegistry().removeLocalSubscription(subscription);
         subscription.end(null); // No reason, on controlpoint request
     }
 
     private void endRemoteSubscription(RemoteGENASubscription subscription) {
-        log.fine("Ending remote subscription: " + subscription);
-        getControlPoint().getConfiguration().getSyncProtocolExecutorService().execute(
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Ending remote subscription: " + subscription);
+		}
+		getControlPoint().getConfiguration().getSyncProtocolExecutorService().execute(
                 getControlPoint().getProtocolFactory().createSendingUnsubscribe(subscription)
         );
     }

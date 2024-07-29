@@ -128,14 +128,18 @@ public abstract class DLNAAttribute<T> {
         for (int i = 0; i < type.getAttributeTypes().size() && attr == null; i++) {
             Class<? extends DLNAAttribute<?>> attributeClass = type.getAttributeTypes().get(i);
             try {
-                log.finest("Trying to parse DLNA '" + type + "' with class: " + attributeClass.getSimpleName());
-                attr = attributeClass.getConstructor().newInstance();
+				if (log.isLoggable(Level.FINEST)) {
+					log.finest("Trying to parse DLNA '" + type + "' with class: " + attributeClass.getSimpleName());
+				}
+				attr = attributeClass.getConstructor().newInstance();
                 if (attributeValue != null) {
                     attr.setString(attributeValue, contentFormat);
                 }
             } catch (InvalidDLNAProtocolAttributeException ex) {
-                log.finest("Invalid DLNA attribute value for tested type: " + attributeClass.getSimpleName() + " - " + ex.getMessage());
-                attr = null;
+				if (log.isLoggable(Level.FINEST)) {
+					log.finest("Invalid DLNA attribute value for tested type: " + attributeClass.getSimpleName() + " - " + ex.getMessage());
+				}
+				attr = null;
             } catch (Exception ex) {
                 log.severe("Error instantiating DLNA attribute of type '" + type + "' with value: " + attributeValue);
                 log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));

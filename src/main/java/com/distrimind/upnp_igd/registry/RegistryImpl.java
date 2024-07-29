@@ -68,9 +68,11 @@ public class RegistryImpl implements Registry {
      */
     @Inject
     public RegistryImpl(UpnpService upnpService) {
-        log.fine("Creating Registry: " + getClass().getName());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating Registry: " + getClass().getName());
+		}
 
-        this.upnpService = upnpService;
+		this.upnpService = upnpService;
 
         log.fine("Starting registry background maintenance...");
         registryMaintainer = createRegistryMaintainer();
@@ -131,8 +133,10 @@ public class RegistryImpl implements Registry {
 	synchronized public boolean notifyDiscoveryStart(final RemoteDevice device) {
         // Exit if we have it already, this is atomic inside this method, finally
         if (getUpnpService().getRegistry().getRemoteDevice(device.getIdentity().getUdn(), true) != null) {
-            log.finer("Not notifying listeners, already registered: " + device);
-            return false;
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Not notifying listeners, already registered: " + device);
+			}
+			return false;
         }
         for (final RegistryListener listener : getListeners()) {
             getConfiguration().getRegistryListenerExecutor().execute(
@@ -419,8 +423,10 @@ public class RegistryImpl implements Registry {
         
         // Final cleanup run to flush out pending executions which might
         // not have been caught by the maintainer before it stopped
-        log.finest("Executing final pending operations on shutdown: " + pendingExecutions.size());
-        runPendingExecutions(false);
+		if (log.isLoggable(Level.FINEST)) {
+			log.finest("Executing final pending operations on shutdown: " + pendingExecutions.size());
+		}
+		runPendingExecutions(false);
 
         for (RegistryListener listener : registryListeners) {
             listener.beforeShutdown(this);

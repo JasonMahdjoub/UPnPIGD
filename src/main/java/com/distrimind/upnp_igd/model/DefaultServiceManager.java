@@ -168,8 +168,10 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
 
                 StateVariable<LocalService<T>> stateVariable = getService().getStateVariable(variableName);
                 if (stateVariable == null || !stateVariable.getEventDetails().isSendEvents()) {
-                    log.fine("Ignoring unknown or non-evented state variable: " + variableName);
-                    continue;
+					if (log.isLoggable(Level.FINE)) {
+						log.fine("Ignoring unknown or non-evented state variable: " + variableName);
+					}
+					continue;
                 }
 
                 StateVariableAccessor accessor = getService().getAccessor(stateVariable);
@@ -208,8 +210,10 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
             // Use this constructor if possible
             return serviceClass.getConstructor(LocalService.class).newInstance(getService());
         } catch (NoSuchMethodException ex) {
-            log.fine("Creating new service implementation instance with no-arg constructor: " + serviceClass.getName());
-            return serviceClass.getConstructor().newInstance();
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Creating new service implementation instance with no-arg constructor: " + serviceClass.getName());
+			}
+			return serviceClass.getConstructor().newInstance();
         }
     }
 
@@ -217,11 +221,15 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
         Method m;
         if ((m = Reflections.getGetterMethod(serviceImpl.getClass(), "propertyChangeSupport")) != null &&
             PropertyChangeSupport.class.isAssignableFrom(m.getReturnType())) {
-            log.fine("Service implementation instance offers PropertyChangeSupport, using that: " + serviceImpl.getClass().getName());
-            return (PropertyChangeSupport) m.invoke(serviceImpl);
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Service implementation instance offers PropertyChangeSupport, using that: " + serviceImpl.getClass().getName());
+			}
+			return (PropertyChangeSupport) m.invoke(serviceImpl);
         }
-        log.fine("Creating new PropertyChangeSupport for service implementation: " + serviceImpl.getClass().getName());
-        return new PropertyChangeSupport(serviceImpl);
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Creating new PropertyChangeSupport for service implementation: " + serviceImpl.getClass().getName());
+		}
+		return new PropertyChangeSupport(serviceImpl);
     }
 
     protected PropertyChangeListener createPropertyChangeListener(T serviceImpl) throws Exception {
@@ -241,15 +249,19 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
 
         @Override
 		public void propertyChange(PropertyChangeEvent e) {
-            log.finer("Property change event on local service: " + e.getPropertyName());
+			if (log.isLoggable(Level.FINER)) {
+				log.finer("Property change event on local service: " + e.getPropertyName());
+			}
 
-            // Prevent recursion
+			// Prevent recursion
             if (e.getPropertyName().equals(EVENTED_STATE_VARIABLES)) return;
 
             String[] variableNames = ModelUtil.fromCommaSeparatedList(e.getPropertyName());
-            log.fine("Changed variable names: " + Arrays.toString(variableNames));
+			if (log.isLoggable(Level.FINE)) {
+				log.fine("Changed variable names: " + Arrays.toString(variableNames));
+			}
 
-            try {
+			try {
                 Collection<StateVariableValue<LocalService<T>>> currentValues = getCurrentState(variableNames);
 
                 if (!currentValues.isEmpty()) {
