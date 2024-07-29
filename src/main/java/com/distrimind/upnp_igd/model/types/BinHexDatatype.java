@@ -25,11 +25,13 @@ public class BinHexDatatype extends AbstractDatatype<byte[]> {
     public BinHexDatatype() {
     }
 
-    public Class<byte[]> getValueType() {
+    @Override
+	public Class<byte[]> getValueType() {
         return byte[].class;
     }
 
-    public byte[] valueOf(String s) throws InvalidValueException {
+    @Override
+	public byte[] valueOf(String s) throws InvalidValueException {
         if (s.isEmpty()) return null;
         try {
             return HexBin.stringToBytes(s);

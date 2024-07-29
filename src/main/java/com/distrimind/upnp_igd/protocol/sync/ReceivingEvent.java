@@ -50,7 +50,8 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
         super(upnpService, inputMessage);
     }
 
-    protected OutgoingEventResponseMessage executeSync() throws RouterException {
+    @Override
+	protected OutgoingEventResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().isContentTypeTextUDA()) {
             log.warning("Received without or with invalid Content-Type: " + getInputMessage());

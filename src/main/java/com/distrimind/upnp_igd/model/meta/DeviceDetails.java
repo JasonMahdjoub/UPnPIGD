@@ -198,7 +198,8 @@ public class DeviceDetails implements Validatable {
         return secProductCaps;
     }
 
-    public List<ValidationError> validate() {
+    @Override
+	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
         if (getUpc() != null) {

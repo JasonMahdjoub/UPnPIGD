@@ -45,7 +45,8 @@ public class ContentTreeExpandListener implements TreeWillExpandListener {
         this.actionCreator = actionCreator;
     }
 
-    public void treeWillExpand(final TreeExpansionEvent e) throws ExpandVetoException {
+    @Override
+	public void treeWillExpand(final TreeExpansionEvent e) throws ExpandVetoException {
         final DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
         // Remove all "old" children such as the loading/progress messages
@@ -60,7 +61,8 @@ public class ContentTreeExpandListener implements TreeWillExpandListener {
         controlPoint.execute(callback);
     }
 
-    public void treeWillCollapse(TreeExpansionEvent e) throws ExpandVetoException {
+    @Override
+	public void treeWillCollapse(TreeExpansionEvent e) throws ExpandVetoException {
 
     }
 

@@ -31,11 +31,13 @@ import com.distrimind.upnp_igd.model.meta.RemoteDevice;
  */
 public class DefaultRegistryListener implements RegistryListener {
 
-    public void remoteDeviceDiscoveryStarted(Registry registry, RemoteDevice device) {
+    @Override
+	public void remoteDeviceDiscoveryStarted(Registry registry, RemoteDevice device) {
 
     }
 
-    public void remoteDeviceDiscoveryFailed(Registry registry, RemoteDevice device, Exception ex) {
+    @Override
+	public void remoteDeviceDiscoveryFailed(Registry registry, RemoteDevice device, Exception ex) {
 
     }
 
@@ -45,11 +47,13 @@ public class DefaultRegistryListener implements RegistryListener {
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   A validated and hydrated device metadata graph, with complete service metadata.
      */
-    public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
+    @Override
+	public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
         deviceAdded(registry, device);
     }
 
-    public void remoteDeviceUpdated(Registry registry, RemoteDevice device) {
+    @Override
+	public void remoteDeviceUpdated(Registry registry, RemoteDevice device) {
 
     }
 
@@ -59,7 +63,8 @@ public class DefaultRegistryListener implements RegistryListener {
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   A validated and hydrated device metadata graph, with complete service metadata.
      */
-    public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
+    @Override
+	public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
         deviceRemoved(registry, device);
     }
 
@@ -69,7 +74,8 @@ public class DefaultRegistryListener implements RegistryListener {
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   The local device added to the {@link Registry}.
      */
-    public void localDeviceAdded(Registry registry, LocalDevice<?> device) {
+    @Override
+	public void localDeviceAdded(Registry registry, LocalDevice<?> device) {
         deviceAdded(registry, device);
     }
 
@@ -79,7 +85,8 @@ public class DefaultRegistryListener implements RegistryListener {
      * @param registry The Cling registry of all devices and services know to the local UPnP stack.
      * @param device   The local device removed from the {@link Registry}.
      */
-    public void localDeviceRemoved(Registry registry, LocalDevice<?> device) {
+    @Override
+	public void localDeviceRemoved(Registry registry, LocalDevice<?> device) {
         deviceRemoved(registry, device);
     }
 
@@ -91,11 +98,13 @@ public class DefaultRegistryListener implements RegistryListener {
 
     }
 
-    public void beforeShutdown(Registry registry) {
+    @Override
+	public void beforeShutdown(Registry registry) {
 
     }
 
-    public void afterShutdown() {
+    @Override
+	public void afterShutdown() {
 
     }
 }

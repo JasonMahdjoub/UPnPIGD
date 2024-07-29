@@ -73,7 +73,8 @@ public class StateVariable<S extends Service<?, ?, ?>> implements Validatable {
         this.service = service;
     }
 
-    public List<ValidationError> validate() {
+    @Override
+	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
         if (getName() == null || getName().isEmpty()) {

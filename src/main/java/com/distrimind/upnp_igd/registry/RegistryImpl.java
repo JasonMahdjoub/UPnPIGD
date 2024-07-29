@@ -79,15 +79,18 @@ public class RegistryImpl implements Registry {
         }
     }
 
-    public UpnpService getUpnpService() {
+    @Override
+	public UpnpService getUpnpService() {
         return upnpService;
     }
 
-    public UpnpServiceConfiguration getConfiguration() {
+    @Override
+	public UpnpServiceConfiguration getConfiguration() {
         return getUpnpService().getConfiguration();
     }
 
-    public ProtocolFactory getProtocolFactory() {
+    @Override
+	public ProtocolFactory getProtocolFactory() {
         return getUpnpService().getProtocolFactory();
     }
 
@@ -109,19 +112,23 @@ public class RegistryImpl implements Registry {
 
     // #################################################################################################
 
-    synchronized public void addListener(RegistryListener listener) {
+    @Override
+	synchronized public void addListener(RegistryListener listener) {
         registryListeners.add(listener);
     }
 
-    synchronized public void removeListener(RegistryListener listener) {
+    @Override
+	synchronized public void removeListener(RegistryListener listener) {
         registryListeners.remove(listener);
     }
 
-    synchronized public Collection<RegistryListener> getListeners() {
+    @Override
+	synchronized public Collection<RegistryListener> getListeners() {
         return Collections.unmodifiableCollection(registryListeners);
     }
 
-    synchronized public boolean notifyDiscoveryStart(final RemoteDevice device) {
+    @Override
+	synchronized public boolean notifyDiscoveryStart(final RemoteDevice device) {
         // Exit if we have it already, this is atomic inside this method, finally
         if (getUpnpService().getRegistry().getRemoteDevice(device.getIdentity().getUdn(), true) != null) {
             log.finer("Not notifying listeners, already registered: " + device);
@@ -135,7 +142,8 @@ public class RegistryImpl implements Registry {
         return true;
     }
 
-    synchronized public void notifyDiscoveryFailure(final RemoteDevice device, final Exception ex) {
+    @Override
+	synchronized public void notifyDiscoveryFailure(final RemoteDevice device, final Exception ex) {
         for (final RegistryListener listener : getListeners()) {
             getConfiguration().getRegistryListenerExecutor().execute(
 					() -> listener.remoteDeviceDiscoveryFailed(RegistryImpl.this, device, ex)
@@ -145,46 +153,57 @@ public class RegistryImpl implements Registry {
 
     // #################################################################################################
 
-    synchronized public void addDevice(LocalDevice<?> localDevice) {
+    @Override
+	synchronized public void addDevice(LocalDevice<?> localDevice) {
         localItems.add(localDevice);
     }
 
-    synchronized public void addDevice(LocalDevice<?> localDevice, DiscoveryOptions options) {
+    @Override
+	synchronized public void addDevice(LocalDevice<?> localDevice, DiscoveryOptions options) {
         localItems.add(localDevice, options);
     }
 
-    synchronized public void setDiscoveryOptions(UDN udn, DiscoveryOptions options) {
+    @Override
+	synchronized public void setDiscoveryOptions(UDN udn, DiscoveryOptions options) {
         localItems.setDiscoveryOptions(udn, options);
     }
 
-    synchronized public DiscoveryOptions getDiscoveryOptions(UDN udn) {
+    @Override
+	synchronized public DiscoveryOptions getDiscoveryOptions(UDN udn) {
         return localItems.getDiscoveryOptions(udn);
     }
 
-    synchronized public void addDevice(RemoteDevice remoteDevice) {
+    @Override
+	synchronized public void addDevice(RemoteDevice remoteDevice) {
         remoteItems.add(remoteDevice);
     }
 
-    synchronized public boolean update(RemoteDeviceIdentity rdIdentity) {
+    @Override
+	synchronized public boolean update(RemoteDeviceIdentity rdIdentity) {
         return remoteItems.update(rdIdentity);
     }
 
-    synchronized public boolean removeDevice(LocalDevice<?> localDevice) {
+    @Override
+	synchronized public boolean removeDevice(LocalDevice<?> localDevice) {
         return localItems.remove(localDevice);
     }
 
-    synchronized public boolean removeDevice(RemoteDevice remoteDevice) {
+    @Override
+	synchronized public boolean removeDevice(RemoteDevice remoteDevice) {
         return remoteItems.remove(remoteDevice);
     }
 
-    synchronized public void removeAllLocalDevices() {
+    @Override
+	synchronized public void removeAllLocalDevices() {
         localItems.removeAll();
     }
 
-    synchronized public void removeAllRemoteDevices() {
+    @Override
+	synchronized public void removeAllRemoteDevices() {
         remoteItems.removeAll();
     }
 
+	@Override
 	synchronized public boolean removeDevice(UDN udn) {
         Device<?, ?, ?> device = getDevice(udn, true);
         if (device instanceof LocalDevice)
@@ -194,37 +213,44 @@ public class RegistryImpl implements Registry {
         return false;
     }
 
-    synchronized public Device<?, ?, ?> getDevice(UDN udn, boolean rootOnly) {
+    @Override
+	synchronized public Device<?, ?, ?> getDevice(UDN udn, boolean rootOnly) {
         Device<?, ?, ?> device;
         if ((device = localItems.get(udn, rootOnly)) != null) return device;
         if ((device = remoteItems.get(udn, rootOnly)) != null) return device;
         return null;
     }
 
-    synchronized public LocalDevice<?> getLocalDevice(UDN udn, boolean rootOnly) {
+    @Override
+	synchronized public LocalDevice<?> getLocalDevice(UDN udn, boolean rootOnly) {
         return localItems.get(udn, rootOnly);
     }
 
-    synchronized public RemoteDevice getRemoteDevice(UDN udn, boolean rootOnly) {
+    @Override
+	synchronized public RemoteDevice getRemoteDevice(UDN udn, boolean rootOnly) {
         return remoteItems.get(udn, rootOnly);
     }
 
-    synchronized public Collection<LocalDevice<?>> getLocalDevices() {
+    @Override
+	synchronized public Collection<LocalDevice<?>> getLocalDevices() {
         return Collections.unmodifiableCollection(localItems.get());
     }
 
-    synchronized public Collection<RemoteDevice> getRemoteDevices() {
+    @Override
+	synchronized public Collection<RemoteDevice> getRemoteDevices() {
         return Collections.unmodifiableCollection(remoteItems.get());
     }
 
-    synchronized public Collection<Device<?, ?, ?>> getDevices() {
+    @Override
+	synchronized public Collection<Device<?, ?, ?>> getDevices() {
         Set<Device<?, ?, ?>> all = new HashSet<>();
         all.addAll(localItems.get());
         all.addAll(remoteItems.get());
         return Collections.unmodifiableCollection(all);
     }
 
-    synchronized public Collection<Device<?, ?, ?>> getDevices(DeviceType deviceType) {
+    @Override
+	synchronized public Collection<Device<?, ?, ?>> getDevices(DeviceType deviceType) {
         Collection<Device<?, ?, ?>> devices = new HashSet<>();
 
         devices.addAll(localItems.get(deviceType));
@@ -233,7 +259,8 @@ public class RegistryImpl implements Registry {
         return Collections.unmodifiableCollection(devices);
     }
 
-    synchronized public Collection<Device<?, ?, ?>> getDevices(ServiceType serviceType) {
+    @Override
+	synchronized public Collection<Device<?, ?, ?>> getDevices(ServiceType serviceType) {
         Collection<Device<?, ?, ?>> devices = new HashSet<>();
 
         devices.addAll(localItems.get(serviceType));
@@ -242,7 +269,8 @@ public class RegistryImpl implements Registry {
         return Collections.unmodifiableCollection(devices);
     }
 
-    synchronized public Service<?, ?, ?> getService(ServiceReference serviceReference) {
+    @Override
+	synchronized public Service<?, ?, ?> getService(ServiceReference serviceReference) {
         Device<?, ?, ?> device;
         if ((device = getDevice(serviceReference.getUdn(), false)) != null) {
             return device.findService(serviceReference.getServiceId());
@@ -252,7 +280,8 @@ public class RegistryImpl implements Registry {
 
     // #################################################################################################
 
-    synchronized public Resource<?> getResource(URI pathQuery) throws IllegalArgumentException {
+    @Override
+	synchronized public Resource<?> getResource(URI pathQuery) throws IllegalArgumentException {
         if (pathQuery.isAbsolute()) {
             throw new IllegalArgumentException("Resource URI can not be absolute, only path and query:" + pathQuery);
         }
@@ -282,7 +311,8 @@ public class RegistryImpl implements Registry {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
 	synchronized public <T extends Resource<?>> T getResource(Class<T> resourceType, URI pathQuery) throws IllegalArgumentException {
         Resource<?> resource = getResource(pathQuery);
         if (resource != null && resourceType.isAssignableFrom(resource.getClass())) {
@@ -291,7 +321,8 @@ public class RegistryImpl implements Registry {
         return null;
     }
 
-    synchronized public Collection<Resource<?>> getResources() {
+    @Override
+	synchronized public Collection<Resource<?>> getResources() {
         Collection<Resource<?>> s = new HashSet<>();
         for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
             s.add(resourceItem.getItem());
@@ -299,7 +330,8 @@ public class RegistryImpl implements Registry {
         return s;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
 	synchronized public <T extends Resource<?>> Collection<T> getResources(Class<T> resourceType) {
         Collection<T> s = new HashSet<>();
         for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
@@ -309,64 +341,77 @@ public class RegistryImpl implements Registry {
         return s;
     }
 
-    synchronized public void addResource(Resource<?> resource) {
+    @Override
+	synchronized public void addResource(Resource<?> resource) {
         addResource(resource, ExpirationDetails.UNLIMITED_AGE);
     }
 
-    synchronized public void addResource(Resource<?> resource, int maxAgeSeconds) {
+    @Override
+	synchronized public void addResource(Resource<?> resource, int maxAgeSeconds) {
         RegistryItem<URI, Resource<?>> resourceItem = new RegistryItem<>(resource.getPathQuery(), resource, maxAgeSeconds);
         resourceItems.remove(resourceItem);
         resourceItems.add(resourceItem);
     }
 
-    synchronized public boolean removeResource(Resource<?> resource) {
+    @Override
+	synchronized public boolean removeResource(Resource<?> resource) {
         return resourceItems.remove(new RegistryItem<URI, Resource<?>>(resource.getPathQuery()));
     }
 
     // #################################################################################################
 
-    synchronized public void addLocalSubscription(LocalGENASubscription<?> subscription) {
+    @Override
+	synchronized public void addLocalSubscription(LocalGENASubscription<?> subscription) {
         localItems.addSubscription(subscription);
     }
 
-    synchronized public LocalGENASubscription<?> getLocalSubscription(String subscriptionId) {
+    @Override
+	synchronized public LocalGENASubscription<?> getLocalSubscription(String subscriptionId) {
         return localItems.getSubscription(subscriptionId);
     }
 
-    synchronized public boolean updateLocalSubscription(LocalGENASubscription<?> subscription) {
+    @Override
+	synchronized public boolean updateLocalSubscription(LocalGENASubscription<?> subscription) {
         return localItems.updateSubscription(subscription);
     }
 
-    synchronized public boolean removeLocalSubscription(LocalGENASubscription<?> subscription) {
+    @Override
+	synchronized public boolean removeLocalSubscription(LocalGENASubscription<?> subscription) {
         return localItems.removeSubscription(subscription);
     }
 
-    synchronized public void addRemoteSubscription(RemoteGENASubscription subscription) {
+    @Override
+	synchronized public void addRemoteSubscription(RemoteGENASubscription subscription) {
         remoteItems.addSubscription(subscription);
     }
 
-    synchronized public RemoteGENASubscription getRemoteSubscription(String subscriptionId) {
+    @Override
+	synchronized public RemoteGENASubscription getRemoteSubscription(String subscriptionId) {
         return remoteItems.getSubscription(subscriptionId);
     }
 
-    synchronized public void updateRemoteSubscription(RemoteGENASubscription subscription) {
+    @Override
+	synchronized public void updateRemoteSubscription(RemoteGENASubscription subscription) {
         remoteItems.updateSubscription(subscription);
     }
 
-    synchronized public void removeRemoteSubscription(RemoteGENASubscription subscription) {
+    @Override
+	synchronized public void removeRemoteSubscription(RemoteGENASubscription subscription) {
         remoteItems.removeSubscription(subscription);
     }
 
     /* ############################################################################################################ */
 
-   	synchronized public void advertiseLocalDevices() {
+   	@Override
+	synchronized public void advertiseLocalDevices() {
    		localItems.advertiseLocalDevices();
    	}
 
     /* ############################################################################################################ */
 
     // When you call this, make sure you have the Router lock before this lock is obtained!
-    synchronized public void shutdown() {
+    @Override
+	synchronized public void shutdown() {
         log.fine("Shutting down registry...");
 
         if (registryMaintainer != null)
@@ -393,7 +438,8 @@ public class RegistryImpl implements Registry {
         }
     }
 
-    synchronized public void pause() {
+    @Override
+	synchronized public void pause() {
         if (registryMaintainer != null) {
             log.fine("Pausing registry maintenance");
             runPendingExecutions(true);
@@ -402,7 +448,8 @@ public class RegistryImpl implements Registry {
         }
     }
 
-    synchronized public void resume() {
+    @Override
+	synchronized public void resume() {
         if (registryMaintainer == null) {
             log.fine("Resuming registry maintenance");
             remoteItems.resume();
@@ -413,7 +460,8 @@ public class RegistryImpl implements Registry {
         }
     }
 
-    synchronized public boolean isPaused() {
+    @Override
+	synchronized public boolean isPaused() {
         return registryMaintainer == null;
     }
 

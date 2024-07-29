@@ -69,7 +69,8 @@ public abstract class ContentBrowseActionCallback extends Browse {
         return treeNode;
     }
 
-    public void received(final ActionInvocation<?> actionInvocation, DIDLContent didl) {
+    @Override
+	public void received(final ActionInvocation<?> actionInvocation, DIDLContent didl) {
         log.fine("Received browse action DIDL descriptor, creating tree nodes");
         final List<DefaultMutableTreeNode> childNodes = new ArrayList<>();
 
@@ -120,7 +121,8 @@ public abstract class ContentBrowseActionCallback extends Browse {
         SwingUtilities.invokeLater(() -> updateTreeModel(childNodes));
     }
 
-    public void updateStatus(final Status status) {
+    @Override
+	public void updateStatus(final Status status) {
         SwingUtilities.invokeLater(() -> updateStatusUI(status, treeNode, treeModel));
     }
 

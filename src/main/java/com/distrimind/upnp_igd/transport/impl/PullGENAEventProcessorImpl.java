@@ -51,6 +51,7 @@ public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 
 	private static final Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
 
+	@Override
 	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
         log.fine("Reading body of: " + requestMessage);
         if (log.isLoggable(Level.FINER)) {

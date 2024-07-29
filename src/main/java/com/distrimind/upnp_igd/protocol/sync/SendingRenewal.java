@@ -56,7 +56,8 @@ public class SendingRenewal extends SendingSync<OutgoingRenewalRequestMessage, I
         this.subscription = subscription;
     }
 
-    protected IncomingSubscribeResponseMessage executeSync() throws RouterException {
+    @Override
+	protected IncomingSubscribeResponseMessage executeSync() throws RouterException {
         log.fine("Sending subscription renewal request: " + getInputMessage());
 
         StreamResponseMessage response;

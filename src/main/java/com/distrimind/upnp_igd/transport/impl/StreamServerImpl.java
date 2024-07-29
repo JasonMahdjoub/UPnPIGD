@@ -58,7 +58,8 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
         this.configuration = configuration;
     }
 
-    synchronized public void init(InetAddress bindAddress, Router router, NetworkAddressFactory networkAddressFactory) throws InitializationException {
+    @Override
+	synchronized public void init(InetAddress bindAddress, Router router, NetworkAddressFactory networkAddressFactory) throws InitializationException {
         try {
             InetSocketAddress socketAddress = new InetSocketAddress(bindAddress, configuration.getListenPort());
 
@@ -72,21 +73,25 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
         }
     }
 
-    synchronized public int getPort() {
+    @Override
+	synchronized public int getPort() {
         return server.getAddress().getPort();
     }
 
-    public StreamServerConfigurationImpl getConfiguration() {
+    @Override
+	public StreamServerConfigurationImpl getConfiguration() {
         return configuration;
     }
 
-    synchronized public void run() {
+    @Override
+	synchronized public void run() {
         log.fine("Starting StreamServer...");
         // Starts a new thread but inherits the properties of the calling thread
         server.start();
     }
 
-    synchronized public void stop() {
+    @Override
+	synchronized public void stop() {
         log.fine("Stopping StreamServer...");
         if (server != null) server.stop(1);
     }
@@ -102,7 +107,8 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
         }
 
         // This is executed in the request receiving thread!
-        public void handle(final HttpExchange httpExchange) throws IOException {
+        @Override
+		public void handle(final HttpExchange httpExchange) throws IOException {
             InetSocketAddress isa=httpExchange.getRemoteAddress();
             if (isa==null)
                 return;

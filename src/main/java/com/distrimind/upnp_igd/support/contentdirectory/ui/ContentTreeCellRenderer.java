@@ -30,7 +30,8 @@ import java.awt.Component;
  */
 public class ContentTreeCellRenderer extends DefaultTreeCellRenderer {
 
-    public Component getTreeCellRendererComponent(
+    @Override
+	public Component getTreeCellRendererComponent(
             JTree tree,
             Object value,
             boolean sel,

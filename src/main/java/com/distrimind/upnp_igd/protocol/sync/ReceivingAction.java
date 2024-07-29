@@ -57,7 +57,8 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
         super(upnpService, inputMessage);
     }
 
-    protected StreamResponseMessage executeSync() throws RouterException {
+    @Override
+	protected StreamResponseMessage executeSync() throws RouterException {
 
         ContentTypeHeader contentTypeHeader =
                 getInputMessage().getHeaders().getFirstHeader(UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class);

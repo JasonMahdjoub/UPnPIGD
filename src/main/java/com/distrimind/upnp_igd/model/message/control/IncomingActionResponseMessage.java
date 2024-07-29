@@ -32,7 +32,8 @@ public class IncomingActionResponseMessage extends StreamResponseMessage impleme
         super(operation);
     }
 
-    public String getActionNamespace() {
+    @Override
+	public String getActionNamespace() {
         return null; // TODO: We _could_ read this in SOAPActionProcessor and set it when we receive a response but why?
     }
 

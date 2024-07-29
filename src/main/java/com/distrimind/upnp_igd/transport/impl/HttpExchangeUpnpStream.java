@@ -58,7 +58,8 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
         return httpExchange;
     }
 
-    public void run() {
+    @Override
+	public void run() {
 
         try {
             log.fine("Processing HTTP request: " + getHttpExchange().getRequestMethod() + " " + getHttpExchange().getRequestURI());

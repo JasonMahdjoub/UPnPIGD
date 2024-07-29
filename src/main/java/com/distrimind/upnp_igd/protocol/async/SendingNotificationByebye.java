@@ -50,7 +50,8 @@ public class SendingNotificationByebye extends SendingNotification {
         super.execute();
     }
 
-    protected NotificationSubtype getNotificationSubtype() {
+    @Override
+	protected NotificationSubtype getNotificationSubtype() {
         return NotificationSubtype.BYEBYE;
     }
 

@@ -38,7 +38,8 @@ public class DLNAOperationsAttribute extends DLNAAttribute<EnumSet<DLNAOperation
         }
     }
 
-    public void setString(String s, String cf) throws InvalidDLNAProtocolAttributeException {
+    @Override
+	public void setString(String s, String cf) throws InvalidDLNAProtocolAttributeException {
         EnumSet<DLNAOperations> value = EnumSet.noneOf(DLNAOperations.class);
         try {
             int parseInt = Integer.parseInt(s, 16);
@@ -57,7 +58,8 @@ public class DLNAOperationsAttribute extends DLNAAttribute<EnumSet<DLNAOperation
         setValue(value);
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         int code = DLNAOperations.NONE.getCode();
         for (DLNAOperations op : getValue()) {
             code |= op.getCode();

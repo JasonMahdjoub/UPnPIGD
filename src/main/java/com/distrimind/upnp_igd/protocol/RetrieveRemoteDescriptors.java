@@ -81,7 +81,8 @@ public class RetrieveRemoteDescriptors implements Runnable {
         return upnpService;
     }
 
-    public void run() {
+    @Override
+	public void run() {
 
         URL deviceURL = rd.getIdentity().getDescriptorURL();
 

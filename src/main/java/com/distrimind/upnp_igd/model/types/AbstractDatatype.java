@@ -39,7 +39,8 @@ public abstract class AbstractDatatype<V> implements Datatype<V> {
         return null;
     }
 
-    public Builtin getBuiltin() {
+    @Override
+	public Builtin getBuiltin() {
         return builtin;
     }
 
@@ -47,7 +48,8 @@ public abstract class AbstractDatatype<V> implements Datatype<V> {
         this.builtin = builtin;
     }
 
-    public String getString(V value) throws InvalidValueException {
+    @Override
+	public String getString(V value) throws InvalidValueException {
         if (value == null) return "";
         if (!isValid(value)) {
             throw new InvalidValueException("Value is not valid: " + value);
@@ -55,7 +57,8 @@ public abstract class AbstractDatatype<V> implements Datatype<V> {
         return value.toString();
     }
 
-    public boolean isValid(V value) {
+    @Override
+	public boolean isValid(V value) {
         return value == null || getValueType().isAssignableFrom(value.getClass());
     }
 
@@ -64,7 +67,8 @@ public abstract class AbstractDatatype<V> implements Datatype<V> {
         return "(" + getClass().getSimpleName() + ")";
     }
 
-    public String getDisplayString() {
+    @Override
+	public String getDisplayString() {
         if (this instanceof CustomDatatype) {
             return ((CustomDatatype)this).getName();
         } else if (getBuiltin() != null) {

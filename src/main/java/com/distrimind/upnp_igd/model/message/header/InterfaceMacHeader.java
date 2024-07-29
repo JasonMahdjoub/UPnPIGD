@@ -35,7 +35,8 @@ public class InterfaceMacHeader extends UpnpHeader<byte[]> {
         setString(s);
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         byte[] bytes = HexBin.stringToBytes(s, ":");
         setValue(bytes);
         if (bytes.length != 6) {
@@ -43,7 +44,8 @@ public class InterfaceMacHeader extends UpnpHeader<byte[]> {
         }
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return HexBin.bytesToString(getValue(), ":");
     }
 

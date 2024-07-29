@@ -112,7 +112,8 @@ public abstract class SubscriptionCallback implements Runnable {
         this.subscription = subscription;
     }
 
-    synchronized public void run() {
+    @Override
+	synchronized public void run() {
         if (getControlPoint()  == null) {
             throw new IllegalStateException("Callback must be executed through ControlPoint");
         }
@@ -148,21 +149,24 @@ public abstract class SubscriptionCallback implements Runnable {
                             }
                         }
 
-                        public void established() {
+                        @Override
+						public void established() {
                             synchronized (SubscriptionCallback.this) {
                                 SubscriptionCallback.this.setSubscription(this);
                                 SubscriptionCallback.this.established(this);
                             }
                         }
 
-                        public void ended(CancelReason reason) {
+                        @Override
+						public void ended(CancelReason reason) {
                             synchronized (SubscriptionCallback.this) {
                                 SubscriptionCallback.this.setSubscription(null);
                                 SubscriptionCallback.this.ended(this, reason, null);
                             }
                         }
 
-                        public void eventReceived() {
+                        @Override
+						public void eventReceived() {
                             synchronized (SubscriptionCallback.this) {
                                 log.fine("Local service state updated, notifying callback, sequence is: " + getCurrentSequence());
                                 SubscriptionCallback.this.eventReceived(this);
@@ -197,39 +201,45 @@ public abstract class SubscriptionCallback implements Runnable {
         RemoteGENASubscription remoteSubscription =
                 new RemoteGENASubscription(service, requestedDurationSeconds) {
 
-                    public void failed(UpnpResponse responseStatus) {
+                    @Override
+					public void failed(UpnpResponse responseStatus) {
                         synchronized (SubscriptionCallback.this) {
                             SubscriptionCallback.this.setSubscription(null);
                             SubscriptionCallback.this.failed(this, responseStatus, null);
                         }
                     }
 
-                    public void established() {
+                    @Override
+					public void established() {
                         synchronized (SubscriptionCallback.this) {
                             SubscriptionCallback.this.setSubscription(this);
                             SubscriptionCallback.this.established(this);
                         }
                     }
 
-                    public void ended(CancelReason reason, UpnpResponse responseStatus) {
+                    @Override
+					public void ended(CancelReason reason, UpnpResponse responseStatus) {
                         synchronized (SubscriptionCallback.this) {
                             SubscriptionCallback.this.setSubscription(null);
                             SubscriptionCallback.this.ended(this, reason, responseStatus);
                         }
                     }
 
-                    public void eventReceived() {
+                    @Override
+					public void eventReceived() {
                         synchronized (SubscriptionCallback.this) {
                             SubscriptionCallback.this.eventReceived(this);
                         }
                     }
 
-                    public void eventsMissed(int numberOfMissedEvents) {
+                    @Override
+					public void eventsMissed(int numberOfMissedEvents) {
                         synchronized (SubscriptionCallback.this) {
                             SubscriptionCallback.this.eventsMissed(this, numberOfMissedEvents);
                         }
                     }
 
+					@Override
 					public void invalidMessage(UnsupportedDataException ex) {
 						synchronized (SubscriptionCallback.this) {
 							SubscriptionCallback.this.invalidMessage(this, ex);

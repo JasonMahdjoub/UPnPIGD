@@ -30,7 +30,8 @@ public class ServerHeader extends UpnpHeader<ServerClientTokens> {
         setValue(tokens);
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         // TODO: This parsing is not as robust as I'd like, probably should use regexs instead
 
         // UDA 1.1/1.0 section 1.2.2 and RfC 2616, section 14.38
@@ -119,7 +120,8 @@ public class ServerHeader extends UpnpHeader<ServerClientTokens> {
         setValue(serverClientTokens);
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue().getHttpToken();
     }
 }

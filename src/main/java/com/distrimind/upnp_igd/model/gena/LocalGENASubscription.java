@@ -132,7 +132,8 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
      * Moderates {@link ServiceManager#EVENTED_STATE_VARIABLES} events and state variable
      * values, calls {@link #eventReceived()}.
      */
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
 	synchronized public void propertyChange(PropertyChangeEvent e) {
         if (!e.getPropertyName().equals(ServiceManager.EVENTED_STATE_VARIABLES)) return;
 

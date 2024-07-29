@@ -63,7 +63,8 @@ public class PlatformApple {
             this.appController = appController;
         }
 
-        public Object invoke(Object proxy, Method m, Object[] args) throws Throwable {
+        @Override
+		public Object invoke(Object proxy, Method m, Object[] args) throws Throwable {
             Object result = null;
             try {
                 if ("handleQuit".equals(m.getName())) {

@@ -66,11 +66,13 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
         this.configuration = configuration;
     }
 
-    public DatagramIOConfigurationImpl getConfiguration() {
+    @Override
+	public DatagramIOConfigurationImpl getConfiguration() {
         return configuration;
     }
 
-    synchronized public void init(NetworkAddressFactory networkAddressFactory, InetAddress bindAddress, Router router, DatagramProcessor datagramProcessor) throws InitializationException {
+    @Override
+	synchronized public void init(NetworkAddressFactory networkAddressFactory, InetAddress bindAddress, Router router, DatagramProcessor datagramProcessor) throws InitializationException {
 
         this.router = router;
         this.networkAddressFactory = networkAddressFactory;
@@ -91,13 +93,15 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
         }
     }
 
-    synchronized public void stop() {
+    @Override
+	synchronized public void stop() {
         if (socket != null && !socket.isClosed()) {
             socket.close();
         }
     }
 
-    public void run() {
+    @Override
+	public void run() {
         log.fine("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
 
         while (true) {
@@ -147,7 +151,8 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
         }
     }
 
-    synchronized public void send(OutgoingDatagramMessage<?> message) {
+    @Override
+	synchronized public void send(OutgoingDatagramMessage<?> message) {
         if (log.isLoggable(Level.FINE)) {
             log.fine("Sending message from address: " + localAddress);
         }
@@ -160,7 +165,8 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
         send(packet);
     }
 
-    synchronized public void send(DatagramPacket datagram) {
+    @Override
+	synchronized public void send(DatagramPacket datagram) {
         if (log.isLoggable(Level.FINE)) {
             log.fine("Sending message from address: " + localAddress);
         }

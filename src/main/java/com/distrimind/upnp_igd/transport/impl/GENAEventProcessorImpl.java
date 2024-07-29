@@ -57,7 +57,8 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
     }
 
-    public void writeBody(OutgoingEventRequestMessage requestMessage) throws UnsupportedDataException {
+    @Override
+	public void writeBody(OutgoingEventRequestMessage requestMessage) throws UnsupportedDataException {
         log.fine("Writing body of: " + requestMessage);
 
         try {
@@ -82,7 +83,8 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
         }
     }
 
-    public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
+    @Override
+	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
 
         log.fine("Reading body of: " + requestMessage);
         if (log.isLoggable(Level.FINER)) {
@@ -208,15 +210,18 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
                 : node.getNodeName();
     }
 
-    public void warning(SAXParseException e) throws SAXException {
+    @Override
+	public void warning(SAXParseException e) throws SAXException {
         log.warning(e.toString());
     }
 
-    public void error(SAXParseException e) throws SAXException {
+    @Override
+	public void error(SAXParseException e) throws SAXException {
         throw e;
     }
 
-    public void fatalError(SAXParseException e) throws SAXException {
+    @Override
+	public void fatalError(SAXParseException e) throws SAXException {
         throw e;
     }
 }

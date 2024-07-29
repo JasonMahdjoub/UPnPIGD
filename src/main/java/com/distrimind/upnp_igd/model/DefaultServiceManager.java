@@ -94,11 +94,13 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
         return 500;
     }
 
-    public LocalService<T> getService() {
+    @Override
+	public LocalService<T> getService() {
         return service;
     }
 
-    public T getImplementation() {
+    @Override
+	public T getImplementation() {
         lock();
         try {
             if (serviceImpl == null) {
@@ -110,7 +112,8 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
         }
     }
 
-    public PropertyChangeSupport getPropertyChangeSupport() {
+    @Override
+	public PropertyChangeSupport getPropertyChangeSupport() {
         lock();
         try {
             if (propertyChangeSupport == null) {
@@ -122,7 +125,8 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
         }
     }
 
-    public void execute(Command<T> cmd) throws Exception {
+    @Override
+	public void execute(Command<T> cmd) throws Exception {
         lock();
         try {
             cmd.execute(this);
@@ -235,7 +239,8 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
 
     protected class DefaultPropertyChangeListener implements PropertyChangeListener {
 
-        public void propertyChange(PropertyChangeEvent e) {
+        @Override
+		public void propertyChange(PropertyChangeEvent e) {
             log.finer("Property change event on local service: " + e.getPropertyName());
 
             // Prevent recursion

@@ -158,7 +158,8 @@ public class Icon implements Validatable {
         this.device = device;
     }
 
-    public List<ValidationError> validate() {
+    @Override
+	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
         if (getMimeType() == null) {

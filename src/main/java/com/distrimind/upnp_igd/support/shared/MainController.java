@@ -87,7 +87,8 @@ public abstract class MainController extends AbstractController<JFrame> {
         // Wire UI into JUL
         // Don't reset JUL root logger but add if there is a JUL config file
         Handler handler = new LoggingHandler() {
-            protected void log(LogMessage msg) {
+            @Override
+			protected void log(LogMessage msg) {
                 logController.pushMessage(msg);
             }
         };

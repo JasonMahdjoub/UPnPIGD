@@ -30,7 +30,8 @@ public class BooleanDatatype extends AbstractDatatype<Boolean> {
         return type == Boolean.TYPE || Boolean.class.isAssignableFrom(type);
     }
 
-    public Boolean valueOf(String s) throws InvalidValueException {
+    @Override
+	public Boolean valueOf(String s) throws InvalidValueException {
         if (s.isEmpty()) return null;
         if (s.equals("1") || s.toUpperCase(Locale.ROOT).equals("YES") || s.toUpperCase(Locale.ROOT).equals("TRUE")) {
             return true;
@@ -41,7 +42,8 @@ public class BooleanDatatype extends AbstractDatatype<Boolean> {
         }
     }
 
-    public String getString(Boolean value) throws InvalidValueException {
+    @Override
+	public String getString(Boolean value) throws InvalidValueException {
         if (value == null) return "";
         return value ? "1" : "0";
     }

@@ -55,7 +55,8 @@ public class MulticastReceiverConfigurationImpl implements MulticastReceiverConf
         this(InetAddress.getByName(group), port, 640);
     }
 
-    public InetAddress getGroup() {
+    @Override
+	public InetAddress getGroup() {
         return group;
     }
 
@@ -63,7 +64,8 @@ public class MulticastReceiverConfigurationImpl implements MulticastReceiverConf
         this.group = group;
     }
 
-    public int getPort() {
+    @Override
+	public int getPort() {
         return port;
     }
 
@@ -71,7 +73,8 @@ public class MulticastReceiverConfigurationImpl implements MulticastReceiverConf
         this.port = port;
     }
 
-    public int getMaxDatagramBytes() {
+    @Override
+	public int getMaxDatagramBytes() {
         return maxDatagramBytes;
     }
 

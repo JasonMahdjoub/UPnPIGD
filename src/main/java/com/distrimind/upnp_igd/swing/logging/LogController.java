@@ -97,19 +97,23 @@ public abstract class LogController extends AbstractController<JPanel> {
         logTable.setDefaultRenderer(
                 LogMessage.class,
                 new LogTableCellRenderer() {
-                    protected ImageIcon getWarnErrorIcon() {
+                    @Override
+					protected ImageIcon getWarnErrorIcon() {
                         return LogController.this.getWarnErrorIcon();
                     }
 
-                    protected ImageIcon getDebugIcon() {
+                    @Override
+					protected ImageIcon getDebugIcon() {
                         return LogController.this.getDebugIcon();
                     }
 
-                    protected ImageIcon getTraceIcon() {
+                    @Override
+					protected ImageIcon getTraceIcon() {
                         return LogController.this.getTraceIcon();
                     }
 
-                    protected ImageIcon getInfoIcon() {
+                    @Override
+					protected ImageIcon getInfoIcon() {
                         return LogController.this.getInfoIcon();
                     }
                 });

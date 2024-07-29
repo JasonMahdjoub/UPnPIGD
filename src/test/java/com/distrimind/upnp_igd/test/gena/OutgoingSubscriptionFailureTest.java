@@ -108,11 +108,13 @@ public class OutgoingSubscriptionFailureTest {
                 testAssertions.add(false);
             }
 
-            public void eventReceived(GENASubscription<?> subscription) {
+            @Override
+			public void eventReceived(GENASubscription<?> subscription) {
                 testAssertions.add(false);
             }
 
-            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -176,13 +178,15 @@ public class OutgoingSubscriptionFailureTest {
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription<?> subscription) {
+            @Override
+			public void eventReceived(GENASubscription<?> subscription) {
                 assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
                 assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
                 testAssertions.add(true);
             }
 
-            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 assertEquals(numberOfMissedEvents, 2);
                 testAssertions.add(true);
             }

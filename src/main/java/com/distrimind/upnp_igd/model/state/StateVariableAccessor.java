@@ -33,7 +33,8 @@ public abstract class StateVariableAccessor {
 
         class AccessCommand implements Command<T> {
             Object result;
-            public void execute(ServiceManager<T> serviceManager) throws Exception {
+            @Override
+			public void execute(ServiceManager<T> serviceManager) throws Exception {
                 result = read(serviceImpl);
                 if (stateVariable.getService().isStringConvertibleType(result)) {
                     result = result.toString();

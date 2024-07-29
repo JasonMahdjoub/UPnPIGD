@@ -62,7 +62,8 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     {
         this.networkAddressFactory=networkAddressFactory;
     }
-    public <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {
+    @Override
+	public <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {
         if (descriptorXml == null || descriptorXml.isEmpty()) {
             throw new DescriptorBindingException("Null or empty descriptor");
         }
@@ -351,7 +352,8 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    public String generate(Service<?, ?, ?> service) throws DescriptorBindingException {
+    @Override
+	public String generate(Service<?, ?, ?> service) throws DescriptorBindingException {
         try {
             log.fine("Generating XML descriptor from service model: " + service);
 
@@ -362,7 +364,8 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
     }
 
-    public Document buildDOM(Service<?, ?, ?> service) throws DescriptorBindingException {
+    @Override
+	public Document buildDOM(Service<?, ?, ?> service) throws DescriptorBindingException {
 
         try {
             log.fine("Generating XML descriptor from service model: " + service);

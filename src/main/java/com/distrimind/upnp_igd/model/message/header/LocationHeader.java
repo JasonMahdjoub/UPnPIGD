@@ -38,7 +38,8 @@ public class LocationHeader extends UpnpHeader<URL> {
         setString(s);
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         try {
             URL url = new URL(s);
             setValue(url);
@@ -47,7 +48,8 @@ public class LocationHeader extends UpnpHeader<URL> {
         }
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue().toString();
     }
 }

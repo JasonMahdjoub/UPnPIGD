@@ -163,6 +163,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
     protected Callable<StreamResponseMessage> createCallable(final StreamRequestMessage requestMessage,
                                                              final HttpRequest exchange) {
         return new Callable<>() {
+			@Override
 			public StreamResponseMessage call() throws Exception {
 
 				if (log.isLoggable(Level.FINE))

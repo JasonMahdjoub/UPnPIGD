@@ -193,7 +193,8 @@ public class ActionInvokeIncomingTest {
             this.service = service;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             Action<?> action = service.getAction("GetTarget");
 
             URI controlURI = upnpService.getConfiguration().getNamespace().getControlPath(service);

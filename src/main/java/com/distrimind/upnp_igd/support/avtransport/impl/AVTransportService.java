@@ -102,9 +102,10 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         this.transportClass = transportClass;
     }
 
-    public void setAVTransportURI(UnsignedIntegerFourBytes instanceId,
-                                  String currentURI,
-                                  String currentURIMetaData) throws AVTransportException {
+    @Override
+	public void setAVTransportURI(UnsignedIntegerFourBytes instanceId,
+								  String currentURI,
+								  String currentURIMetaData) throws AVTransportException {
 
         URI uri;
         try {
@@ -123,9 +124,10 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void setNextAVTransportURI(UnsignedIntegerFourBytes instanceId,
-                                      String nextURI,
-                                      String nextURIMetaData) throws AVTransportException {
+    @Override
+	public void setNextAVTransportURI(UnsignedIntegerFourBytes instanceId,
+									  String nextURI,
+									  String nextURIMetaData) throws AVTransportException {
 
         URI uri;
         try {
@@ -144,7 +146,8 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void setPlayMode(UnsignedIntegerFourBytes instanceId, String newPlayMode) throws AVTransportException {
+    @Override
+	public void setPlayMode(UnsignedIntegerFourBytes instanceId, String newPlayMode) throws AVTransportException {
         AVTransport transport = findStateMachine(instanceId).getCurrentState().getTransport();
         try {
             transport.setTransportSettings(
@@ -160,7 +163,8 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void setRecordQualityMode(UnsignedIntegerFourBytes instanceId, String newRecordQualityMode) throws AVTransportException {
+    @Override
+	public void setRecordQualityMode(UnsignedIntegerFourBytes instanceId, String newRecordQualityMode) throws AVTransportException {
         AVTransport transport = findStateMachine(instanceId).getCurrentState().getTransport();
         try {
             transport.setTransportSettings(
@@ -176,27 +180,33 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public MediaInfo getMediaInfo(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public MediaInfo getMediaInfo(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         return findStateMachine(instanceId).getCurrentState().getTransport().getMediaInfo();
     }
 
-    public TransportInfo getTransportInfo(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public TransportInfo getTransportInfo(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         return findStateMachine(instanceId).getCurrentState().getTransport().getTransportInfo();
     }
 
-    public PositionInfo getPositionInfo(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public PositionInfo getPositionInfo(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         return findStateMachine(instanceId).getCurrentState().getTransport().getPositionInfo();
     }
 
-    public DeviceCapabilities getDeviceCapabilities(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public DeviceCapabilities getDeviceCapabilities(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         return findStateMachine(instanceId).getCurrentState().getTransport().getDeviceCapabilities();
     }
 
-    public TransportSettings getTransportSettings(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public TransportSettings getTransportSettings(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         return findStateMachine(instanceId).getCurrentState().getTransport().getTransportSettings();
     }
 
-    public void stop(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public void stop(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         try {
             findStateMachine(instanceId).stop();
         } catch (TransitionException ex) {
@@ -204,7 +214,8 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void play(UnsignedIntegerFourBytes instanceId, String speed) throws AVTransportException {
+    @Override
+	public void play(UnsignedIntegerFourBytes instanceId, String speed) throws AVTransportException {
         try {
             findStateMachine(instanceId).play(speed);
         } catch (TransitionException ex) {
@@ -212,7 +223,8 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void pause(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public void pause(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         try {
             findStateMachine(instanceId).pause();
         } catch (TransitionException ex) {
@@ -220,7 +232,8 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void record(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public void record(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         try {
             findStateMachine(instanceId).record();
         } catch (TransitionException ex) {
@@ -228,7 +241,8 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void seek(UnsignedIntegerFourBytes instanceId, String unit, String target) throws AVTransportException {
+    @Override
+	public void seek(UnsignedIntegerFourBytes instanceId, String unit, String target) throws AVTransportException {
         SeekMode seekMode;
         try {
              seekMode = SeekMode.valueOrExceptionOf(unit);
@@ -245,7 +259,8 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void next(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public void next(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         try {
             findStateMachine(instanceId).next();
         } catch (TransitionException ex) {
@@ -253,7 +268,8 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
         }
     }
 
-    public void previous(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
+    @Override
+	public void previous(UnsignedIntegerFourBytes instanceId) throws AVTransportException {
         try {
             findStateMachine(instanceId).previous();
         } catch (TransitionException ex) {

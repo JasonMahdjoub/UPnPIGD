@@ -38,7 +38,8 @@ public class DLNAFlagsAttribute extends DLNAAttribute<EnumSet<DLNAFlags>> {
         }
     }
 
-    public void setString(String s, String cf) throws InvalidDLNAProtocolAttributeException {
+    @Override
+	public void setString(String s, String cf) throws InvalidDLNAProtocolAttributeException {
         EnumSet<DLNAFlags> value = EnumSet.noneOf(DLNAFlags.class);
         try {
             int parseInt = Integer.parseInt(s.substring(0, s.length() - 24), 16);
@@ -57,7 +58,8 @@ public class DLNAFlagsAttribute extends DLNAAttribute<EnumSet<DLNAFlags>> {
         setValue(value);
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         int code = 0;
         for (DLNAFlags op : getValue()) {
             code |= op.getCode();

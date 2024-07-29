@@ -64,11 +64,13 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
             value = copyFrom.getValue();
         }
 
-        public K getKey() {
+        @Override
+		public K getKey() {
             return key;
         }
 
-        public V getValue() {
+        @Override
+		public V getValue() {
             return value;
         }
 
@@ -76,7 +78,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
          * This base implementation throws {@code UnsupportedOperationException}
          * always.
          */
-        public V setValue(V object) {
+        @Override
+		public V setValue(V object) {
             throw new UnsupportedOperationException();
         }
 
@@ -129,15 +132,18 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
             value = copyFrom.getValue();
         }
 
-        public K getKey() {
+        @Override
+		public K getKey() {
             return key;
         }
 
-        public V getValue() {
+        @Override
+		public V getValue() {
             return value;
         }
 
-        public V setValue(V object) {
+        @Override
+		public V setValue(V object) {
             V result = value;
             value = object;
             return result;
@@ -176,7 +182,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      *
      * <p>This implementation calls {@code entrySet().clear()}.
      */
-    public void clear() {
+    @Override
+	public void clear() {
         entrySet().clear();
     }
 
@@ -186,7 +193,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * <p>This implementation iterates its key set, looking for a key that
      * {@code key} equals.
      */
-    public boolean containsKey(Object key) {
+    @Override
+	public boolean containsKey(Object key) {
         Iterator<Entry<K, V>> it = entrySet().iterator();
         if (key != null) {
             while (it.hasNext()) {
@@ -210,7 +218,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * <p>This implementation iterates its entry set, looking for an entry with
      * a value that {@code value} equals.
      */
-    public boolean containsValue(Object value) {
+    @Override
+	public boolean containsValue(Object value) {
         Iterator<Entry<K, V>> it = entrySet().iterator();
         if (value != null) {
             while (it.hasNext()) {
@@ -274,7 +283,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * <p>This implementation iterates its entry set, looking for an entry with
      * a key that {@code key} equals.
      */
-    public V get(Object key) {
+    @Override
+	public V get(Object key) {
         Iterator<Entry<K, V>> it = entrySet().iterator();
         if (key != null) {
             while (it.hasNext()) {
@@ -313,7 +323,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      *
      * <p>This implementation compares {@code size()} to 0.
      */
-    public boolean isEmpty() {
+    @Override
+	public boolean isEmpty() {
         return size() == 0;
     }
 
@@ -323,7 +334,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * <p>This implementation returns a view that calls through this to map. Its
      * iterator transforms this map's entry set iterator to return keys.
      */
-    public Set<K> keySet() {
+    @Override
+	public Set<K> keySet() {
         if (keySet == null) {
             keySet = new AbstractSet<>() {
 				@Override
@@ -341,14 +353,17 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 					return new Iterator<>() {
 						final Iterator<Entry<K, V>> setIterator = entrySet().iterator();
 
+						@Override
 						public boolean hasNext() {
 							return setIterator.hasNext();
 						}
 
+						@Override
 						public K next() {
 							return setIterator.next().getKey();
 						}
 
+						@Override
 						public void remove() {
 							setIterator.remove();
 						}
@@ -364,7 +379,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      *
      * <p>This base implementation throws {@code UnsupportedOperationException}.
      */
-    public V put(K key, V value) {
+    @Override
+	public V put(K key, V value) {
         throw new UnsupportedOperationException();
     }
 
@@ -374,7 +390,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * <p>This implementation iterates through {@code map}'s entry set, calling
      * {@code put()} for each.
      */
-    public void putAll(Map<? extends K, ? extends V> map) {
+    @Override
+	public void putAll(Map<? extends K, ? extends V> map) {
         for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
@@ -386,7 +403,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * <p>This implementation iterates its entry set, removing the entry with
      * a key that {@code key} equals.
      */
-    public V remove(Object key) {
+    @Override
+	public V remove(Object key) {
         Iterator<Entry<K, V>> it = entrySet().iterator();
         if (key != null) {
             while (it.hasNext()) {
@@ -413,7 +431,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      *
      * <p>This implementation returns its entry set's size.
      */
-    public int size() {
+    @Override
+	public int size() {
         return entrySet().size();
     }
 
@@ -461,7 +480,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * <p>This implementation returns a view that calls through this to map. Its
      * iterator transforms this map's entry set iterator to return values.
      */
-    public Collection<V> values() {
+    @Override
+	public Collection<V> values() {
         if (valuesCollection == null) {
             valuesCollection = new AbstractCollection<>() {
 				@Override
@@ -479,14 +499,17 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 					return new Iterator<>() {
 						final Iterator<Entry<K, V>> setIterator = entrySet().iterator();
 
+						@Override
 						public boolean hasNext() {
 							return setIterator.hasNext();
 						}
 
+						@Override
 						public V next() {
 							return setIterator.next().getValue();
 						}
 
+						@Override
 						public void remove() {
 							setIterator.remove();
 						}

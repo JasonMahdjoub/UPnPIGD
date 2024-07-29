@@ -60,7 +60,8 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
         this.actionInvocation = actionInvocation;
     }
 
-    protected IncomingActionResponseMessage executeSync() throws RouterException {
+    @Override
+	protected IncomingActionResponseMessage executeSync() throws RouterException {
         return invokeRemote(getInputMessage());
     }
 

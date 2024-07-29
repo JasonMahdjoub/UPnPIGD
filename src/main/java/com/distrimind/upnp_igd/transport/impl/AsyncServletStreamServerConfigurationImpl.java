@@ -59,7 +59,8 @@ public class AsyncServletStreamServerConfigurationImpl implements StreamServerCo
     /**
      * @return Defaults to <code>0</code>.
      */
-    public int getListenPort() {
+    @Override
+	public int getListenPort() {
         return listenPort;
     }
 

@@ -62,15 +62,18 @@ public class ControlPointImpl implements ControlPoint {
         this.registry = registry;
     }
 
-    public UpnpServiceConfiguration getConfiguration() {
+    @Override
+	public UpnpServiceConfiguration getConfiguration() {
         return configuration;
     }
 
-    public ProtocolFactory getProtocolFactory() {
+    @Override
+	public ProtocolFactory getProtocolFactory() {
         return protocolFactory;
     }
 
-    public Registry getRegistry() {
+    @Override
+	public Registry getRegistry() {
         return registry;
     }
 
@@ -78,19 +81,23 @@ public class ControlPointImpl implements ControlPoint {
         search(search.getSearchType(), search.getMxSeconds());
     }
 
-    public void search() {
+    @Override
+	public void search() {
         search(new STAllHeader(), MXHeader.DEFAULT_VALUE);
     }
 
-    public void search(UpnpHeader<?> searchType) {
+    @Override
+	public void search(UpnpHeader<?> searchType) {
         search(searchType, MXHeader.DEFAULT_VALUE);
     }
 
-    public void search(int mxSeconds) {
+    @Override
+	public void search(int mxSeconds) {
         search(new STAllHeader(), mxSeconds);
     }
 
-    public void search(UpnpHeader<?> searchType, int mxSeconds) {
+    @Override
+	public void search(UpnpHeader<?> searchType, int mxSeconds) {
         log.fine("Sending asynchronous search for: " + searchType.getString());
         getConfiguration().getAsyncProtocolExecutor().execute(
                 getProtocolFactory().createSendingSearch(searchType, mxSeconds)
@@ -101,14 +108,16 @@ public class ControlPointImpl implements ControlPoint {
         execute(executeAction.getCallback());
     }
 
-    public Future<?> execute(ActionCallback callback) {
+    @Override
+	public Future<?> execute(ActionCallback callback) {
         log.fine("Invoking action in background: " + callback);
         callback.setControlPoint(this);
         ExecutorService executor = getConfiguration().getSyncProtocolExecutorService();
         return executor.submit(callback);
     }
 
-    public void execute(SubscriptionCallback callback) {
+    @Override
+	public void execute(SubscriptionCallback callback) {
         log.fine("Invoking subscription in background: " + callback);
         callback.setControlPoint(this);
         getConfiguration().getSyncProtocolExecutorService().execute(callback);

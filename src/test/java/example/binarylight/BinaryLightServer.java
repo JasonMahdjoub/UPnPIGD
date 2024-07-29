@@ -22,7 +22,8 @@ public class BinaryLightServer implements Runnable {
         serverThread.start();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         try {
 
             final UpnpService upnpService = new UpnpServiceImpl();

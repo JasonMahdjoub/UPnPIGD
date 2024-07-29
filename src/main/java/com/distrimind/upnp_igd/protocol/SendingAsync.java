@@ -49,7 +49,8 @@ public abstract class SendingAsync implements Runnable {
         return upnpService;
     }
 
-    public void run() {
+    @Override
+	public void run() {
         try {
             execute();
         } catch (Exception ex) {

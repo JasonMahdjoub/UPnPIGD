@@ -76,7 +76,8 @@ public class SampleDeviceRoot<D extends Device<?, D, S>, S extends Service<?, D,
         );
     }
 
-    public DeviceDetailsProvider getDeviceDetailsProvider() {
+    @Override
+	public DeviceDetailsProvider getDeviceDetailsProvider() {
         return info -> getDeviceDetails();
     }
 

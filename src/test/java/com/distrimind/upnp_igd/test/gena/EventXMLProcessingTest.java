@@ -134,15 +134,18 @@ public class EventXMLProcessingTest {
         LocalGENASubscription<GenaSampleData.LocalTestService> subscription =
                 new LocalGENASubscription<>(localService, 1800, urls) {
 
-                    public void ended(CancelReason reason) {
+                    @Override
+					public void ended(CancelReason reason) {
 
                     }
 
-                    public void established() {
+                    @Override
+					public void established() {
 
                     }
 
-                    public void eventReceived() {
+                    @Override
+					public void eventReceived() {
 
                     }
                 };

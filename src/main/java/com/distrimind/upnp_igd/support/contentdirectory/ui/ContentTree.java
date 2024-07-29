@@ -96,15 +96,18 @@ public abstract class ContentTree extends JTree implements ContentBrowseActionCa
         return new ContentTreeCellRenderer();
     }
 
-    public ActionCallback createContentBrowseActionCallback(Service<?, ?, ?> service,
-                                                              DefaultTreeModel treeModel,
-                                                              DefaultMutableTreeNode treeNode) {
+    @Override
+	public ActionCallback createContentBrowseActionCallback(Service<?, ?, ?> service,
+															DefaultTreeModel treeModel,
+															DefaultMutableTreeNode treeNode) {
 
         return new ContentBrowseActionCallback(service, treeModel, treeNode) {
-            public void updateStatusUI(Status status, DefaultMutableTreeNode treeNode, DefaultTreeModel treeModel) {
+            @Override
+			public void updateStatusUI(Status status, DefaultMutableTreeNode treeNode, DefaultTreeModel treeModel) {
                 ContentTree.this.updateStatus(status, treeNode, treeModel);
             }
-            public void failureUI(String failureMessage) {
+            @Override
+			public void failureUI(String failureMessage) {
                 ContentTree.this.failure(failureMessage);
             }
         };

@@ -43,7 +43,8 @@ public class RegistryMaintainer implements Runnable {
         stopped = true;
     }
 
-    public void run() {
+    @Override
+	public void run() {
         stopped = false;
         if (log.isLoggable(Level.FINE))
             log.fine("Running registry maintenance loop every milliseconds: " + sleepIntervalMillis);

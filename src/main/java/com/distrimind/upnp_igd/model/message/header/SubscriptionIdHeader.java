@@ -29,14 +29,16 @@ public class SubscriptionIdHeader extends UpnpHeader<String> {
         setValue(value);
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         if (!s.startsWith(PREFIX)) {
             throw new InvalidHeaderException("Invalid subscription ID header value, must start with '"+PREFIX+"': " + s);
         }
         setValue(s);
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue();
     }
 }

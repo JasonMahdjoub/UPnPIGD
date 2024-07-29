@@ -70,7 +70,8 @@ public class LogTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public Object getValueAt(int row, int column) {
+    @Override
+	public Object getValueAt(int row, int column) {
         return messages.get(row);
     }
 
@@ -79,11 +80,13 @@ public class LogTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public int getRowCount() {
+    @Override
+	public int getRowCount() {
         return messages.size();
     }
 
-    public int getColumnCount() {
+    @Override
+	public int getColumnCount() {
         return 5;
     }
 

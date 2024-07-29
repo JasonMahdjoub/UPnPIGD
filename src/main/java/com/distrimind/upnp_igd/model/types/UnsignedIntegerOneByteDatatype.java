@@ -20,7 +20,8 @@ package com.distrimind.upnp_igd.model.types;
  */
 public class UnsignedIntegerOneByteDatatype extends AbstractDatatype<UnsignedIntegerOneByte> {
 
-    public UnsignedIntegerOneByte valueOf(String s) throws InvalidValueException {
+    @Override
+	public UnsignedIntegerOneByte valueOf(String s) throws InvalidValueException {
         if (s.isEmpty()) return null;
         try {
             return new UnsignedIntegerOneByte(s);

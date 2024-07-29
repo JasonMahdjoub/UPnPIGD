@@ -39,7 +39,8 @@ public class SoapActionHeader extends UpnpHeader<SoapActionType> {
         setString(s);
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         try {
             if (!s.startsWith("\"") && s.endsWith("\"")) {
                 throw new InvalidHeaderException("Invalid SOAP action header, must be enclosed in doublequotes:" + s);
@@ -52,7 +53,8 @@ public class SoapActionHeader extends UpnpHeader<SoapActionType> {
         }
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return "\"" + getValue().toString() + "\"";
     }
 }

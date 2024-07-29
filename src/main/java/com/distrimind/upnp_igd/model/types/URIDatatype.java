@@ -26,7 +26,8 @@ public class URIDatatype extends AbstractDatatype<URI> {
     public URIDatatype() {
     }
 
-    public URI valueOf(String s) throws InvalidValueException {
+    @Override
+	public URI valueOf(String s) throws InvalidValueException {
         if (s.isEmpty()) return null;
         try {
             return new URI(s);

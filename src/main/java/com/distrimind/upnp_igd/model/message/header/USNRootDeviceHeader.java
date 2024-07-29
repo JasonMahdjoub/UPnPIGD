@@ -31,7 +31,8 @@ public class USNRootDeviceHeader extends UpnpHeader<UDN> {
         setValue(udn);
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         if (!s.startsWith(UDN.PREFIX) || !s.endsWith(ROOT_DEVICE_SUFFIX)) {
             throw new InvalidHeaderException(
                     "Invalid root device USN header value, must start with '" +
@@ -43,7 +44,8 @@ public class USNRootDeviceHeader extends UpnpHeader<UDN> {
         setValue(udn);
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue().toString() + ROOT_DEVICE_SUFFIX;
     }
 

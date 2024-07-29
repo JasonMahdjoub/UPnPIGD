@@ -28,7 +28,8 @@ final public class UnsignedIntegerOneByte extends UnsignedVariableInteger {
         super(s);
     }
 
-    public Bits getBits() {
+    @Override
+	public Bits getBits() {
         return Bits.EIGHT;
     }
 

@@ -70,7 +70,8 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
         return getDiscoveryOptions(udn) != null && getDiscoveryOptions(udn).isByeByeBeforeFirstAlive();
     }
 
-    void add(LocalDevice<?> localDevice) throws RegistrationException {
+    @Override
+	void add(LocalDevice<?> localDevice) throws RegistrationException {
         add(localDevice, null);
     }
 
@@ -122,7 +123,8 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
 
     }
 
-    Collection<LocalDevice<?>> get() {
+    @Override
+	Collection<LocalDevice<?>> get() {
         Set<LocalDevice<?>> c = new HashSet<>();
         for (RegistryItem<UDN, LocalDevice<?>> item : getDeviceItems()) {
             c.add(item.getItem());
@@ -186,7 +188,8 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
         return false;
     }
 
-    void removeAll() {
+    @Override
+	void removeAll() {
         removeAll(false);
     }
 
@@ -207,7 +210,8 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
 
     /* ############################################################################################################ */
     
-    void maintain() {
+    @Override
+	void maintain() {
 
     	if(getDeviceItems().isEmpty()) return ;
 
@@ -261,7 +265,8 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
 
     }
 
-    void shutdown() {
+    @Override
+	void shutdown() {
         log.fine("Clearing all registered subscriptions to local devices during shutdown");
         getSubscriptionItems().clear();
 

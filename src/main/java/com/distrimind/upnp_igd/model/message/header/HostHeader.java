@@ -38,7 +38,8 @@ public class HostHeader extends UpnpHeader<HostPort> {
         setValue(new HostPort(host, port));
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         // UDA 1.1/1.0 section 1.2.2
         if (s.contains(":")) {
             // We have a port in the header, so we have to use that instead of the UDA default
@@ -55,7 +56,8 @@ public class HostHeader extends UpnpHeader<HostPort> {
         }
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue().toString();
     }
 }

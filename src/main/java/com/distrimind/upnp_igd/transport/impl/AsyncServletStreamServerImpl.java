@@ -51,11 +51,13 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
         this.configuration = configuration;
     }
 
-    public AsyncServletStreamServerConfigurationImpl getConfiguration() {
+    @Override
+	public AsyncServletStreamServerConfigurationImpl getConfiguration() {
         return configuration;
     }
 
-    synchronized public void init(InetAddress bindAddress, final Router router, NetworkAddressFactory networkAddressFactory) throws InitializationException {
+    @Override
+	synchronized public void init(InetAddress bindAddress, final Router router, NetworkAddressFactory networkAddressFactory) throws InitializationException {
         try {
             if (log.isLoggable(Level.FINE))
                 log.fine("Setting executor service on servlet container adapter");
@@ -90,15 +92,18 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
         }
     }
 
-    synchronized public int getPort() {
+    @Override
+	synchronized public int getPort() {
         return this.localPort;
     }
 
-    synchronized public void stop() {
+    @Override
+	synchronized public void stop() {
         getConfiguration().getServletContainerAdapter().removeConnector(hostAddress, localPort);
     }
 
-    public void run() {
+    @Override
+	public void run() {
         getConfiguration().getServletContainerAdapter().startIfNotRunning();
     }
 

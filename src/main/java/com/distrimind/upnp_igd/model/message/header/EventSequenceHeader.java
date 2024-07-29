@@ -29,7 +29,8 @@ public class EventSequenceHeader extends UpnpHeader<UnsignedIntegerFourBytes> {
         setValue(new UnsignedIntegerFourBytes(value));
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
 
         // Cut off leading zeros
         if (!"0".equals(s)) {
@@ -46,7 +47,8 @@ public class EventSequenceHeader extends UpnpHeader<UnsignedIntegerFourBytes> {
 
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue().toString();
     }
 }

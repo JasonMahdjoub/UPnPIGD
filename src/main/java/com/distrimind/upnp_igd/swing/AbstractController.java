@@ -78,15 +78,18 @@ public class AbstractController<V extends Container> implements Controller<V> {
         }
     }
 
-    public V getView() {
+    @Override
+	public V getView() {
         return view;
     }
 
-    public Controller<? extends Container> getParentController() {
+    @Override
+	public Controller<? extends Container> getParentController() {
         return parentController;
     }
 
-    public java.util.List<Controller<?>> getSubControllers() {
+    @Override
+	public java.util.List<Controller<?>> getSubControllers() {
         return subControllers;
     }
 
@@ -95,7 +98,8 @@ public class AbstractController<V extends Container> implements Controller<V> {
      * This method disposes all subcontrollers first, recursively. Disposing a controller means it
      * will no longer be attached to its parent controller.
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         log.fine("Disposing controller");
         Iterator<Controller<?>> it = subControllers.iterator();
         while (it.hasNext()) {
@@ -111,7 +115,8 @@ public class AbstractController<V extends Container> implements Controller<V> {
      * @param source The prepared (== has action command assigned) action trigger source
      * @param action An actual action implementation.
      */
-    public void registerAction(AbstractButton source, DefaultAction action) {
+    @Override
+	public void registerAction(AbstractButton source, DefaultAction action) {
         source.removeActionListener(this);
         source.addActionListener(this);
         this.actions.put(source.getActionCommand(), action);
@@ -124,7 +129,8 @@ public class AbstractController<V extends Container> implements Controller<V> {
      * @param actionCommand The action command, used as a key when registering and executing actions.
      * @param action        An actual action implementation.
      */
-    public void registerAction(AbstractButton source, String actionCommand, DefaultAction action) {
+    @Override
+	public void registerAction(AbstractButton source, String actionCommand, DefaultAction action) {
         source.setActionCommand(actionCommand);
         registerAction(source, action);
     }
@@ -170,11 +176,13 @@ public class AbstractController<V extends Container> implements Controller<V> {
      *
      * @param event The event to be propagated.
      */
-    public <PAYLOAD> void fireEventGlobal(Event<PAYLOAD> event) {
+    @Override
+	public <PAYLOAD> void fireEventGlobal(Event<PAYLOAD> event) {
         fireEvent(event, true);
     }
 
-    public <PAYLOAD> void fireEvent(Event<PAYLOAD> event, boolean global) {
+    @Override
+	public <PAYLOAD> void fireEvent(Event<PAYLOAD> event, boolean global) {
         if (!event.alreadyFired(this)) {
             log.finest("Event has not been fired already");
             if (eventListeners.get(event.getClass()) != null) {
@@ -210,7 +218,8 @@ public class AbstractController<V extends Container> implements Controller<V> {
      *
      * @param actionEvent the action
      */
-    public void actionPerformed(ActionEvent actionEvent) {
+    @Override
+	public void actionPerformed(ActionEvent actionEvent) {
 
         try {
             AbstractButton button = (AbstractButton) actionEvent.getSource();
@@ -249,41 +258,52 @@ public class AbstractController<V extends Container> implements Controller<V> {
         }
     }
 
-    public void preActionExecute() {
+    @Override
+	public void preActionExecute() {
     }
 
-    public void postActionExecute() {
+    @Override
+	public void postActionExecute() {
     }
 
-    public void failedActionExecute() {
+    @Override
+	public void failedActionExecute() {
     }
 
-    public void finalActionExecute() {
+    @Override
+	public void finalActionExecute() {
     }
 
     // If this controller is responsible for a JFrame, close it and all its children when the
     // window is closed.
-    public void windowClosing(WindowEvent windowEvent) {
+    @Override
+	public void windowClosing(WindowEvent windowEvent) {
         dispose();
         ((JFrame)getView()).dispose();
     }
 
-    public void windowOpened(WindowEvent windowEvent) {
+    @Override
+	public void windowOpened(WindowEvent windowEvent) {
     }
 
-    public void windowClosed(WindowEvent windowEvent) {
+    @Override
+	public void windowClosed(WindowEvent windowEvent) {
     }
 
-    public void windowIconified(WindowEvent windowEvent) {
+    @Override
+	public void windowIconified(WindowEvent windowEvent) {
     }
 
-    public void windowDeiconified(WindowEvent windowEvent) {
+    @Override
+	public void windowDeiconified(WindowEvent windowEvent) {
     }
 
-    public void windowActivated(WindowEvent windowEvent) {
+    @Override
+	public void windowActivated(WindowEvent windowEvent) {
     }
 
-    public void windowDeactivated(WindowEvent windowEvent) {
+    @Override
+	public void windowDeactivated(WindowEvent windowEvent) {
     }
 
 }

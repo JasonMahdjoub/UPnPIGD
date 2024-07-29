@@ -151,22 +151,28 @@ public class InvalidEventXMLProcessingTest {
         );
 
         RemoteGENASubscription subscription = new RemoteGENASubscription(service, 1800) {
-            public void failed(UpnpResponse responseStatus) {
+            @Override
+			public void failed(UpnpResponse responseStatus) {
             }
 
-            public void ended(CancelReason reason, UpnpResponse responseStatus) {
+            @Override
+			public void ended(CancelReason reason, UpnpResponse responseStatus) {
             }
 
-            public void eventsMissed(int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(int numberOfMissedEvents) {
             }
 
-            public void established() {
+            @Override
+			public void established() {
             }
 
-            public void eventReceived() {
+            @Override
+			public void eventReceived() {
             }
 
-            public void invalidMessage(UnsupportedDataException ex) {
+            @Override
+			public void invalidMessage(UnsupportedDataException ex) {
             }
         };
         subscription.receive(new UnsignedIntegerFourBytes(0), new ArrayList<>());

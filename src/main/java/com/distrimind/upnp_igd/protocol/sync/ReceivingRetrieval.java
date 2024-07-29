@@ -62,7 +62,8 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
         super(upnpService, inputMessage);
     }
 
-    protected StreamResponseMessage executeSync() throws RouterException {
+    @Override
+	protected StreamResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().hasHostHeader()) {
             log.fine("Ignoring message, missing HOST header: " + getInputMessage());

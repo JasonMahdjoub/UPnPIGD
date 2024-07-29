@@ -116,7 +116,8 @@ public class ActionArgument<S extends Service<?, ?, ?>> implements Validatable {
         return getAction().getService().getDatatype(this);
     }
 
-    public List<ValidationError> validate() {
+    @Override
+	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
         if (getName() == null || getName().isEmpty()) {

@@ -37,7 +37,8 @@ public class StreamServerConfigurationImpl implements StreamServerConfiguration 
         this.listenPort = listenPort;
     }
 
-    public int getListenPort() {
+    @Override
+	public int getListenPort() {
         return listenPort;
     }
 

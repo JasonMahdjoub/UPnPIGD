@@ -98,19 +98,23 @@ public class LogViewImpl extends JPanel implements LogView {
                 LogMessage.class,
                 new LogTableCellRenderer() {
                     // TODO: These should be injected
-                    protected ImageIcon getWarnErrorIcon() {
+                    @Override
+					protected ImageIcon getWarnErrorIcon() {
                         return LogViewImpl.this.getWarnErrorIcon();
                     }
 
-                    protected ImageIcon getDebugIcon() {
+                    @Override
+					protected ImageIcon getDebugIcon() {
                         return LogViewImpl.this.getDebugIcon();
                     }
 
-                    protected ImageIcon getTraceIcon() {
+                    @Override
+					protected ImageIcon getTraceIcon() {
                         return LogViewImpl.this.getTraceIcon();
                     }
 
-                    protected ImageIcon getInfoIcon() {
+                    @Override
+					protected ImageIcon getInfoIcon() {
                         return LogViewImpl.this.getInfoIcon();
                     }
                 });

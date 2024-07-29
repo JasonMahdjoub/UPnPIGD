@@ -42,7 +42,8 @@ public abstract class AbstractStreamClientConfiguration implements StreamClientC
         this.logWarningSeconds = logWarningSeconds;
     }
 
-    public ExecutorService getRequestExecutorService() {
+    @Override
+	public ExecutorService getRequestExecutorService() {
         return requestExecutorService;
     }
 
@@ -53,7 +54,8 @@ public abstract class AbstractStreamClientConfiguration implements StreamClientC
     /**
      * @return Configured value or default of 60 seconds.
      */
-    public int getTimeoutSeconds() {
+    @Override
+	public int getTimeoutSeconds() {
         return timeoutSeconds;
     }
 
@@ -64,7 +66,8 @@ public abstract class AbstractStreamClientConfiguration implements StreamClientC
     /**
      * @return Configured value or default of 5 seconds.
      */
-    public int getLogWarningSeconds() {
+    @Override
+	public int getLogWarningSeconds() {
         return logWarningSeconds;
     }
 
@@ -75,7 +78,8 @@ public abstract class AbstractStreamClientConfiguration implements StreamClientC
     /**
      * @return Defaults to string value of {@link ServerClientTokens}.
      */
-    public String getUserAgentValue(int majorVersion, int minorVersion) {
+    @Override
+	public String getUserAgentValue(int majorVersion, int minorVersion) {
         return new ServerClientTokens(majorVersion, minorVersion).toString();
     }
 }

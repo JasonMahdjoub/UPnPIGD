@@ -40,7 +40,8 @@ public abstract class GetMediaInfo extends ActionCallback {
         getActionInvocation().setInput("InstanceID", instanceId);
     }
 
-    public void success(ActionInvocation<?> invocation) {
+    @Override
+	public void success(ActionInvocation<?> invocation) {
         MediaInfo mediaInfo = new MediaInfo(invocation.getOutputMap());
         received(invocation, mediaInfo);
     }

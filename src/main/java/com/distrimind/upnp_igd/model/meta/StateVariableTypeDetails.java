@@ -83,7 +83,8 @@ public class StateVariableTypeDetails implements Validatable {
         return false;
     }
 
-    public List<ValidationError> validate() {
+    @Override
+	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
         if (getDatatype() == null) {

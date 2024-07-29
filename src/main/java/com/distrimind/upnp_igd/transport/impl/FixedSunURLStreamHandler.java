@@ -42,16 +42,19 @@ public class FixedSunURLStreamHandler implements URLStreamHandlerFactory {
 
     final private static Logger log = Logger.getLogger(FixedSunURLStreamHandler.class.getName());
 
-    public URLStreamHandler createURLStreamHandler(String protocol) {
+    @Override
+	public URLStreamHandler createURLStreamHandler(String protocol) {
         log.fine("Creating new URLStreamHandler for protocol: " + protocol);
         if ("http".equals(protocol)) {
             return new URLStreamHandler() {
 
-                protected java.net.URLConnection openConnection(URL u) throws IOException {
+                @Override
+				protected java.net.URLConnection openConnection(URL u) throws IOException {
                     return openConnection(u, null);
                 }
 
-                protected java.net.URLConnection openConnection(URL u, Proxy p) throws IOException {
+                @Override
+				protected java.net.URLConnection openConnection(URL u, Proxy p) throws IOException {
                     /*if (p==null)
                         return u.openConnection();
                     else
@@ -84,7 +87,8 @@ public class FixedSunURLStreamHandler implements URLStreamHandlerFactory {
             //super(u, host, port);
         }
 
-        public synchronized OutputStream getOutputStream() throws IOException {
+        @Override
+		public synchronized OutputStream getOutputStream() throws IOException {
             OutputStream os;
             String savedMethod = method;
             // see if the method supports output
@@ -101,7 +105,8 @@ public class FixedSunURLStreamHandler implements URLStreamHandlerFactory {
             return os;
         }
 
-        public void setRequestMethod(String method) throws ProtocolException {
+        @Override
+		public void setRequestMethod(String method) throws ProtocolException {
             if (connected) {
                 throw new ProtocolException("Cannot reset method once connected");
             }

@@ -29,7 +29,8 @@ public class UDNHeader extends UpnpHeader<UDN> {
         setValue(udn);
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         if (!s.startsWith(UDN.PREFIX)) {
             throw new InvalidHeaderException("Invalid UDA header value, must start with '"+UDN.PREFIX+"': " + s);
         }
@@ -42,7 +43,8 @@ public class UDNHeader extends UpnpHeader<UDN> {
         setValue(udn);
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue().toString();
     }
 }

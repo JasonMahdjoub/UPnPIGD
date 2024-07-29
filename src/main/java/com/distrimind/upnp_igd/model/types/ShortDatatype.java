@@ -26,7 +26,8 @@ public class ShortDatatype extends AbstractDatatype<Short> {
         return type == Short.TYPE || Short.class.isAssignableFrom(type);
     }
 
-    public Short valueOf(String s) throws InvalidValueException {
+    @Override
+	public Short valueOf(String s) throws InvalidValueException {
         if (s.isEmpty()) return null;
         try {
             Short value = Short.parseShort(s.trim());

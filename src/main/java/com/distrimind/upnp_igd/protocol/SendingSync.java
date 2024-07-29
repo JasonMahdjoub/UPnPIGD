@@ -50,7 +50,8 @@ public abstract class SendingSync<IN extends StreamRequestMessage, OUT extends S
         return outputMessage;
     }
 
-    final protected void execute() throws RouterException {
+    @Override
+	final protected void execute() throws RouterException {
         outputMessage = executeSync();
     }
 

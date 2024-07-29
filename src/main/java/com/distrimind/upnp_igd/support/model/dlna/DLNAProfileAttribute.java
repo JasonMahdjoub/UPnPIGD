@@ -27,7 +27,8 @@ public class DLNAProfileAttribute extends DLNAAttribute<DLNAProfiles> {
         setValue(profile);
     }
     
-    public void setString(String s, String cf) throws InvalidDLNAProtocolAttributeException {
+    @Override
+	public void setString(String s, String cf) throws InvalidDLNAProtocolAttributeException {
         DLNAProfiles value = DLNAProfiles.valueOf(s, cf);
         if (value == null) {
             throw new InvalidDLNAProtocolAttributeException("Can't parse DLNA profile from: " + s);
@@ -35,7 +36,8 @@ public class DLNAProfileAttribute extends DLNAAttribute<DLNAProfiles> {
         setValue(value);
     }
     
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue().getCode();
     }
 }

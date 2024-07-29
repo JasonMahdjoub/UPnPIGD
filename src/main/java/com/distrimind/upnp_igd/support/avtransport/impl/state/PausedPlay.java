@@ -57,7 +57,8 @@ public abstract class PausedPlay<T extends AVTransport> extends AbstractState<T>
     public abstract Class<? extends AbstractState<?>> stop();
     public abstract Class<? extends AbstractState<?>> play(String speed);
 
-    public List<TransportAction> getCurrentTransportActions() {
+    @Override
+	public List<TransportAction> getCurrentTransportActions() {
         return List.of(
                 TransportAction.Stop,
                 TransportAction.Play

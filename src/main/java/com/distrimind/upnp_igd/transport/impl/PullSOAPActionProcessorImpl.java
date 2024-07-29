@@ -56,7 +56,8 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
 
     protected static Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
 
-    public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
+    @Override
+	public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
         String body = getMessageBody(requestMessage);
         try {
             Document doc= Jsoup.parse(body, "", Parser.xmlParser());
@@ -66,7 +67,8 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
         }
     }
 
-    public <S extends Service<?, ?, ?>> void readBody(ActionResponseMessage responseMsg, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
+    @Override
+	public <S extends Service<?, ?, ?>> void readBody(ActionResponseMessage responseMsg, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
         String body = getMessageBody(responseMsg);
         try {
             Document doc= Jsoup.parse(body, "", Parser.xmlParser());

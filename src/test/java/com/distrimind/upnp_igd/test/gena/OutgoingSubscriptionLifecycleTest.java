@@ -102,13 +102,15 @@ public class OutgoingSubscriptionLifecycleTest {
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription<?> subscription) {
+            @Override
+			public void eventReceived(GENASubscription<?> subscription) {
                 assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
                 assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
                 testAssertions.add(true);
             }
 
-            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -222,14 +224,16 @@ public class OutgoingSubscriptionLifecycleTest {
             public void ended(GENASubscription<?> subscription, CancelReason reason, UpnpResponse responseStatus) {
             }
 
-            public void eventReceived(GENASubscription<?> subscription) {
+            @Override
+			public void eventReceived(GENASubscription<?> subscription) {
                 assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
                 assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
                 testAssertions.add(true);
                 notificationCalled.add(true);
             }
 
-            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 

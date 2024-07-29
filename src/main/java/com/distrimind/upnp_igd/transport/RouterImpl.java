@@ -104,11 +104,13 @@ public class RouterImpl implements Router {
         return disable();
     }
 
-    public UpnpServiceConfiguration getConfiguration() {
+    @Override
+	public UpnpServiceConfiguration getConfiguration() {
         return configuration;
     }
 
-    public ProtocolFactory getProtocolFactory() {
+    @Override
+	public ProtocolFactory getProtocolFactory() {
         return protocolFactory;
     }
 
@@ -214,7 +216,8 @@ public class RouterImpl implements Router {
         }
     }
 
-    public List<NetworkAddress> getActiveStreamServers(InetAddress preferredAddress) throws RouterException {
+    @Override
+	public List<NetworkAddress> getActiveStreamServers(InetAddress preferredAddress) throws RouterException {
         lock(readLock);
         try {
             if (enabled && !streamServers.isEmpty()) {
@@ -261,7 +264,8 @@ public class RouterImpl implements Router {
      *
      * @param msg The received datagram message.
      */
-    public void received(IncomingDatagramMessage<?> msg) {
+    @Override
+	public void received(IncomingDatagramMessage<?> msg) {
         if (!enabled) {
             log.fine("Router disabled, ignoring incoming message: " + msg);
             return;
@@ -287,7 +291,8 @@ public class RouterImpl implements Router {
      *
      * @param stream The received {@link UpnpStream}.
      */
-    public void received(UpnpStream stream) {
+    @Override
+	public void received(UpnpStream stream) {
         if (!enabled) {
             log.fine("Router disabled, ignoring incoming: " + stream);
             return;
@@ -301,7 +306,8 @@ public class RouterImpl implements Router {
      *
      * @param msg The UDP datagram message to send.
      */
-    public void send(OutgoingDatagramMessage<?> msg) throws RouterException {
+    @Override
+	public void send(OutgoingDatagramMessage<?> msg) throws RouterException {
         lock(readLock);
         try {
             if (enabled) {
@@ -323,7 +329,8 @@ public class RouterImpl implements Router {
      * @return The return value of the {@link StreamClient#sendRequest(StreamRequestMessage)}
      *         method or <code>null</code> if no <code>StreamClient</code> is available.
      */
-    public StreamResponseMessage send(StreamRequestMessage msg) throws RouterException {
+    @Override
+	public StreamResponseMessage send(StreamRequestMessage msg) throws RouterException {
         lock(readLock);
         try {
             if (enabled) {
@@ -355,7 +362,8 @@ public class RouterImpl implements Router {
      *
      * @param bytes The byte payload of the UDP datagram.
      */
-    public void broadcast(byte[] bytes) throws RouterException {
+    @Override
+	public void broadcast(byte[] bytes) throws RouterException {
         lock(readLock);
         try {
             if (enabled) {

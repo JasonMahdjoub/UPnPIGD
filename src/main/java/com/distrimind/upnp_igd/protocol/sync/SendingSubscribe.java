@@ -69,7 +69,8 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
         this.subscription = subscription;
     }
 
-    protected IncomingSubscribeResponseMessage executeSync() throws RouterException {
+    @Override
+	protected IncomingSubscribeResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().hasCallbackURLs()) {
             log.fine("Subscription failed, no active local callback URLs available (network disabled?)");

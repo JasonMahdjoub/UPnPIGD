@@ -25,7 +25,8 @@ public class BinaryLightClient implements Runnable {
 
     }
 
-    public void run() {
+    @Override
+	public void run() {
         try {
 
             UpnpService upnpService = new UpnpServiceImpl();

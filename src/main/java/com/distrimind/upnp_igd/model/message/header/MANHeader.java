@@ -40,7 +40,8 @@ public class MANHeader extends UpnpHeader<String> {
         this.namespace = namespace;
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
 
         Matcher matcher = PATTERN.matcher(s);
         if (matcher.matches()) {
@@ -60,7 +61,8 @@ public class MANHeader extends UpnpHeader<String> {
         }
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         if (getValue() == null) return null;
         StringBuilder s = new StringBuilder();
         s.append("\"").append(getValue()).append("\"");

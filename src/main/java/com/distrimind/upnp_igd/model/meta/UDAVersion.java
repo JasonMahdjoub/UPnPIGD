@@ -50,7 +50,8 @@ public class UDAVersion implements Validatable {
         return minor;
     }
 
-    public List<ValidationError> validate() {
+    @Override
+	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
 
         if (getMajor() != 1) {

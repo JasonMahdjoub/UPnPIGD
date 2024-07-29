@@ -84,7 +84,8 @@ public class HeaderDeviceDetailsProvider implements DeviceDetailsProvider {
         return headerDetails;
     }
 
-    public DeviceDetails provide(RemoteClientInfo info) {
+    @Override
+	public DeviceDetails provide(RemoteClientInfo info) {
         if (info == null || info.getRequestHeaders().isEmpty()) return getDefaultDeviceDetails();
 
         for (Key key : getHeaderDetails().keySet()) {

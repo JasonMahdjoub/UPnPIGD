@@ -32,7 +32,8 @@ public abstract class LoggingHandler extends Handler {
         this.sourcePathElements = sourcePathElements;
     }
 
-    public void publish(LogRecord logRecord) {
+    @Override
+	public void publish(LogRecord logRecord) {
         LogMessage logMessage = new LogMessage(
                 logRecord.getLevel(),
                 getSource(logRecord),
@@ -42,10 +43,12 @@ public abstract class LoggingHandler extends Handler {
         log(logMessage);
     }
 
-    public void flush() {
+    @Override
+	public void flush() {
     }
 
-    public void close() throws SecurityException {
+    @Override
+	public void close() throws SecurityException {
     }
 
     protected String getSource(LogRecord record) {

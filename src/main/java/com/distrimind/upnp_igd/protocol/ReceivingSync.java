@@ -59,7 +59,8 @@ public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends
         return outputMessage;
     }
 
-    final protected void execute() throws RouterException {
+    @Override
+	final protected void execute() throws RouterException {
         outputMessage = executeSync();
 
         if (outputMessage != null && !getRemoteClientInfo().getExtraResponseHeaders().isEmpty()) {

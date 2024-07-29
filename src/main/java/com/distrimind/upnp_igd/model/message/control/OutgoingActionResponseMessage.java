@@ -69,7 +69,8 @@ public class OutgoingActionResponseMessage extends StreamResponseMessage impleme
         );
     }
 
-    public String getActionNamespace() {
+    @Override
+	public String getActionNamespace() {
         return actionNamespace;
     }
 

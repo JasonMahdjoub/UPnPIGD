@@ -122,7 +122,8 @@ public class EventProviderTest extends EventSubscriptionTest {
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription<?> subscription) {
+            @Override
+			public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
                     assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
                     testAssertions.add(true);
@@ -134,7 +135,8 @@ public class EventProviderTest extends EventSubscriptionTest {
                 }
             }
 
-            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -195,7 +197,8 @@ public class EventProviderTest extends EventSubscriptionTest {
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription<?> subscription) {
+            @Override
+			public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
                     assertEquals(subscription.getCurrentValues().get("Target").toString(), "0");
                     assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
@@ -209,7 +212,8 @@ public class EventProviderTest extends EventSubscriptionTest {
                 }
             }
 
-            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -283,7 +287,8 @@ public class EventProviderTest extends EventSubscriptionTest {
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription<?> subscription) {
+            @Override
+			public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
 
                     // Initial event contains all evented variables, snapshot of the service state
@@ -309,7 +314,8 @@ public class EventProviderTest extends EventSubscriptionTest {
                 }
             }
 
-            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 
@@ -397,7 +403,8 @@ public class EventProviderTest extends EventSubscriptionTest {
                 testAssertions.add(true);
             }
 
-            public void eventReceived(GENASubscription<?> subscription) {
+            @Override
+			public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
 
                     // Initial event contains all evented variables, snapshot of the service state
@@ -423,7 +430,8 @@ public class EventProviderTest extends EventSubscriptionTest {
                 }
             }
 
-            public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
+            @Override
+			public void eventsMissed(GENASubscription<?> subscription, int numberOfMissedEvents) {
                 testAssertions.add(false);
             }
 

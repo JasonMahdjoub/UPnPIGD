@@ -79,11 +79,13 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         this.upnpService = upnpService;
     }
 
-    public UpnpService getUpnpService() {
+    @Override
+	public UpnpService getUpnpService() {
         return upnpService;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
 	public ReceivingAsync<?> createReceivingAsync(IncomingDatagramMessage<?> message) throws ProtocolCreationException {
         if (log.isLoggable(Level.FINE)) {
             log.fine("Creating protocol for incoming asynchronous: " + message);
@@ -150,7 +152,8 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         return false;
     }
 
-    public ReceivingSync<?, ?> createReceivingSync(StreamRequestMessage message) throws ProtocolCreationException {
+    @Override
+	public ReceivingSync<?, ?> createReceivingSync(StreamRequestMessage message) throws ProtocolCreationException {
         log.fine("Creating protocol for incoming synchronous: " + message);
 
         if (message.getOperation().getMethod().equals(UpnpRequest.Method.GET)) {
@@ -199,23 +202,28 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         throw new ProtocolCreationException("Protocol for message type not found: " + message);
     }
 
-    public <T> SendingNotificationAlive createSendingNotificationAlive(LocalDevice<T> localDevice) {
+    @Override
+	public <T> SendingNotificationAlive createSendingNotificationAlive(LocalDevice<T> localDevice) {
         return new SendingNotificationAlive(getUpnpService(), localDevice);
     }
 
-    public <T> SendingNotificationByebye createSendingNotificationByebye(LocalDevice<T> localDevice) {
+    @Override
+	public <T> SendingNotificationByebye createSendingNotificationByebye(LocalDevice<T> localDevice) {
         return new SendingNotificationByebye(getUpnpService(), localDevice);
     }
 
-    public SendingSearch createSendingSearch(UpnpHeader<?> searchTarget, int mxSeconds) {
+    @Override
+	public SendingSearch createSendingSearch(UpnpHeader<?> searchTarget, int mxSeconds) {
         return new SendingSearch(getUpnpService(), searchTarget, mxSeconds);
     }
 
-    public SendingAction createSendingAction(ActionInvocation<?> actionInvocation, URL controlURL) {
+    @Override
+	public SendingAction createSendingAction(ActionInvocation<?> actionInvocation, URL controlURL) {
         return new SendingAction(getUpnpService(), actionInvocation, controlURL);
     }
 
-    public SendingSubscribe createSendingSubscribe(RemoteGENASubscription subscription) throws ProtocolCreationException {
+    @Override
+	public SendingSubscribe createSendingSubscribe(RemoteGENASubscription subscription) throws ProtocolCreationException {
         try {
             List<NetworkAddress> activeStreamServers =
                 getUpnpService().getRouter().getActiveStreamServers(
@@ -230,15 +238,18 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         }
     }
 
-    public SendingRenewal createSendingRenewal(RemoteGENASubscription subscription) {
+    @Override
+	public SendingRenewal createSendingRenewal(RemoteGENASubscription subscription) {
         return new SendingRenewal(getUpnpService(), subscription);
     }
 
-    public SendingUnsubscribe createSendingUnsubscribe(RemoteGENASubscription subscription) {
+    @Override
+	public SendingUnsubscribe createSendingUnsubscribe(RemoteGENASubscription subscription) {
         return new SendingUnsubscribe(getUpnpService(), subscription);
     }
 
-    public SendingEvent createSendingEvent(LocalGENASubscription<?> subscription) {
+    @Override
+	public SendingEvent createSendingEvent(LocalGENASubscription<?> subscription) {
         return new SendingEvent(getUpnpService(), subscription);
     }
 

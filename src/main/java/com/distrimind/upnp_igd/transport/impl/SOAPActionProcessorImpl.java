@@ -623,15 +623,18 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     	return null;
     }
 
-    public void warning(SAXParseException e) throws SAXException {
+    @Override
+	public void warning(SAXParseException e) throws SAXException {
         log.warning(e.toString());
     }
 
-    public void error(SAXParseException e) throws SAXException {
+    @Override
+	public void error(SAXParseException e) throws SAXException {
         throw e;
     }
 
-    public void fatalError(SAXParseException e) throws SAXException {
+    @Override
+	public void fatalError(SAXParseException e) throws SAXException {
         throw e;
     }
 }

@@ -77,7 +77,8 @@ public class ReceivingNotification extends ReceivingAsync<IncomingNotificationRe
         super(upnpService, new IncomingNotificationRequest(inputMessage));
     }
 
-    protected void execute() throws RouterException {
+    @Override
+	protected void execute() throws RouterException {
 
         UDN udn = getInputMessage().getUDN();
         if (udn == null) {

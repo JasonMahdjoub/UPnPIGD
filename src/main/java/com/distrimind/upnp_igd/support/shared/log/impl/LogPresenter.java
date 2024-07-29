@@ -37,7 +37,8 @@ public class LogPresenter implements LogView.Presenter {
     @Inject
     protected Event<TextExpand> textExpandEvent;
 
-    public void init() {
+    @Override
+	public void init() {
         view.setPresenter(this);
     }
 

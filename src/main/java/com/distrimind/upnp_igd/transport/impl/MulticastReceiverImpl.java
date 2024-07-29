@@ -59,14 +59,16 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
         this.configuration = configuration;
     }
 
-    public MulticastReceiverConfigurationImpl getConfiguration() {
+    @Override
+	public MulticastReceiverConfigurationImpl getConfiguration() {
         return configuration;
     }
 
-    synchronized public void init(NetworkInterface networkInterface,
-                                  Router router,
-                                  NetworkAddressFactory networkAddressFactory,
-                                  DatagramProcessor datagramProcessor) throws InitializationException {
+    @Override
+	synchronized public void init(NetworkInterface networkInterface,
+								  Router router,
+								  NetworkAddressFactory networkAddressFactory,
+								  DatagramProcessor datagramProcessor) throws InitializationException {
 
         this.router = router;
         this.networkAddressFactory = networkAddressFactory;
@@ -90,7 +92,8 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
         }
     }
 
-    synchronized public void stop() {
+    @Override
+	synchronized public void stop() {
         if (socket != null && !socket.isClosed()) {
             try {
                 log.fine("Leaving multicast group");
@@ -104,7 +107,8 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
         }
     }
 
-    public void run() {
+    @Override
+	public void run() {
 
         log.fine("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
         while (true) {

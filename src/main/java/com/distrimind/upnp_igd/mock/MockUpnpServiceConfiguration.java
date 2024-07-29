@@ -101,29 +101,35 @@ public class MockUpnpServiceConfiguration extends DefaultUpnpServiceConfiguratio
 
             boolean terminated;
 
-            public void shutdown() {
+            @Override
+			public void shutdown() {
                 terminated = true;
             }
 
-            public List<Runnable> shutdownNow() {
+            @Override
+			public List<Runnable> shutdownNow() {
                 shutdown();
                 return Collections.emptyList();
             }
 
-            public boolean isShutdown() {
+            @Override
+			public boolean isShutdown() {
                 return terminated;
             }
 
-            public boolean isTerminated() {
+            @Override
+			public boolean isTerminated() {
                 return terminated;
             }
 
-            public boolean awaitTermination(long l, TimeUnit timeUnit) throws InterruptedException {
+            @Override
+			public boolean awaitTermination(long l, TimeUnit timeUnit) throws InterruptedException {
                 shutdown();
                 return terminated;
             }
 
-            public void execute(Runnable runnable) {
+            @Override
+			public void execute(Runnable runnable) {
                 runnable.run();
             }
         };

@@ -35,7 +35,8 @@ public class ServiceTypeHeader extends UpnpHeader<ServiceType> {
         setValue(value);
     }
 
-    public void setString(String s) throws InvalidHeaderException {
+    @Override
+	public void setString(String s) throws InvalidHeaderException {
         try {
             setValue(ServiceType.valueOf(s));
         } catch (RuntimeException ex) {
@@ -43,7 +44,8 @@ public class ServiceTypeHeader extends UpnpHeader<ServiceType> {
         }
     }
 
-    public String getString() {
+    @Override
+	public String getString() {
         return getValue().toString();
     }
 }

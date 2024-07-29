@@ -76,7 +76,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         super(upnpService, new IncomingSearchRequest(inputMessage));
     }
 
-    protected void execute() throws RouterException {
+    @Override
+	protected void execute() throws RouterException {
         if (getUpnpService().getRouter() == null) {
             // TODO: http://mailinglists.945824.n3.nabble.com/rare-NPE-on-start-tp3078213p3142767.html
             log.fine("Router hasn't completed initialization, ignoring received search message");

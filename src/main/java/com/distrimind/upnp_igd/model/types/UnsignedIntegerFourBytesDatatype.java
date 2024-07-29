@@ -20,7 +20,8 @@ package com.distrimind.upnp_igd.model.types;
  */
 public class UnsignedIntegerFourBytesDatatype extends AbstractDatatype<UnsignedIntegerFourBytes> {
 
-    public UnsignedIntegerFourBytes valueOf(String s) throws InvalidValueException {
+    @Override
+	public UnsignedIntegerFourBytes valueOf(String s) throws InvalidValueException {
         if (s.isEmpty()) return null;
         try {
             return new UnsignedIntegerFourBytes(s);
