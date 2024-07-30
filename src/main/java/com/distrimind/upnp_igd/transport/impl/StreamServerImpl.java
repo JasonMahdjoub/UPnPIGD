@@ -67,7 +67,7 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
             server = HttpServer.create(socketAddress, configuration.getTcpConnectionBacklog());
             server.createContext("/", new RequestHttpHandler(router, networkAddressFactory));
 
-            log.info("Created server (for receiving TCP streams) on: " + server.getAddress());
+            if (log.isLoggable(Level.INFO)) log.info("Created server (for receiving TCP streams) on: " + server.getAddress());
 
         } catch (Exception ex) {
             throw new InitializationException("Could not initialize " + getClass().getSimpleName() + ": " + ex, ex);

@@ -309,7 +309,7 @@ class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>>
 				log.finer("Sleeping some milliseconds to avoid flooding the network with ALIVE msgs");
 				Thread.sleep(randomGenerator.nextInt(100));
 			} catch (InterruptedException ex) {
-				log.severe("Background execution interrupted: " + ex.getMessage());
+				if (log.isLoggable(Level.SEVERE)) log.severe("Background execution interrupted: " + ex.getMessage());
 			}
 			registry.getProtocolFactory().createSendingNotificationAlive(localDevice).run();
 		});

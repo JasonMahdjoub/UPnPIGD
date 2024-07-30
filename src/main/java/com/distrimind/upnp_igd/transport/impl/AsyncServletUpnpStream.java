@@ -89,7 +89,7 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
         } catch (IllegalStateException ex) {
             // If Jetty's connection, for whatever reason, is in an illegal state, this will be thrown,
             // and we can "probably" ignore it. The request is complete, no matter how it ended.
-            log.info("Error calling servlet container's AsyncContext#complete() method: " + ex);
+            if (log.isLoggable(Level.INFO)) log.info("Error calling servlet container's AsyncContext#complete() method: " + ex);
         }
     }
 
@@ -114,15 +114,15 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
             }
 
         } catch (Throwable t) {
-            log.info("Exception occurred during UPnP stream processing: " + t);
+            if (log.isLoggable(Level.INFO)) log.info("Exception occurred during UPnP stream processing: " + t);
             if (log.isLoggable(Level.FINER)) {
                 log.log(Level.FINER, "Cause: " + Exceptions.unwrap(t), Exceptions.unwrap(t));
             }
             if (!getResponse().isCommitted()) {
-                log.finer("Response hasn't been committed, returning INTERNAL SERVER ERROR to client");
+                if (log.isLoggable(Level.FINER)) log.finer("Response hasn't been committed, returning INTERNAL SERVER ERROR to client");
                 getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } else {
-                log.info("Could not return INTERNAL SERVER ERROR to client, response was already committed");
+                if (log.isLoggable(Level.INFO)) log.info("Could not return INTERNAL SERVER ERROR to client, response was already committed");
             }
             responseException(t);
         } finally {

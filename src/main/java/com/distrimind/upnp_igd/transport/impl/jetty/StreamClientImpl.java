@@ -258,7 +258,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         try {
             client.stop();
         } catch (Exception ex) {
-            log.info("Error stopping HTTP client: " + ex);
+			if (log.isLoggable(Level.INFO)) log.info("Error stopping HTTP client: " + ex);
         }
     }
 

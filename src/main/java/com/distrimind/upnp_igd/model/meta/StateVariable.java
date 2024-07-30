@@ -23,6 +23,7 @@ import com.distrimind.upnp_igd.model.types.Datatype;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -84,8 +85,10 @@ public class StateVariable<S extends Service<?, ?, ?>> implements Validatable {
                     "StateVariable without name of: " + getService()
             ));
         } else if (!ModelUtil.isValidUDAName(getName())) {
-            log.warning("UPnP specification violation of: " + getService().getDevice());
-            log.warning("Invalid state variable name: " + this);
+            if (log.isLoggable(Level.WARNING)) {
+                log.warning("UPnP specification violation of: " + getService().getDevice());
+                log.warning("Invalid state variable name: " + this);
+            }
         }
 
         errors.addAll(getTypeDetails().validate());

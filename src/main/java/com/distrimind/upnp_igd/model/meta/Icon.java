@@ -31,6 +31,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -161,24 +162,34 @@ public class Icon implements Validatable {
     @Override
 	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
+        if (log.isLoggable(Level.WARNING)) {
 
-        if (getMimeType() == null) {
-            log.warning("UPnP specification violation of: " + getDevice());
-            log.warning("Invalid icon, missing mime type: " + this);
-        }
-        if (getWidth() == 0) {
-            log.warning("UPnP specification violation of: " + getDevice());
-            log.warning("Invalid icon, missing width: " + this);
-        }
-        if (getHeight() == 0) {
-            log.warning("UPnP specification violation of: " + getDevice());
-            log.warning("Invalid icon, missing height: " + this);
-        }
-        if (getDepth() == 0) {
-            log.warning("UPnP specification violation of: " + getDevice());
-            log.warning("Invalid icon, missing bitmap depth: " + this);
-        }
+            if (getMimeType() == null) {
+                if (log.isLoggable(Level.WARNING)) {
+                    log.warning("UPnP specification violation of: " + getDevice());
+                    log.warning("Invalid icon, missing mime type: " + this);
+                }
+            }
+            if (getWidth() == 0) {
+                if (log.isLoggable(Level.WARNING)) {
+                    log.warning("UPnP specification violation of: " + getDevice());
+                    log.warning("Invalid icon, missing width: " + this);
+                }
+            }
+            if (getHeight() == 0) {
+                if (log.isLoggable(Level.WARNING)) {
+                    log.warning("UPnP specification violation of: " + getDevice());
+                    log.warning("Invalid icon, missing height: " + this);
+                }
+            }
+            if (getDepth() == 0) {
+                if (log.isLoggable(Level.WARNING)) {
+                    log.warning("UPnP specification violation of: " + getDevice());
+                    log.warning("Invalid icon, missing bitmap depth: " + this);
+                }
+            }
 
+        }
         if (getUri() == null) {
             errors.add(new ValidationError(
                     getClass(),

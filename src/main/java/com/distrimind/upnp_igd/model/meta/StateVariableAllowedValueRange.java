@@ -20,6 +20,7 @@ import com.distrimind.upnp_igd.model.ValidationError;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -43,7 +44,7 @@ public class StateVariableAllowedValueRange implements Validatable {
 
     public StateVariableAllowedValueRange(long minimum, long maximum, long step) {
         if (minimum > maximum) {
-            log.warning("UPnP specification violation, allowed value range minimum '" + minimum
+            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, allowed value range minimum '" + minimum
                                 + "' is greater than maximum '" + maximum + "', switching values.");
             this.minimum = maximum;
             this.maximum = minimum;

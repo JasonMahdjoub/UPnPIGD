@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -56,7 +57,7 @@ public class TextExpandDialog extends JDialog {
                     }
                 }.print(text, 2, false);
             } catch (Exception ex) {
-                log.severe("Error pretty printing XML: " + ex);
+                if (log.isLoggable(Level.SEVERE)) log.severe("Error pretty printing XML: " + ex);
                 pretty = text;
             }
         } else if (text.startsWith("http-get")) {

@@ -70,7 +70,7 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
                 log.finest("Got HTTP response in " + elapsed + "ms: " + requestMessage);
             if (getConfiguration().getLogWarningSeconds() > 0
                 && elapsed > getConfiguration().getLogWarningSeconds()* 1000L) {
-                log.warning("HTTP request took a long time (" + elapsed + "ms): " + requestMessage);
+                if (log.isLoggable(Level.WARNING)) log.warning("HTTP request took a long time (" + elapsed + "ms): " + requestMessage);
             }
 
             return response;
@@ -84,17 +84,17 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
 
         } catch (TimeoutException ex) {
 
-            log.info(
+            if (log.isLoggable(Level.INFO)) log.info(
                 "Timeout of " + getConfiguration().getTimeoutSeconds()
                 + " seconds while waiting for HTTP request to complete, aborting: " + requestMessage
-            );
+                );
             abort(request);
             return null;
 
         } catch (ExecutionException ex) {
             Throwable cause = ex.getCause();
             if (!logExecutionException(cause)) {
-                log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(cause));
+                if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(cause));
             }
             return null;
         } finally {

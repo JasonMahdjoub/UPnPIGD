@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.Constants;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -69,7 +70,7 @@ public class ServiceId {
         // First try UDAServiceId parse
         try {
             serviceId = UDAServiceId.valueOf(s);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // Ignore
         }
 
@@ -91,14 +92,14 @@ public class ServiceId {
         // urn:upnp-org:serviceId:
         matcher = Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):serviceId:").matcher(s);
         if (matcher.matches() && matcher.groupCount() >= 1) {
-            log.warning("UPnP specification violation, no service ID token, defaulting to " + UNKNOWN + ": " + s);
+            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, no service ID token, defaulting to " + UNKNOWN + ": " + s);
             return new ServiceId(matcher.group(1), UNKNOWN);
         }
 
         // TODO: UPNP VIOLATION: PS Audio Bridge has invalid service IDs
         String[] tokens = s.split("[:]");
         if (tokens.length == 4) {
-            log.warning("UPnP specification violation, trying a simple colon-split of: " + s);
+            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, trying a simple colon-split of: " + s);
             return new ServiceId(tokens[1], tokens[3]);
         }
 

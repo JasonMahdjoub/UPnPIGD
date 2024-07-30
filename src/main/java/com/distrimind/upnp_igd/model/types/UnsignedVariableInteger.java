@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.model.types;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -56,7 +57,7 @@ public abstract class UnsignedVariableInteger {
         if (s.startsWith("-")) {
             // Don't throw exception, just cut it!
             // TODO: UPNP VIOLATION: Twonky Player returns "-1" as the track number
-            log.warning("Invalid negative integer value '" + s + "', assuming value 0!");
+            if (log.isLoggable(Level.WARNING)) log.warning("Invalid negative integer value '" + s + "', assuming value 0!");
             s = "0";
         }
         setValue(Long.parseLong(s.trim()));

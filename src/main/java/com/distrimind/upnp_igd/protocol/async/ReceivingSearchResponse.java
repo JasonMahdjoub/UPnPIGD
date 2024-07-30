@@ -83,9 +83,9 @@ public class ReceivingSearchResponse extends ReceivingAsync<IncomingSearchRespon
         try {
             rd = new RemoteDevice(rdIdentity);
         } catch (ValidationException ex) {
-            log.warning("Validation errors of device during discovery: " + rdIdentity);
+			if (log.isLoggable(Level.WARNING)) log.warning("Validation errors of device during discovery: " + rdIdentity);
             for (ValidationError validationError : ex.getErrors()) {
-                log.warning(validationError.toString());
+				if (log.isLoggable(Level.WARNING)) log.warning(validationError.toString());
             }
             return;
         }

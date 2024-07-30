@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.Constants;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -61,7 +62,7 @@ public class UDAServiceId extends ServiceId {
         // TODO: UPNP VIOLATION: Handle garbage sent by Eyecon Android app
         matcher = Pattern.compile("urn:upnp-orgerviceId:urnchemas-upnp-orgervice:(" + Constants.REGEX_ID + ")").matcher(s);
         if (matcher.matches()) {
-            log.warning("UPnP specification violation, recovering from Eyecon garbage: " + s);
+            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, recovering from Eyecon garbage: " + s);
             return new UDAServiceId(matcher.group(1));
         }
 
@@ -70,7 +71,7 @@ public class UDAServiceId extends ServiceId {
            "ConnectionManager".equals(s) ||
            "RenderingControl".equals(s) ||
            "AVTransport".equals(s)) {
-            log.warning("UPnP specification violation, fixing broken Service ID: " + s);
+            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, fixing broken Service ID: " + s);
             return new UDAServiceId(s);
         }
 

@@ -78,14 +78,14 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
 
         try {
 
-            log.info("Creating wildcard socket (for receiving multicast datagrams) on port: " + configuration.getPort());
+			if (log.isLoggable(Level.INFO)) log.info("Creating wildcard socket (for receiving multicast datagrams) on port: " + configuration.getPort());
             multicastAddress = new InetSocketAddress(configuration.getGroup(), configuration.getPort());
 
             socket = new MulticastSocket(configuration.getPort());
             socket.setReuseAddress(true);
             socket.setReceiveBufferSize(32768); // Keep a backlog of incoming datagrams if we are not fast enough
 
-            log.info("Joining multicast group: " + multicastAddress + " on network interface: " + multicastInterface.getDisplayName());
+			if (log.isLoggable(Level.INFO)) log.info("Joining multicast group: " + multicastAddress + " on network interface: " + multicastInterface.getDisplayName());
             socket.joinGroup(multicastAddress, multicastInterface);
 
         } catch (Exception ex) {
@@ -150,7 +150,7 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
                 log.fine("Socket closed");
                 break;
             } catch (UnsupportedDataException ex) {
-                log.info("Could not read datagram: " + ex.getMessage());
+				if (log.isLoggable(Level.INFO)) log.info("Could not read datagram: " + ex.getMessage());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

@@ -141,8 +141,10 @@ public abstract class DLNAAttribute<T> {
 				}
 				attr = null;
             } catch (Exception ex) {
-                log.severe("Error instantiating DLNA attribute of type '" + type + "' with value: " + attributeValue);
-                log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));
+                if (log.isLoggable(Level.SEVERE)) {
+                    log.severe("Error instantiating DLNA attribute of type '" + type + "' with value: " + attributeValue);
+                    log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));
+                }
             }
         }
         return attr;

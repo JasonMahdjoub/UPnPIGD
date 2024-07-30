@@ -52,6 +52,7 @@ import java.util.List;
  *
  * @author Christian Bauer
  */
+
 @UpnpService(
         serviceId = @UpnpServiceId("AVTransport"),
         serviceType = @UpnpServiceType(value = "AVTransport", version = 1),

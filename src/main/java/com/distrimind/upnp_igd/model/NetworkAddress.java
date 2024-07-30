@@ -48,7 +48,7 @@ public class NetworkAddress {
     }
 
     public byte[] getHardwareAddress() {
-        return hardwareAddress;
+        return hardwareAddress.clone();
     }
 
     @Override

@@ -196,7 +196,7 @@ public abstract class SubscriptionCallback implements Runnable {
 			if (log.isLoggable(Level.FINE)) {
 				log.fine("Local callback creation failed: " + ex);
 			}
-			log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
+            if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
             if (localSubscription != null)
                 getControlPoint().getRegistry().removeLocalSubscription(localSubscription);
             failed(localSubscription, null, ex);
@@ -378,7 +378,7 @@ public abstract class SubscriptionCallback implements Runnable {
      */
 	protected void invalidMessage(RemoteGENASubscription remoteGENASubscription,
                                   UnsupportedDataException ex) {
-        log.info("Invalid event message received, causing: " + ex);
+        if (log.isLoggable(Level.INFO)) log.info("Invalid event message received, causing: " + ex);
         if (log.isLoggable(Level.FINE)) {
             log.fine("------------------------------------------------------------------------------");
             log.fine(ex.getData() != null ? ex.getData().toString() : "null");

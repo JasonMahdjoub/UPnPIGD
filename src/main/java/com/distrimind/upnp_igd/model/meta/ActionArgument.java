@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -126,12 +127,20 @@ public class ActionArgument<S extends Service<?, ?, ?>> implements Validatable {
                     "name",
                     "Argument without name of: " + getAction()
             ));
-        } else if (!ModelUtil.isValidUDAName(getName())) {
-            log.warning("UPnP specification violation of: " + getAction().getService().getDevice());
-            log.warning("Invalid argument name: " + this);
-        } else if (getName().length() > 32) {
-            log.warning("UPnP specification violation of: " + getAction().getService().getDevice());
-            log.warning("Argument name should be less than 32 characters: " + this);
+        } else if (log.isLoggable(Level.WARNING)) {
+
+            if (!ModelUtil.isValidUDAName(getName())) {
+                if (log.isLoggable(Level.WARNING)) {
+                    log.warning("UPnP specification violation of: " + getAction().getService().getDevice());
+                    log.warning("Invalid argument name: " + this);
+                }
+            } else if (getName().length() > 32) {
+                if (log.isLoggable(Level.WARNING)) {
+                    log.warning("UPnP specification violation of: " + getAction().getService().getDevice());
+                    log.warning("Argument name should be less than 32 characters: " + this);
+                }
+            }
+
         }
 
         if (getDirection() == null) {

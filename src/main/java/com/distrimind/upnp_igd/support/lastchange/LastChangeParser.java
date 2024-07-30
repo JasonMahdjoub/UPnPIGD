@@ -176,7 +176,7 @@ public abstract class LastChangeParser extends SAXParser {
                     getInstance().getValues().add(esv);
             } catch (Exception ex) {
                 // Don't exit, just log a warning
-                log.warning("Error reading event XML, ignoring value: " + Exceptions.unwrap(ex));
+                if (log.isLoggable(Level.WARNING)) log.warning("Error reading event XML, ignoring value: " + Exceptions.unwrap(ex));
             }
         }
 

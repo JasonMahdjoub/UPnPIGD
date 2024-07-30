@@ -146,8 +146,10 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
             }
 
         } catch (DescriptorBindingException ex) {
-            log.warning("Error generating requested device/service descriptor: " + ex);
-            log.log(Level.WARNING, "Exception root cause: ", Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.WARNING)) {
+				log.warning("Error generating requested device/service descriptor: " + ex);
+				log.log(Level.WARNING, "Exception root cause: ", Exceptions.unwrap(ex));
+			}
             response = new StreamResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
         }
         

@@ -170,7 +170,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
             NetworkInterface iface = NetworkInterface.getByInetAddress(inetAddress);
             return iface != null ? iface.getHardwareAddress() : null;
         } catch (Throwable ex) {
-            log.log(Level.WARNING, "Cannot get hardware address for: " + inetAddress, ex);
+			if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "Cannot get hardware address for: " + inetAddress, ex);
         	// On Win32: java.lang.Error: IP Helper Library GetIpAddrTable function failed
 
             // On Android 4.0.3 NullPointerException with inetAddress != null
@@ -412,7 +412,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
         }
 
         if (!iface.supportsMulticast())
-            log.warning("Network interface may not be multicast capable: "  + iface.getDisplayName());
+			if (log.isLoggable(Level.WARNING)) log.warning("Network interface may not be multicast capable: "  + iface.getDisplayName());
 
         return true;
     }
@@ -431,7 +431,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
 					int usableAddresses = 0;
                     for (InetAddress inetAddress : getInetAddresses(networkInterface)) {
                         if (inetAddress == null) {
-                            log.warning("Network has a null address: " + networkInterface.getDisplayName());
+							if (log.isLoggable(Level.WARNING)) log.warning("Network has a null address: " + networkInterface.getDisplayName());
                             continue;
                         }
 
@@ -507,47 +507,54 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
     }
 
     protected void logInterfaceInformation(NetworkInterface networkInterface) throws SocketException {
-        log.info("---------------------------------------------------------------------------------");
-        log.info(String.format("Interface display name: %s", networkInterface.getDisplayName()));
-        if (networkInterface.getParent() != null)
-            log.info(String.format("Parent Info: %s", networkInterface.getParent()));
-        log.info(String.format("Name: %s", networkInterface.getName()));
-
+		if (log.isLoggable(Level.INFO)) {
+			log.info("---------------------------------------------------------------------------------");
+			log.info(String.format("Interface display name: %s", networkInterface.getDisplayName()));
+			if (networkInterface.getParent() != null)
+				if (log.isLoggable(Level.INFO)) log.info(String.format("Parent Info: %s", networkInterface.getParent()));
+			log.info(String.format("Name: %s", networkInterface.getName()));
+		}
         Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
 
         for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-            log.info(String.format("InetAddress: %s", inetAddress));
+			if (log.isLoggable(Level.INFO)) log.info(String.format("InetAddress: %s", inetAddress));
         }
 
         List<InterfaceAddress> interfaceAddresses = networkInterface.getInterfaceAddresses();
 
         for (InterfaceAddress interfaceAddress : interfaceAddresses) {
             if (interfaceAddress == null) {
-                log.warning("Skipping null InterfaceAddress!");
+				if (log.isLoggable(Level.WARNING)) log.warning("Skipping null InterfaceAddress!");
                 continue;
             }
-            log.info(" Interface Address");
-            log.info("  Address: " + interfaceAddress.getAddress());
-            log.info("  Broadcast: " + interfaceAddress.getBroadcast());
-            log.info("  Prefix length: " + interfaceAddress.getNetworkPrefixLength());
+			if (log.isLoggable(Level.INFO)) {
+				log.info(" Interface Address");
+				log.info("  Address: " + interfaceAddress.getAddress());
+				log.info("  Broadcast: " + interfaceAddress.getBroadcast());
+				log.info("  Prefix length: " + interfaceAddress.getNetworkPrefixLength());
+			}
         }
 
         Enumeration<NetworkInterface> subIfs = networkInterface.getSubInterfaces();
 
         for (NetworkInterface subIf : Collections.list(subIfs)) {
             if (subIf == null) {
-                log.warning("Skipping null NetworkInterface sub-interface");
+				if (log.isLoggable(Level.WARNING)) log.warning("Skipping null NetworkInterface sub-interface");
                 continue;
             }
-            log.info(String.format("\tSub Interface Display name: %s", subIf.getDisplayName()));
-            log.info(String.format("\tSub Interface Name: %s", subIf.getName()));
+			if (log.isLoggable(Level.INFO)) {
+				log.info(String.format("\tSub Interface Display name: %s", subIf.getDisplayName()));
+				log.info(String.format("\tSub Interface Name: %s", subIf.getName()));
+			}
         }
-        log.info(String.format("Up? %s", networkInterface.isUp()));
-        log.info(String.format("Loopback? %s", networkInterface.isLoopback()));
-        log.info(String.format("PointToPoint? %s", networkInterface.isPointToPoint()));
-        log.info(String.format("Supports multicast? %s", networkInterface.supportsMulticast()));
-        log.info(String.format("Virtual? %s", networkInterface.isVirtual()));
-        log.info(String.format("Hardware address: %s", Arrays.toString(networkInterface.getHardwareAddress())));
-        log.info(String.format("MTU: %s", networkInterface.getMTU()));
+		if (log.isLoggable(Level.INFO)) {
+			log.info(String.format("Up? %s", networkInterface.isUp()));
+			log.info(String.format("Loopback? %s", networkInterface.isLoopback()));
+			log.info(String.format("PointToPoint? %s", networkInterface.isPointToPoint()));
+			log.info(String.format("Supports multicast? %s", networkInterface.supportsMulticast()));
+			log.info(String.format("Virtual? %s", networkInterface.isVirtual()));
+			log.info(String.format("Hardware address: %s", Arrays.toString(networkInterface.getHardwareAddress())));
+			log.info(String.format("MTU: %s", networkInterface.getMTU()));
+		}
     }
 }

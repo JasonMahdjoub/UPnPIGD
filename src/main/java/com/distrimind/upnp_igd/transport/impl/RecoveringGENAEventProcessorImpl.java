@@ -22,6 +22,8 @@ import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 
 import jakarta.enterprise.inject.Alternative;
+
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,7 +64,7 @@ public class RecoveringGENAEventProcessorImpl extends PullGENAEventProcessorImpl
             if (!requestMessage.isBodyNonEmptyString())
                 throw ex;
 
-            log.warning("Trying to recover from invalid GENA XML event: " + ex);
+            if (log.isLoggable(Level.WARNING)) log.warning("Trying to recover from invalid GENA XML event: " + ex);
 
             // Some properties may have been read at this point, so reset the list
             requestMessage.getStateVariableValues().clear();

@@ -170,8 +170,10 @@ public class MethodActionExecutor extends AbstractActionExecutor {
 					Object o = ctor.newInstance(inputCallValueString);
                     values.add(i++, o);
                 } catch (Exception ex) {
-                    log.warning("Error preparing action method call: " + method);
-                    log.warning("Can't convert input argument string to desired type of '" + argument.getName() + "': " + ex);
+                    if (log.isLoggable(Level.WARNING)) {
+                        log.warning("Error preparing action method call: " + method);
+                        log.warning("Can't convert input argument string to desired type of '" + argument.getName() + "': " + ex);
+                    }
                     throw new ActionException(
                             ErrorCode.ARGUMENT_VALUE_INVALID, "Can't convert input argument string to desired type of '" + argument.getName() + "': " + ex
                     );

@@ -176,7 +176,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
 
                 StateVariableAccessor accessor = getService().getAccessor(stateVariable);
                 if (accessor == null) {
-                    log.warning("Ignoring evented state variable without accessor: " + variableName);
+                    if (log.isLoggable(Level.WARNING)) log.warning("Ignoring evented state variable without accessor: " + variableName);
                     continue;
                 }
                 values.add(accessor.read(stateVariable, getImplementation()));
@@ -274,11 +274,11 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
 
             } catch (Exception ex) {
                 // TODO: Is it OK to only log this error? It means we keep running although we couldn't send events?
-                log.log(
-                    Level.SEVERE,
-                    "Error reading state of service after state variable update event: " + Exceptions.unwrap(ex),
-                    ex
-                );
+                if (log.isLoggable(Level.SEVERE)) log.log(
+                        Level.SEVERE,
+                        "Error reading state of service after state variable update event: " + Exceptions.unwrap(ex),
+                        ex
+                    );
             }
         }
     }

@@ -218,7 +218,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
     @Override
 	public void warning(SAXParseException e) throws SAXException {
-        log.warning(e.toString());
+        if (log.isLoggable(Level.WARNING)) log.warning(e.toString());
     }
 
     @Override

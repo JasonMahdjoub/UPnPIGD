@@ -428,7 +428,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 	@Override
 	public void warning(SAXParseException e) throws SAXException {
-		log.warning(e.toString());
+		if (log.isLoggable(Level.WARNING)) log.warning(e.toString());
 	}
 
 	@Override

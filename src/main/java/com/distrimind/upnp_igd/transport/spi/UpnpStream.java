@@ -77,7 +77,7 @@ public abstract class UpnpStream implements Runnable {
             // Try to get a protocol implementation that matches the request message
             syncProtocol = getProtocolFactory().createReceivingSync(requestMsg);
         } catch (ProtocolCreationException ex) {
-            log.warning("Processing stream request failed - " + Exceptions.unwrap(ex).toString());
+			if (log.isLoggable(Level.WARNING)) log.warning("Processing stream request failed - " + Exceptions.unwrap(ex).toString());
             return new StreamResponseMessage(UpnpResponse.Status.NOT_IMPLEMENTED);
         }
 

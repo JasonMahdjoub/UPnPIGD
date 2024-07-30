@@ -55,7 +55,7 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
 	protected OutgoingEventResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().isContentTypeTextUDA()) {
-            log.warning("Received without or with invalid Content-Type: " + getInputMessage());
+			if (log.isLoggable(Level.WARNING)) log.warning("Received without or with invalid Content-Type: " + getInputMessage());
             // We continue despite the invalid UPnP message because we can still hope to convert the content
             // return new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.UNSUPPORTED_MEDIA_TYPE));
         }
@@ -132,7 +132,7 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
                 getUpnpService().getRegistry().getWaitRemoteSubscription(requestMessage.getSubscrptionId());
 
         if (subscription == null) {
-            log.severe("Invalid subscription ID, no active subscription: " + requestMessage);
+			if (log.isLoggable(Level.SEVERE)) log.severe("Invalid subscription ID, no active subscription: " + requestMessage);
             return new OutgoingEventResponseMessage(new UpnpResponse(UpnpResponse.Status.PRECONDITION_FAILED));
         }
 

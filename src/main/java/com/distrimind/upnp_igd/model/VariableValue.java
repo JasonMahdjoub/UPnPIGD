@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.model;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.model.types.Datatype;
@@ -97,7 +98,7 @@ public class VariableValue {
                     (cp >= 0x20 && cp <= 0xD7FF) ||
                     (cp >= 0xE000 && cp <= 0xFFFD) ||
                     (cp >= 0x10000 && cp <= 0x10FFFF))) {
-           		log.warning("Found invalid XML char code: " + cp);
+                if (log.isLoggable(Level.WARNING)) log.warning("Found invalid XML char code: " + cp);
             }
             i += Character.charCount(cp);
         }

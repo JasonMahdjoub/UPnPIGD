@@ -35,7 +35,7 @@ public class ModelUtil {
         try {
             Class<?> androidBuild = Thread.currentThread().getContextClassLoader().loadClass("android.os.Build");
             foundAndroid = androidBuild.getField("ID").get(null) != null;
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // Ignore
         }
         ANDROID_RUNTIME = foundAndroid;
@@ -52,7 +52,7 @@ public class ModelUtil {
             String product = (String)androidBuild.getField("PRODUCT").get(null);
             if ("google_sdk".equals(product) || ("sdk".equals(product)))
                 foundEmulator = true;
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // Ignore
         }
         ANDROID_EMULATOR = foundEmulator;

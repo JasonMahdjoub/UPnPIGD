@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.Constants;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -92,7 +93,7 @@ public class ServiceType {
         // First try UDAServiceType parse
         try {
             serviceType = UDAServiceType.valueOf(s);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // Ignore
         }
 
@@ -116,12 +117,12 @@ public class ServiceType {
             matcher = Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(.+?):([0-9]+).*").matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
-                log.warning(
+                if (log.isLoggable(Level.WARNING)) log.warning(
                     "UPnP specification violation, replacing invalid service type token '"
                         + matcher.group(2)
                         + "' with: "
                         + cleanToken
-                );
+                    );
                 return new ServiceType(matcher.group(1), cleanToken, Integer.parseInt(matcher.group(3)));
             }
 
@@ -130,7 +131,7 @@ public class ServiceType {
             matcher = Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):serviceId:(.+?):([0-9]+).*").matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
-                log.warning(
+                if (log.isLoggable(Level.WARNING)) log.warning(
                     "UPnP specification violation, replacing invalid service type token '"
                     + matcher.group(2)
                     + "' with: "

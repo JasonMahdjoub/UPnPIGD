@@ -167,7 +167,7 @@
 	 }
 
 	 public void set(String key, String value) {
-		 LinkedList<String> l = new LinkedList<>();
+		 List<String> l = new LinkedList<>();
 		 l.add(value);
 		 put(key, l);
 	 }

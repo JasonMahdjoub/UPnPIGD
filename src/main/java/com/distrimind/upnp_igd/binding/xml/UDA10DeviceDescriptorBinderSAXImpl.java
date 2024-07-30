@@ -139,12 +139,13 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         }
 
         @Override
+        @SuppressWarnings("PMD.SwitchStmtsShouldHaveDefault")
         public void endElement(ELEMENT element) {
             switch (element) {
                 case major:
                     String majorVersion = getCharacters().trim();
                     if (!"1".equals(majorVersion)) {
-                        log.warning("Unsupported UDA major version, ignoring: " + majorVersion);
+                        if (log.isLoggable(Level.WARNING)) log.warning("Unsupported UDA major version, ignoring: " + majorVersion);
                         majorVersion = "1";
                     }
                     getInstance().major = Integer.parseInt(majorVersion);

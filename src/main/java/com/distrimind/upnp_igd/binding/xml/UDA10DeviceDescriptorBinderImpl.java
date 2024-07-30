@@ -624,12 +624,15 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         throw e;
     }
 
-    static protected URI parseURI(String uri) {
+    static protected URI parseURI(String _uri) {
 
         // TODO: UPNP VIOLATION: Netgear DG834 uses a non-URI: 'www.netgear.com'
-        if (uri.startsWith("www.")) {
-             uri = "http://" + uri;
+        String uri;
+        if (_uri.startsWith("www.")) {
+             uri = "http://" + _uri;
         }
+        else
+            uri=_uri;
 
         // TODO: UPNP VIOLATION: Plutinosoft uses unencoded relative URIs
         // /var/mobile/Applications/71367E68-F30F-460B-A2D2-331509441D13/Windows Media Player Streamer.app/Icon-ps3.jpg

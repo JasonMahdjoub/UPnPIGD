@@ -163,13 +163,13 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             sendSearchResponseServiceType((ServiceType) searchTarget.getValue(), activeStreamServer);
 
         } else {
-            log.warning("Non-implemented search request target: " + searchTarget.getClass());
+			if (log.isLoggable(Level.WARNING)) log.warning("Non-implemented search request target: " + searchTarget.getClass());
         }
     }
 
     protected void sendSearchResponseAll(NetworkAddress activeStreamServer) throws RouterException {
         if (LOG_ENABLED) {
-            log.fine("Responding to 'all' search with advertisement messages for all local devices");
+			if (log.isLoggable(Level.FINE)) log.fine("Responding to 'all' search with advertisement messages for all local devices");
         }
         for (LocalDevice<?> localDevice : getUpnpService().getRegistry().getLocalDevices()) {
 

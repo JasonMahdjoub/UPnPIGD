@@ -67,12 +67,12 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
         // 'If the CONTENT-TYPE header specifies an unsupported value (other than "text/xml") the
         // device must return an HTTP status code "415 Unsupported Media Type".'
         if (contentTypeHeader != null && !contentTypeHeader.isUDACompliantXML()) {
-            log.warning("Received invalid Content-Type '" + contentTypeHeader + "': " + getInputMessage());
+			if (log.isLoggable(Level.WARNING)) log.warning("Received invalid Content-Type '" + contentTypeHeader + "': " + getInputMessage());
             return new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.UNSUPPORTED_MEDIA_TYPE));
         }
 
         if (contentTypeHeader == null) {
-            log.warning("Received without Content-Type: " + getInputMessage());
+			if (log.isLoggable(Level.WARNING)) log.warning("Received without Content-Type: " + getInputMessage());
         }
 
         ServiceControlResource<?> resource =
@@ -144,7 +144,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
 
         } catch (UnsupportedDataException ex) {
-        	log.log(Level.WARNING, "Error reading action request XML body: " + ex, Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "Error reading action request XML body: " + ex, Exceptions.unwrap(ex));
 
             invocation =
                     new RemoteActionInvocation<>(
@@ -168,8 +168,10 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 			return responseMessage;
 
         } catch (UnsupportedDataException ex) {
-            log.warning("Failure writing body of response message, sending '500 Internal Server Error' without body");
-            log.log(Level.WARNING, "Exception root cause: ", Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.WARNING)) {
+				log.warning("Failure writing body of response message, sending '500 Internal Server Error' without body");
+				log.log(Level.WARNING, "Exception root cause: ", Exceptions.unwrap(ex));
+			}
             return new StreamResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
         }
     }

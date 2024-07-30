@@ -19,6 +19,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Enumeration;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -157,7 +158,7 @@ public class RequestInfo {
 	}
 
 	public static void dumpRequestString(long timestamp, HttpServletRequest request) {
-		log.info(getRequestInfoString(timestamp, request));
+		if (log.isLoggable(Level.INFO)) log.info(getRequestInfoString(timestamp, request));
 	}
 
 	public static void dumpRequestHeaders(long timestamp, String text, HttpServletRequest request) {
@@ -167,7 +168,7 @@ public class RequestInfo {
 		if (headers != null) {
 			while (headers.hasMoreElements()) {
 				String headerName = headers.nextElement();
-				log.info(String.format("%s: %s", headerName, request.getHeader(headerName)));
+				if (log.isLoggable(Level.INFO)) log.info(String.format("%s: %s", headerName, request.getHeader(headerName)));
 			}
 		}
 		log.info("----------------------------------------");

@@ -198,7 +198,7 @@ public class DIDLParser extends SAXParser {
                     new ProtocolInfo(attributes.getValue("protocolInfo"))
             );
         } catch (InvalidValueException ex) {
-            log.warning("In DIDL content, invalid resource protocol info: " + Exceptions.unwrap(ex));
+            if (log.isLoggable(Level.WARNING)) log.warning("In DIDL content, invalid resource protocol info: " + Exceptions.unwrap(ex));
             return null;
         }
 
@@ -379,7 +379,7 @@ public class DIDLParser extends SAXParser {
 
         String title = container.getTitle();
         if (title == null) {
-            log.warning("Missing 'dc:title' element for container: " + container.getId());
+            if (log.isLoggable(Level.WARNING)) log.warning("Missing 'dc:title' element for container: " + container.getId());
             title = UNKNOWN_TITLE;
         }
 
@@ -460,7 +460,7 @@ public class DIDLParser extends SAXParser {
 
         String title = item.getTitle();
         if (title == null) {
-            log.warning("Missing 'dc:title' element for item: " + item.getId());
+            if (log.isLoggable(Level.WARNING)) log.warning("Missing 'dc:title' element for item: " + item.getId());
             title = UNKNOWN_TITLE;
         }
 
@@ -581,7 +581,7 @@ public class DIDLParser extends SAXParser {
             }
 
         } else {
-            log.warning("Unknown desc metadata content, please override populateDescMetadata(): " + descMeta.getMetadata());
+            if (log.isLoggable(Level.WARNING)) log.warning("Unknown desc metadata content, please override populateDescMetadata(): " + descMeta.getMetadata());
         }
     }
 
@@ -670,7 +670,7 @@ public class DIDLParser extends SAXParser {
                             WriteStatus.valueOf(getCharacters())
                         );
                     } catch (Exception ex) {
-                        log.info("Ignoring invalid writeStatus value: " + getCharacters());
+                        if (log.isLoggable(Level.INFO)) log.info("Ignoring invalid writeStatus value: " + getCharacters());
                     }
                 } else if ("class".equals(localName)) {
                     getInstance().setClazz(
@@ -953,10 +953,10 @@ public class DIDLParser extends SAXParser {
         protected boolean isLastElement(String uri, String localName, String qName) {
             if (DIDLContent.NAMESPACE_URI.equals(uri) && "container".equals(localName)) {
                 if (getInstance().getTitle() == null) {
-                    log.warning("In DIDL content, missing 'dc:title' element for container: " + getInstance().getId());
+                    if (log.isLoggable(Level.WARNING)) log.warning("In DIDL content, missing 'dc:title' element for container: " + getInstance().getId());
                 }
                 if (getInstance().getClazz() == null) {
-                    log.warning("In DIDL content, missing 'upnp:class' element for container: " + getInstance().getId());
+                    if (log.isLoggable(Level.WARNING)) log.warning("In DIDL content, missing 'upnp:class' element for container: " + getInstance().getId());
                 }
                 return true;
             }
@@ -996,10 +996,10 @@ public class DIDLParser extends SAXParser {
         protected boolean isLastElement(String uri, String localName, String qName) {
             if (DIDLContent.NAMESPACE_URI.equals(uri) && "item".equals(localName)) {
                 if (getInstance().getTitle() == null) {
-                    log.warning("In DIDL content, missing 'dc:title' element for item: " + getInstance().getId());
+                    if (log.isLoggable(Level.WARNING)) log.warning("In DIDL content, missing 'dc:title' element for item: " + getInstance().getId());
                 }
                 if (getInstance().getClazz() == null) {
-                    log.warning("In DIDL content, missing 'upnp:class' element for item: " + getInstance().getId());
+                    if (log.isLoggable(Level.WARNING)) log.warning("In DIDL content, missing 'upnp:class' element for item: " + getInstance().getId());
                 }
                 return true;
             }

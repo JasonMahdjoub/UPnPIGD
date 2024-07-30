@@ -277,7 +277,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
             }
         }
         for (RemoteGENASubscription subscription : expiredOutgoingSubscriptions) {
-            if (log.isLoggable(Level.FINEST))
+            if (log.isLoggable(Level.FINE))
                 log.fine("Renewing outgoing subscription: " + subscription);
             renewOutgoingSubscription(subscription);
         }

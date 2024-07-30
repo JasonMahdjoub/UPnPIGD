@@ -69,10 +69,10 @@ public class CatalogResourceResolver implements LSResourceResolver {
 				throw new RuntimeException(ex);
 			}
 		}
-		log.info(
+		if (log.isLoggable(Level.INFO)) log.info(
 				"System identifier not found in catalog, continuing with default resolution " +
 						"(this most likely means remote HTTP request!): " + systemId
-		);
+			);
 		return null;
 	}
 

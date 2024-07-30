@@ -181,7 +181,7 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
                 }
             };
         } catch (Exception ex) {
-            log.warning("Couldn't create local subscription to service: " + Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.WARNING)) log.warning("Couldn't create local subscription to service: " + Exceptions.unwrap(ex));
             return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
         }
 

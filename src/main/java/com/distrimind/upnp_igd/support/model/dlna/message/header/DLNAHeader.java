@@ -147,8 +147,11 @@ public abstract class DLNAHeader<T> extends UpnpHeader<T> {
 				}
 				upnpHeader = null;
             } catch (Exception ex) {
-                log.severe("Error instantiating header of type '" + type + "' with value: " + headerValue);
-                log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));
+                if (log.isLoggable(Level.SEVERE)) {
+                    log.severe("Error instantiating header of type '" + type + "' with value: " + headerValue);
+                    log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));
+                }
+
             }
 
         }

@@ -91,7 +91,7 @@ public class RouterImpl implements Router {
      */
     @Inject
     public RouterImpl(UpnpServiceConfiguration configuration, ProtocolFactory protocolFactory) {
-        log.info("Creating Router: " + getClass().getName());
+        if (log.isLoggable(Level.INFO)) log.info("Creating Router: " + getClass().getName());
         this.configuration = configuration;
         this.protocolFactory = protocolFactory;
     }
@@ -215,10 +215,12 @@ public class RouterImpl implements Router {
     @Override
     public void handleStartFailure(InitializationException ex) throws InitializationException {
         if (ex instanceof NoNetworkException) {
-            log.info("Unable to initialize network router, no network found.");
+            if (log.isLoggable(Level.INFO)) log.info("Unable to initialize network router, no network found.");
         } else {
-            log.severe("Unable to initialize network router: " + ex);
-            log.severe("Cause: " + Exceptions.unwrap(ex));
+            if (log.isLoggable(Level.SEVERE)) {
+                log.severe("Unable to initialize network router: " + ex);
+                log.severe("Cause: " + Exceptions.unwrap(ex));
+            }
         }
     }
 
@@ -289,7 +291,7 @@ public class RouterImpl implements Router {
                 log.fine("Received asynchronous message: " + msg);
             getConfiguration().getAsyncProtocolExecutor().execute(protocol);
         } catch (ProtocolCreationException ex) {
-            log.warning("Handling received datagram failed - " + Exceptions.unwrap(ex).toString());
+            if (log.isLoggable(Level.WARNING)) log.warning("Handling received datagram failed - " + Exceptions.unwrap(ex).toString());
         }
     }
 
@@ -414,7 +416,7 @@ public class RouterImpl implements Router {
             // We only have the MulticastReceiver as an interface-based transport
             MulticastReceiver<?> multicastReceiver = getConfiguration().createMulticastReceiver(networkAddressFactory);
             if (multicastReceiver == null) {
-                log.info("Configuration did not create a MulticastReceiver for: " + networkInterface);
+                if (log.isLoggable(Level.INFO)) log.info("Configuration did not create a MulticastReceiver for: " + networkInterface);
             } else {
                 try {
                     if (log.isLoggable(Level.FINE))
@@ -458,7 +460,7 @@ public class RouterImpl implements Router {
             // HTTP servers
             StreamServer<?> streamServer = getConfiguration().createStreamServer(networkAddressFactory);
             if (streamServer == null) {
-                log.info("Configuration did not create a StreamServer for: " + address);
+                if (log.isLoggable(Level.INFO)) log.info("Configuration did not create a StreamServer for: " + address);
             } else {
                 try {
                     if (log.isLoggable(Level.FINE))
@@ -469,10 +471,10 @@ public class RouterImpl implements Router {
                     // Try to recover
                     Throwable cause = Exceptions.unwrap(ex);
                     if (cause instanceof BindException) {
-                        log.warning("Failed to init StreamServer: " + cause);
+                        if (log.isLoggable(Level.WARNING)) log.warning("Failed to init StreamServer: " + cause);
                         if (log.isLoggable(Level.FINE))
                             log.log(Level.FINE, "Initialization exception root cause", cause);
-                        log.warning("Removing unusable address: " + address);
+                        if (log.isLoggable(Level.WARNING)) log.warning("Removing unusable address: " + address);
                         addresses.remove();
                         continue; // Don't try anything else with this address
                     }
@@ -483,7 +485,7 @@ public class RouterImpl implements Router {
             // Datagram I/O
             DatagramIO<?> datagramIO = getConfiguration().createDatagramIO(networkAddressFactory);
             if (datagramIO == null) {
-                log.info("Configuration did not create a StreamServer for: " + address);
+                if (log.isLoggable(Level.INFO)) log.info("Configuration did not create a StreamServer for: " + address);
             } else {
                 try {
                     if (log.isLoggable(Level.FINE))

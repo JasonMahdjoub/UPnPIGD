@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
@@ -65,7 +66,7 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
             if (!requestMessage.isBodyNonEmptyString())
                 throw ex;
 
-            log.warning("Trying to recover from invalid SOAP XML request: " + ex);
+            if (log.isLoggable(Level.WARNING)) log.warning("Trying to recover from invalid SOAP XML request: " + ex);
             String body = getMessageBody(requestMessage);
 
             // TODO: UPNP VIOLATION: TwonkyMobile sends unencoded '&' in SetAVTransportURI action calls:
@@ -92,7 +93,7 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
             if (!responseMsg.isBodyNonEmptyString())
                 throw ex;
 
-            log.warning("Trying to recover from invalid SOAP XML response: " + ex);
+            if (log.isLoggable(Level.WARNING)) log.warning("Trying to recover from invalid SOAP XML response: " + ex);
             String body = getMessageBody(responseMsg);
 
             // TODO: UPNP VIOLATION: TwonkyMobile doesn't properly encode '&'

@@ -36,21 +36,23 @@ import java.util.regex.Pattern;
 public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescriptorBinderImpl {
 
     private static final Logger log = Logger.getLogger(RecoveringUDA10DeviceDescriptorBinderImpl.class.getName());
-
+    static final String endRootTag = "</root>";
     public RecoveringUDA10DeviceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory) {
         super(networkAddressFactory);
     }
 
     @Override
-    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String _descriptorXml) throws DescriptorBindingException, ValidationException {
 
         D device = null;
         DescriptorBindingException originalException;
+        String descriptorXml=null;
+        if (_descriptorXml != null)
+            descriptorXml = _descriptorXml.trim(); // Always trim whitespace
         try {
 
             try {
-                if (descriptorXml != null)
-                  descriptorXml = descriptorXml.trim(); // Always trim whitespace
+
                 device = super.describe(undescribedDevice, descriptorXml);
                 return device;
             } catch (DescriptorBindingException ex) {
@@ -152,16 +154,17 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
     protected String fixGarbageTrailingChars(String descriptorXml, DescriptorBindingException ex) {
         if (descriptorXml==null)
             return null;
-        int index = descriptorXml.indexOf("</root>");
+
+        int index = descriptorXml.indexOf(endRootTag);
         if (index == -1) {
             if (log.isLoggable(Level.WARNING))
                 log.warning("No closing </root> element in descriptor");
             return null;
         }
-        if (descriptorXml.length() != index + "</root>".length()) {
+        if (descriptorXml.length() != index + endRootTag.length()) {
             if (log.isLoggable(Level.WARNING))
                 log.warning("Detected garbage characters after <root> node, removing"+(ex==null?"":ex.getMessage()));
-            return descriptorXml.substring(0, index) + "</root>";
+            return descriptorXml.substring(0, index) + endRootTag;
         }
         return null;
     }
@@ -219,7 +222,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
             + "<root "
             + String.format(Locale.ROOT, "xmlns:%s=\"urn:schemas-dlna-org:device-1-0\"", missingNS) + rootAttributes + ">"
             + rootBody
-            + "</root>";
+            + endRootTag;
 
         // TODO: Should we match different undeclared prefixes with their correct namespace?
         // So if it's "dlna" we use "urn:schemas-dlna-org:device-1-0" etc.

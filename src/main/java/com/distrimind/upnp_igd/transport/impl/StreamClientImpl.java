@@ -158,20 +158,20 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
             return createResponse(urlConnection, inputStream);
 
         } catch (ProtocolException ex) {
-            log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
             return null;
         } catch (IOException ex) {
 
             if (urlConnection == null) {
-                log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
+				if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
                 return null;
             }
 
             if (ex instanceof SocketTimeoutException) {
-                log.info(
+				if (log.isLoggable(Level.INFO)) log.info(
                     "Timeout of " + getConfiguration().getTimeoutSeconds()
                         + " seconds while waiting for HTTP request to complete, aborting: " + requestMessage
-                );
+                	);
                 return null;
             }
 
@@ -186,7 +186,7 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
                 return null;
             }
         } catch (Exception ex) {
-            log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
             return null;
 
         } finally {
@@ -258,10 +258,12 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
     protected StreamResponseMessage createResponse(HttpURLConnection urlConnection, InputStream inputStream) throws Exception {
 
         if (urlConnection.getResponseCode() == -1) {
-            log.warning("Received an invalid HTTP response: " + urlConnection.getURL());
-            log.warning("Is your Cling-based server sending connection heartbeats with " +
-                "RemoteClientInfo#isRequestCancelled? This client can't handle " +
-                "heartbeats, read the manual.");
+			if (log.isLoggable(Level.WARNING)) {
+				log.warning("Received an invalid HTTP response: " + urlConnection.getURL());
+				log.warning("Is your Cling-based server sending connection heartbeats with " +
+						"RemoteClientInfo#isRequestCancelled? This client can't handle " +
+						"heartbeats, read the manual.");
+			}
             return null;
         }
 

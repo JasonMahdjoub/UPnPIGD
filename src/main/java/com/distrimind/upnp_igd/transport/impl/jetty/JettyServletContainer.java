@@ -96,7 +96,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
             try {
                 connector.start();
             } catch (Exception ex) {
-                log.severe("Couldn't start connector: " + connector + " " + ex);
+                if (log.isLoggable(Level.SEVERE)) log.severe("Couldn't start connector: " + connector + " " + ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -114,7 +114,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
                         try {
                             connector.stop();
                         } catch (Exception ex) {
-                            log.severe("Couldn't stop connector: " + connector + " " + ex);
+                            if (log.isLoggable(Level.SEVERE)) log.severe("Couldn't stop connector: " + connector + " " + ex);
                             throw new RuntimeException(ex);
                         }
                     }
@@ -134,7 +134,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
         if (server.getHandler() != null) {
             return;
         }
-        log.info("Registering UPnP servlet under context path: " + contextPath);
+        if (log.isLoggable(Level.INFO)) log.info("Registering UPnP servlet under context path: " + contextPath);
         ServletContextHandler servletHandler =
             new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         if (contextPath != null && !contextPath.isEmpty())
@@ -151,7 +151,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
             try {
                 server.start();
             } catch (Exception ex) {
-                log.severe("Couldn't start Jetty server: " + ex);
+                if (log.isLoggable(Level.SEVERE)) log.severe("Couldn't start Jetty server: " + ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -164,7 +164,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
             try {
                 server.stop();
             } catch (Exception ex) {
-                log.severe("Couldn't stop Jetty server: " + ex);
+                if (log.isLoggable(Level.SEVERE)) log.severe("Couldn't stop Jetty server: " + ex);
                 throw new RuntimeException(ex);
             } finally {
                 resetServer();

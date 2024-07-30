@@ -109,7 +109,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
             activeRetrievals.add(deviceURL);
             describe();
         } catch (RouterException ex) {
-            log.log(Level.WARNING,
+			if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING,
                 "Descriptor retrieval failed: " + deviceURL,
                 ex
             );
@@ -152,7 +152,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
     	} catch(IllegalArgumentException ex) {
     		// UpnpRequest constructor can throw IllegalArgumentException on invalid URI
     		// IllegalArgumentException can also be thrown by Apache HttpClient on blank URI in send()
-            log.warning(
+			if (log.isLoggable(Level.WARNING)) log.warning(
                 "Device descriptor retrieval failed: "
                 + rd.getIdentity().getDescriptorURL()
                 + ", possibly invalid URL: " + ex);
@@ -160,14 +160,14 @@ public class RetrieveRemoteDescriptors implements Runnable {
         }
 
         if (deviceDescMsg == null) {
-            log.warning(
+			if (log.isLoggable(Level.WARNING)) log.warning(
                 "Device descriptor retrieval failed, no response: " + rd.getIdentity().getDescriptorURL()
             );
             return;
         }
 
         if (deviceDescMsg.getOperation().isFailed()) {
-            log.warning(
+			if (log.isLoggable(Level.WARNING)) log.warning(
                     "Device descriptor retrieval failed: "
                             + rd.getIdentity().getDescriptorURL() +
                             ", "
@@ -187,7 +187,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
 
         String descriptorContent = deviceDescMsg.getBodyString();
         if (descriptorContent == null || descriptorContent.isEmpty()) {
-            log.warning("Received empty device descriptor:" + rd.getIdentity().getDescriptorURL());
+			if (log.isLoggable(Level.WARNING)) log.warning("Received empty device descriptor:" + rd.getIdentity().getDescriptorURL());
             return;
         }
 
@@ -223,7 +223,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
             if (hydratedDevice == null) {
             	if(!errorsAlreadyLogged.contains(rd.getIdentity().getUdn())) {
             		errorsAlreadyLogged.add(rd.getIdentity().getUdn());
-            		log.warning("Device service description failed: " + rd);
+					if (log.isLoggable(Level.WARNING)) log.warning("Device service description failed: " + rd);
             	}
                 if (notifiedStart)
                     getUpnpService().getRegistry().notifyDiscoveryFailure(
@@ -245,23 +245,27 @@ public class RetrieveRemoteDescriptors implements Runnable {
     		// Avoid error log spam each time device is discovered, errors are logged once per device.
         	if(!errorsAlreadyLogged.contains(rd.getIdentity().getUdn())) {
         		errorsAlreadyLogged.add(rd.getIdentity().getUdn());
-        		log.warning("Could not validate device model: " + rd);
+				if (log.isLoggable(Level.WARNING)) log.warning("Could not validate device model: " + rd);
         		for (ValidationError validationError : ex.getErrors()) {
-        			log.warning(validationError.toString());
+					if (log.isLoggable(Level.WARNING)) log.warning(validationError.toString());
         		}
                 if (describedDevice != null && notifiedStart)
                     getUpnpService().getRegistry().notifyDiscoveryFailure(describedDevice, ex);
         	}
 
         } catch (DescriptorBindingException ex) {
-            log.warning("Could not hydrate device or its services from descriptor: " + rd);
-            log.warning("Cause was: " + Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.WARNING)) {
+				log.warning("Could not hydrate device or its services from descriptor: " + rd);
+				log.warning("Cause was: " + Exceptions.unwrap(ex));
+			}
             if (describedDevice != null && notifiedStart)
                 getUpnpService().getRegistry().notifyDiscoveryFailure(describedDevice, ex);
 
         } catch (RegistrationException ex) {
-            log.warning("Adding hydrated device to registry failed: " + rd);
-            log.warning("Cause was: " + ex);
+			if (log.isLoggable(Level.WARNING)) {
+				log.warning("Adding hydrated device to registry failed: " + rd);
+				log.warning("Cause was: " + ex);
+			}
             if (describedDevice != null && notifiedStart)
                 getUpnpService().getRegistry().notifyDiscoveryFailure(describedDevice, ex);
         }
@@ -278,8 +282,8 @@ public class RetrieveRemoteDescriptors implements Runnable {
                  // Skip invalid services (yes, we can continue with only some services available)
                 if (svc != null)
                     describedServices.add(svc);
-                else
-                    log.warning("Skipping invalid service '" + service + "' of: " + currentDevice);
+                else if (log.isLoggable(Level.WARNING))
+					log.warning("Skipping invalid service '" + service + "' of: " + currentDevice);
             }
         }
 
@@ -320,7 +324,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
     	try {
     		descriptorURL = service.getDevice().normalizeURI(service.getDescriptorURI());
     	}  catch(IllegalArgumentException e) {
-    		log.warning("Could not normalize service descriptor URL: " + service.getDescriptorURI());
+			if (log.isLoggable(Level.WARNING)) log.warning("Could not normalize service descriptor URL: " + service.getDescriptorURI());
     		return null;
     	}
 
@@ -338,12 +342,12 @@ public class RetrieveRemoteDescriptors implements Runnable {
 		StreamResponseMessage serviceDescMsg = getUpnpService().getRouter().send(serviceDescRetrievalMsg);
 
         if (serviceDescMsg == null) {
-            log.warning("Could not retrieve service descriptor, no response: " + service);
+			if (log.isLoggable(Level.WARNING)) log.warning("Could not retrieve service descriptor, no response: " + service);
             return null;
         }
 
         if (serviceDescMsg.getOperation().isFailed()) {
-            log.warning("Service descriptor retrieval failed: "
+			if (log.isLoggable(Level.WARNING)) log.warning("Service descriptor retrieval failed: "
                                 + descriptorURL
                                 + ", "
                                 + serviceDescMsg.getOperation().getResponseDetails());
@@ -359,7 +363,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
 
         String descriptorContent = serviceDescMsg.getBodyString();
         if (descriptorContent == null || descriptorContent.isEmpty()) {
-            log.warning("Received empty service descriptor:" + descriptorURL);
+			if (log.isLoggable(Level.WARNING)) log.warning("Received empty service descriptor:" + descriptorURL);
             return null;
         }
 

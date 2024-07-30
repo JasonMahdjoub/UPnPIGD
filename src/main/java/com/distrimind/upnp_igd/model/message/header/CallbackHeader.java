@@ -64,7 +64,7 @@ public class CallbackHeader extends UpnpHeader<List<URL>> {
                 sp = sp.trim();
 
                 if (!sp.startsWith("http://")) {
-                    log.warning("Discarding non-http callback URL: " + sp);
+                    if (log.isLoggable(Level.WARNING)) log.warning("Discarding non-http callback URL: " + sp);
                     continue;
                 }
 
@@ -82,7 +82,7 @@ public class CallbackHeader extends UpnpHeader<List<URL>> {
             	    */
                     url.toURI();
                 } catch (URISyntaxException ex) {
-                    log.log(Level.WARNING, "Discarding callback URL, not a valid URI on this platform: " + url, ex);
+                    if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "Discarding callback URL, not a valid URI on this platform: " + url, ex);
                     continue;
                 }
 

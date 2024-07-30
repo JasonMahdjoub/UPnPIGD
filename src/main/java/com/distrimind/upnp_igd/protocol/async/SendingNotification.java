@@ -93,7 +93,7 @@ public abstract class SendingNotification extends SendingAsync {
 				Thread.sleep(getBulkIntervalMilliseconds());
 
             } catch (InterruptedException ex) {
-                log.warning("Advertisement thread was interrupted: " + ex);
+                if (log.isLoggable(Level.WARNING)) log.warning("Advertisement thread was interrupted: " + ex);
             }
         }
     }

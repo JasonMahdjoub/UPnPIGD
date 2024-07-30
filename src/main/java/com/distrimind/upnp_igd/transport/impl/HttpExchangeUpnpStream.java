@@ -152,7 +152,7 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
 
             } else {
                 // If it's null, it's 404, everything else needs a proper httpResponse
-                log.fine("Sending HTTP response status: " + HttpURLConnection.HTTP_NOT_FOUND);
+				if (log.isLoggable(Level.FINE)) log.fine("Sending HTTP response status: " + HttpURLConnection.HTTP_NOT_FOUND);
                 getHttpExchange().sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, -1);
             }
 
@@ -178,7 +178,7 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
             try {
                 httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, -1);
             } catch (IOException ex) {
-                log.warning("Couldn't send error response: " + ex);
+				if (log.isLoggable(Level.WARNING)) log.warning("Couldn't send error response: " + ex);
             }
 
             responseException(t);

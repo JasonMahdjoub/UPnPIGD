@@ -153,7 +153,7 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
 			if (log.isLoggable(Level.FINE)) {
 				log.fine("Error reading SOAP body: " + ex);
 			}
-			log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
             throw new ActionException(
                 ErrorCode.ACTION_FAILED,
                 "Error reading SOAP response message. " + ex.getMessage(),
@@ -171,7 +171,7 @@ public class SendingAction extends SendingSync<OutgoingActionRequestMessage, Inc
 			if (log.isLoggable(Level.FINE)) {
 				log.fine("Error reading SOAP body: " + ex);
 			}
-			log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
             throw new ActionException(
                 ErrorCode.ACTION_FAILED,
                 "Error reading SOAP response failure message. " + ex.getMessage(),

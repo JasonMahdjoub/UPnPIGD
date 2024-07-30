@@ -22,6 +22,7 @@ import com.distrimind.upnp_igd.model.ValidationError;
 import com.distrimind.upnp_igd.model.types.Datatype;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -115,14 +116,14 @@ public class StateVariableTypeDetails implements Validatable {
 
             for (String s : getAllowedValues()) {
                 if (s.length() > 31) {
-                    log.warning("UPnP specification violation, allowed value string must be less than 32 chars: " + s);
+                    if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, allowed value string must be less than 32 chars: " + s);
                 }
             }
 
             if(!foundDefaultInAllowedValues(defaultValue, allowedValues)) {
-                log.warning("UPnP specification violation, allowed string values " +
+                if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, allowed string values " +
                                     "don't contain default value: " + defaultValue
-                );
+                    );
             }
         }
 

@@ -87,7 +87,7 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
 		for (StateVariableValue<LocalService<T>> value : values) {
             this.currentValues.put(value.getStateVariable().getName(), value);
 
-            if (log.isLoggable(Level.FINEST)) {
+            if (log.isLoggable(Level.FINER)) {
                 log.finer("Read state variable value '" + value.getStateVariable().getName() + "': " + value);
             }
 
@@ -125,7 +125,7 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
         try {
             getService().getManager().getPropertyChangeSupport().removePropertyChangeListener(this);
         } catch (Exception ex) {
-            log.warning("Removal of local service property change listener failed: " + Exceptions.unwrap(ex));
+			if (log.isLoggable(Level.WARNING)) log.warning("Removal of local service property change listener failed: " + Exceptions.unwrap(ex));
         }
         ended(reason);
     }

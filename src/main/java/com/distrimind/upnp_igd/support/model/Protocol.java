@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.support.model;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -49,7 +50,7 @@ public enum Protocol {
                 return protocol;
             }
         }
-        LOG.info("Unsupported OTHER protocol string: " + s);
+        if (LOG.isLoggable(Level.INFO)) LOG.info("Unsupported OTHER protocol string: " + s);
         return OTHER;
     }
 

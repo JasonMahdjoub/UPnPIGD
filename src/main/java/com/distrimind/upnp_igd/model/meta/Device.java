@@ -87,7 +87,7 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
                     if(iconErrors.isEmpty()) {
                         validIcons.add(icon);
                     } else {
-                        log.warning("Discarding invalid '" + icon + "': " + iconErrors);
+                        if (log.isLoggable(Level.WARNING)) log.warning("Discarding invalid '" + icon + "': " + iconErrors);
                     }
                 }
             }

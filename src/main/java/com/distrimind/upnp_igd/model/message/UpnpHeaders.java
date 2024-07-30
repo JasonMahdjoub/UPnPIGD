@@ -178,9 +178,9 @@ public class UpnpHeaders extends Headers {
             if (parsedHeaders != null && !parsedHeaders.isEmpty()) {
                 log.fine("########################## PARSED HEADERS ##########################");
                 for (Map.Entry<UpnpHeader.Type, List<UpnpHeader<?>>> entry : parsedHeaders.entrySet()) {
-                    log.fine("=== TYPE: " + entry.getKey());
+                    if (log.isLoggable(Level.FINE)) log.fine("=== TYPE: " + entry.getKey());
                     for (UpnpHeader<?> upnpHeader : entry.getValue()) {
-                        log.fine("HEADER: " + upnpHeader);
+                        if (log.isLoggable(Level.FINE)) log.fine("HEADER: " + upnpHeader);
                     }
                 }
             }
