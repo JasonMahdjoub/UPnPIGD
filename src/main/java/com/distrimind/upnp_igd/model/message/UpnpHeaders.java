@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class UpnpHeaders extends Headers {
 
-    private static final Logger log = Logger.getLogger(UpnpHeaders.class.getName());
+    private static final Logger logger = Logger.getLogger(UpnpHeaders.class.getName());
 
     protected Map<UpnpHeader.Type, List<UpnpHeader<?>>> parsedHeaders;
 
@@ -52,24 +52,24 @@ public class UpnpHeaders extends Headers {
     protected void parseHeaders() {
         // This runs as late as possible and only when necessary (getter called and map is dirty)
         parsedHeaders = new LinkedHashMap<>();
-        if (log.isLoggable(Level.FINE))
-            log.fine("Parsing all HTTP headers for known UPnP headers: " + size());
+        if (logger.isLoggable(Level.FINE))
+            logger.fine("Parsing all HTTP headers for known UPnP headers: " + size());
         for (Entry<String, List<String>> entry : entrySet()) {
 
             if (entry.getKey() == null) continue; // Oh yes, the JDK has 'null' HTTP headers
 
             UpnpHeader.Type type = UpnpHeader.Type.getByHttpName(entry.getKey());
             if (type == null) {
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Ignoring non-UPNP HTTP header: " + entry.getKey());
+                if (logger.isLoggable(Level.FINE))
+                    logger.fine("Ignoring non-UPNP HTTP header: " + entry.getKey());
                 continue;
             }
 
             for (String value : entry.getValue()) {
                 UpnpHeader<?> upnpHeader = UpnpHeader.newInstance(type, value);
                 if (upnpHeader == null || upnpHeader.getValue() == null) {
-                    if (log.isLoggable(Level.FINE))
-                        log.fine(
+                    if (logger.isLoggable(Level.FINE))
+                        logger.fine(
                             "Ignoring known but irrelevant header (value violates the UDA specification?) '"
                                 + type.getHttpName()
                                 + "': "
@@ -83,8 +83,8 @@ public class UpnpHeaders extends Headers {
     }
 
     protected void addParsedValue(UpnpHeader.Type type, UpnpHeader<?> value) {
-        if (log.isLoggable(Level.FINE))
-            log.fine("Adding parsed header: " + value);
+        if (logger.isLoggable(Level.FINE))
+            logger.fine("Adding parsed header: " + value);
 		List<UpnpHeader<?>> list = parsedHeaders.computeIfAbsent(type, k -> new LinkedList<>());
 		list.add(value);
     }
@@ -167,24 +167,24 @@ public class UpnpHeaders extends Headers {
     }
 
     public void log() {
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("############################ RAW HEADERS ###########################");
+        if (logger.isLoggable(Level.FINE)) {
+            logger.fine("############################ RAW HEADERS ###########################");
             for (Entry<String, List<String>> entry : entrySet()) {
-                log.fine("=== NAME : " + entry.getKey());
+                logger.fine("=== NAME : " + entry.getKey());
                 for (String v : entry.getValue()) {
-                    log.fine("VALUE: " + v);
+                    logger.fine("VALUE: " + v);
                 }
             }
             if (parsedHeaders != null && !parsedHeaders.isEmpty()) {
-                log.fine("########################## PARSED HEADERS ##########################");
+                logger.fine("########################## PARSED HEADERS ##########################");
                 for (Map.Entry<UpnpHeader.Type, List<UpnpHeader<?>>> entry : parsedHeaders.entrySet()) {
-                    if (log.isLoggable(Level.FINE)) log.fine("=== TYPE: " + entry.getKey());
+                    if (logger.isLoggable(Level.FINE)) logger.fine("=== TYPE: " + entry.getKey());
                     for (UpnpHeader<?> upnpHeader : entry.getValue()) {
-                        if (log.isLoggable(Level.FINE)) log.fine("HEADER: " + upnpHeader);
+                        if (logger.isLoggable(Level.FINE)) logger.fine("HEADER: " + upnpHeader);
                     }
                 }
             }
-            log.fine("####################################################################");
+            logger.fine("####################################################################");
         }
     }
 

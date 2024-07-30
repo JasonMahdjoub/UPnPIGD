@@ -16,6 +16,7 @@
         <exclude name="NullAssignment"/>
         <exclude name="ConstructorCallsOverridableMethod"/>
         <exclude name="AvoidCatchingThrowable"/>
+
     </rule>
 
     <rule ref="category/java/bestpractices.xml">
@@ -26,6 +27,7 @@
         <exclude name="UseVarargs"/>
         <exclude name="AbstractClassWithoutAbstractMethod"/>
         <exclude name="JUnitAssertionsShouldIncludeMessage"/>
-
+        <exclude name="SwitchStmtsShouldHaveDefault"/>
+        <exclude name="AvoidUsingHardCodedIP"/>
     </rule>
 </ruleset>

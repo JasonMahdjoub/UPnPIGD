@@ -49,6 +49,7 @@
 		 putAll(map);
 	 }
 
+	 @SuppressWarnings("PMD.LooseCoupling")
 	 public Headers(ByteArrayInputStream inputStream) {
 		 StringBuilder sb = new StringBuilder(256);
 		 Headers headers = new Headers();

@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
  * 
  * @author Christian Bauer
  */
+@SuppressWarnings("PMD.LooseCoupling")
 public abstract class UpnpMessage<O extends UpnpOperation> {
 
     public enum BodyType {
@@ -150,7 +151,7 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
             throw new RuntimeException(ex);
         }
     }
-
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public byte[] getBodyBytes() {
         try {
             if(!hasBody()) {

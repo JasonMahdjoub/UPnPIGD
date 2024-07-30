@@ -143,15 +143,19 @@ public class ModelUtil {
      * Converts the comma-separated elements of a string into an array of strings,
      * optionally unescaping backslashed commas.
      */
-    public static String[] fromCommaSeparatedList(String s, boolean unescapeCommas) {
-        if (s == null || s.isEmpty()) {
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
+    public static String[] fromCommaSeparatedList(String _s, boolean unescapeCommas) {
+        if (_s == null || _s.isEmpty()) {
             return null;
         }
 
         final String QUOTED_COMMA_PLACEHOLDER = "XXX1122334455XXX";
+        String s;
         if (unescapeCommas) {
-            s = s.replaceAll("\\\\,", QUOTED_COMMA_PLACEHOLDER);
+            s = _s.replaceAll("\\\\,", QUOTED_COMMA_PLACEHOLDER);
         }
+        else
+            s=_s;
 
         String[] split = s.split(",");
         for (int i = 0; i < split.length; i++) {

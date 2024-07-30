@@ -151,6 +151,7 @@ public class Namespace {
         return uri.toString().endsWith(Namespace.CALLBACK_FILE);
     }
 
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public Collection<Resource<?>> getResources(Device<?, ?, ?> device) throws ValidationException {
         if (!device.isRoot()) return null;
 

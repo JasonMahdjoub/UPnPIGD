@@ -88,7 +88,7 @@ public class IncomingNotificationRequest extends IncomingDatagramMessage<UpnpReq
         }
         return null;
     }
-
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public byte[] getInterfaceMacHeader() {
         InterfaceMacHeader header = getHeaders().getFirstHeader(UpnpHeader.Type.EXT_IFACE_MAC, InterfaceMacHeader.class);
         if (header != null) {

@@ -290,7 +290,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
 
         stateVariable.eventDetails = new StateVariableEventDetails(
                 stateVariableElement.getAttribute("sendEvents") != null &&
-                        stateVariableElement.getAttribute(ATTRIBUTE.sendEvents.toString()).toUpperCase(Locale.ROOT).equals("YES")
+                        "YES".equals(stateVariableElement.getAttribute(ATTRIBUTE.sendEvents.toString()).toUpperCase(Locale.ROOT))
         );
 
         NodeList stateVariableChildren = stateVariableElement.getChildNodes();
@@ -417,7 +417,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         Element actionListElement = appendNewElement(descriptor, scpdElement, ELEMENT.actionList);
 
         for (Action<?> action : serviceModel.getActions()) {
-            if (!action.getName().equals(QueryStateVariableAction.ACTION_NAME))
+            if (!QueryStateVariableAction.ACTION_NAME.equals(action.getName()))
                 generateAction(action, descriptor, actionListElement);
         }
     }

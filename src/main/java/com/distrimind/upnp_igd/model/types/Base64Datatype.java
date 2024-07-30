@@ -33,6 +33,7 @@ public class Base64Datatype extends AbstractDatatype<byte[]> {
     }
 
     @Override
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
 	public byte[] valueOf(String s) throws InvalidValueException {
         if (s.isEmpty()) return null;
         try {

@@ -89,7 +89,6 @@ public abstract class RemoteGENASubscription extends GENASubscription<RemoteServ
 
             // TODO: Handle rollover to 1!
             if (this.currentSequence.getValue().equals(this.currentSequence.getBits().getMaxValue()) && sequence.getValue() == 1) {
-                System.err.println("TODO: HANDLE ROLLOVER");
                 return;
             }
 

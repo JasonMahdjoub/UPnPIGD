@@ -36,7 +36,7 @@ public class NetworkAddress {
     public NetworkAddress(InetAddress address, int port, byte[] hardwareAddress) {
         this.address = address;
         this.port = port;
-        this.hardwareAddress = hardwareAddress;
+        this.hardwareAddress = hardwareAddress==null?null:hardwareAddress.clone();
     }
 
     public InetAddress getAddress() {

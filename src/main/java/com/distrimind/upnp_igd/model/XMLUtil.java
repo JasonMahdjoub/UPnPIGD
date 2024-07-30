@@ -130,8 +130,9 @@ public class XMLUtil {
         return encodeText(s, true);
     }
 
-    public static String encodeText(String s, boolean encodeQuotes) {
-        s = s.replaceAll("&", "&amp;");
+    public static String encodeText(String _s, boolean encodeQuotes) {
+
+        String s = _s.replaceAll("&", "&amp;");
         s = s.replaceAll("<", "&lt;");
         s = s.replaceAll(">", "&gt;");
         if(encodeQuotes) {

@@ -282,7 +282,7 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
 
                 String sendEventsAttributeValue = attributes.getValue(ATTRIBUTE.sendEvents.toString());
                 stateVariable.eventDetails = new StateVariableEventDetails(
-                        sendEventsAttributeValue != null && sendEventsAttributeValue.toUpperCase(Locale.ROOT).equals("YES")
+                        sendEventsAttributeValue != null && "YES".equals(sendEventsAttributeValue.toUpperCase(Locale.ROOT))
                 );
 
                 getInstance().add(stateVariable);
@@ -385,7 +385,7 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
                         getInstance().step = Long.valueOf(getCharacters());
                         break;
                 }
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
                 // Ignore
             }
         }

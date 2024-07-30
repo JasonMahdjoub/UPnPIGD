@@ -22,6 +22,7 @@ import java.net.InetAddress;
  *
  * @author Christian Bauer
  */
+@SuppressWarnings("PMD.LooseCoupling")
 public abstract class OutgoingDatagramMessage<O extends UpnpOperation> extends UpnpMessage<O> {
 
     private final InetAddress destinationAddress;

@@ -114,6 +114,7 @@ public class ControlPointImpl implements ControlPoint {
     }
 
     @Override
+	@SuppressWarnings("PMD.CloseResource")
 	public Future<?> execute(ActionCallback callback) {
 		if (log.isLoggable(Level.FINE)) {
 			log.fine("Invoking action in background: " + callback);

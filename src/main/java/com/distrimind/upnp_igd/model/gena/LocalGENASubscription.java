@@ -137,7 +137,7 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
     @Override
 	@SuppressWarnings("unchecked")
 	synchronized public void propertyChange(PropertyChangeEvent e) {
-        if (!e.getPropertyName().equals(ServiceManager.EVENTED_STATE_VARIABLES)) return;
+        if (!ServiceManager.EVENTED_STATE_VARIABLES.equals(e.getPropertyName())) return;
 
 		if (log.isLoggable(Level.FINE)) {
 			log.fine("Eventing triggered, getting state for subscription: " + getSubscriptionId());

@@ -54,7 +54,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
 
     final protected LocalService<T> service;
     final protected Class<T> serviceClass;
-    final protected ReentrantLock lock = new ReentrantLock(true);
+    final protected ReentrantLock reentrantLock = new ReentrantLock(true);
 
     // Locking!
     protected T serviceImpl;
@@ -73,7 +73,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
 
     protected void lock() {
         try {
-            if (lock.tryLock(getLockTimeoutMillis(), TimeUnit.MILLISECONDS)) {
+            if (reentrantLock.tryLock(getLockTimeoutMillis(), TimeUnit.MILLISECONDS)) {
                 if (log.isLoggable(Level.FINEST))
                     log.finest("Acquired lock");
             } else {
@@ -87,7 +87,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
     protected void unlock() {
         if (log.isLoggable(Level.FINEST))
             log.finest("Releasing lock");
-        lock.unlock();
+        reentrantLock.unlock();
     }
 
     protected int getLockTimeoutMillis() {
@@ -163,8 +163,8 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
         lock();
         try {
             Collection<StateVariableValue<LocalService<T>>> values = new ArrayList<>();
-            for (String variableName : variableNames) {
-                variableName = variableName.trim();
+            for (String vn : variableNames) {
+                String variableName = vn.trim();
 
                 StateVariable<LocalService<T>> stateVariable = getService().getStateVariable(variableName);
                 if (stateVariable == null || !stateVariable.getEventDetails().isSendEvents()) {
@@ -236,6 +236,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
         return new DefaultPropertyChangeListener();
     }
 
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     protected Collection<StateVariableValue<LocalService<T>>> readInitialEventedStateVariableValues() throws Exception {
         return null;
     }
@@ -254,7 +255,7 @@ public class DefaultServiceManager<T> implements ServiceManager<T> {
 			}
 
 			// Prevent recursion
-            if (e.getPropertyName().equals(EVENTED_STATE_VARIABLES)) return;
+            if (EVENTED_STATE_VARIABLES.equals(e.getPropertyName())) return;
 
             String[] variableNames = ModelUtil.fromCommaSeparatedList(e.getPropertyName());
 			if (log.isLoggable(Level.FINE)) {

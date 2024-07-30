@@ -80,7 +80,7 @@ public class IncomingSearchResponse extends IncomingDatagramMessage<UpnpResponse
         }
         return null;
     }
-
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public byte[] getInterfaceMacHeader() {
         InterfaceMacHeader header = getHeaders().getFirstHeader(UpnpHeader.Type.EXT_IFACE_MAC, InterfaceMacHeader.class);
         if (header != null) {
