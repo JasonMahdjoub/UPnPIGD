@@ -21,7 +21,7 @@ package com.distrimind.upnp_igd.model;
  * @author Christian Bauer
  */
 public class Constants {
-
+    public static final String DATE_FORMAT="yyyy-MM-dd";
     public static String SYSTEM_PROPERTY_ANNOUNCE_MAC_ADDRESS = "com.distrimind.upnp_igd.network.announceMACAddress";
 
     public static int UPNP_MULTICAST_PORT = 1900;

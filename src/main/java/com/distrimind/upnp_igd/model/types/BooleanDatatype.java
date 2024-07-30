@@ -33,9 +33,9 @@ public class BooleanDatatype extends AbstractDatatype<Boolean> {
     @Override
 	public Boolean valueOf(String s) throws InvalidValueException {
         if (s.isEmpty()) return null;
-        if (s.equals("1") || s.toUpperCase(Locale.ROOT).equals("YES") || s.toUpperCase(Locale.ROOT).equals("TRUE")) {
+        if ("1".equals(s) || "YES".equals(s.toUpperCase(Locale.ROOT)) || "TRUE".equals(s.toUpperCase(Locale.ROOT))) {
             return true;
-        } else if (s.equals("0") || s.toUpperCase(Locale.ROOT).equals("NO") || s.toUpperCase(Locale.ROOT).equals("FALSE")) {
+        } else if ("0".equals(s) || "NO".equals(s.toUpperCase(Locale.ROOT)) || "FALSE".equals(s.toUpperCase(Locale.ROOT))) {
             return false;
         } else {
             throw new InvalidValueException("Invalid boolean value string: " + s);

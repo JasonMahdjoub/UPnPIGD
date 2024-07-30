@@ -77,17 +77,17 @@ public class DeviceType {
     /**
      * @return Either a {@link UDADeviceType} or a more generic {@link DeviceType}.
      */
-    public static DeviceType valueOf(String s) throws InvalidValueException {
+    public static DeviceType valueOf(String _s) throws InvalidValueException {
 
         DeviceType deviceType = null;
 
         // Sometimes crazy UPnP devices deliver spaces in a URN, don't ask...
-        s = s==null?null:s.replaceAll("\\s", "");
+        String s = _s==null?null:_s.replaceAll("\\s", "");
 
         // First try UDADeviceType parse
         try {
             deviceType = UDADeviceType.valueOf(s);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // Ignore
         }
 

@@ -139,7 +139,7 @@ public class DatatypesTest {
     public void dateAndTimeWithZone() {
         DateTimeDatatype type =
                 new DateTimeDatatype(
-                        new String[]{"yyyy-MM-dd", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ssZ"},
+                        List.of("yyyy-MM-dd", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ssZ"),
                         "yyyy-MM-dd'T'HH:mm:ssZ"
                 ) {
                     @Override
@@ -198,7 +198,7 @@ public class DatatypesTest {
     @Test
     public void timeWithZone() {
 
-        DateTimeDatatype type = new DateTimeDatatype(new String[]{"HH:mm:ssZ", "HH:mm:ss"}, "HH:mm:ssZ") {
+        DateTimeDatatype type = new DateTimeDatatype(List.of("HH:mm:ssZ", "HH:mm:ss"), "HH:mm:ssZ") {
             @Override
             protected TimeZone getTimeZone() {
                 // Set the "local" timezone to CET for the test

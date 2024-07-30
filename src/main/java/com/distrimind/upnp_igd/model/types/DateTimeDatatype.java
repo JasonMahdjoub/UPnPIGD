@@ -17,19 +17,17 @@ package com.distrimind.upnp_igd.model.types;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * @author Christian Bauer
  */
 public class DateTimeDatatype extends AbstractDatatype<Calendar> {
 
-    protected String[] readFormats;
+    protected List<String> readFormats;
     protected String writeFormat;
 
-    public DateTimeDatatype(String[] readFormats, String writeFormat) {
+    public DateTimeDatatype(List<String> readFormats, String writeFormat) {
         this.readFormats = readFormats;
         this.writeFormat = writeFormat;
     }
@@ -58,7 +56,7 @@ public class DateTimeDatatype extends AbstractDatatype<Calendar> {
     @Override
     public String getString(Calendar value) throws InvalidValueException {
         if (value == null) return "";
-        SimpleDateFormat sdt = new SimpleDateFormat(writeFormat);
+        SimpleDateFormat sdt = new SimpleDateFormat(writeFormat, Locale.ROOT);
         sdt.setTimeZone(getTimeZone());
         return sdt.format(value.getTime());
     }
@@ -78,18 +76,18 @@ public class DateTimeDatatype extends AbstractDatatype<Calendar> {
         return value;
     }
 
-    protected Date getDateValue(String value, String[] formats) {
+    protected Date getDateValue(String _value, List<String> formats) {
 
-        value = normalizeTimeZone(value);
+        String value = normalizeTimeZone(_value);
 
         Date d = null;
         for (String format : formats) {
-            SimpleDateFormat sdt = new SimpleDateFormat(format);
+            SimpleDateFormat sdt = new SimpleDateFormat(format, Locale.ROOT);
             sdt.setTimeZone(getTimeZone());
             try {
                 d = sdt.parse(value);
                 // Continue, last match is the one we need
-            } catch (ParseException ex) {
+            } catch (ParseException ignored) {
                 // Just continue
             }
         }

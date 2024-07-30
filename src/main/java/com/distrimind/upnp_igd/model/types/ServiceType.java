@@ -80,15 +80,15 @@ public class ServiceType {
     /**
      * @return Either a {@link UDAServiceType} or a more generic {@link ServiceType}.
      */
-    public static ServiceType valueOf(String s) throws InvalidValueException {
+    public static ServiceType valueOf(String _s) throws InvalidValueException {
 
-        if (s == null)
+        if (_s == null)
             throw new InvalidValueException("Can't parse null string");
 
         ServiceType serviceType = null;
 
         // Sometimes crazy UPnP devices deliver spaces in a URN, don't ask...
-        s = s.replaceAll("\\s", "");
+        String s = _s.replaceAll("\\s", "");
 
         // First try UDAServiceType parse
         try {

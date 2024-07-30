@@ -15,10 +15,9 @@
 
 package com.distrimind.upnp_igd.model.types;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Locale;
+import com.distrimind.upnp_igd.model.Constants;
+
+import java.util.*;
 
 /**
  * The type of state variable value, able to convert to/from string representation.
@@ -113,23 +112,23 @@ public interface Datatype<V> {
         CHAR("char", new CharacterDatatype()),
         STRING("string", new StringDatatype()),
         DATE("date", new DateTimeDatatype(
-                new String[]{"yyyy-MM-dd"},
-                "yyyy-MM-dd"
+                List.of(Constants.DATE_FORMAT),
+                Constants.DATE_FORMAT
         )),
         DATETIME("dateTime", new DateTimeDatatype(
-                new String[]{"yyyy-MM-dd", "yyyy-MM-dd'T'HH:mm:ss"},
+                List.of(Constants.DATE_FORMAT, "yyyy-MM-dd'T'HH:mm:ss"),
                 "yyyy-MM-dd'T'HH:mm:ss"
         )),
         DATETIME_TZ("dateTime.tz", new DateTimeDatatype(
-                new String[]{"yyyy-MM-dd", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ssZ"},
+                List.of(Constants.DATE_FORMAT, "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ssZ"),
                 "yyyy-MM-dd'T'HH:mm:ssZ"
         )),
         TIME("time", new DateTimeDatatype(
-                new String[]{"HH:mm:ss"},
+                List.of("HH:mm:ss"),
                 "HH:mm:ss"
         )),
         TIME_TZ("time.tz", new DateTimeDatatype(
-                new String[]{"HH:mm:ssZ", "HH:mm:ss"},
+                List.of("HH:mm:ssZ", "HH:mm:ss"),
                 "HH:mm:ssZ"
         )),
         BOOLEAN("boolean", new BooleanDatatype()),

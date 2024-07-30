@@ -97,14 +97,16 @@ public class BytesRange {
     public static BytesRange valueOf(String s) throws InvalidValueException {
         return valueOf(s,null);
     }
-    
+    @SuppressWarnings("PMD.ImplicitSwitchFallThrough")
     public static BytesRange valueOf(String s, String rangePrefix) throws InvalidValueException {
         if (s.startsWith((rangePrefix!=null)?rangePrefix:PREFIX)) {
-            Long firstByte=null, lastByte = null, byteLength = null;
+            Long firstByte=null;
+            Long lastByte = null;
+            Long byteLength = null;
             String[] params = s.substring( ((rangePrefix!=null)?rangePrefix:PREFIX).length()).split("[-/]");
             switch (params.length) {
                 case 3:
-                    if (!params[2].isEmpty() && !params[2].equals("*")) {
+                    if (!params[2].isEmpty() && !"*".equals(params[2])) {
                         byteLength = Long.parseLong(params[2]);
                     }
                 case 2:

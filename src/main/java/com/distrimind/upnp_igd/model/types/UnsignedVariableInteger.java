@@ -53,13 +53,16 @@ public abstract class UnsignedVariableInteger {
         setValue(value);
     }
 
-    public UnsignedVariableInteger(String s) throws NumberFormatException {
-        if (s.startsWith("-")) {
+    public UnsignedVariableInteger(String _s) throws NumberFormatException {
+        String s;
+        if (_s.startsWith("-")) {
             // Don't throw exception, just cut it!
             // TODO: UPNP VIOLATION: Twonky Player returns "-1" as the track number
-            if (log.isLoggable(Level.WARNING)) log.warning("Invalid negative integer value '" + s + "', assuming value 0!");
+            if (log.isLoggable(Level.WARNING)) log.warning("Invalid negative integer value '" + _s + "', assuming value 0!");
             s = "0";
         }
+        else
+            s=_s;
         setValue(Long.parseLong(s.trim()));
     }
 
