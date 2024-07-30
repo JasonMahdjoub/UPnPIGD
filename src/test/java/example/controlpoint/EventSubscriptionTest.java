@@ -200,11 +200,11 @@ public class EventSubscriptionTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
-                        return new StreamResponseMessage[]{
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
+                        return List.of(
                                 createSubscribeResponseMessage(),
                                 createUnsubscribeResponseMessage()
-                        };
+                        );
                     }
                 };
             }

@@ -37,6 +37,7 @@ public class AVTransportLastChangeParser extends LastChangeParser {
     }
 
     @Override
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     protected Source[] getSchemaSources() {
         // TODO: Android 2.2 has a broken SchemaFactory, we can't validate
         // http://code.google.com/p/android/issues/detail?id=9491&q=schemafactory&colspec=ID%20Type%20Status%20Owner%20Summary%20Stars

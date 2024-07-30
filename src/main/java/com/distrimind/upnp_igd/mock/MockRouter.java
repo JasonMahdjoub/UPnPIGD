@@ -31,6 +31,7 @@ import jakarta.enterprise.inject.Alternative;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -131,9 +132,10 @@ public class MockRouter implements Router {
 	public StreamResponseMessage send(StreamRequestMessage msg) throws RouterException {
         sentStreamRequestMessages.add(msg);
         counter++;
-        return getStreamResponseMessages() != null
-            ? getStreamResponseMessages()[counter]
-            : getStreamResponseMessage(msg);
+        List<StreamResponseMessage> l=getStreamResponseMessages();
+        return l.isEmpty()
+                ?getStreamResponseMessage(msg)
+                :l.get(counter);
     }
 
     @Override
@@ -165,8 +167,8 @@ public class MockRouter implements Router {
         return broadcastedBytes;
     }
 
-    public StreamResponseMessage[] getStreamResponseMessages() {
-        return null;
+    public List<StreamResponseMessage> getStreamResponseMessages() {
+        return Collections.emptyList();
     }
 
     public StreamResponseMessage getStreamResponseMessage(StreamRequestMessage request) {

@@ -87,6 +87,7 @@ public class RemoteDeviceIdentity extends DeviceIdentity {
         return discoveredOnLocalAddress;
     }
 
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public byte[] getWakeOnLANBytes() {
         if (getInterfaceMacAddress() == null) return null;
         byte[] bytes = new byte[6 + 16 * getInterfaceMacAddress().length];

@@ -165,6 +165,7 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
     }
 
     @Override
+	@SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
 	public byte[] getHardwareAddress(InetAddress inetAddress) {
         try {
             NetworkInterface iface = NetworkInterface.getByInetAddress(inetAddress);

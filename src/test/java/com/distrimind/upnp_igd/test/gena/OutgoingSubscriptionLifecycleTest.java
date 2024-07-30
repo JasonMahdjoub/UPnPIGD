@@ -60,13 +60,13 @@ public class OutgoingSubscriptionLifecycleTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                 @Override
-                public StreamResponseMessage[] getStreamResponseMessages() {
+                public List<StreamResponseMessage> getStreamResponseMessages() {
 
-                    return new StreamResponseMessage[]{
+                    return List.of(
                             createSubscribeResponseMessage(),
                             createUnsubscribeResponseMessage()
 
-                    };
+                    );
                 }
                 };
             }

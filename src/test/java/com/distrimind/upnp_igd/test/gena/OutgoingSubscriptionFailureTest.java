@@ -66,12 +66,12 @@ public class OutgoingSubscriptionFailureTest {
                         return Collections.emptyList();
                     }
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
 
-                        return new StreamResponseMessage[]{
+                        return List.of(
                                 createSubscribeResponseMessage()
 
-                        };
+                        );
                     }
                 };
             }
@@ -134,13 +134,13 @@ public class OutgoingSubscriptionFailureTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
 
-                        return new StreamResponseMessage[]{
+                        return List.of(
                             createSubscribeResponseMessage(),
                             createUnsubscribeResponseMessage()
 
-                        };
+                        );
                     }
                 };
             }

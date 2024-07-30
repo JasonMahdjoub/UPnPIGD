@@ -212,10 +212,10 @@ public class ActionInvokeOutgoingTest {
                     }
 
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
-                        return new StreamResponseMessage[]{
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
+                        return List.of(
                             new StreamResponseMessage(RESPONSE_SUCCESSFUL)
-                        };
+                        );
                     }
                 };
             }
@@ -292,10 +292,8 @@ public class ActionInvokeOutgoingTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
-                        return new StreamResponseMessage[]{
-                            new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.INTERNAL_SERVER_ERROR), RESPONSE_FAILURE)
-                        };
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
+                        return List.of(new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.INTERNAL_SERVER_ERROR), RESPONSE_FAILURE));
                     }
                 };
             }
@@ -344,10 +342,8 @@ public class ActionInvokeOutgoingTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
-                        return new StreamResponseMessage[]{
-                            new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.NOT_FOUND))
-                        };
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
+                        return List.of(new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.NOT_FOUND)));
                     }
                 };
             }
@@ -435,10 +431,8 @@ public class ActionInvokeOutgoingTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
-                        return new StreamResponseMessage[]{
-                            new StreamResponseMessage(RESPONSE_NEGATIVE_VALUE)
-                        };
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
+                        return List.of(new StreamResponseMessage(RESPONSE_NEGATIVE_VALUE));
                     }
                 };
             }
@@ -635,10 +629,8 @@ public class ActionInvokeOutgoingTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
-                        return new StreamResponseMessage[]{
-                            new StreamResponseMessage(RESPONSE_QUERY_VARIABLE)
-                        };
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
+                        return List.of(new StreamResponseMessage(RESPONSE_QUERY_VARIABLE));
                     }
                 };
             }

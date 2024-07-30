@@ -106,6 +106,7 @@ public class SAXParser {
 		}
 	}
 
+	@SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
 	protected Source[] getSchemaSources() {
 		return null;
 	}

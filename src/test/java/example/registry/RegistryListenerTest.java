@@ -31,6 +31,8 @@ import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.Test;
 import org.xml.sax.SAXParseException;
 
+import java.util.List;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -104,7 +106,7 @@ public class RegistryListenerTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
                         try {
                             String deviceDescriptorXML =
                                 getConfiguration().getDeviceDescriptorBinderUDA10().generate(
@@ -118,12 +120,12 @@ public class RegistryListenerTest {
                                 getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
                             String serviceThreeXML =
                                 getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
-                            return new StreamResponseMessage[]{
+                            return List.of(
                                 new StreamResponseMessage(deviceDescriptorXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                                 new StreamResponseMessage(serviceOneXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                                 new StreamResponseMessage(serviceTwoXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                                 new StreamResponseMessage(serviceThreeXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8)
-                            };
+                            );
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
@@ -152,7 +154,7 @@ public class RegistryListenerTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
                         String deviceDescriptorXML;
                         DeviceDescriptorBinder binder = getConfiguration().getDeviceDescriptorBinderUDA10();
                         try {
@@ -165,13 +167,13 @@ public class RegistryListenerTest {
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
-                        return new StreamResponseMessage[]{
+                        return List.of(
                             new StreamResponseMessage(deviceDescriptorXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                             new StreamResponseMessage(
                                 "<?xml>THIS SHOULD BE SERVER DESCRIPTOR XML, BUT WE WANT IT TO FAIL WITH SAXParseException.",
                                 ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8
-                            ),
-                        };
+                            )
+                                );
                     }
                 };
             }
@@ -243,7 +245,7 @@ public class RegistryListenerTest {
             protected MockRouter createRouter() {
                 return new MockRouter(getConfiguration(), getProtocolFactory()) {
                     @Override
-                    public StreamResponseMessage[] getStreamResponseMessages() {
+                    public List<StreamResponseMessage> getStreamResponseMessages() {
                         try {
                             String deviceDescriptorXML =
                                 getConfiguration().getDeviceDescriptorBinderUDA10().generate(
@@ -257,12 +259,12 @@ public class RegistryListenerTest {
                                 getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
                             String serviceThreeXML =
                                 getConfiguration().getServiceDescriptorBinderUDA10().generate(hydratedDevice.findServices().iterator().next());
-                            return new StreamResponseMessage[]{
+                            return List.of(
                                 new StreamResponseMessage(deviceDescriptorXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                                 new StreamResponseMessage(serviceOneXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                                 new StreamResponseMessage(serviceTwoXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8),
                                 new StreamResponseMessage(serviceThreeXML, ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8)
-                            };
+                            );
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }

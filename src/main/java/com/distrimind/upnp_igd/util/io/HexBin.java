@@ -109,6 +109,7 @@ public final class HexBin {
      *
      * @return return encode binary array
      */
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     static public byte[] encode(byte[] binaryData) {
         if (binaryData == null)
             return null;
@@ -122,6 +123,7 @@ public final class HexBin {
         return encodedData;
     }
 
+    @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     static public byte[] decode(byte[] binaryData) {
         if (binaryData == null)
             return null;
