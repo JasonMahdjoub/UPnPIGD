@@ -104,6 +104,7 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
         readActionInputArguments(doc, actionInvocation);
     }
 
+    @SuppressWarnings("PMD.LooseCoupling")
     protected <S extends Service<?, ?, ?>> boolean readBodyResponse(Element element,
                                                                            ActionInvocation<S> actionInvocation) throws Exception {
         Elements children = element.children();
@@ -141,7 +142,7 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
         );
     }
 
-
+    @SuppressWarnings("PMD.LooseCoupling")
     private static void getMatchingNodes(Element element, List<String> names, Map<String, String> matches) {
         Elements children = element.children();
         for (Element child : children) {
@@ -234,6 +235,7 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
         return null;
     }
 
+    @SuppressWarnings("PMD.LooseCoupling")
     private static boolean readFaultElement(Element element, StringBuilder errorCode, StringBuilder errorDescription) {
         Elements children = element.children();
         for (Element child : children) {

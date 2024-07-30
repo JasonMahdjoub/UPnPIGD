@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.model.profile;
 
+import com.distrimind.upnp_igd.model.message.IUpnpHeaders;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.model.message.header.UserAgentHeader;
@@ -26,17 +27,17 @@ import com.distrimind.upnp_igd.model.message.header.UserAgentHeader;
  */
 public class ClientInfo {
 
-    final protected UpnpHeaders requestHeaders;
+    final protected IUpnpHeaders requestHeaders;
 
     public ClientInfo() {
         this(new UpnpHeaders());
     }
 
-    public ClientInfo(UpnpHeaders requestHeaders) {
+    public ClientInfo(IUpnpHeaders requestHeaders) {
         this.requestHeaders = requestHeaders;
     }
 
-    public UpnpHeaders getRequestHeaders() {
+    public IUpnpHeaders getRequestHeaders() {
         return requestHeaders;
     }
 

@@ -520,7 +520,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         return valuesCollection;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.LooseCoupling"})
     @Override protected Object clone() throws CloneNotSupportedException {
         AbstractMap<K, V> result = (AbstractMap<K, V>) super.clone();
         result.keySet = null;

@@ -15,8 +15,8 @@
 
 package com.distrimind.upnp_igd.model.message.gena;
 
+import com.distrimind.upnp_igd.model.message.IUpnpHeaders;
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
-import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.message.UpnpRequest;
 import com.distrimind.upnp_igd.model.message.header.CallbackHeader;
 import com.distrimind.upnp_igd.model.message.header.NTEventHeader;
@@ -34,7 +34,7 @@ public class OutgoingSubscribeRequestMessage extends StreamRequestMessage {
 
     public OutgoingSubscribeRequestMessage(RemoteGENASubscription subscription,
                                            List<URL> callbackURLs,
-                                           UpnpHeaders extraHeaders) {
+                                           IUpnpHeaders extraHeaders) {
 
         super(UpnpRequest.Method.SUBSCRIBE, subscription.getEventSubscriptionURL());
 

@@ -37,6 +37,7 @@ public class XmlPullParserUtils {
 		}
 	}
 
+	@SuppressWarnings("PMD.LooseCoupling")
 	public static boolean searchTagImpl(Element element, String tag) {
 		Elements children = element.children();
 		for (Element child : children) {

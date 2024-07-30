@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.model.profile;
 
+import com.distrimind.upnp_igd.model.message.IUpnpHeaders;
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
 import com.distrimind.upnp_igd.model.message.Connection;
@@ -38,7 +39,7 @@ import java.net.InetAddress;
 public class RemoteClientInfo extends ClientInfo {
 
     final protected Connection connection;
-    final protected UpnpHeaders extraResponseHeaders = new UpnpHeaders();
+    final protected IUpnpHeaders extraResponseHeaders = new UpnpHeaders();
 
     public RemoteClientInfo() {
         this(null);
@@ -49,7 +50,7 @@ public class RemoteClientInfo extends ClientInfo {
             requestMessage != null ? requestMessage.getHeaders() : new UpnpHeaders());
     }
 
-    public RemoteClientInfo(Connection connection, UpnpHeaders requestHeaders) {
+    public RemoteClientInfo(Connection connection, IUpnpHeaders requestHeaders) {
         super(requestHeaders);
         this.connection = connection;
     }
@@ -91,7 +92,7 @@ public class RemoteClientInfo extends ClientInfo {
         return getConnection().getLocalAddress();
     }
 
-    public UpnpHeaders getExtraResponseHeaders() {
+    public IUpnpHeaders getExtraResponseHeaders() {
         return extraResponseHeaders;
     }
 

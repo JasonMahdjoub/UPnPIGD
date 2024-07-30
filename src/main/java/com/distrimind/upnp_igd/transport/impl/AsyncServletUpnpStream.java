@@ -15,12 +15,7 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
-import com.distrimind.upnp_igd.model.message.Connection;
-import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
-import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
-import com.distrimind.upnp_igd.model.message.UpnpHeaders;
-import com.distrimind.upnp_igd.model.message.UpnpMessage;
-import com.distrimind.upnp_igd.model.message.UpnpRequest;
+import com.distrimind.upnp_igd.model.message.*;
 import com.distrimind.upnp_igd.protocol.ProtocolFactory;
 import com.distrimind.upnp_igd.transport.spi.UpnpStream;
 import com.distrimind.upnp_igd.util.Exceptions;
@@ -184,7 +179,7 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
         requestMessage.setConnection(createConnection());
 
         // Headers
-        UpnpHeaders headers = new UpnpHeaders();
+        IUpnpHeaders headers = new UpnpHeaders();
         Enumeration<String> headerNames = getRequest().getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();

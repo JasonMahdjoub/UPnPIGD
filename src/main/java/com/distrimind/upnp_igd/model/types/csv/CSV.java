@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author Christian Bauer
  */
-public abstract class CSV<T> extends ArrayList<T> {
+public abstract class CSV<T> extends ArrayList<T> implements ICSV<T> {
     private static final long serialVersionUID = 1L;
 
     protected final Datatype.Builtin datatype;

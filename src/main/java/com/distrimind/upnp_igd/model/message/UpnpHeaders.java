@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public class UpnpHeaders extends Headers {
+public class UpnpHeaders extends Headers implements IUpnpHeaders {
 
     private static final Logger logger = Logger.getLogger(UpnpHeaders.class.getName());
 
@@ -112,29 +112,29 @@ public class UpnpHeaders extends Headers {
         parsedHeaders = null;
         super.clear();
     }
-
+    @Override
     public boolean containsKey(UpnpHeader.Type type) {
         if (parsedHeaders == null) parseHeaders();
         return parsedHeaders.containsKey(type);
     }
-
+    @Override
     public List<UpnpHeader<?>> get(UpnpHeader.Type type) {
         if (parsedHeaders == null) parseHeaders();
         return parsedHeaders.get(type);
     }
-
+    @Override
     public void add(UpnpHeader.Type type, UpnpHeader<?> value) {
         super.add(type.getHttpName(), value.getString());
         if (parsedHeaders != null)
             addParsedValue(type, value);
     }
-
+    @Override
     public void remove(UpnpHeader.Type type) {
         super.remove(type.getHttpName());
         if (parsedHeaders != null)
             parsedHeaders.remove(type);
     }
-
+    @Override
     public List<UpnpHeader<?>> getList(UpnpHeader.Type type) {
         if (parsedHeaders == null) parseHeaders();
         return parsedHeaders.get(type) != null
@@ -142,6 +142,7 @@ public class UpnpHeaders extends Headers {
                 : Collections.emptyList();
     }
 
+    @Override
     public UpnpHeader<?> getFirstHeader(UpnpHeader.Type type) {
         List<UpnpHeader<?>> l=getList(type);
         return l.isEmpty()?
@@ -150,6 +151,7 @@ public class UpnpHeaders extends Headers {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
 	public <H extends UpnpHeader<?>> H getFirstHeader(UpnpHeader.Type type, Class<H> subtype) {
         List<UpnpHeader<?>> headers = getList(type);
 
@@ -161,11 +163,13 @@ public class UpnpHeaders extends Headers {
         return null;
     }
 
+    @Override
     public String getFirstHeaderString(UpnpHeader.Type type) {
         UpnpHeader<?> header = getFirstHeader(type);
         return header != null ? header.getString() : null;
     }
 
+    @Override
     public void log() {
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("############################ RAW HEADERS ###########################");

@@ -45,23 +45,23 @@ public class CallbackHeader extends UpnpHeader<List<URL>> {
     }
 
     @Override
-	public void setString(String s) throws InvalidHeaderException {
+	public void setString(String _s) throws InvalidHeaderException {
 
-        if (s.isEmpty()) {
+        if (_s.isEmpty()) {
             // Well, no callback URLs are not useful, but we have to consider this state
             return;
         }
 
-        if (!s.contains("<") || !s.contains(">")) {
-            throw new InvalidHeaderException("URLs not in brackets: " + s);
+        if (!_s.contains("<") || !_s.contains(">")) {
+            throw new InvalidHeaderException("URLs not in brackets: " + _s);
         }
 
-        s = s.replaceAll("<", "");
+        String s = _s.replaceAll("<", "");
         String[] split = s.split(">");
         try {
             List<URL> urls = new ArrayList<>();
-            for (String sp : split) {
-                sp = sp.trim();
+            for (String oneSplit : split) {
+                String sp = oneSplit.trim();
 
                 if (!sp.startsWith("http://")) {
                     if (log.isLoggable(Level.WARNING)) log.warning("Discarding non-http callback URL: " + sp);

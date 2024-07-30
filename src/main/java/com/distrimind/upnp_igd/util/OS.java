@@ -14,35 +14,40 @@
  */
  package com.distrimind.upnp_igd.util;
 
-/**
+ import java.util.Locale;
+
+ /**
  * @author Christian Bauer
  */
 public class OS {
 
+    public static final String OS_NAME = "os.name";
+    public static final String LINUX = "linux";
+
     public static boolean checkForLinux() {
-        return checkForPresence("os.name", "linux");
+        return checkForPresence(OS_NAME, LINUX);
     }
 
     public static boolean checkForHp() {
-        return checkForPresence("os.name", "hp");
+        return checkForPresence(OS_NAME, "hp");
     }
 
     public static boolean checkForSolaris() {
-        return checkForPresence("os.name", "sun");
+        return checkForPresence(OS_NAME, "sun");
     }
 
     public static boolean checkForWindows() {
-        return checkForPresence("os.name", "win");
+        return checkForPresence(OS_NAME, "win");
     }
 
     public static boolean checkForMac() {
-        return checkForPresence("os.name", "mac");
+        return checkForPresence(OS_NAME, "mac");
     }
 
     private static boolean checkForPresence(String key, String value) {
         try {
             String tmp = System.getProperty(key);
-            return tmp != null && tmp.trim().toLowerCase().startsWith(value);
+            return tmp != null && tmp.trim().toLowerCase(Locale.ROOT).startsWith(value);
         }
         catch (Throwable t) {
             return false;

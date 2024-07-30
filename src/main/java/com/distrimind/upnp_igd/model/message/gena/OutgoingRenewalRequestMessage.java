@@ -15,8 +15,8 @@
 
 package com.distrimind.upnp_igd.model.message.gena;
 
+import com.distrimind.upnp_igd.model.message.IUpnpHeaders;
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
-import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.message.UpnpRequest;
 import com.distrimind.upnp_igd.model.message.header.SubscriptionIdHeader;
 import com.distrimind.upnp_igd.model.message.header.TimeoutHeader;
@@ -29,7 +29,7 @@ import com.distrimind.upnp_igd.model.gena.RemoteGENASubscription;
 public class OutgoingRenewalRequestMessage extends StreamRequestMessage {
 
     public OutgoingRenewalRequestMessage(RemoteGENASubscription subscription,
-                                         UpnpHeaders extraHeaders) {
+                                         IUpnpHeaders extraHeaders) {
 
         super(UpnpRequest.Method.SUBSCRIBE, subscription.getEventSubscriptionURL());
 

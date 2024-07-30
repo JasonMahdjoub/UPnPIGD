@@ -101,13 +101,13 @@ public class MimeType {
 			major = paths[0].trim();
 			subtype = paths[1].trim();
 
-		} else if (paths.length != 2) {
+		} else {
 
 			throw new IllegalArgumentException("Error parsing string: " + stringValue);
 		}
 
 		if (params != null && !params.isEmpty()) {
-			HashMap<String, String> map = new HashMap<>();
+			Map<String, String> map = new HashMap<>();
 
 			int start = 0;
 
@@ -196,8 +196,8 @@ public class MimeType {
 
 	@Override
 	public int hashCode() {
-		int result = type.toLowerCase().hashCode();
-		result = 31 * result + subtype.toLowerCase().hashCode();
+		int result = type.toLowerCase(Locale.ROOT).hashCode();
+		result = 31 * result + subtype.toLowerCase(Locale.ROOT).hashCode();
 		result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
 		return result;
 	}

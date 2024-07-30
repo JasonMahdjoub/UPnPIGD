@@ -47,7 +47,7 @@ public class DLNAProtocolInfo extends ProtocolInfo {
         this.attributes.put(DLNAAttribute.Type.DLNA_ORG_PN, new DLNAProfileAttribute(profile));
         this.additionalInfo = this.getAttributesString();
     }
-
+    @SuppressWarnings("PMD.LooseCoupling")
     public DLNAProtocolInfo(DLNAProfiles profile, EnumMap<DLNAAttribute.Type, DLNAAttribute<?>> attributes) {
         super(MimeType.valueOf(profile.getContentFormat()));
         this.attributes.putAll(attributes);

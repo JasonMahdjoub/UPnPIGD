@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.distrimind.upnp_igd.model.message.*;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.registry.RegistrationException;
 import com.distrimind.upnp_igd.registry.Registry;
@@ -31,10 +32,6 @@ import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.model.ValidationError;
 import com.distrimind.upnp_igd.model.ValidationException;
-import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
-import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
-import com.distrimind.upnp_igd.model.message.UpnpHeaders;
-import com.distrimind.upnp_igd.model.message.UpnpRequest;
 import com.distrimind.upnp_igd.model.meta.Icon;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
@@ -117,7 +114,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
             activeRetrievals.remove(deviceURL);
         }
     }
-
+	@SuppressWarnings("PMD.LooseCoupling")
     protected void describe() throws RouterException {
 
         // All the following is a very expensive and time-consuming procedure, thanks to the
@@ -139,7 +136,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
                 new StreamRequestMessage(UpnpRequest.Method.GET, rd.getIdentity().getDescriptorURL());
 
             // Extra headers
-            UpnpHeaders headers =
+			IUpnpHeaders headers =
                 getUpnpService().getConfiguration().getDescriptorRetrievalHeaders(rd.getIdentity());
             if (headers != null)
                 deviceDescRetrievalMsg.getHeaders().putAll(headers);
@@ -331,7 +328,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
         StreamRequestMessage serviceDescRetrievalMsg = new StreamRequestMessage(UpnpRequest.Method.GET, descriptorURL);
 
         // Extra headers
-        UpnpHeaders headers =
+		IUpnpHeaders headers =
             getUpnpService().getConfiguration().getDescriptorRetrievalHeaders(service.getDevice().getIdentity());
         if (headers != null)
             serviceDescRetrievalMsg.getHeaders().putAll(headers);

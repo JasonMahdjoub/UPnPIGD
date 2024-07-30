@@ -19,12 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import com.distrimind.upnp_igd.model.message.IncomingDatagramMessage;
-import com.distrimind.upnp_igd.model.message.OutgoingDatagramMessage;
-import com.distrimind.upnp_igd.model.message.UpnpHeaders;
-import com.distrimind.upnp_igd.model.message.UpnpOperation;
-import com.distrimind.upnp_igd.model.message.UpnpRequest;
-import com.distrimind.upnp_igd.model.message.UpnpResponse;
+import com.distrimind.upnp_igd.model.message.*;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
 import com.distrimind.upnp_igd.http.Headers;
@@ -123,7 +118,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
                                                          String httpProtocol) throws Exception {
 
         // Headers
-        UpnpHeaders headers = new UpnpHeaders(is);
+        IUpnpHeaders headers = new UpnpHeaders(is);
 
         // Assemble message
         IncomingDatagramMessage<UpnpRequest> requestMessage;
@@ -144,7 +139,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
                                                           String httpProtocol) throws Exception {
 
         // Headers
-        UpnpHeaders headers = new UpnpHeaders(is);
+        IUpnpHeaders headers = new UpnpHeaders(is);
 
         // Assemble the message
         IncomingDatagramMessage<?> responseMessage;

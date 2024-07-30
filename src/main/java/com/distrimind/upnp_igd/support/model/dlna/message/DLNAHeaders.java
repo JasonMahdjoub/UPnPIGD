@@ -30,7 +30,7 @@ import com.distrimind.upnp_igd.support.model.dlna.message.header.DLNAHeader;
  * @author Mario Franco
  * @author Christian Bauer
  */
-public class DLNAHeaders extends UpnpHeaders {
+public class DLNAHeaders extends UpnpHeaders implements IDLNAHeaders {
 
     private static final Logger log = Logger.getLogger(DLNAHeaders.class.getName());
 
@@ -104,29 +104,29 @@ public class DLNAHeaders extends UpnpHeaders {
         parsedDLNAHeaders = null;
         super.clear();
     }
-
+    @Override
     public boolean containsKey(DLNAHeader.Type type) {
         if (parsedDLNAHeaders == null) parseHeaders();
         return parsedDLNAHeaders.containsKey(type);
     }
-
+    @Override
     public List<UpnpHeader<?>> get(DLNAHeader.Type type) {
         if (parsedDLNAHeaders == null) parseHeaders();
         return parsedDLNAHeaders.get(type);
     }
-
+    @Override
     public void add(DLNAHeader.Type type, UpnpHeader<?> value) {
         super.add(type.getHttpName(), value.getString());
         if (parsedDLNAHeaders != null)
             addParsedValue(type, value);
     }
-
+    @Override
     public void remove(DLNAHeader.Type type) {
         super.remove(type.getHttpName());
         if (parsedDLNAHeaders != null)
             parsedDLNAHeaders.remove(type);
     }
-
+    @Override
     public List<UpnpHeader<?>> getAsArray(DLNAHeader.Type type) {
         if (parsedDLNAHeaders == null) parseHeaders();
         return parsedDLNAHeaders.get(type) != null
@@ -134,11 +134,13 @@ public class DLNAHeaders extends UpnpHeaders {
                 : Collections.emptyList();
     }
 
+    @Override
     public UpnpHeader<?> getFirstHeader(DLNAHeader.Type type) {
         return getAsArray(type).stream().findFirst().orElse(null);
     }
 
     @SuppressWarnings("unchecked")
+    @Override
 	public <H extends UpnpHeader<?>> H getFirstHeader(DLNAHeader.Type type, Class<H> subtype) {
         List<UpnpHeader<?>> headers = getAsArray(type);
 

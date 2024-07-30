@@ -20,6 +20,7 @@ import java.util.Locale;
 /**
  * @author Mario Franco
  */
+@SuppressWarnings("PMD.LooseCoupling")
 public class DLNAOperationsAttribute extends DLNAAttribute<EnumSet<DLNAOperations>> {
 
     public DLNAOperationsAttribute() {

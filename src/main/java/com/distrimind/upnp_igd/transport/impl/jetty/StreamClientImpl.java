@@ -107,7 +107,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         request.method(requestOperation.getHttpMethodName());
 
         //set headers
-        UpnpHeaders headers = requestMessage.getHeaders();
+        IUpnpHeaders headers = requestMessage.getHeaders();
         if (log.isLoggable(Level.FINE))
             log.fine("Writing headers on HttpContentExchange: " + headers.size());
         // TODO Always add the Host header
@@ -186,7 +186,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 					StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
 
 					// Headers
-					UpnpHeaders headers = new UpnpHeaders();
+					IUpnpHeaders headers = new UpnpHeaders();
 					HttpFields responseFields = response.getHeaders();
 					for (String name : responseFields.getFieldNamesCollection()) {
 						for (Enumeration<String> e = responseFields.getValues(name); e.hasMoreElements(); ) {

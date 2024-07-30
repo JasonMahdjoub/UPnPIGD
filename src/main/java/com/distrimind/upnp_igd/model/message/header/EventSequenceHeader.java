@@ -30,9 +30,10 @@ public class EventSequenceHeader extends UpnpHeader<UnsignedIntegerFourBytes> {
     }
 
     @Override
-	public void setString(String s) throws InvalidHeaderException {
+	public void setString(String _s) throws InvalidHeaderException {
 
         // Cut off leading zeros
+        String s=_s;
         if (!"0".equals(s)) {
             while(s.startsWith("0")) {
                 s = s.substring(1);

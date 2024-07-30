@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, S>, S extends Service<DI, D, S>> implements Validatable {
 
     final private static Logger log = Logger.getLogger(Device.class.getName());
+    public static final String UNCHECKED = "unchecked";
 
     final private DI identity;
 
@@ -66,7 +67,7 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
         this(identity, null, type, details, icons, services, embeddedDevices);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public Device(DI identity, UDAVersion version, DeviceType type, DeviceDetails details,
 				  Collection<Icon> icons, Collection<S> services, List<D> embeddedDevices) throws ValidationException {
 
@@ -191,17 +192,17 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
 
     public abstract D findDevice(UDN udn);
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public Collection<D> findEmbeddedDevices() {
         return findEmbeddedDevices((D)this);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public Collection<D> findDevices(DeviceType deviceType) {
         return find(deviceType, (D)this);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public Collection<D> findDevices(ServiceType serviceType) {
         return find(serviceType, (D)this);
     }
@@ -220,12 +221,12 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
         return Collections.unmodifiableCollection(icons);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public Collection<S> findServices() {
         return findServices(null, null, (D)this);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public Collection<S> findServices(ServiceType serviceType) {
         return findServices(serviceType, null, (D)this);
     }
@@ -301,19 +302,19 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
         return Collections.unmodifiableCollection(services);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public S findService(ServiceId serviceId) {
         Collection<S> services = findServices(null, serviceId, (D)this);
         return services.size() == 1 ? services.iterator().next() : null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public S findService(ServiceType serviceType) {
         Collection<S> services = findServices(serviceType, null, (D)this);
         return !services.isEmpty() ? services.iterator().next() : null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public Collection<ServiceType> findServiceTypes() {
         Collection<S> services = findServices(null, null, (D)this);
         Collection<ServiceType> col = new HashSet<>();

@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
+import com.distrimind.upnp_igd.http.IHeaders;
 import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
@@ -26,7 +27,6 @@ import com.distrimind.upnp_igd.model.message.UpnpResponse;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
-import com.distrimind.upnp_igd.http.Headers;
 import com.distrimind.upnp_igd.util.Exceptions;
 import com.distrimind.upnp_igd.util.URIUtil;
 import com.distrimind.upnp_igd.util.io.IO;
@@ -223,7 +223,7 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
         applyHeaders(urlConnection, requestMessage.getHeaders());
     }
 
-    protected void applyHeaders(HttpURLConnection urlConnection, Headers headers) {
+    protected void applyHeaders(HttpURLConnection urlConnection, IHeaders headers) {
 		if (log.isLoggable(Level.FINE)) {
 			log.fine("Writing headers on HttpURLConnection: " + headers.size());
 		}

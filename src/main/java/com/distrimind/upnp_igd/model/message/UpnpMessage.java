@@ -48,7 +48,7 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
     private int udaMinorVersion = 0;
 
     private final O operation;
-    private UpnpHeaders headers = new UpnpHeaders();
+    private IUpnpHeaders headers = new UpnpHeaders();
     private Object body;
     private BodyType bodyType = BodyType.STRING;
 
@@ -87,11 +87,11 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
         this.udaMinorVersion = udaMinorVersion;
     }
 
-    public UpnpHeaders getHeaders() {
+    public IUpnpHeaders getHeaders() {
         return headers;
     }
 
-    public void setHeaders(UpnpHeaders headers) {
+    public void setHeaders(IUpnpHeaders headers) {
         this.headers = headers;
     }
 

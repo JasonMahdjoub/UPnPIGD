@@ -49,6 +49,7 @@ import java.util.logging.Logger;
 public class Icon implements Validatable {
 
     final private static Logger log = Logger.getLogger(StateVariable.class.getName());
+    public static final String UPN_P_SPECIFICATION_VIOLATION_OF = "UPnP specification violation of: ";
 
     final private MimeType mimeType;
     final private int width;
@@ -122,7 +123,7 @@ public class Icon implements Validatable {
         this.height = height;
         this.depth = depth;
         this.uri = uri;
-        this.data = data;
+        this.data = data==null?null:data.clone();
     }
 
     public MimeType getMimeType() {
@@ -146,7 +147,7 @@ public class Icon implements Validatable {
     }
 
     public byte[] getData() {
-        return data;
+        return data==null?null:data.clone();
     }
 
     public Device<?, ?, ?> getDevice() {
@@ -166,25 +167,25 @@ public class Icon implements Validatable {
 
             if (getMimeType() == null) {
                 if (log.isLoggable(Level.WARNING)) {
-                    log.warning("UPnP specification violation of: " + getDevice());
+                    log.warning(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
                     log.warning("Invalid icon, missing mime type: " + this);
                 }
             }
             if (getWidth() == 0) {
                 if (log.isLoggable(Level.WARNING)) {
-                    log.warning("UPnP specification violation of: " + getDevice());
+                    log.warning(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
                     log.warning("Invalid icon, missing width: " + this);
                 }
             }
             if (getHeight() == 0) {
                 if (log.isLoggable(Level.WARNING)) {
-                    log.warning("UPnP specification violation of: " + getDevice());
+                    log.warning(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
                     log.warning("Invalid icon, missing height: " + this);
                 }
             }
             if (getDepth() == 0) {
                 if (log.isLoggable(Level.WARNING)) {
-                    log.warning("UPnP specification violation of: " + getDevice());
+                    log.warning(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
                     log.warning("Invalid icon, missing bitmap depth: " + this);
                 }
             }
@@ -207,7 +208,7 @@ public class Icon implements Validatable {
         				"uri",
         				"URL must be valid: " + ex.getMessage())
         				);
-        	} catch (IllegalArgumentException ex) {
+        	} catch (IllegalArgumentException ignored) {
         		// Relative URI is fine here!
         	}
         }

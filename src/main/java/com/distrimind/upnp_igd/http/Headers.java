@@ -34,7 +34,7 @@
   *
   * @author Christian Bauer
   */
- public class Headers implements Map<String, List<String>> {
+ public class Headers implements IHeaders {
 
 	 final static byte CR = 13;
 	 final static byte LF = 10;
@@ -156,17 +156,20 @@
 		 return map.hashCode();
 	 }
 
+	 @Override
 	 public String getFirstHeader(String key) {
 		 List<String> l = map.get(normalize(key));
 		 return l != null && !l.isEmpty() ? l.get(0) : null;
 	 }
 
+	 @Override
 	 public void add(String key, String value) {
 		 String k = normalize(key);
 		 List<String> l = map.computeIfAbsent(k, k1 -> new LinkedList<>());
 		 l.add(value);
 	 }
 
+	 @Override
 	 public void set(String key, String value) {
 		 List<String> l = new LinkedList<>();
 		 l.add(value);

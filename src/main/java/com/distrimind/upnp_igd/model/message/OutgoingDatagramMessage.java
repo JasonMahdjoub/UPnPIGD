@@ -51,7 +51,7 @@ public abstract class OutgoingDatagramMessage<O extends UpnpOperation> extends U
     }
     
     @Override
-    public UpnpHeaders getHeaders() {
+    public IUpnpHeaders getHeaders() {
         return this.headers;
     }
 }

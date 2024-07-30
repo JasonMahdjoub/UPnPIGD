@@ -26,6 +26,7 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.model.types.csv.CSV;
 import com.distrimind.upnp_igd.model.types.csv.CSVString;
+import com.distrimind.upnp_igd.model.types.csv.ICSV;
 import com.distrimind.upnp_igd.support.model.BrowseFlag;
 import com.distrimind.upnp_igd.support.model.BrowseResult;
 import com.distrimind.upnp_igd.support.model.DIDLContent;
@@ -94,15 +95,16 @@ import java.util.List;
                                     sendEvents = false,
                                     datatype = "string")
                     })
+
 public abstract class AbstractContentDirectoryService {
 
     public static final String CAPS_WILDCARD = "*";
 
     @UpnpStateVariable(sendEvents = false)
-    final private CSV<String> searchCapabilities;
+    final private ICSV<String> searchCapabilities;
 
     @UpnpStateVariable(sendEvents = false)
-    final private CSV<String> sortCapabilities;
+    final private ICSV<String> sortCapabilities;
 
     @UpnpStateVariable(
             sendEvents = true,
@@ -131,12 +133,12 @@ public abstract class AbstractContentDirectoryService {
     }
 
     @UpnpAction(out = @UpnpOutputArgument(name = "SearchCaps"))
-    public CSV<String> getSearchCapabilities() {
+    public ICSV<String> getSearchCapabilities() {
         return searchCapabilities;
     }
 
     @UpnpAction(out = @UpnpOutputArgument(name = "SortCaps"))
-    public CSV<String> getSortCapabilities() {
+    public ICSV<String> getSortCapabilities() {
         return sortCapabilities;
     }
 

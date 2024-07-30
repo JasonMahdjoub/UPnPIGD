@@ -22,6 +22,7 @@ import com.distrimind.upnp_igd.model.message.header.InvalidHeaderException;
 /**
  * @author Mario Franco
  */
+@SuppressWarnings("PMD.LooseCoupling")
 public class ContentFeaturesHeader extends DLNAHeader<EnumMap<DLNAAttribute.Type, DLNAAttribute<?>>> {
 
     public ContentFeaturesHeader() {

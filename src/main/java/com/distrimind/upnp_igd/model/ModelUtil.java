@@ -184,10 +184,13 @@ public class ModelUtil {
      * @param s A string representing hours, minutes, seconds, e.g. <code>11:23:44</code>
      * @return The converted number of seconds.
      */
-    public static long fromTimeString(String s) {
+    public static long fromTimeString(String _s) {
         // Handle "00:00:00.000" pattern, drop the milliseconds
-        if (s.lastIndexOf(".") != -1)
-            s = s.substring(0, s.lastIndexOf("."));
+        String s;
+        if (_s.lastIndexOf(".") != -1)
+            s = _s.substring(0, _s.lastIndexOf("."));
+        else
+            s=_s;
         String[] split = s.split(":");
         if (split.length != 3)
             throw new IllegalArgumentException("Can't parse time string: " + s);

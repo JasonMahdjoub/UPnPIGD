@@ -53,7 +53,7 @@ public class RemoteDeviceIdentity extends DeviceIdentity {
     public RemoteDeviceIdentity(UDN udn, Integer maxAgeSeconds, URL descriptorURL, byte[] interfaceMacAddress, InetAddress discoveredOnLocalAddress) {
         super(udn, maxAgeSeconds);
         this.descriptorURL = descriptorURL;
-        this.interfaceMacAddress = interfaceMacAddress;
+        this.interfaceMacAddress = interfaceMacAddress==null?null:interfaceMacAddress.clone();
         this.discoveredOnLocalAddress = discoveredOnLocalAddress;
     }
 
@@ -80,7 +80,7 @@ public class RemoteDeviceIdentity extends DeviceIdentity {
     }
 
     public byte[] getInterfaceMacAddress() {
-        return interfaceMacAddress;
+        return interfaceMacAddress==null?null:interfaceMacAddress.clone();
     }
 
     public InetAddress getDiscoveredOnLocalAddress() {
