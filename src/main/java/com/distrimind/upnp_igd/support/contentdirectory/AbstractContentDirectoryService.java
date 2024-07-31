@@ -26,7 +26,6 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.model.types.csv.CSV;
 import com.distrimind.upnp_igd.model.types.csv.CSVString;
-import com.distrimind.upnp_igd.model.types.csv.ICSV;
 import com.distrimind.upnp_igd.support.avtransport.AbstractAVTransportService;
 import com.distrimind.upnp_igd.support.model.BrowseFlag;
 import com.distrimind.upnp_igd.support.model.BrowseResult;
@@ -96,17 +95,17 @@ import java.util.List;
                                     sendEvents = false,
                                     datatype = AbstractAVTransportService.STRING)
                     })
-
+@SuppressWarnings("PMD.LooseCoupling")
 public abstract class AbstractContentDirectoryService {
 
     public static final String CAPS_WILDCARD = "*";
     public static final String A_ARG_TYPE_COUNT = "A_ARG_TYPE_Count";
 
     @UpnpStateVariable(sendEvents = false)
-    final private ICSV<String> searchCapabilities;
+    final private CSV<String> searchCapabilities;
 
     @UpnpStateVariable(sendEvents = false)
-    final private ICSV<String> sortCapabilities;
+    final private CSV<String> sortCapabilities;
 
     @UpnpStateVariable(
             sendEvents = true,
@@ -135,12 +134,12 @@ public abstract class AbstractContentDirectoryService {
     }
 
     @UpnpAction(out = @UpnpOutputArgument(name = "SearchCaps"))
-    public ICSV<String> getSearchCapabilities() {
+    public CSV<String> getSearchCapabilities() {
         return searchCapabilities;
     }
 
     @UpnpAction(out = @UpnpOutputArgument(name = "SortCaps"))
-    public ICSV<String> getSortCapabilities() {
+    public CSV<String> getSortCapabilities() {
         return sortCapabilities;
     }
 

@@ -14,6 +14,8 @@
  */
 package example.controlpoint;
 
+import com.distrimind.upnp_igd.test.local.LocalActionInvocationEnumTest;
+import com.distrimind.upnp_igd.test.model.IconTest;
 import example.binarylight.BinaryLightSampleData;
 import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
 import com.distrimind.upnp_igd.binding.annotations.UpnpAction;
@@ -109,15 +111,22 @@ import static org.testng.Assert.*;
  * thing, an empty XML element. If you forget to set an input argument's value, it will be null/empty element.
  * </div>
  */
+@SuppressWarnings("PMD.SystemPrintln")
 public class ActionInvocationTest {
+
+    public static final String MY_STRING = "MyString";
+    public static final String NEW_TARGET_VALUE = "NewTargetValue";
+    public static final String MY_STRING_1 = "MyString1";
+    public static final String NEW_TARGET_VALUE_1 = "NewTargetValue1";
+    public static final String RESULT_STATUS = "ResultStatus";
 
     protected <T> LocalService<T> bindService(Class<T> clazz) throws Exception {
         AnnotationLocalServiceBinder binder = new AnnotationLocalServiceBinder();
         // Let's also test the overloaded reader
         LocalService<T> svc = binder.read(
                 clazz,
-                new UDAServiceId("SwitchPower"),
-                new UDAServiceType("SwitchPower", 1),
+                new UDAServiceId(LocalActionInvocationEnumTest.SWITCH_POWER),
+                new UDAServiceType(LocalActionInvocationEnumTest.SWITCH_POWER, 1),
                 true,
                 List.of(MyString.class)
         );
@@ -141,7 +150,7 @@ public class ActionInvocationTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalService<?> service = device.findService(new UDAServiceId("SwitchPower")); // DOC: FINDSERVICE
+        LocalService<?> service = device.findService(new UDAServiceId(LocalActionInvocationEnumTest.SWITCH_POWER)); // DOC: FINDSERVICE
         Action<?> getStatusAction = service.getAction("GetStatus");               // DOC: FINDSERVICE
 
         final boolean[] tests = new boolean[3];
@@ -152,16 +161,16 @@ public class ActionInvocationTest {
 
             @Override
             public void success(ActionInvocation<?> invocation) {
-                ActionArgumentValue<?> status  = invocation.getOutput("ResultStatus");
+                ActionArgumentValue<?> status  = invocation.getOutput(RESULT_STATUS);
 
                 assert status != null;
 
-                assertEquals(status.getArgument().getName(), "ResultStatus");
+                assertEquals(status.getArgument().getName(), RESULT_STATUS);
 
                 assertEquals(status.getDatatype().getClass(), BooleanDatatype.class);
                 assertEquals(status.getDatatype().getBuiltin(), Datatype.Builtin.BOOLEAN);
 
-                assertEquals((Boolean) status.getValue(), Boolean.valueOf(false));
+                assertEquals((Boolean) status.getValue(), Boolean.FALSE);
                 assertEquals(status.toString(), "0"); // '0' is 'false' in UPnP
                 tests[0] = true; // DOC: EXC1
             }
@@ -185,8 +194,8 @@ public class ActionInvocationTest {
 
         getStatusInvocation = new ActionInvocation<>(getStatusAction);
         new ActionCallback.Default(getStatusInvocation, upnpService.getControlPoint()).run(); // DOC: SYNCHRONOUS
-        ActionArgumentValue<?> status  = getStatusInvocation.getOutput("ResultStatus");
-        if (Boolean.valueOf(true).equals(status.getValue())) {
+        ActionArgumentValue<?> status  = getStatusInvocation.getOutput(RESULT_STATUS);
+        if (Boolean.TRUE.equals(status.getValue())) {
             tests[2] = true;
         }
 
@@ -202,7 +211,7 @@ public class ActionInvocationTest {
         assertEquals(getTargetInvocation.getOutput().iterator().next().toString(), "1");
 
         ActionInvocation<? extends LocalService<?>> setMyStringInvocation = new ActionInvocation<>(service.getAction("SetMyString"));
-        setMyStringInvocation.setInput("MyString", "foo");
+        setMyStringInvocation.setInput(MY_STRING, IconTest.FOO);
         service.getExecutor(setMyStringInvocation.getAction()).executeWithUntypedGeneric(setMyStringInvocation);
 		assertNull(setMyStringInvocation.getFailure());
         assertEquals(setMyStringInvocation.getOutput().size(), 0);
@@ -211,14 +220,14 @@ public class ActionInvocationTest {
         service.getExecutor(getMyStringInvocation.getAction()).executeWithUntypedGeneric(getMyStringInvocation);
 		assertNull(getTargetInvocation.getFailure());
         assertEquals(getMyStringInvocation.getOutput().size(), 1);
-        assertEquals(getMyStringInvocation.getOutput().iterator().next().toString(), "foo");
+        assertEquals(getMyStringInvocation.getOutput().iterator().next().toString(), IconTest.FOO);
 
     }
 
     private static ActionCallback getActionCallback(Action<?> action, boolean[] tests) {
         ActionInvocation<?> setTargetInvocation = new ActionInvocation<>(action);
 
-        setTargetInvocation.setInput("NewTargetValue", true); // Can throw InvalidValueException
+        setTargetInvocation.setInput(NEW_TARGET_VALUE, true); // Can throw InvalidValueException
 
         // Alternative:
         //
@@ -252,7 +261,7 @@ public class ActionInvocationTest {
 
         MockUpnpService upnpService = new MockUpnpService();
 
-        LocalService<?> service = device.findService(new UDAServiceId("SwitchPower"));
+        LocalService<?> service = device.findService(new UDAServiceId(LocalActionInvocationEnumTest.SWITCH_POWER));
 
 
         final boolean[] tests = new boolean[1];
@@ -272,7 +281,7 @@ public class ActionInvocationTest {
         assertEquals(getTargetInvocation.getOutput().iterator().next().toString(), "1");
 
         ActionInvocation<? extends LocalService<?>> setMyStringInvocation = new ActionInvocation<>(service.getAction("SetMyString"));
-        setMyStringInvocation.setInput("MyString1", "foo");
+        setMyStringInvocation.setInput(MY_STRING_1, IconTest.FOO);
         service.getExecutor(setMyStringInvocation.getAction()).executeWithUntypedGeneric(setMyStringInvocation);
 		assertNull(setMyStringInvocation.getFailure());
         assertEquals(setMyStringInvocation.getOutput().size(), 0);
@@ -281,13 +290,13 @@ public class ActionInvocationTest {
         service.getExecutor(getMyStringInvocation.getAction()).executeWithUntypedGeneric(getMyStringInvocation);
 		assertNull(getTargetInvocation.getFailure());
         assertEquals(getMyStringInvocation.getOutput().size(), 1);
-        assertEquals(getMyStringInvocation.getOutput().iterator().next().toString(), "foo");
+        assertEquals(getMyStringInvocation.getOutput().iterator().next().toString(), IconTest.FOO);
 
     }
 
     private static ActionCallback getCallback(Action<? extends LocalService<?>> action, boolean[] tests) {
         ActionInvocation<? extends LocalService<?>> setTargetInvocation = new ActionInvocation<>(action);
-        setTargetInvocation.setInput("NewTargetValue1", true);
+        setTargetInvocation.setInput(NEW_TARGET_VALUE_1, true);
 		return new ActionCallback(setTargetInvocation) {
 
             @Override
@@ -320,7 +329,7 @@ public class ActionInvocationTest {
         private MyString myString;
 
         @UpnpAction
-        public void setTarget(@UpnpInputArgument(name = "NewTargetValue", aliases ={"NewTargetValue1"}) boolean newTargetValue) {
+        public void setTarget(@UpnpInputArgument(name = NEW_TARGET_VALUE, aliases ={NEW_TARGET_VALUE_1}) boolean newTargetValue) {
             target = newTargetValue;
             status = newTargetValue;
         }
@@ -330,7 +339,7 @@ public class ActionInvocationTest {
             return target;
         }
 
-        @UpnpAction(name = "GetStatus", out = @UpnpOutputArgument(name = "ResultStatus", getterName = "getStatus"))
+        @UpnpAction(name = "GetStatus", out = @UpnpOutputArgument(name = RESULT_STATUS, getterName = "getStatus"))
         public void dummyStatus() {
             // NOOP
         }
@@ -340,11 +349,11 @@ public class ActionInvocationTest {
         }
 
         @UpnpAction
-        public void setMyString(@UpnpInputArgument(name = "MyString", aliases ={"MyString1"}) MyString myString) {
+        public void setMyString(@UpnpInputArgument(name = MY_STRING, aliases ={MY_STRING_1}) MyString myString) {
             this.myString = myString;
         }
 
-        @UpnpAction(name = "GetMyString", out = @UpnpOutputArgument(name = "MyString", getterName = "getMyString"))
+        @UpnpAction(name = "GetMyString", out = @UpnpOutputArgument(name = MY_STRING, getterName = "getMyString"))
         public void getMyStringDummy() {
         }
 
@@ -365,7 +374,7 @@ public class ActionInvocationTest {
         private MyString myString;
 
         @UpnpAction
-        public void setTarget(@UpnpInputArgument(name = "NewTargetValue", aliases ={"NewTargetValue1"}) boolean newTargetValue) {
+        public void setTarget(@UpnpInputArgument(name = NEW_TARGET_VALUE, aliases ={NEW_TARGET_VALUE_1}) boolean newTargetValue) {
             target = newTargetValue;
             status = newTargetValue;
         }
@@ -375,17 +384,17 @@ public class ActionInvocationTest {
             return target;
         }
 
-        @UpnpAction(name = "GetStatus", out = @UpnpOutputArgument(name = "ResultStatus", getterName = "getStatus"))
+        @UpnpAction(name = "GetStatus", out = @UpnpOutputArgument(name = RESULT_STATUS, getterName = "getStatus"))
         public StatusHolder dummyStatus() {
             return new StatusHolder(status);
         }
 
         @UpnpAction
-        public void setMyString(@UpnpInputArgument(name = "MyString", aliases ={"MyString1"}) MyString myString) {
+        public void setMyString(@UpnpInputArgument(name = MY_STRING, aliases ={MY_STRING_1}) MyString myString) {
             this.myString = myString;
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "MyString", getterName = "getMyString"))
+        @UpnpAction(out = @UpnpOutputArgument(name = MY_STRING, getterName = "getMyString"))
         public MyStringHolder getMyString() {
             return new MyStringHolder(myString);
         }
@@ -428,7 +437,7 @@ public class ActionInvocationTest {
         private MyString myString;
 
         @UpnpAction
-        public void setTarget(@UpnpInputArgument(name = "NewTargetValue", aliases ={"NewTargetValue1"}) boolean newTargetValue) {
+        public void setTarget(@UpnpInputArgument(name = NEW_TARGET_VALUE, aliases ={NEW_TARGET_VALUE_1}) boolean newTargetValue) {
             target = newTargetValue;
             status = newTargetValue;
         }
@@ -438,17 +447,17 @@ public class ActionInvocationTest {
             return target;
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "ResultStatus"))
+        @UpnpAction(out = @UpnpOutputArgument(name = RESULT_STATUS))
         public boolean getStatus() {
             return status;
         }
 
         @UpnpAction
-        public void setMyString(@UpnpInputArgument(name = "MyString", aliases ={"MyString1"}) MyString myString) {
+        public void setMyString(@UpnpInputArgument(name = MY_STRING, aliases ={MY_STRING_1}) MyString myString) {
             this.myString = myString;
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "MyString"))
+        @UpnpAction(out = @UpnpOutputArgument(name = MY_STRING))
         public MyString getMyString() {
             return myString;
         }

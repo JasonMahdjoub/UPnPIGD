@@ -42,7 +42,7 @@ if (propFile.canRead())
 
 pmd {
     consoleOutput = true
-    toolVersion = "7.3.0"
+    toolVersion = "7.4.0"
     rulesMinimumPriority = 5
     ruleSetFiles = files("pmd/pmd-rules.xml")
 }

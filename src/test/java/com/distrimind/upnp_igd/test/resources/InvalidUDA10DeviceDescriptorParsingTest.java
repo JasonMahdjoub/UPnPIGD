@@ -35,7 +35,9 @@ import java.util.Objects;
  */
 public class InvalidUDA10DeviceDescriptorParsingTest {
 
-    @DataProvider(name = "strict")
+    public static final String STRICT = "strict";
+
+    @DataProvider(name = STRICT)
     public String[][] getStrict() throws Exception {
         return new String[][]{
             {"/invalidxml/device/atb_miviewtv.xml"},
@@ -98,12 +100,12 @@ public class InvalidUDA10DeviceDescriptorParsingTest {
 
     /* ############################## TEST SUCCESS ############################ */
 
-    @Test(dataProvider = "strict")
+    @Test(dataProvider = STRICT)
     public void readDefault(String strict) throws Exception {
         readDevice(strict, new MockUpnpService());
     }
 
-    @Test(dataProvider = "strict")
+    @Test(dataProvider = STRICT)
     public void readSAX(String strict) throws Exception {
         readDevice(
             strict,
@@ -116,7 +118,7 @@ public class InvalidUDA10DeviceDescriptorParsingTest {
         );
     }
 
-    @Test(dataProvider = "strict")
+    @Test(dataProvider = STRICT)
     public void readRecoveringStrict(String strict) throws Exception {
         readDevice(
             strict,

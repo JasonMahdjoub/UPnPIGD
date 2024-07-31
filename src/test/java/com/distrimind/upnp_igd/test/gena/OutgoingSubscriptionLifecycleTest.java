@@ -52,6 +52,10 @@ import static org.testng.Assert.*;
 
 public class OutgoingSubscriptionLifecycleTest {
 
+    public static final String STATUS = "Status";
+    public static final String TARGET = "Target";
+    public static final String UUID_1234 = "uuid:1234";
+
     @Test
     public void subscriptionLifecycle() throws Exception {
 
@@ -104,8 +108,8 @@ public class OutgoingSubscriptionLifecycleTest {
 
             @Override
 			public void eventReceived(GENASubscription<?> subscription) {
-                assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
-                assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
+                assertEquals(subscription.getCurrentValues().get(STATUS).toString(), "0");
+                assertEquals(subscription.getCurrentValues().get(TARGET).toString(), "1");
                 testAssertions.add(true);
             }
 
@@ -129,7 +133,7 @@ public class OutgoingSubscriptionLifecycleTest {
         ).run();
 
         assertEquals(callback.getSubscription().getCurrentSequence().getValue(), Long.valueOf(0));
-        assertEquals(callback.getSubscription().getSubscriptionId(), "uuid:1234");
+        assertEquals(callback.getSubscription().getSubscriptionId(), UUID_1234);
         assertEquals(callback.getSubscription().getActualDurationSeconds(), 180);
 
         List<URL> callbackURLs = ((RemoteGENASubscription) callback.getSubscription())
@@ -167,7 +171,7 @@ public class OutgoingSubscriptionLifecycleTest {
         );
         assertEquals(
             sentMessages.get(1).getHeaders().getFirstHeader(UpnpHeader.Type.SID, SubscriptionIdHeader.class).getValue(),
-                "uuid:1234"
+                UUID_1234
         );
     }
 
@@ -226,8 +230,8 @@ public class OutgoingSubscriptionLifecycleTest {
 
             @Override
 			public void eventReceived(GENASubscription<?> subscription) {
-                assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
-                assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
+                assertEquals(subscription.getCurrentValues().get(STATUS).toString(), "0");
+                assertEquals(subscription.getCurrentValues().get(TARGET).toString(), "1");
                 testAssertions.add(true);
                 notificationCalled.add(true);
             }
@@ -307,7 +311,7 @@ public class OutgoingSubscriptionLifecycleTest {
              public void eventsMissed(int numberOfMissedEvents) {
              }
          };
-        subscription.setSubscriptionId("uuid:1234");
+        subscription.setSubscriptionId(UUID_1234);
         return subscription;
     }
 
@@ -315,7 +319,7 @@ public class OutgoingSubscriptionLifecycleTest {
     protected StreamResponseMessage createSubscribeResponseMessage() {
         StreamResponseMessage msg = new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.OK));
         msg.getHeaders().add(
-                UpnpHeader.Type.SID, new SubscriptionIdHeader("uuid:1234")
+                UpnpHeader.Type.SID, new SubscriptionIdHeader(UUID_1234)
         );
         msg.getHeaders().add(
                 UpnpHeader.Type.TIMEOUT, new TimeoutHeader(180)
@@ -331,10 +335,10 @@ public class OutgoingSubscriptionLifecycleTest {
 
         List<StateVariableValue<?>> values = new ArrayList<>();
         values.add(
-                new StateVariableValue<>(callback.getService().getStateVariable("Status"), false)
+                new StateVariableValue<>(callback.getService().getStateVariable(STATUS), false)
         );
         values.add(
-                new StateVariableValue<>(callback.getService().getStateVariable("Target"), true)
+                new StateVariableValue<>(callback.getService().getStateVariable(TARGET), true)
         );
 
         OutgoingEventRequestMessage outgoing = new OutgoingEventRequestMessage(
@@ -357,10 +361,10 @@ public class OutgoingSubscriptionLifecycleTest {
 
         List<StateVariableValue<?>> values = new ArrayList<>();
         values.add(
-                new StateVariableValue<>(service.getStateVariable("Status"), false)
+                new StateVariableValue<>(service.getStateVariable(STATUS), false)
         );
         values.add(
-                new StateVariableValue<>(service.getStateVariable("Target"), true)
+                new StateVariableValue<>(service.getStateVariable(TARGET), true)
         );
 
         OutgoingEventRequestMessage outgoing = new OutgoingEventRequestMessage(

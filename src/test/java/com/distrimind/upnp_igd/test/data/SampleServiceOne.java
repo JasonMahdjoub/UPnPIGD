@@ -41,6 +41,12 @@ import static org.testng.Assert.*;
  */
 public class SampleServiceOne extends SampleService {
 
+    public static final String SET_TARGET = "SetTarget";
+    public static final String TARGET = "Target";
+    public static final String STATUS = "Status";
+    public static final String SOME_VAR = "SomeVar";
+    public static final String ANOTHER_VAR = "AnotherVar";
+
     public static URL getDescriptorURL() {
         return URIUtil.createAbsoluteURL(SampleDeviceRoot.getDeviceDescriptorURL(), getThisDescriptorURI());
     }
@@ -94,16 +100,16 @@ public class SampleServiceOne extends SampleService {
     public Collection<Action<?>> getActions() {
         return List.of(
                 new Action<>(
-                        "SetTarget",
-						List.of(new ActionArgument<>("NewTargetValue", "Target", ActionArgument.Direction.IN))
+                        SET_TARGET,
+						List.of(new ActionArgument<>("NewTargetValue", TARGET, ActionArgument.Direction.IN))
                 ),
                 new Action<>(
                         "GetTarget",
-                        List.of(new ActionArgument<>("RetTargetValue", "Target", ActionArgument.Direction.OUT, true))
+                        List.of(new ActionArgument<>("RetTargetValue", TARGET, ActionArgument.Direction.OUT, true))
                 ),
                 new Action<>(
                         "GetStatus",
-                        List.of(new ActionArgument<>("ResultStatus", "Status", ActionArgument.Direction.OUT))
+                        List.of(new ActionArgument<>("ResultStatus", STATUS, ActionArgument.Direction.OUT))
                 )
         );
     }
@@ -112,20 +118,20 @@ public class SampleServiceOne extends SampleService {
     public Collection<StateVariable<?>> getStateVariables() {
         return List.of(
                 new StateVariable<>(
-                        "Target",
+                        TARGET,
                         new StateVariableTypeDetails(Datatype.Builtin.BOOLEAN.getDatatype(), "0"),
                         new StateVariableEventDetails(false)
                 ),
                 new StateVariable<>(
-                        "Status",
+                        STATUS,
                         new StateVariableTypeDetails(Datatype.Builtin.BOOLEAN.getDatatype(), "0")
                 ),
                 new StateVariable<>(
-                        "SomeVar",
+                        SOME_VAR,
                         new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype(), "foo", List.of("foo", "bar"), null)
                 ),
                 new StateVariable<>(
-                        "AnotherVar",
+                        ANOTHER_VAR,
                         new StateVariableTypeDetails(Datatype.Builtin.UI4.getDatatype(), null, null, new StateVariableAllowedValueRange(0, 10, 2)),
                         new StateVariableEventDetails(false)
                 ),
@@ -146,41 +152,41 @@ public class SampleServiceOne extends SampleService {
 
         assertEquals(a.getActions().size(), b.getActions().size());
 
-        assertEquals(a.getAction("SetTarget").getName(), b.getAction("SetTarget").getName());
-        assertEquals(a.getAction("SetTarget").getArguments().size(), b.getAction("SetTarget").getArguments().size());
-        assertEquals(a.getAction("SetTarget").getArguments().iterator().next().getName(), a.getAction("SetTarget").getArguments().iterator().next().getName());
-        assertEquals(a.getAction("SetTarget").getArguments().iterator().next().getDirection(), b.getAction("SetTarget").getArguments().iterator().next().getDirection());
-        assertEquals(a.getAction("SetTarget").getArguments().iterator().next().getRelatedStateVariableName(), b.getAction("SetTarget").getArguments().iterator().next().getRelatedStateVariableName());
+        assertEquals(a.getAction(SET_TARGET).getName(), b.getAction(SET_TARGET).getName());
+        assertEquals(a.getAction(SET_TARGET).getArguments().size(), b.getAction(SET_TARGET).getArguments().size());
+        assertEquals(a.getAction(SET_TARGET).getArguments().iterator().next().getName(), a.getAction(SET_TARGET).getArguments().iterator().next().getName());
+        assertEquals(a.getAction(SET_TARGET).getArguments().iterator().next().getDirection(), b.getAction(SET_TARGET).getArguments().iterator().next().getDirection());
+        assertEquals(a.getAction(SET_TARGET).getArguments().iterator().next().getRelatedStateVariableName(), b.getAction(SET_TARGET).getArguments().iterator().next().getRelatedStateVariableName());
 
         assertEquals(a.getAction("GetTarget").getArguments().iterator().next().getName(), b.getAction("GetTarget").getArguments().iterator().next().getName());
         // TODO: UPNP VIOLATION: WMP12 will discard RenderingControl service if it contains <retval> tags
         // assertEquals(a.getAction("GetTarget").getArguments()[0].isReturnValue(), b.getAction("GetTarget").getArguments()[0].isReturnValue());
 
         assertEquals(a.getStateVariables().size(), b.getStateVariables().size());
-		assertNotNull(a.getStateVariable("Target"));
-		assertNotNull(b.getStateVariable("Target"));
-		assertNotNull(a.getStateVariable("Status"));
-		assertNotNull(b.getStateVariable("Status"));
-		assertNotNull(a.getStateVariable("SomeVar"));
-		assertNotNull(b.getStateVariable("SomeVar"));
+		assertNotNull(a.getStateVariable(TARGET));
+		assertNotNull(b.getStateVariable(TARGET));
+		assertNotNull(a.getStateVariable(STATUS));
+		assertNotNull(b.getStateVariable(STATUS));
+		assertNotNull(a.getStateVariable(SOME_VAR));
+		assertNotNull(b.getStateVariable(SOME_VAR));
 
-        assertEquals(a.getStateVariable("Target").getName(), "Target");
-        assertEquals(a.getStateVariable("Target").getEventDetails().isSendEvents(), b.getStateVariable("Target").getEventDetails().isSendEvents());
+        assertEquals(a.getStateVariable(TARGET).getName(), TARGET);
+        assertEquals(a.getStateVariable(TARGET).getEventDetails().isSendEvents(), b.getStateVariable(TARGET).getEventDetails().isSendEvents());
 
-        assertEquals(a.getStateVariable("Status").getName(), "Status");
-        assertEquals(a.getStateVariable("Status").getEventDetails().isSendEvents(), b.getStateVariable("Status").getEventDetails().isSendEvents());
-        assertEquals(a.getStateVariable("Status").getTypeDetails().getDatatype(), Datatype.Builtin.BOOLEAN.getDatatype());
+        assertEquals(a.getStateVariable(STATUS).getName(), STATUS);
+        assertEquals(a.getStateVariable(STATUS).getEventDetails().isSendEvents(), b.getStateVariable(STATUS).getEventDetails().isSendEvents());
+        assertEquals(a.getStateVariable(STATUS).getTypeDetails().getDatatype(), Datatype.Builtin.BOOLEAN.getDatatype());
 
-        assertEquals(a.getStateVariable("SomeVar").getTypeDetails().getAllowedValues().size(), b.getStateVariable("SomeVar").getTypeDetails().getAllowedValues().size());
-        assertEquals(a.getStateVariable("SomeVar").getTypeDetails().getDefaultValue(), b.getStateVariable("SomeVar").getTypeDetails().getDefaultValue());
-        assertEquals(a.getStateVariable("SomeVar").getTypeDetails().getAllowedValues().iterator().next(), b.getStateVariable("SomeVar").getTypeDetails().getAllowedValues().iterator().next());
-        assertEquals(a.getStateVariable("SomeVar").getTypeDetails().getAllowedValues().iterator().next(), b.getStateVariable("SomeVar").getTypeDetails().getAllowedValues().iterator().next());
-        assertEquals(a.getStateVariable("SomeVar").getEventDetails().isSendEvents(), b.getStateVariable("SomeVar").getEventDetails().isSendEvents());
+        assertEquals(a.getStateVariable(SOME_VAR).getTypeDetails().getAllowedValues().size(), b.getStateVariable(SOME_VAR).getTypeDetails().getAllowedValues().size());
+        assertEquals(a.getStateVariable(SOME_VAR).getTypeDetails().getDefaultValue(), b.getStateVariable(SOME_VAR).getTypeDetails().getDefaultValue());
+        assertEquals(a.getStateVariable(SOME_VAR).getTypeDetails().getAllowedValues().iterator().next(), b.getStateVariable(SOME_VAR).getTypeDetails().getAllowedValues().iterator().next());
+        assertEquals(a.getStateVariable(SOME_VAR).getTypeDetails().getAllowedValues().iterator().next(), b.getStateVariable(SOME_VAR).getTypeDetails().getAllowedValues().iterator().next());
+        assertEquals(a.getStateVariable(SOME_VAR).getEventDetails().isSendEvents(), b.getStateVariable(SOME_VAR).getEventDetails().isSendEvents());
 
-        assertEquals(a.getStateVariable("AnotherVar").getTypeDetails().getAllowedValueRange().getMinimum(), b.getStateVariable("AnotherVar").getTypeDetails().getAllowedValueRange().getMinimum());
-        assertEquals(a.getStateVariable("AnotherVar").getTypeDetails().getAllowedValueRange().getMaximum(), b.getStateVariable("AnotherVar").getTypeDetails().getAllowedValueRange().getMaximum());
-        assertEquals(a.getStateVariable("AnotherVar").getTypeDetails().getAllowedValueRange().getStep(), b.getStateVariable("AnotherVar").getTypeDetails().getAllowedValueRange().getStep());
-        assertEquals(a.getStateVariable("AnotherVar").getEventDetails().isSendEvents(), b.getStateVariable("AnotherVar").getEventDetails().isSendEvents());
+        assertEquals(a.getStateVariable(ANOTHER_VAR).getTypeDetails().getAllowedValueRange().getMinimum(), b.getStateVariable(ANOTHER_VAR).getTypeDetails().getAllowedValueRange().getMinimum());
+        assertEquals(a.getStateVariable(ANOTHER_VAR).getTypeDetails().getAllowedValueRange().getMaximum(), b.getStateVariable(ANOTHER_VAR).getTypeDetails().getAllowedValueRange().getMaximum());
+        assertEquals(a.getStateVariable(ANOTHER_VAR).getTypeDetails().getAllowedValueRange().getStep(), b.getStateVariable(ANOTHER_VAR).getTypeDetails().getAllowedValueRange().getStep());
+        assertEquals(a.getStateVariable(ANOTHER_VAR).getEventDetails().isSendEvents(), b.getStateVariable(ANOTHER_VAR).getEventDetails().isSendEvents());
     }
 
 }

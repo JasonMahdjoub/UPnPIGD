@@ -33,12 +33,14 @@ import static org.testng.Assert.*;
  */
 public class IconTest {
 
+    public static final String FOO = "Foo";
+
     @Test
     public void validIcons() throws Exception {
         RemoteDevice rd = new RemoteDevice(
             SampleData.createRemoteDeviceIdentity(),
-            new UDADeviceType("Foo", 1),
-            new DeviceDetails("Foo"),
+            new UDADeviceType(FOO, 1),
+            new DeviceDetails(FOO),
             List.of(
                 new Icon(null, 0, 0, 0, URI.create("foo")),
                 new Icon("foo/bar", 0, 0, 0, URI.create("foo")),
@@ -53,8 +55,8 @@ public class IconTest {
     public void invalidIcons() throws Exception {
         RemoteDevice rd = new RemoteDevice(
             SampleData.createRemoteDeviceIdentity(),
-            new UDADeviceType("Foo", 1),
-            new DeviceDetails("Foo"),
+            new UDADeviceType(FOO, 1),
+            new DeviceDetails(FOO),
             List.of(
                 new Icon("image/png", 123, 123, 8, URI.create("urn:not_a_URL"))
                     ),

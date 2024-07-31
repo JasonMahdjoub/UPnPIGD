@@ -113,10 +113,10 @@ public class EventXMLProcessingTest {
         boolean gotValueOne = false;
         boolean gotValueTwo = false;
         for (StateVariableValue<?> stateVariableValue : incomingCall.getStateVariableValues()) {
-            if (stateVariableValue.getStateVariable().getName().equals("Status")) {
+            if ("Status".equals(stateVariableValue.getStateVariable().getName())) {
                 gotValueOne = (!(Boolean) stateVariableValue.getValue());
             }
-            if (stateVariableValue.getStateVariable().getName().equals("SomeVar")) {
+            if ("SomeVar".equals(stateVariableValue.getStateVariable().getName())) {
                 // TODO: So... can it be null at all? It has a default value...
                 gotValueTwo = stateVariableValue.getValue() == null;
             }

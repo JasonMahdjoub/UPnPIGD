@@ -41,6 +41,8 @@ import static org.testng.Assert.assertEquals;
 
 public class DatatypesTest {
 
+    public static final String CET = "CET";
+
     @Test
     public void upperLowerCase() {
         // Broken devices do this
@@ -145,12 +147,12 @@ public class DatatypesTest {
                     @Override
                     protected TimeZone getTimeZone() {
                         // Set the "local" timezone to CET for the test
-                        return TimeZone.getTimeZone("CET");
+                        return TimeZone.getTimeZone(CET);
                     }
                 };
 
         Calendar expected = Calendar.getInstance();
-        expected.setTimeZone(TimeZone.getTimeZone("CET"));
+        expected.setTimeZone(TimeZone.getTimeZone(CET));
         expected.set(Calendar.YEAR, 2010);
         expected.set(Calendar.MONTH, 10);
         expected.set(Calendar.DAY_OF_MONTH, 3);
@@ -202,12 +204,12 @@ public class DatatypesTest {
             @Override
             protected TimeZone getTimeZone() {
                 // Set the "local" timezone to CET for the test
-                return TimeZone.getTimeZone("CET");
+                return TimeZone.getTimeZone(CET);
             }
         };
 
         Calendar expected = Calendar.getInstance();
-        expected.setTimeZone(TimeZone.getTimeZone("CET"));
+        expected.setTimeZone(TimeZone.getTimeZone(CET));
         expected.setTime(new Date(0));
         expected.set(Calendar.HOUR_OF_DAY, 8);
         expected.set(Calendar.MINUTE, 9);
@@ -223,17 +225,17 @@ public class DatatypesTest {
     public void base64() {
         Base64Datatype type = (Base64Datatype) Datatype.Builtin.BIN_BASE64.getDatatype();
         assert Arrays.equals(type.valueOf("a1b2"), new byte[]{107, 86, -10});
-        assert type.getString(new byte[]{107, 86, -10}).equals("a1b2");
+        assert "a1b2".equals(type.getString(new byte[]{107, 86, -10}));
     }
 
     @Test
     public void simpleCSV() {
         List<String> csv = new CSVString("foo,bar,baz");
         assert csv.size() == 3;
-        assert csv.get(0).equals("foo");
-        assert csv.get(1).equals("bar");
-        assert csv.get(2).equals("baz");
-        assert csv.toString().equals("foo,bar,baz");
+        assert "foo".equals(csv.get(0));
+        assert "bar".equals(csv.get(1));
+        assert "baz".equals(csv.get(2));
+        assert "foo,bar,baz".equals(csv.toString());
 
         csv = new CSVString("f\\\\oo,b\\,ar,b\\\\az");
         assert csv.size() == 3;

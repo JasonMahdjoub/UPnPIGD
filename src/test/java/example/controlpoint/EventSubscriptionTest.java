@@ -14,6 +14,7 @@
  */
 package example.controlpoint;
 
+import com.distrimind.upnp_igd.test.gena.OutgoingSubscriptionLifecycleTest;
 import example.binarylight.BinaryLightSampleData;
 import example.binarylight.SwitchPower;
 import com.distrimind.upnp_igd.controlpoint.SubscriptionCallback;
@@ -92,6 +93,7 @@ import static org.testng.Assert.*;
  * your control point from the service.
  * </p>
  */
+@SuppressWarnings("PMD.SystemPrintln")
 public class EventSubscriptionTest {
 
     @Test
@@ -140,7 +142,7 @@ public class EventSubscriptionTest {
                 System.out.println("Event: " + sub.getCurrentSequence().getValue());
 
                 Map<String, ? extends StateVariableValue<?>> values = sub.getCurrentValues();
-                StateVariableValue<?> status = values.get("Status");
+                StateVariableValue<?> status = values.get(OutgoingSubscriptionLifecycleTest.STATUS);
 
                 assertEquals(status.getDatatype().getClass(), BooleanDatatype.class);
                 assertEquals(status.getDatatype().getBuiltin(), Datatype.Builtin.BOOLEAN);
@@ -148,10 +150,10 @@ public class EventSubscriptionTest {
                 System.out.println("Status is: " + status);
 
                 if (sub.getCurrentSequence().getValue() == 0) {                             // DOC: EXC4
-                    assertEquals(sub.getCurrentValues().get("Status").toString(), "0");
+                    assertEquals(sub.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS).toString(), "0");
                     testAssertions.add(true);
                 } else if (sub.getCurrentSequence().getValue() == 1) {
-                    assertEquals(sub.getCurrentValues().get("Status").toString(), "1");
+                    assertEquals(sub.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS).toString(), "1");
                     testAssertions.add(true);
                 } else {
                     testAssertions.add(false);
@@ -176,7 +178,7 @@ public class EventSubscriptionTest {
         // Modify the state of the service and trigger event
         Object serviceImpl = service.getManager().getImplementation();
         Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "status")), serviceImpl, true);
-        service.getManager().getPropertyChangeSupport().firePropertyChange("Status", false, true);
+        service.getManager().getPropertyChangeSupport().firePropertyChange(OutgoingSubscriptionLifecycleTest.STATUS, false, true);
 
         assertEquals(callback.getSubscription().getCurrentSequence().getValue(), Long.valueOf(2)); // It's the NEXT sequence!
         assertTrue(callback.getSubscription().getSubscriptionId().startsWith("uuid:"));

@@ -36,6 +36,16 @@ import static org.testng.Assert.assertNull;
 
 public class HeaderParsingTest {
 
+    public static final String HTTP_127_0_0_1_FOO = "http://127.0.0.1/foo";
+    public static final String URN_SCHEMAS_UPNP_ORG_SERVICE_MY_SERVICE_TYPE_123 = "urn:schemas-upnp-org:service:MyServiceType:123";
+    public static final String FOO_BAR = "foo-bar";
+    public static final String MY_DEVICE_TYPE = "MyDeviceType";
+    public static final String URN_SCHEMAS_UPNP_ORG_DEVICE_MY_DEVICE_TYPE_123 = "urn:schemas-upnp-org:device:MyDeviceType:123";
+    public static final String SCHEMAS_UPNP_ORG = "schemas-upnp-org";
+    public static final String FOO_DOR_BAR = "foo.bar";
+    public static final String ABC = "abc";
+    public static final String MY_SERVICE_TYPE = "MyServiceType";
+
     @Test
     public void parseContentTypeHeader() {
         ContentTypeHeader header = new ContentTypeHeader(MimeType.valueOf("foo/bar;charset=\"utf-8\""));
@@ -45,15 +55,15 @@ public class HeaderParsingTest {
     @Test
     public void parseDeviceType() {
         DeviceType deviceType = DeviceType.valueOf("urn:foo-bar:device:MyDeviceType:123");
-        assertEquals(deviceType.getNamespace(), "foo-bar");
-        assertEquals(deviceType.getType(), "MyDeviceType");
+        assertEquals(deviceType.getNamespace(), FOO_BAR);
+        assertEquals(deviceType.getType(), MY_DEVICE_TYPE);
         assertEquals(deviceType.getVersion(), 123);
     }
 
     @Test
     public void parseUDADeviceType() {
-        UDADeviceType deviceType = (UDADeviceType)DeviceType.valueOf("urn:schemas-upnp-org:device:MyDeviceType:123");
-        assertEquals(deviceType.getType(), "MyDeviceType");
+        UDADeviceType deviceType = (UDADeviceType)DeviceType.valueOf(URN_SCHEMAS_UPNP_ORG_DEVICE_MY_DEVICE_TYPE_123);
+        assertEquals(deviceType.getType(), MY_DEVICE_TYPE);
         assertEquals(deviceType.getVersion(), 123);
     }
 
@@ -61,7 +71,7 @@ public class HeaderParsingTest {
     public void parseInvalidDeviceTypeHeader() {
         DeviceTypeHeader header = new DeviceTypeHeader();
         header.setString("urn:foo-bar:device:!@#:123");
-        assertEquals(header.getValue().getNamespace(), "foo-bar");
+        assertEquals(header.getValue().getNamespace(), FOO_BAR);
         assertEquals(header.getValue().getType(), "---");
         assertEquals(header.getValue().getVersion(), 123);
         assertEquals(header.getString(), "urn:foo-bar:device:---:123");
@@ -69,11 +79,11 @@ public class HeaderParsingTest {
 
     @Test
     public void parseDeviceTypeHeaderURI() {
-        DeviceTypeHeader header = new DeviceTypeHeader(URI.create("urn:schemas-upnp-org:device:MyDeviceType:123"));
-        assertEquals(header.getValue().getNamespace(), "schemas-upnp-org");
-        assertEquals(header.getValue().getType(), "MyDeviceType");
+        DeviceTypeHeader header = new DeviceTypeHeader(URI.create(URN_SCHEMAS_UPNP_ORG_DEVICE_MY_DEVICE_TYPE_123));
+        assertEquals(header.getValue().getNamespace(), SCHEMAS_UPNP_ORG);
+        assertEquals(header.getValue().getType(), MY_DEVICE_TYPE);
         assertEquals(header.getValue().getVersion(), 123);
-        assertEquals(header.getString(), "urn:schemas-upnp-org:device:MyDeviceType:123");
+        assertEquals(header.getString(), URN_SCHEMAS_UPNP_ORG_DEVICE_MY_DEVICE_TYPE_123);
 
     }
 
@@ -108,8 +118,8 @@ public class HeaderParsingTest {
 
     @Test
     public void parseHostHeaderConstructor() {
-        HostHeader header = new HostHeader("foo.bar", 1234);
-        assertEquals(header.getValue().getHost(), "foo.bar");
+        HostHeader header = new HostHeader(FOO_DOR_BAR, 1234);
+        assertEquals(header.getValue().getHost(), FOO_DOR_BAR);
         assertEquals(header.getValue().getPort(), 1234);
 
         header = new HostHeader(1234);
@@ -125,12 +135,12 @@ public class HeaderParsingTest {
 
         header = new HostHeader();
         header.setString("foo.bar:1234");
-        assertEquals(header.getValue().getHost(), "foo.bar");
+        assertEquals(header.getValue().getHost(), FOO_DOR_BAR);
         assertEquals(header.getValue().getPort(), 1234);
 
         header = new HostHeader();
-        header.setString("foo.bar");
-        assertEquals(header.getValue().getHost(), "foo.bar");
+        header.setString(FOO_DOR_BAR);
+        assertEquals(header.getValue().getHost(), FOO_DOR_BAR);
         assertEquals(header.getValue().getPort(), Constants.UPNP_MULTICAST_PORT);
     }
 
@@ -148,26 +158,26 @@ public class HeaderParsingTest {
 
     @Test(expectedExceptions = InvalidHeaderException.class)
     public void parseInvalidMANHeader() {
-        MANHeader header = new MANHeader("abc");
+        MANHeader header = new MANHeader(ABC);
         header.setString("\"foo.bar\"; ns = baz"); // Not valid
     }
 
     @Test
     public void parseMANHeaderNoNS() {
-        MANHeader header = new MANHeader("abc");
+        MANHeader header = new MANHeader(ABC);
         header.setString("\"foo.bar\"");
-        assert header.getValue().equals("foo.bar");
+        assert FOO_DOR_BAR.equals(header.getValue());
         assert header.getNamespace() == null;
-        assert header.getString().equals("\"foo.bar\"");
+        assert "\"foo.bar\"".equals(header.getString());
     }
 
     @Test
     public void parseMANHeaderNS() {
-        MANHeader header = new MANHeader("abc");
+        MANHeader header = new MANHeader(ABC);
         header.setString("\"foo.bar\"; ns =12");
-        assert header.getValue().equals("foo.bar");
-        assert header.getNamespace().equals("12");
-        assert header.getString().equals("\"foo.bar\"; ns=12");
+        assert FOO_DOR_BAR.equals(header.getValue());
+        assert "12".equals(header.getNamespace());
+        assert "\"foo.bar\"; ns=12".equals(header.getString());
     }
 
     @Test
@@ -198,7 +208,7 @@ public class HeaderParsingTest {
     @Test(expectedExceptions = InvalidHeaderException.class)
     public void parseInvalidMXHeader() {
         MXHeader header = new MXHeader();
-        header.setString("abc");
+        header.setString(ABC);
     }
 
     @Test(expectedExceptions = InvalidHeaderException.class)
@@ -275,15 +285,15 @@ public class HeaderParsingTest {
     @Test
     public void parseServiceType() {
         ServiceType serviceType = ServiceType.valueOf("urn:foo-bar:service:MyServiceType:123");
-        assertEquals(serviceType.getNamespace(), "foo-bar");
-        assertEquals(serviceType.getType(), "MyServiceType");
+        assertEquals(serviceType.getNamespace(), FOO_BAR);
+        assertEquals(serviceType.getType(), MY_SERVICE_TYPE);
         assertEquals(serviceType.getVersion(), 123);
     }
 
     @Test
     public void parseUDAServiceType() {
-        UDAServiceType serviceType = (UDAServiceType)ServiceType.valueOf("urn:schemas-upnp-org:service:MyServiceType:123");
-        assertEquals(serviceType.getType(), "MyServiceType");
+        UDAServiceType serviceType = (UDAServiceType)ServiceType.valueOf(URN_SCHEMAS_UPNP_ORG_SERVICE_MY_SERVICE_TYPE_123);
+        assertEquals(serviceType.getType(), MY_SERVICE_TYPE);
         assertEquals(serviceType.getVersion(), 123);
     }
 
@@ -291,7 +301,7 @@ public class HeaderParsingTest {
     public void parseInvalidServiceTypeHeader() {
         ServiceTypeHeader header = new ServiceTypeHeader();
         header.setString("urn:foo-bar:service:!@#:123");
-        assertEquals(header.getValue().getNamespace(), "foo-bar");
+        assertEquals(header.getValue().getNamespace(), FOO_BAR);
         assertEquals(header.getValue().getType(), "---");
         assertEquals(header.getValue().getVersion(), 123);
         assertEquals(header.getString(), "urn:foo-bar:service:---:123");
@@ -299,11 +309,11 @@ public class HeaderParsingTest {
 
     @Test
     public void parseServiceTypeHeaderURI() {
-        ServiceTypeHeader header = new ServiceTypeHeader(URI.create("urn:schemas-upnp-org:service:MyServiceType:123"));
-        assertEquals(header.getValue().getNamespace(), "schemas-upnp-org");
-        assertEquals(header.getValue().getType(), "MyServiceType");
+        ServiceTypeHeader header = new ServiceTypeHeader(URI.create(URN_SCHEMAS_UPNP_ORG_SERVICE_MY_SERVICE_TYPE_123));
+        assertEquals(header.getValue().getNamespace(), SCHEMAS_UPNP_ORG);
+        assertEquals(header.getValue().getType(), MY_SERVICE_TYPE);
         assertEquals(header.getValue().getVersion(), 123);
-        assertEquals(header.getString(), "urn:schemas-upnp-org:service:MyServiceType:123");
+        assertEquals(header.getString(), URN_SCHEMAS_UPNP_ORG_SERVICE_MY_SERVICE_TYPE_123);
     }
 
     @Test
@@ -343,11 +353,11 @@ public class HeaderParsingTest {
 
     @Test
     public void parseUDADeviceTypeHeaderURI() {
-        UDADeviceTypeHeader header = new UDADeviceTypeHeader(URI.create("urn:schemas-upnp-org:device:MyDeviceType:123"));
-        assertEquals(header.getValue().getNamespace(), "schemas-upnp-org");
-        assertEquals(header.getValue().getType(), "MyDeviceType");
+        UDADeviceTypeHeader header = new UDADeviceTypeHeader(URI.create(URN_SCHEMAS_UPNP_ORG_DEVICE_MY_DEVICE_TYPE_123));
+        assertEquals(header.getValue().getNamespace(), SCHEMAS_UPNP_ORG);
+        assertEquals(header.getValue().getType(), MY_DEVICE_TYPE);
         assertEquals(header.getValue().getVersion(), 123);
-        assertEquals(header.getString(), "urn:schemas-upnp-org:device:MyDeviceType:123");
+        assertEquals(header.getString(), URN_SCHEMAS_UPNP_ORG_DEVICE_MY_DEVICE_TYPE_123);
     }
 
     @Test(expectedExceptions = InvalidHeaderException.class)
@@ -358,11 +368,11 @@ public class HeaderParsingTest {
 
     @Test
     public void parseUDAServiceTypeHeaderURI() {
-        UDAServiceTypeHeader header = new UDAServiceTypeHeader(URI.create("urn:schemas-upnp-org:service:MyServiceType:123"));
-        assertEquals(header.getValue().getNamespace(), "schemas-upnp-org");
-        assertEquals(header.getValue().getType(), "MyServiceType");
+        UDAServiceTypeHeader header = new UDAServiceTypeHeader(URI.create(URN_SCHEMAS_UPNP_ORG_SERVICE_MY_SERVICE_TYPE_123));
+        assertEquals(header.getValue().getNamespace(), SCHEMAS_UPNP_ORG);
+        assertEquals(header.getValue().getType(), MY_SERVICE_TYPE);
         assertEquals(header.getValue().getVersion(), 123);
-        assertEquals(header.getString(), "urn:schemas-upnp-org:service:MyServiceType:123");
+        assertEquals(header.getString(), URN_SCHEMAS_UPNP_ORG_SERVICE_MY_SERVICE_TYPE_123);
 
     }
 
@@ -394,8 +404,8 @@ public class HeaderParsingTest {
     @Test
     public void parseSoapActionHeader() {
         SoapActionHeader header = new SoapActionHeader(URI.create("urn:schemas-upnp-org:service:MyServiceType:1#MyAction"));
-        assertEquals(header.getValue().getServiceType().getNamespace(), "schemas-upnp-org");
-        assertEquals(header.getValue().getServiceType().getType(), "MyServiceType");
+        assertEquals(header.getValue().getServiceType().getNamespace(), SCHEMAS_UPNP_ORG);
+        assertEquals(header.getValue().getServiceType().getType(), MY_SERVICE_TYPE);
         assertEquals(header.getValue().getServiceType().getVersion(), 1);
         assertEquals(header.getValue().getActionName(), "MyAction");
         assertEquals(header.getString(), "\"urn:schemas-upnp-org:service:MyServiceType:1#MyAction\"");
@@ -406,8 +416,8 @@ public class HeaderParsingTest {
     public void parseSoapActionHeaderString() {
         SoapActionHeader header = new SoapActionHeader();
         header.setString("\"urn:schemas-upnp-org:service:MyServiceType:1#MyAction\"");
-        assertEquals(header.getValue().getServiceType().getNamespace(), "schemas-upnp-org");
-        assertEquals(header.getValue().getServiceType().getType(), "MyServiceType");
+        assertEquals(header.getValue().getServiceType().getNamespace(), SCHEMAS_UPNP_ORG);
+        assertEquals(header.getValue().getServiceType().getType(), MY_SERVICE_TYPE);
         assertEquals(header.getValue().getServiceType().getVersion(), 1);
         assertEquals(header.getValue().getActionName(), "MyAction");
         assertEquals(header.getString(), "\"urn:schemas-upnp-org:service:MyServiceType:1#MyAction\"");
@@ -450,16 +460,16 @@ public class HeaderParsingTest {
         CallbackHeader header = new CallbackHeader();
         header.setString("<http://127.0.0.1/foo>");
         assertEquals(header.getValue().size(), 1);
-        assertEquals(header.getValue().get(0).toString(), "http://127.0.0.1/foo");
+        assertEquals(header.getValue().get(0).toString(), HTTP_127_0_0_1_FOO);
 
         header.setString("<http://127.0.0.1/foo><http://127.0.0.1/bar>");
         assertEquals(header.getValue().size(), 2);
-        assertEquals(header.getValue().get(0).toString(), "http://127.0.0.1/foo");
+        assertEquals(header.getValue().get(0).toString(), HTTP_127_0_0_1_FOO);
         assertEquals(header.getValue().get(1).toString(), "http://127.0.0.1/bar");
 
         header.setString("<http://127.0.0.1/foo> <http://127.0.0.1/bar>");
         assertEquals(header.getValue().size(), 2);
-        assertEquals(header.getValue().get(0).toString(), "http://127.0.0.1/foo");
+        assertEquals(header.getValue().get(0).toString(), HTTP_127_0_0_1_FOO);
         assertEquals(header.getValue().get(1).toString(), "http://127.0.0.1/bar");
     }
 
@@ -468,7 +478,7 @@ public class HeaderParsingTest {
         CallbackHeader header = new CallbackHeader();
         header.setString("<http://127.0.0.1/foo> <ftp://127.0.0.1/bar>");
         assertEquals(header.getValue().size(), 1);
-        assertEquals(header.getValue().get(0).toString(), "http://127.0.0.1/foo");
+        assertEquals(header.getValue().get(0).toString(), HTTP_127_0_0_1_FOO);
 
         /* TODO: I'm having trouble finding a valid URL that is
            an invalid URI in the standard JDK...

@@ -186,7 +186,7 @@ public class SearchExecuteTest {
 
     @Test(expectedExceptions = java.lang.IllegalArgumentException.class)
     public void searchInvalidST() {
-        SendingSearch search = new SendingSearch(new MockUpnpService(), new MXHeader());
+        new SendingSearch(new MockUpnpService(), new MXHeader());
     }
 
     protected void assertMessages(MockUpnpService upnpService, UpnpHeader<?> header) throws Exception {

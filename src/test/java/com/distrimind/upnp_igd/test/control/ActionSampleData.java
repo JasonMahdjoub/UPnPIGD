@@ -30,6 +30,8 @@ import static org.testng.Assert.*;
  */
 public class ActionSampleData {
 
+    public static final String SWITCH_POWER = "SwitchPower";
+
     public static LocalDevice<LocalTestService> createTestDevice() throws Exception {
         return createTestDevice(LocalTestService.class);
     }
@@ -53,8 +55,8 @@ public class ActionSampleData {
     }
 
     @UpnpService(
-            serviceId = @UpnpServiceId("SwitchPower"),
-            serviceType = @UpnpServiceType(value = "SwitchPower", version = 1)
+            serviceId = @UpnpServiceId(SWITCH_POWER),
+            serviceType = @UpnpServiceType(value = SWITCH_POWER, version = 1)
     )
     public static class LocalTestService {
 
@@ -120,8 +122,8 @@ public class ActionSampleData {
     }
     
     @UpnpService(
-            serviceId = @UpnpServiceId("SwitchPower"),
-            serviceType = @UpnpServiceType(value = "SwitchPower", version = 1)
+            serviceId = @UpnpServiceId(SWITCH_POWER),
+            serviceType = @UpnpServiceType(value = SWITCH_POWER, version = 1)
     )
     public static class LocalTestServiceWithClientInfo {
 

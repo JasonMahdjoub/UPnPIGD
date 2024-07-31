@@ -71,8 +71,9 @@ public class ActionXMLProcessingTest {
             "     </u:SetSomeValue>\n" +
             "   </s:Body>\n" +
             " </s:Envelope>";
+    public static final String PROCESSORS = "processors";
 
-    @DataProvider(name = "processors")
+    @DataProvider(name = PROCESSORS)
     public SOAPActionProcessor[][] getProcessors() {
         return new SOAPActionProcessor[][] {
             {new SOAPActionProcessorImpl()},
@@ -81,7 +82,7 @@ public class ActionXMLProcessingTest {
         };
     }
 
-    @Test(dataProvider = "processors")
+    @Test(dataProvider = PROCESSORS)
     public void writeReadRequest(final SOAPActionProcessor processor) throws Exception {
 
         LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
@@ -114,7 +115,7 @@ public class ActionXMLProcessingTest {
         assertEquals(actionInvocation.getInput().iterator().next().getArgument().getName(), "NewTargetValue");
     }
 
-    @Test(dataProvider = "processors")
+    @Test(dataProvider = PROCESSORS)
     public void writeReadResponse(final SOAPActionProcessor processor) throws Exception {
 
         LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
@@ -144,7 +145,7 @@ public class ActionXMLProcessingTest {
         assertEquals(actionInvocation.getOutput().iterator().next().getArgument().getName(), "RetTargetValue");
     }
 
-    @Test(dataProvider = "processors")
+    @Test(dataProvider = PROCESSORS)
     public void writeFailureReadFailure(final SOAPActionProcessor processor) throws Exception {
 
         LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
@@ -176,7 +177,7 @@ public class ActionXMLProcessingTest {
         assertEquals(actionInvocation.getFailure().getMessage(), ErrorCode.ACTION_FAILED.getDescription() + ". A test string.");
     }
 
-    @Test(dataProvider = "processors")
+    @Test(dataProvider = PROCESSORS)
     public void readEncodedRequest(final SOAPActionProcessor processor) throws Exception {
 
         LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
@@ -216,7 +217,7 @@ public class ActionXMLProcessingTest {
 
     }
 
-    @Test(dataProvider = "processors")
+    @Test(dataProvider = PROCESSORS)
     public void readEncodedRequestWithAlias(final SOAPActionProcessor processor) throws Exception {
 
         LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);
@@ -257,7 +258,7 @@ public class ActionXMLProcessingTest {
 
     }
 
-    @Test(dataProvider = "processors")
+    @Test(dataProvider = PROCESSORS)
     public void writeDecodedResponse(final SOAPActionProcessor processor) throws Exception {
 
         LocalDevice<?> ld = ActionSampleData.createTestDevice(ActionSampleData.LocalTestServiceExtended.class);

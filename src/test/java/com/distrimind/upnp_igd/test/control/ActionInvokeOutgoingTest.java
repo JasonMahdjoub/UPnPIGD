@@ -19,10 +19,7 @@ import com.distrimind.upnp_igd.controlpoint.ActionCallback;
 import com.distrimind.upnp_igd.mock.MockRouter;
 import com.distrimind.upnp_igd.mock.MockUpnpService;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
-import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
-import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
-import com.distrimind.upnp_igd.model.message.UpnpHeaders;
-import com.distrimind.upnp_igd.model.message.UpnpResponse;
+import com.distrimind.upnp_igd.model.message.*;
 import com.distrimind.upnp_igd.model.message.header.ContentTypeHeader;
 import com.distrimind.upnp_igd.model.message.header.SoapActionHeader;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
@@ -55,6 +52,7 @@ import java.util.List;
 import static org.testng.Assert.*;
 
 
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class ActionInvokeOutgoingTest {
 
     public static final String RESPONSE_SUCCESSFUL = "<?xml version=\"1.0\"?>\n" +
@@ -107,6 +105,7 @@ public class ActionInvokeOutgoingTest {
         "     </u:GetNegativeValueResponse>\n" +
         "   </s:Body>\n" +
         " </s:Envelope>";
+    public static final String GET_TARGET = "GetTarget";
 
     @Test
     public void callLocalGet() throws Exception {
@@ -117,7 +116,7 @@ public class ActionInvokeOutgoingTest {
         LocalService<?> service = ld.getServices().iterator().next();
         upnpService.getRegistry().addDevice(ld);
 
-        Action<?> action = service.getAction("GetTarget");
+        Action<?> action = service.getAction(GET_TARGET);
         ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
 
         final boolean[] assertions = new boolean[1];
@@ -226,9 +225,9 @@ public class ActionInvokeOutgoingTest {
         RemoteService service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action<?> action = service.getAction("GetTarget");
+        Action<?> action = service.getAction(GET_TARGET);
 
-        UpnpHeaders extraHeaders = new UpnpHeaders();
+        IUpnpHeaders extraHeaders = new UpnpHeaders();
         extraHeaders.add(UpnpHeader.Type.USER_AGENT.getHttpName(), "MyCustom/Agent");
         extraHeaders.add("X-Custom-Header", "foo");
 
@@ -304,7 +303,7 @@ public class ActionInvokeOutgoingTest {
         Service<?, ?, ?> service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action<?> action = service.getAction("GetTarget");
+        Action<?> action = service.getAction(GET_TARGET);
 
         ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         final boolean[] assertions = new boolean[1];
@@ -354,7 +353,7 @@ public class ActionInvokeOutgoingTest {
         Service<?, ?, ?> service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action<?> action = service.getAction("GetTarget");
+        Action<?> action = service.getAction(GET_TARGET);
 
         ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         final boolean[] assertions = new boolean[1];
@@ -394,7 +393,7 @@ public class ActionInvokeOutgoingTest {
         Service<?, ?, ?> service = SampleData.getFirstService(device);
         upnpService.getRegistry().addDevice(device);
 
-        Action<?> action = service.getAction("GetTarget");
+        Action<?> action = service.getAction(GET_TARGET);
 
         ActionInvocation<?> actionInvocation = new ActionInvocation<>(action);
         final boolean[] assertions = new boolean[1];

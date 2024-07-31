@@ -29,5 +29,7 @@
         <exclude name="JUnitAssertionsShouldIncludeMessage"/>
         <exclude name="SwitchStmtsShouldHaveDefault"/>
         <exclude name="AvoidUsingHardCodedIP"/>
+        <exclude name="JUnitTestsShouldIncludeAssert"/>
+
     </rule>
 </ruleset>

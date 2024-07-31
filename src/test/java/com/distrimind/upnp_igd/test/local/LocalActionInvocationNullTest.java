@@ -38,6 +38,10 @@ import static org.testng.Assert.assertNull;
  */
 public class LocalActionInvocationNullTest {
 
+    public static final String ONE = "One";
+    public static final String FOO = "foo";
+    public static final String THREE = "Three";
+
     @Test
     public void invokeActions() throws Exception {
 
@@ -53,23 +57,23 @@ public class LocalActionInvocationNullTest {
 
         // This succeeds
         invocation = new ActionInvocation<>(svc.getAction("SetSomeValues"));
-        invocation.setInput("One", "foo");
+        invocation.setInput(ONE, FOO);
         invocation.setInput("Two", "bar");
-        invocation.setInput("Three", "baz");
+        invocation.setInput(THREE, "baz");
         svc.getExecutor(invocation.getAction()).execute(invocation);
 		assertNull(invocation.getFailure());
-        assertEquals(svc.getManager().getImplementation().one, "foo");
+        assertEquals(svc.getManager().getImplementation().one, FOO);
         assertEquals(svc.getManager().getImplementation().two, "bar");
         assertEquals(svc.getManager().getImplementation().three.toString(), "baz");
 
         // Empty string is fine, will be converted into "null"
         invocation = new ActionInvocation<>(svc.getAction("SetSomeValues"));
-        invocation.setInput("One", "foo");
+        invocation.setInput(ONE, FOO);
         invocation.setInput("Two", "");
-        invocation.setInput("Three", null);
+        invocation.setInput(THREE, null);
         svc.getExecutor(invocation.getAction()).execute(invocation);
 		assertNull(invocation.getFailure());
-        assertEquals(svc.getManager().getImplementation().one, "foo");
+        assertEquals(svc.getManager().getImplementation().one, FOO);
 		assertNull(svc.getManager().getImplementation().two);
 		assertNull(svc.getManager().getImplementation().three);
 
@@ -85,9 +89,9 @@ public class LocalActionInvocationNullTest {
 
         // We forgot to set one and it's a local invocation (no string conversion)
         invocation = new ActionInvocation<>(svc.getAction("SetSomeValues"));
-        invocation.setInput("One", null);
+        invocation.setInput(ONE, null);
         // OOPS! invocation.setInput("Two", null);
-        invocation.setInput("Three", null);
+        invocation.setInput(THREE, null);
         svc.getExecutor(invocation.getAction()).execute(invocation);
 		assertNull(invocation.getFailure());
 		assertNull(svc.getManager().getImplementation().one);
@@ -117,9 +121,9 @@ public class LocalActionInvocationNullTest {
         private boolean primitive;
 
         @UpnpAction
-        public void setSomeValues(@UpnpInputArgument(name = "One") String one,
+        public void setSomeValues(@UpnpInputArgument(name = ONE) String one,
                                   @UpnpInputArgument(name = "Two") String two,
-                                  @UpnpInputArgument(name = "Three") MyString three) {
+                                  @UpnpInputArgument(name = THREE) MyString three) {
             this.one = one;
             this.two = two;
             this.three = three;
@@ -127,7 +131,7 @@ public class LocalActionInvocationNullTest {
 
         @UpnpAction
         public void setPrimitive(@UpnpInputArgument(name = "Primitive") boolean b) {
-            this.primitive = primitive;
+            this.primitive = b;
         }
     }
 

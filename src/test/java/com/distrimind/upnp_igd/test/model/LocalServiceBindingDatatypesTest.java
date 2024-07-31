@@ -42,6 +42,8 @@ import static org.testng.Assert.*;
  */
 public class LocalServiceBindingDatatypesTest {
 
+    public static final String GET_DATA = "GetData";
+
     public <T> LocalDevice<T> createTestDevice(LocalService<T> service) throws Exception {
         return new LocalDevice<>(
                 SampleData.createLocalDeviceIdentity(),
@@ -78,12 +80,12 @@ public class LocalServiceBindingDatatypesTest {
 
         assertEquals(svc.getActions().size(), 1);
 
-        assertEquals(svc.getAction("GetData").getName(), "GetData");
-        assertEquals(svc.getAction("GetData").getArguments().size(), 1);
-        assertEquals(svc.getAction("GetData").getArguments().get(0).getName(), "RandomData");
-        assertEquals(svc.getAction("GetData").getArguments().get(0).getDirection(), ActionArgument.Direction.OUT);
-        assertEquals(svc.getAction("GetData").getArguments().get(0).getRelatedStateVariableName(), "Data");
-		assertTrue(svc.getAction("GetData").getArguments().get(0).isReturnValue());
+        assertEquals(svc.getAction(GET_DATA).getName(), GET_DATA);
+        assertEquals(svc.getAction(GET_DATA).getArguments().size(), 1);
+        assertEquals(svc.getAction(GET_DATA).getArguments().get(0).getName(), "RandomData");
+        assertEquals(svc.getAction(GET_DATA).getArguments().get(0).getDirection(), ActionArgument.Direction.OUT);
+        assertEquals(svc.getAction(GET_DATA).getArguments().get(0).getRelatedStateVariableName(), "Data");
+		assertTrue(svc.getAction(GET_DATA).getArguments().get(0).isReturnValue());
 
     }
 
@@ -106,7 +108,7 @@ public class LocalServiceBindingDatatypesTest {
 
         @UpnpAction(out = @UpnpOutputArgument(name = "RandomData"))
         public byte[] getData() {
-            return data;
+            return data.clone();
         }
     }
 

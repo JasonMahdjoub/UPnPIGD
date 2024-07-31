@@ -15,6 +15,7 @@ import com.distrimind.upnp_igd.registry.RegistryListener;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.UpnpServiceImpl;
 
+@SuppressWarnings({"PMD.SystemPrintln", "PMD.DoNotTerminateVM"})
 public class BinaryLightClient implements Runnable {
 
     public static void main(String[] args) throws Exception {

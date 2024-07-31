@@ -22,7 +22,6 @@ import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.support.model.TransportAction;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * @author Christian Bauer

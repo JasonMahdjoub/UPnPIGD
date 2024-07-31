@@ -43,6 +43,7 @@ public class SwitchPowerExtraGetter {
     private boolean status = false;
 
     @UpnpAction
+    @SuppressWarnings("PMD.SystemPrintln")
     public void setTarget(@UpnpInputArgument(name = "NewTargetValue")
                           boolean newTargetValue) {
         target = newTargetValue;

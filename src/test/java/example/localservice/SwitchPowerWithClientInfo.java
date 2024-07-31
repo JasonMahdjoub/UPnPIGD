@@ -42,6 +42,7 @@ import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
         )
     }
 )
+@SuppressWarnings("PMD.SystemPrintln")
 public class SwitchPowerWithClientInfo {
 
     private boolean power;

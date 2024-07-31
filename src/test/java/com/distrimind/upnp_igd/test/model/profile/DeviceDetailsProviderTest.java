@@ -28,6 +28,8 @@ import java.util.Map;
  */
 public class DeviceDetailsProviderTest {
 
+    public static final String USER_AGENT = "User-Agent";
+
     @Test
     public void headerRegexMatch() {
 
@@ -38,7 +40,7 @@ public class DeviceDetailsProviderTest {
 
         Map<HeaderDeviceDetailsProvider.Key, DeviceDetails> headerDetails = new HashMap<>();
 
-        headerDetails.put(new HeaderDeviceDetailsProvider.Key("User-Agent", "Xbox.*"), dd1);
+        headerDetails.put(new HeaderDeviceDetailsProvider.Key(USER_AGENT, "Xbox.*"), dd1);
         headerDetails.put(new HeaderDeviceDetailsProvider.Key("X-AV-Client-Info", ".*PLAYSTATION 3.*"), dd2);
 
         HeaderDeviceDetailsProvider provider = new HeaderDeviceDetailsProvider(dd1, headerDetails);
@@ -46,14 +48,14 @@ public class DeviceDetailsProviderTest {
         // No match, test default behavior
         clientInfo.getRequestHeaders().clear();
         clientInfo.getRequestHeaders().add(
-                "User-Agent",
+                USER_AGENT,
                 "Microsoft-Windows/6.1 UPnP/1.0 Windows-Media-Player-DMS/12.0.7600.16385 DLNADOC/1.50"
         );
         Assert.assertEquals(provider.provide(clientInfo), dd1);
 
         clientInfo.getRequestHeaders().clear();
         clientInfo.getRequestHeaders().add(
-                "User-Agent",
+                USER_AGENT,
                 "UPnP/1.0"
         );
         clientInfo.getRequestHeaders().add(
@@ -64,7 +66,7 @@ public class DeviceDetailsProviderTest {
 
         clientInfo.getRequestHeaders().clear();
         clientInfo.getRequestHeaders().add(
-                "User-Agent",
+                USER_AGENT,
                 "Xbox/2.0.4548.0 UPnP/1.0 Xbox/2.0.4548.0"
         );
         Assert.assertEquals(provider.provide(clientInfo), dd1);

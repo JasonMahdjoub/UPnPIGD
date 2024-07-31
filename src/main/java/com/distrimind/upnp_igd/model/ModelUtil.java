@@ -181,7 +181,7 @@ public class ModelUtil {
     }
 
     /**
-     * @param s A string representing hours, minutes, seconds, e.g. <code>11:23:44</code>
+     * @param _s A string representing hours, minutes, seconds, e.g. <code>11:23:44</code>
      * @return The converted number of seconds.
      */
     public static long fromTimeString(String _s) {

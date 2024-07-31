@@ -50,6 +50,9 @@ import static org.testng.Assert.assertNull;
  */
 public class EnumTest {
 
+    public static final String GET_COLOR = "GetColor";
+    public static final String SET_COLOR = "SetColor";
+
     public <T> LocalDevice<T> createTestDevice(Class<T> serviceClass) throws Exception {
 
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
@@ -89,15 +92,15 @@ public class EnumTest {
 
         assertEquals(svc.getActions().size(), 3); // Has 2 actions plus QueryStateVariableAction!
 
-        assertEquals(svc.getAction("GetColor").getArguments().size(), 1);
-        assertEquals(svc.getAction("GetColor").getArguments().iterator().next().getName(), "Out");
-        assertEquals(svc.getAction("GetColor").getArguments().iterator().next().getDirection(), ActionArgument.Direction.OUT);
-        assertEquals(svc.getAction("GetColor").getArguments().iterator().next().getRelatedStateVariableName(), "Color");
+        assertEquals(svc.getAction(GET_COLOR).getArguments().size(), 1);
+        assertEquals(svc.getAction(GET_COLOR).getArguments().iterator().next().getName(), "Out");
+        assertEquals(svc.getAction(GET_COLOR).getArguments().iterator().next().getDirection(), ActionArgument.Direction.OUT);
+        assertEquals(svc.getAction(GET_COLOR).getArguments().iterator().next().getRelatedStateVariableName(), "Color");
 
-        assertEquals(svc.getAction("SetColor").getArguments().size(), 1);
-        assertEquals(svc.getAction("SetColor").getArguments().iterator().next().getName(), "In");
-        assertEquals(svc.getAction("SetColor").getArguments().iterator().next().getDirection(), ActionArgument.Direction.IN);
-        assertEquals(svc.getAction("SetColor").getArguments().iterator().next().getRelatedStateVariableName(), "Color");
+        assertEquals(svc.getAction(SET_COLOR).getArguments().size(), 1);
+        assertEquals(svc.getAction(SET_COLOR).getArguments().iterator().next().getName(), "In");
+        assertEquals(svc.getAction(SET_COLOR).getArguments().iterator().next().getDirection(), ActionArgument.Direction.IN);
+        assertEquals(svc.getAction(SET_COLOR).getArguments().iterator().next().getRelatedStateVariableName(), "Color");
 
     }
 
@@ -105,13 +108,13 @@ public class EnumTest {
     public void invokeActions(LocalDevice<?> device) {
         LocalService<?> svc = device.getServices().iterator().next();
 
-        ActionInvocation<? extends LocalService<?>> setColor = new ActionInvocation<>(svc.getAction("SetColor"));
+        ActionInvocation<? extends LocalService<?>> setColor = new ActionInvocation<>(svc.getAction(SET_COLOR));
         setColor.setInput("In", MyServiceWithEnum.Color.Blue);
         svc.getExecutor(setColor.getAction()).executeWithUntypedGeneric(setColor);
 		assertNull(setColor.getFailure());
         assertEquals(setColor.getOutput().size(), 0);
 
-        ActionInvocation<? extends LocalService<?>> getColor = new ActionInvocation<>(svc.getAction("GetColor"));
+        ActionInvocation<? extends LocalService<?>> getColor = new ActionInvocation<>(svc.getAction(GET_COLOR));
         svc.getExecutor(getColor.getAction()).executeWithUntypedGeneric(getColor);
 		assertNull(getColor.getFailure());
         assertEquals(getColor.getOutput().size(), 1);

@@ -21,8 +21,6 @@ import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.support.model.MediaInfo;
 
-import java.util.logging.Logger;
-
 /**
  *
  * @author Christian Bauer

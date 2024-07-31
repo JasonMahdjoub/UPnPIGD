@@ -113,6 +113,7 @@ public class SwitchPowerAnnotatedClass {
     private boolean power;
 
     @UpnpAction
+    @SuppressWarnings("PMD.SystemPrintln")
     public void setTarget(@UpnpInputArgument(name = "NewTargetValue")
                           boolean newTargetValue) {
         power = newTargetValue;

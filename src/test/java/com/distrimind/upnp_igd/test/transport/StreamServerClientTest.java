@@ -150,7 +150,7 @@ abstract public class StreamServerClientTest {
         new Thread(() -> {
 			try {
 				Thread.sleep(250);
-			} catch (InterruptedException ex) {
+			} catch (InterruptedException ignored) {
 				// Ignore
 			}
 			requestThread.interrupt();
@@ -212,7 +212,7 @@ abstract public class StreamServerClientTest {
         new Thread(() -> {
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException ex) {
+			} catch (InterruptedException ignored) {
 				// Ignore
 			}
 			requestThread.interrupt();

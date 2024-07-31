@@ -29,11 +29,7 @@ import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
-import com.distrimind.upnp_igd.model.types.csv.CSV;
-import com.distrimind.upnp_igd.model.types.csv.CSVBoolean;
-import com.distrimind.upnp_igd.model.types.csv.CSVInteger;
-import com.distrimind.upnp_igd.model.types.csv.CSVString;
-import com.distrimind.upnp_igd.model.types.csv.CSVUnsignedIntegerFourBytes;
+import com.distrimind.upnp_igd.model.types.csv.*;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -43,6 +39,7 @@ import java.util.List;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+@SuppressWarnings("PMD.LooseCoupling")
 public class LocalActionInvocationCSVTest {
 
     public LocalDevice<?> createTestDevice(LocalService<?> service) throws Exception {

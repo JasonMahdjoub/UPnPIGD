@@ -14,6 +14,7 @@
  */
 package example.localservice;
 
+import com.distrimind.upnp_igd.test.gena.OutgoingSubscriptionLifecycleTest;
 import example.binarylight.BinaryLightSampleData;
 import example.controlpoint.EventSubscriptionTest;
 import com.distrimind.upnp_igd.controlpoint.SubscriptionCallback;
@@ -86,6 +87,9 @@ import static org.testng.Assert.*;
  */
 public class EventProviderTest extends EventSubscriptionTest {
 
+    public static final String MODERATED_MIN_DELTA_VAR = "ModeratedMinDeltaVar";
+    public static final String MODERATED_MAX_RATE_VAR = "ModeratedMaxRateVar";
+
     @Test
     public void subscriptionLifecycleChangeSupport() throws Exception {
 
@@ -125,10 +129,10 @@ public class EventProviderTest extends EventSubscriptionTest {
             @Override
 			public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
-                    assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
+                    assertEquals(subscription.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS).toString(), "0");
                     testAssertions.add(true);
                 } else if (subscription.getCurrentSequence().getValue() == 1) {
-                    assertEquals(subscription.getCurrentValues().get("Status").toString(), "1");
+                    assertEquals(subscription.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS).toString(), "1");
                     testAssertions.add(true);
                 } else {
                     testAssertions.add(false);
@@ -201,11 +205,11 @@ public class EventProviderTest extends EventSubscriptionTest {
 			public void eventReceived(GENASubscription<?> subscription) {
                 if (subscription.getCurrentSequence().getValue() == 0) {
                     assertEquals(subscription.getCurrentValues().get("Target").toString(), "0");
-                    assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
+                    assertEquals(subscription.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS).toString(), "0");
                     testAssertions.add(true);
                 } else if (subscription.getCurrentSequence().getValue() == 1) {
                     assertEquals(subscription.getCurrentValues().get("Target").toString(), "1");
-                    assertEquals(subscription.getCurrentValues().get("Status").toString(), "1");
+                    assertEquals(subscription.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS).toString(), "1");
                     testAssertions.add(true);
                 } else {
                     testAssertions.add(false);
@@ -292,21 +296,21 @@ public class EventProviderTest extends EventSubscriptionTest {
                 if (subscription.getCurrentSequence().getValue() == 0) {
 
                     // Initial event contains all evented variables, snapshot of the service state
-                    assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
-                    assertEquals(subscription.getCurrentValues().get("ModeratedMinDeltaVar").toString(), "1");
+                    assertEquals(subscription.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS).toString(), "0");
+                    assertEquals(subscription.getCurrentValues().get(MODERATED_MIN_DELTA_VAR).toString(), "1");
 
                     // Initial state
-                    assertEquals(subscription.getCurrentValues().get("ModeratedMaxRateVar").toString(), "one");
+                    assertEquals(subscription.getCurrentValues().get(MODERATED_MAX_RATE_VAR).toString(), "one");
 
                     testAssertions.add(true);
                 } else if (subscription.getCurrentSequence().getValue() == 1) {
 
                     // Subsequent events do NOT contain unchanged variables
-                    assertNull(subscription.getCurrentValues().get("Status"));
-                    assertNull(subscription.getCurrentValues().get("ModeratedMinDeltaVar"));
+                    assertNull(subscription.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS));
+                    assertNull(subscription.getCurrentValues().get(MODERATED_MIN_DELTA_VAR));
 
                     // We didn't see the intermediate values "two" and "three" because it's moderated
-                    assertEquals(subscription.getCurrentValues().get("ModeratedMaxRateVar").toString(), "four");
+                    assertEquals(subscription.getCurrentValues().get(MODERATED_MAX_RATE_VAR).toString(), "four");
 
                     testAssertions.add(true);
                 } else {
@@ -328,17 +332,17 @@ public class EventProviderTest extends EventSubscriptionTest {
         Object serviceImpl = service.getManager().getImplementation();
 
         Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar")), serviceImpl, "two");
-        service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMaxRateVar", null, null);
+        service.getManager().getPropertyChangeSupport().firePropertyChange(MODERATED_MAX_RATE_VAR, null, null);
 
         Thread.sleep(200);
 
         Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar")), serviceImpl, "three");
-        service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMaxRateVar", null, null);
+        service.getManager().getPropertyChangeSupport().firePropertyChange(MODERATED_MAX_RATE_VAR, null, null);
 
         Thread.sleep(200);
 
         Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMaxRateVar")), serviceImpl, "four");
-        service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMaxRateVar", null, null);
+        service.getManager().getPropertyChangeSupport().firePropertyChange(MODERATED_MAX_RATE_VAR, null, null);
 
         Thread.sleep(100);
 
@@ -408,21 +412,21 @@ public class EventProviderTest extends EventSubscriptionTest {
                 if (subscription.getCurrentSequence().getValue() == 0) {
 
                     // Initial event contains all evented variables, snapshot of the service state
-                    assertEquals(subscription.getCurrentValues().get("Status").toString(), "0");
-                    assertEquals(subscription.getCurrentValues().get("ModeratedMaxRateVar").toString(), "one");
+                    assertEquals(subscription.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS).toString(), "0");
+                    assertEquals(subscription.getCurrentValues().get(MODERATED_MAX_RATE_VAR).toString(), "one");
 
                     // Initial state
-                    assertEquals(subscription.getCurrentValues().get("ModeratedMinDeltaVar").toString(), "1");
+                    assertEquals(subscription.getCurrentValues().get(MODERATED_MIN_DELTA_VAR).toString(), "1");
 
                     testAssertions.add(true);
                 } else if (subscription.getCurrentSequence().getValue() == 1) {
 
                     // Subsequent events do NOT contain unchanged variables
-                    assertNull(subscription.getCurrentValues().get("Status"));
-                    assertNull(subscription.getCurrentValues().get("ModeratedMaxRateVar"));
+                    assertNull(subscription.getCurrentValues().get(OutgoingSubscriptionLifecycleTest.STATUS));
+                    assertNull(subscription.getCurrentValues().get(MODERATED_MAX_RATE_VAR));
 
                     // We didn't get events for values 2 and 3
-                    assertEquals(subscription.getCurrentValues().get("ModeratedMinDeltaVar").toString(), "4");
+                    assertEquals(subscription.getCurrentValues().get(MODERATED_MIN_DELTA_VAR).toString(), "4");
 
                     testAssertions.add(true);
                 } else {
@@ -442,13 +446,13 @@ public class EventProviderTest extends EventSubscriptionTest {
         Object serviceImpl = service.getManager().getImplementation();
 
         Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar")), serviceImpl, 2);
-        service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMinDeltaVar", 1, 2);
+        service.getManager().getPropertyChangeSupport().firePropertyChange(MODERATED_MIN_DELTA_VAR, 1, 2);
 
         Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar")), serviceImpl, 3);
-        service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMinDeltaVar", 2, 3);
+        service.getManager().getPropertyChangeSupport().firePropertyChange(MODERATED_MIN_DELTA_VAR, 2, 3);
 
         Reflections.set(Objects.requireNonNull(Reflections.getField(serviceImpl.getClass(), "moderatedMinDeltaVar")), serviceImpl, 4);
-        service.getManager().getPropertyChangeSupport().firePropertyChange("ModeratedMinDeltaVar", 3, 4);
+        service.getManager().getPropertyChangeSupport().firePropertyChange(MODERATED_MIN_DELTA_VAR, 3, 4);
 
         assertEquals(callback.getSubscription().getCurrentSequence().getValue(), Long.valueOf(2)); // It's the NEXT sequence!
 

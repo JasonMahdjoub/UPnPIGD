@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.security.MessageDigest;
 import java.math.BigInteger;
-import java.util.logging.Logger;
 
 /**
  * A unique device name.

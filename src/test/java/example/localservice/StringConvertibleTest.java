@@ -71,7 +71,10 @@ import static org.testng.Assert.assertNull;
  */
 public class StringConvertibleTest {
 
-        public <T> LocalDevice<T> createTestDevice(Class<T> serviceClass) throws Exception {
+    public static final String SET_MY_URL = "SetMyURL";
+    public static final String HTTP_FOO_BAR = "http://foo/bar";
+
+    public <T> LocalDevice<T> createTestDevice(Class<T> serviceClass) throws Exception {
 
         LocalServiceBinder binder = new AnnotationLocalServiceBinder();
         LocalService<T> svc = binder.read(serviceClass);
@@ -112,10 +115,10 @@ public class StringConvertibleTest {
 
         assertEquals(svc.getActions().size(), 9); // Has 8 actions plus QueryStateVariableAction!
 
-        assertEquals(svc.getAction("SetMyURL").getArguments().size(), 1);
-        assertEquals(svc.getAction("SetMyURL").getArguments().iterator().next().getName(), "In");
-        assertEquals(svc.getAction("SetMyURL").getArguments().iterator().next().getDirection(), ActionArgument.Direction.IN);
-        assertEquals(svc.getAction("SetMyURL").getArguments().iterator().next().getRelatedStateVariableName(), "MyURL");
+        assertEquals(svc.getAction(SET_MY_URL).getArguments().size(), 1);
+        assertEquals(svc.getAction(SET_MY_URL).getArguments().iterator().next().getName(), "In");
+        assertEquals(svc.getAction(SET_MY_URL).getArguments().iterator().next().getDirection(), ActionArgument.Direction.IN);
+        assertEquals(svc.getAction(SET_MY_URL).getArguments().iterator().next().getRelatedStateVariableName(), "MyURL");
         // The others are all the same...
 
     }
@@ -124,8 +127,8 @@ public class StringConvertibleTest {
     public void invokeActions(LocalDevice<?> device) {
         LocalService<?> svc = device.getServices().iterator().next();
 
-        ActionInvocation<? extends LocalService<?>> setMyURL = new ActionInvocation<>(svc.getAction("SetMyURL"));
-        setMyURL.setInput("In", "http://foo/bar");
+        ActionInvocation<? extends LocalService<?>> setMyURL = new ActionInvocation<>(svc.getAction(SET_MY_URL));
+        setMyURL.setInput("In", HTTP_FOO_BAR);
         svc.getExecutor(setMyURL.getAction()).executeWithUntypedGeneric(setMyURL);
 		assertNull(setMyURL.getFailure());
         assertEquals(setMyURL.getOutput().size(), 0);
@@ -134,10 +137,10 @@ public class StringConvertibleTest {
         svc.getExecutor(getMyURL.getAction()).executeWithUntypedGeneric(getMyURL);
 		assertNull(getMyURL.getFailure());
         assertEquals(getMyURL.getOutput().size(), 1);
-        assertEquals(getMyURL.getOutput().iterator().next().toString(), "http://foo/bar");
+        assertEquals(getMyURL.getOutput().iterator().next().toString(), HTTP_FOO_BAR);
 
         ActionInvocation<? extends LocalService<?>> setMyURI = new ActionInvocation<>(svc.getAction("SetMyURI"));
-        setMyURI.setInput("In", "http://foo/bar");
+        setMyURI.setInput("In", HTTP_FOO_BAR);
         svc.getExecutor(setMyURI.getAction()).executeWithUntypedGeneric(setMyURI);
 		assertNull(setMyURI.getFailure());
         assertEquals(setMyURI.getOutput().size(), 0);
@@ -146,7 +149,7 @@ public class StringConvertibleTest {
         svc.getExecutor(getMyURI.getAction()).executeWithUntypedGeneric(getMyURI);
 		assertNull(getMyURI.getFailure());
         assertEquals(getMyURI.getOutput().size(), 1);
-        assertEquals(getMyURI.getOutput().iterator().next().toString(), "http://foo/bar");
+        assertEquals(getMyURI.getOutput().iterator().next().toString(), HTTP_FOO_BAR);
 
         ActionInvocation<? extends LocalService<?>> setMyNumbers = new ActionInvocation<>(svc.getAction("SetMyNumbers"));
         setMyNumbers.setInput("In", "1,2,3");

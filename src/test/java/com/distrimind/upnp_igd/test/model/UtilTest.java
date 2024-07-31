@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.test.model;
 
 import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.XMLUtil;
+import com.distrimind.upnp_igd.test.local.LocalActionInvocationNullTest;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,6 +40,11 @@ import static org.testng.Assert.*;
 
 public class UtilTest {
 
+    public static final String BAR = "bar";
+    public static final String BAZ = "baz";
+    public static final String _123 = "123";
+    public static final String ABC = "abc";
+    public static final String URN_FOO_BAR_BAZ = "urn:foo-bar:baz";
     final protected DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     final protected DocumentBuilder documentBuilder;
 
@@ -68,10 +74,10 @@ public class UtilTest {
     @Test
     public void csvToString() {
 
-        List<Object> plainStrings = List.of("foo", "bar", "baz");
+        List<Object> plainStrings = List.of(LocalActionInvocationNullTest.FOO, BAR, BAZ);
         assertEquals(ModelUtil.toCommaSeparatedList(plainStrings), "foo,bar,baz");
 
-        List<Object> commaStrings = List.of("foo,", "bar", "b,az");
+        List<Object> commaStrings = List.of("foo,", BAR, "b,az");
         assertEquals(ModelUtil.toCommaSeparatedList(commaStrings), "foo\\,,bar,b\\,az");
 
         List<Object> backslashStrings = List.of("f\\oo", "b,ar", "b\\az");
@@ -81,10 +87,10 @@ public class UtilTest {
     @Test
     public void stringToCsv() {
 
-        Object[] plainStrings = new Object[]{"foo", "bar", "baz"};
+        Object[] plainStrings = new Object[]{LocalActionInvocationNullTest.FOO, BAR, BAZ};
         assertEquals(ModelUtil.fromCommaSeparatedList("foo,bar,baz"), plainStrings);
 
-        Object[] commaStrings = new Object[]{"foo,", "bar", "b,az"};
+        Object[] commaStrings = new Object[]{"foo,", BAR, "b,az"};
         assertEquals(ModelUtil.fromCommaSeparatedList("foo\\,,bar,b\\,az"), commaStrings);
 
         Object[] backslashStrings = new Object[]{"f\\oo", "b,ar", "b\\az"};
@@ -97,14 +103,14 @@ public class UtilTest {
         Document dom = documentBuilder.newDocument();
         dom.setXmlStandalone(true); // ROTFL
 
-        Element fooEl = dom.createElement("foo");
+        Element fooEl = dom.createElement(LocalActionInvocationNullTest.FOO);
         dom.appendChild(fooEl);
 
-        Element barEl = dom.createElement("bar");
-        barEl.setAttribute("baz", "123");
+        Element barEl = dom.createElement(BAR);
+        barEl.setAttribute(BAZ, _123);
         fooEl.appendChild(barEl);
 
-        barEl.setTextContent("abc");
+        barEl.setTextContent(ABC);
 
         String xml = XMLUtil.documentToString(dom);
 
@@ -116,14 +122,14 @@ public class UtilTest {
         Document dom = documentBuilder.newDocument();
         dom.setXmlStandalone(true); // ROTFL
 
-        Element fooEl = dom.createElementNS("urn:foo-bar:baz", "foo");
+        Element fooEl = dom.createElementNS(URN_FOO_BAR_BAZ, LocalActionInvocationNullTest.FOO);
         dom.appendChild(fooEl);
 
-        Element barEl = dom.createElement("bar");
-        barEl.setAttribute("baz", "123");
+        Element barEl = dom.createElement(BAR);
+        barEl.setAttribute(BAZ, _123);
         fooEl.appendChild(barEl);
 
-        barEl.setTextContent("abc");
+        barEl.setTextContent(ABC);
 
         String xml = XMLUtil.documentToString(dom);
 
@@ -135,14 +141,14 @@ public class UtilTest {
         Document dom = documentBuilder.newDocument();
         dom.setXmlStandalone(true); // ROTFL
 
-        Element fooEl = dom.createElementNS("urn:foo-bar:baz", "foo");
+        Element fooEl = dom.createElementNS(URN_FOO_BAR_BAZ, LocalActionInvocationNullTest.FOO);
         dom.appendChild(fooEl);
 
-        Element barEl = dom.createElementNS("urn:foo-bar:abc", "bar");
-        barEl.setAttribute("baz", "123");
+        Element barEl = dom.createElementNS("urn:foo-bar:abc", BAR);
+        barEl.setAttribute(BAZ, _123);
         fooEl.appendChild(barEl);
 
-        barEl.setTextContent("abc");
+        barEl.setTextContent(ABC);
 
         String xml = XMLUtil.documentToString(dom);
 
@@ -154,14 +160,14 @@ public class UtilTest {
         Document dom = documentBuilder.newDocument();
         dom.setXmlStandalone(true); // ROTFL
 
-        Element fooEl = dom.createElement("foo");
+        Element fooEl = dom.createElement(LocalActionInvocationNullTest.FOO);
         dom.appendChild(fooEl);
 
-        Element barEl = dom.createElementNS("urn:foo-bar:baz", "bar");
-        barEl.setAttribute("baz", "123");
+        Element barEl = dom.createElementNS(URN_FOO_BAR_BAZ, BAR);
+        barEl.setAttribute(BAZ, _123);
         fooEl.appendChild(barEl);
 
-        barEl.setTextContent("abc");
+        barEl.setTextContent(ABC);
 
         String xml = XMLUtil.documentToString(dom);
 
@@ -173,18 +179,18 @@ public class UtilTest {
         Document dom = documentBuilder.newDocument();
         dom.setXmlStandalone(true); // ROTFL
 
-        Element fooEl = dom.createElement("foo");
+        Element fooEl = dom.createElement(LocalActionInvocationNullTest.FOO);
         dom.appendChild(fooEl);
 
         Document dom2 = documentBuilder.newDocument();
         dom2.setXmlStandalone(true);
 
-        Element barEl = dom2.createElementNS("urn:foo-bar:baz", "bar");
-        barEl.setAttribute("baz", "123");
+        Element barEl = dom2.createElementNS(URN_FOO_BAR_BAZ, BAR);
+        barEl.setAttribute(BAZ, _123);
         dom2.appendChild(barEl);
 
-        Element bazEl = dom2.createElement("baz");
-        bazEl.setTextContent("baz");
+        Element bazEl = dom2.createElement(BAZ);
+        bazEl.setTextContent(BAZ);
         barEl.appendChild(bazEl);
 
         String dom2XML = XMLUtil.documentToString(dom2);
@@ -202,7 +208,7 @@ public class UtilTest {
         Document dom = documentBuilder.newDocument();
         dom.setXmlStandalone(true); // ROTFL
 
-        Element fooEl = dom.createElement("foo");
+        Element fooEl = dom.createElement(LocalActionInvocationNullTest.FOO);
         dom.appendChild(fooEl);
 
         Element barOneEl = dom.createElementNS("urn:same:space", "same:bar");
@@ -223,8 +229,8 @@ public class UtilTest {
         Document dom = documentBuilder.newDocument();
         dom.setXmlStandalone(true); // ROTFL
 
-        Element fooEl = dom.createElement("foo");
-        fooEl.setAttribute("bar", "baz");
+        Element fooEl = dom.createElement(LocalActionInvocationNullTest.FOO);
+        fooEl.setAttribute(BAR, BAZ);
         dom.appendChild(fooEl);
 
         String xml = XMLUtil.documentToString(dom);

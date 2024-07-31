@@ -27,6 +27,7 @@ import com.distrimind.upnp_igd.model.types.DeviceType;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UDN;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,7 +63,7 @@ public class SampleDeviceEmbeddedTwo<D extends Device<?, D, S>, S extends Servic
 
     @Override
     public List<Icon> getIcons() {
-        return null;
+        return Collections.emptyList();
     }
 
     public static UDN getEmbeddedTwoUDN() {

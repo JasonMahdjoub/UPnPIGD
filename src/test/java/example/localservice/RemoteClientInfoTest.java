@@ -20,6 +20,7 @@ import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
 import com.distrimind.upnp_igd.model.DefaultServiceManager;
 import com.distrimind.upnp_igd.model.action.RemoteActionInvocation;
 import com.distrimind.upnp_igd.model.message.Connection;
+import com.distrimind.upnp_igd.model.message.IUpnpHeaders;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.model.message.header.UserAgentHeader;
@@ -103,7 +104,7 @@ public class RemoteClientInfoTest {
     public <T> void invokeActions(LocalDevice<T> device) throws Exception {
         LocalService<T> svc = device.getServices().iterator().next();
 
-        UpnpHeaders requestHeaders = new UpnpHeaders();
+        IUpnpHeaders requestHeaders = new UpnpHeaders();
         requestHeaders.add(UpnpHeader.Type.USER_AGENT, new UserAgentHeader("foo/bar"));
         requestHeaders.add("X-MY-HEADER", "foo");
 

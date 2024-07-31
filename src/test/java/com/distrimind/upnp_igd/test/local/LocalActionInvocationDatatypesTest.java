@@ -40,6 +40,8 @@ import static org.testng.Assert.assertNull;
  */
 public class LocalActionInvocationDatatypesTest {
 
+    public static final String FOUR = "four";
+
     @Test
     public void invokeActions() throws Exception {
 
@@ -88,7 +90,7 @@ public class LocalActionInvocationDatatypesTest {
         svc.getExecutor(invocation.getAction()).execute(invocation);
 		assertNull(invocation.getFailure());
         assertEquals(invocation.getOutput().size(), 1);
-        assertEquals(invocation.getOutput("four").toString(), "456");
+        assertEquals(invocation.getOutput(FOUR).toString(), "456");
 
         invocation = new ActionInvocation<>(svc.getAction("GetFive"));
         assertEquals(svc.getAction("GetFive").getOutputArguments().iterator().next().getDatatype().getBuiltin().getDescriptorName(), "int");
@@ -120,7 +122,7 @@ public class LocalActionInvocationDatatypesTest {
         @UpnpStateVariable(sendEvents = false)
         private short three;
 
-        @UpnpStateVariable(sendEvents = false, name = "four", datatype = "int")
+        @UpnpStateVariable(sendEvents = false, name = FOUR, datatype = "int")
         private int four;
 
         public LocalTestServiceOne() {
@@ -137,7 +139,7 @@ public class LocalActionInvocationDatatypesTest {
         // This works and the byte[] should not interfere with any Object[] handling in the executors
         @UpnpAction(out = @UpnpOutputArgument(name = "RandomData"))
         public byte[] getData() {
-            return data;
+            return data==null?null:data.clone();
         }
 
         // This fails, we can't just put random data into a string
@@ -162,12 +164,12 @@ public class LocalActionInvocationDatatypesTest {
         }
 
         // Conversion of int into integer/UPnP "int" datatype
-        @UpnpAction(out = @UpnpOutputArgument(name = "four"))
+        @UpnpAction(out = @UpnpOutputArgument(name = FOUR))
         public Integer getFour() {
             return 456;
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "five", stateVariable = "four"))
+        @UpnpAction(out = @UpnpOutputArgument(name = "five", stateVariable = FOUR))
         public int getFive() {
             return 456;
         }

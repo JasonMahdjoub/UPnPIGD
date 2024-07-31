@@ -53,7 +53,8 @@ public class DeviceGraphTest {
         Collection<? extends LocalDevice<?>> embedded = ld.findEmbeddedDevices();
         assertEquals(embedded.size(), 2);
 
-        boolean haveOne = false, haveTwo = false;
+        boolean haveOne = false;
+        boolean haveTwo = false;
 
         for (LocalDevice<?> em : embedded) {
             if (em.getIdentity().getUdn().equals(ld.getEmbeddedDevices().iterator().next().getIdentity().getUdn())) haveOne = true;
@@ -133,7 +134,9 @@ public class DeviceGraphTest {
 
         Collection<? extends Service<?, ?, ?>> services = ld.findServices();
 
-        boolean haveOne = false, haveTwo = false, haveThree = false;
+        boolean haveOne = false;
+        boolean haveTwo = false;
+        boolean haveThree = false;
         for (Service<?, ?, ?> service : services) {
             if (service.getServiceId().equals(one.getServiceId())) haveOne = true;
             if (service.getServiceId().equals(two.getServiceId())) haveTwo = true;
@@ -208,7 +211,9 @@ public class DeviceGraphTest {
         Collection<ServiceType> svcTypes = ld.findServiceTypes();
         assertEquals(svcTypes.size(), 3);
 
-        boolean haveOne = false, haveTwo = false, haveThree = false;
+        boolean haveOne = false;
+        boolean haveTwo = false;
+        boolean haveThree = false;
 
         for (ServiceType svcType : svcTypes) {
             if (svcType.equals(ld.getServices().get(0).getServiceType())) haveOne = true;

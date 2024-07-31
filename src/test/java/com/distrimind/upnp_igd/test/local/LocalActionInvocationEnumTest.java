@@ -29,6 +29,7 @@ import com.distrimind.upnp_igd.model.meta.DeviceDetails;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.types.UDADeviceType;
+import com.distrimind.upnp_igd.test.control.ActionSampleData;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -37,6 +38,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 public class LocalActionInvocationEnumTest {
+
+    public static final String GET_TARGET = "GetTarget";
+    public static final String NEW_TARGET_VALUE = "NewTargetValue";
+    public static final String SWITCH_POWER = "SwitchPower";
+    public static final String RET_TARGET_VALUE = "RetTargetValue";
+    public static final String RESULT_STATUS = "ResultStatus";
 
     public <T> LocalDevice<T> createTestDevice(LocalService<T> service) throws Exception {
         return new LocalDevice<>(
@@ -62,19 +69,19 @@ public class LocalActionInvocationEnumTest {
 
         LocalService<?> svc = SampleData.getFirstService(device);
 
-        ActionInvocation<? extends LocalService<?>> checkTargetInvocation = new ActionInvocation<>(svc.getAction("GetTarget"));
+        ActionInvocation<? extends LocalService<?>> checkTargetInvocation = new ActionInvocation<>(svc.getAction(GET_TARGET));
         svc.getExecutor(checkTargetInvocation.getAction()).executeWithUntypedGeneric(checkTargetInvocation);
 		assertNull(checkTargetInvocation.getFailure());
         assertEquals(checkTargetInvocation.getOutput().size(), 1);
         assertEquals(checkTargetInvocation.getOutput().iterator().next().toString(), "UNKNOWN");
 
         ActionInvocation<? extends LocalService<?>> setTargetInvocation = new ActionInvocation<>(svc.getAction("SetTarget"));
-        setTargetInvocation.setInput("NewTargetValue", "ON");
+        setTargetInvocation.setInput(NEW_TARGET_VALUE, "ON");
         svc.getExecutor(setTargetInvocation.getAction()).executeWithUntypedGeneric(setTargetInvocation);
 		assertNull(setTargetInvocation.getFailure());
         assertEquals(setTargetInvocation.getOutput().size(), 0);
 
-        ActionInvocation<? extends LocalService<?>> getTargetInvocation = new ActionInvocation<>(svc.getAction("GetTarget"));
+        ActionInvocation<? extends LocalService<?>> getTargetInvocation = new ActionInvocation<>(svc.getAction(GET_TARGET));
         svc.getExecutor(getTargetInvocation.getAction()).executeWithUntypedGeneric(getTargetInvocation);
 		assertNull(getTargetInvocation.getFailure());
         assertEquals(getTargetInvocation.getOutput().size(), 1);
@@ -91,8 +98,8 @@ public class LocalActionInvocationEnumTest {
     /* ####################################################################################################### */
 
     @UpnpService(
-            serviceId = @UpnpServiceId("SwitchPower"),
-            serviceType = @UpnpServiceType(value = "SwitchPower", version = 1)
+            serviceId = @UpnpServiceId(SWITCH_POWER),
+            serviceType = @UpnpServiceType(value = ActionSampleData.SWITCH_POWER, version = 1)
     )
     public static class TestServiceOne {
 
@@ -109,18 +116,18 @@ public class LocalActionInvocationEnumTest {
         private boolean status = false;
 
         @UpnpAction
-        public void setTarget(@UpnpInputArgument(name = "NewTargetValue") String newTargetValue) {
+        public void setTarget(@UpnpInputArgument(name = NEW_TARGET_VALUE) String newTargetValue) {
             target = Target.valueOf(newTargetValue);
 
             status = target == Target.ON;
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "RetTargetValue"))
+        @UpnpAction(out = @UpnpOutputArgument(name = RET_TARGET_VALUE))
         public Target getTarget() {
             return target;
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "ResultStatus"))
+        @UpnpAction(out = @UpnpOutputArgument(name = RESULT_STATUS))
         public boolean getStatus() {
             return status;
         }
@@ -130,8 +137,8 @@ public class LocalActionInvocationEnumTest {
     /* ####################################################################################################### */
 
     @UpnpService(
-            serviceId = @UpnpServiceId("SwitchPower"),
-            serviceType = @UpnpServiceType(value = "SwitchPower", version = 1)
+            serviceId = @UpnpServiceId(ActionSampleData.SWITCH_POWER),
+            serviceType = @UpnpServiceType(value = ActionSampleData.SWITCH_POWER, version = 1)
     )
     public static class TestServiceTwo {
 
@@ -148,13 +155,13 @@ public class LocalActionInvocationEnumTest {
         private boolean status = false;
 
         @UpnpAction
-        public void setTarget(@UpnpInputArgument(name = "NewTargetValue") String newTargetValue) {
+        public void setTarget(@UpnpInputArgument(name = NEW_TARGET_VALUE) String newTargetValue) {
             target = Target.valueOf(newTargetValue);
 
             status = target == Target.ON;
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "RetTargetValue", stateVariable = "Target", getterName = "getRealTarget"))
+        @UpnpAction(out = @UpnpOutputArgument(name = RET_TARGET_VALUE, stateVariable = "Target", getterName = "getRealTarget"))
         public void getTarget() {
         }
 
@@ -162,7 +169,7 @@ public class LocalActionInvocationEnumTest {
             return target;
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "ResultStatus"))
+        @UpnpAction(out = @UpnpOutputArgument(name = RESULT_STATUS))
         public boolean getStatus() {
             return status;
         }
@@ -171,8 +178,8 @@ public class LocalActionInvocationEnumTest {
     /* ####################################################################################################### */
 
     @UpnpService(
-            serviceId = @UpnpServiceId("SwitchPower"),
-            serviceType = @UpnpServiceType(value = "SwitchPower", version = 1)
+            serviceId = @UpnpServiceId(ActionSampleData.SWITCH_POWER),
+            serviceType = @UpnpServiceType(value = ActionSampleData.SWITCH_POWER, version = 1)
     )
     public static class TestServiceThree {
 
@@ -201,18 +208,18 @@ public class LocalActionInvocationEnumTest {
         private boolean status = false;
 
         @UpnpAction
-        public void setTarget(@UpnpInputArgument(name = "NewTargetValue") String newTargetValue) {
+        public void setTarget(@UpnpInputArgument(name = NEW_TARGET_VALUE) String newTargetValue) {
             target = Target.valueOf(newTargetValue);
 
             status = target == Target.ON;
         }
 
-        @UpnpAction(name = "GetTarget", out = @UpnpOutputArgument(name = "RetTargetValue", getterName = "getTarget"))
+        @UpnpAction(name = GET_TARGET, out = @UpnpOutputArgument(name = RET_TARGET_VALUE, getterName = "getTarget"))
         public TargetHolder getTargetHolder() {
             return new TargetHolder(target);
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "ResultStatus"))
+        @UpnpAction(out = @UpnpOutputArgument(name = RESULT_STATUS))
         public boolean getStatus() {
             return status;
         }
@@ -221,8 +228,8 @@ public class LocalActionInvocationEnumTest {
     /* ####################################################################################################### */
 
     @UpnpService(
-            serviceId = @UpnpServiceId("SwitchPower"),
-            serviceType = @UpnpServiceType(value = "SwitchPower", version = 1)
+            serviceId = @UpnpServiceId(ActionSampleData.SWITCH_POWER),
+            serviceType = @UpnpServiceType(value = ActionSampleData.SWITCH_POWER, version = 1)
     )
     public static class TestServiceFour {
 
@@ -251,18 +258,18 @@ public class LocalActionInvocationEnumTest {
         private boolean status = false;
 
         @UpnpAction
-        public void setTarget(@UpnpInputArgument(name = "NewTargetValue") String newTargetValue) {
+        public void setTarget(@UpnpInputArgument(name = NEW_TARGET_VALUE) String newTargetValue) {
             target = Target.valueOf(newTargetValue);
 
             status = target == Target.ON;
         }
 
-        @UpnpAction(name = "GetTarget", out = @UpnpOutputArgument(name = "RetTargetValue", stateVariable = "Target", getterName = "getT"))
+        @UpnpAction(name = GET_TARGET, out = @UpnpOutputArgument(name = RET_TARGET_VALUE, stateVariable = "Target", getterName = "getT"))
         public TargetHolder getTargetHolder() {
             return new TargetHolder(target);
         }
 
-        @UpnpAction(out = @UpnpOutputArgument(name = "ResultStatus"))
+        @UpnpAction(out = @UpnpOutputArgument(name = RESULT_STATUS))
         public boolean getStatus() {
             return status;
         }

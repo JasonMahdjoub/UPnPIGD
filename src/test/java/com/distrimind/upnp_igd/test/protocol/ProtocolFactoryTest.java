@@ -37,7 +37,7 @@ public class ProtocolFactoryTest {
     public void noSyncProtocol() throws Exception {
         MockUpnpService upnpService = new MockUpnpService();
 
-        ReceivingSync<?, ?> protocol = upnpService.getProtocolFactory().createReceivingSync(
+        upnpService.getProtocolFactory().createReceivingSync(
             new StreamRequestMessage(
                 UpnpRequest.Method.NOTIFY,
                 URI.create("/dev/1234/upnp-org/SwitchPower/invalid"),

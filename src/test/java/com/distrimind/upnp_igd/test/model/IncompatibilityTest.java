@@ -47,6 +47,9 @@ import static org.testng.Assert.*;
 
 public class IncompatibilityTest {
 
+    public static final String UPNP_ORG = "upnp-org";
+    public static final String URN = "urn:";
+
     @Test
     public void validateMSFTServiceType() {
         // TODO: UPNP VIOLATION: Microsoft violates the spec and sends periods in domain names instead of hyphens!
@@ -60,7 +63,7 @@ public class IncompatibilityTest {
     @Test
     public void validateAzureusServiceId() {
         ServiceId serviceId = ServiceId.valueOf("urn:upnp-org:serviceId:urn:schemas-upnp-org:service:ConnectionManager");
-        assertEquals(serviceId.getNamespace(), "upnp-org");
+        assertEquals(serviceId.getNamespace(), UPNP_ORG);
         assertEquals(serviceId.getId(), "urn:schemas-upnp-org:service:ConnectionManager");
     }
 
@@ -87,12 +90,12 @@ public class IncompatibilityTest {
     public void validateIntelServiceId() {
         // The Intel UPnP tools NetworkLight sends a valid but weird identifier with a dot
         ServiceId serviceId = ServiceId.valueOf("urn:upnp-org:serviceId:DimmingService.0001");
-        assertEquals(serviceId.getNamespace(), "upnp-org");
+        assertEquals(serviceId.getNamespace(), UPNP_ORG);
         assertEquals(serviceId.getId(), "DimmingService.0001");
 
         // TODO: UPNP VIOLATION: The Intel UPnP tools MediaRenderer sends an invalid identifier, we need to deal
         serviceId = ServiceId.valueOf("urn:schemas-upnp-org:service:AVTransport");
-        assertEquals(serviceId.getNamespace(), "upnp-org");
+        assertEquals(serviceId.getNamespace(), UPNP_ORG);
         assertEquals(serviceId.getId(), "AVTransport");
     }
 
@@ -219,7 +222,7 @@ public class IncompatibilityTest {
 
         boolean foundA = false;
         for (String s : stateVariable.getTypeDetails().getAllowedValues()) {
-			if (s.equals("A")) {
+			if ("A".equals(s)) {
 				foundA = true;
 				break;
 			}
@@ -277,22 +280,22 @@ public class IncompatibilityTest {
         UDAServiceId serviceId = UDAServiceId.valueOf("ContentDirectory");
         assertEquals(serviceId.getNamespace(), UDAServiceId.DEFAULT_NAMESPACE);
         assertEquals(serviceId.getId(), "ContentDirectory");
-        assertEquals(serviceId.toString(), "urn:" + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:ContentDirectory");
+        assertEquals(serviceId.toString(), URN + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:ContentDirectory");
 
         serviceId = UDAServiceId.valueOf("ConnectionManager");
         assertEquals(serviceId.getNamespace(), UDAServiceId.DEFAULT_NAMESPACE);
         assertEquals(serviceId.getId(), "ConnectionManager");
-        assertEquals(serviceId.toString(), "urn:" + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:ConnectionManager");
+        assertEquals(serviceId.toString(), URN + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:ConnectionManager");
 
         serviceId = UDAServiceId.valueOf("RenderingControl");
         assertEquals(serviceId.getNamespace(), UDAServiceId.DEFAULT_NAMESPACE);
         assertEquals(serviceId.getId(), "RenderingControl");
-        assertEquals(serviceId.toString(), "urn:" + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:RenderingControl");
+        assertEquals(serviceId.toString(), URN + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:RenderingControl");
 
         serviceId = UDAServiceId.valueOf("AVTransport");
         assertEquals(serviceId.getNamespace(), UDAServiceId.DEFAULT_NAMESPACE);
         assertEquals(serviceId.getId(), "AVTransport");
-        assertEquals(serviceId.toString(), "urn:" + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:AVTransport");
+        assertEquals(serviceId.toString(), URN + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:AVTransport");
     }
 
     // TODO: UPNP VIOLATION: EyeTV Netstream uses colons in device type token
@@ -328,7 +331,7 @@ public class IncompatibilityTest {
         ServiceId serviceId = ServiceId.valueOf("urn:upnp-orgerviceId:urnchemas-upnp-orgervice:Foo");
         assertEquals(serviceId.getNamespace(), UDAServiceId.DEFAULT_NAMESPACE);
         assertEquals(serviceId.getId(), "Foo");
-        assertEquals(serviceId.toString(), "urn:" + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:Foo");
+        assertEquals(serviceId.toString(), URN + UDAServiceId.DEFAULT_NAMESPACE + ":serviceId:Foo");
     }
 
     // TODO: UPNP VIOLATION: Escient doesn't provide any device type token
@@ -344,7 +347,7 @@ public class IncompatibilityTest {
     @Test
     public void parseKodakServiceId() {
         ServiceId serviceId = ServiceId.valueOf("urn:upnp-org:serviceId:");
-        assertEquals(serviceId.getNamespace(), "upnp-org");
+        assertEquals(serviceId.getNamespace(), UPNP_ORG);
         assertEquals(serviceId.getId(), ServiceId.UNKNOWN);
         assertEquals(serviceId.toString(), "urn:upnp-org:serviceId:" + ServiceId.UNKNOWN);
     }

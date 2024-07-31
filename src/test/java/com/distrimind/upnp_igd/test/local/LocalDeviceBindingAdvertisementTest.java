@@ -84,7 +84,8 @@ public class LocalDeviceBindingAdvertisementTest {
         // TODO: more tests
 
         ServiceDescriptorBinder svcBinder = upnpService.getConfiguration().getServiceDescriptorBinderUDA10();
-        String serviceXml = svcBinder.generate(binaryLight.getServices().iterator().next());
+        /*String serviceXml =*/
+                svcBinder.generate(binaryLight.getServices().iterator().next());
 
         // TODO: more tests
     }

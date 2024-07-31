@@ -34,7 +34,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Collection;
-import java.util.logging.Logger;
 
 import com.distrimind.upnp_igd.model.profile.DeviceDetailsProvider;
 import org.testng.Assert;
@@ -42,7 +41,6 @@ import org.testng.Assert;
 
 public class SampleData {
 
-    private static final Logger log = Logger.getLogger(SampleData.class.getName());
 
     /* ###################################################################################### */
 

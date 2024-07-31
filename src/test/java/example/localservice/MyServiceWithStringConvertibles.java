@@ -26,8 +26,10 @@ import com.distrimind.upnp_igd.model.types.csv.CSVInteger;
         serviceType = @UpnpServiceType(namespace = "mydomain", value = "MyService"),
         stringConvertibleTypes = MyStringConvertible.class
 )
+@SuppressWarnings("PMD.LooseCoupling")
 public class MyServiceWithStringConvertibles {
 
+    public static final String OUT = "Out";
     @UpnpStateVariable
     private URL myURL;
 
@@ -40,7 +42,7 @@ public class MyServiceWithStringConvertibles {
     @UpnpStateVariable
     private MyStringConvertible myStringConvertible;
 
-    @UpnpAction(out = @UpnpOutputArgument(name = "Out"))
+    @UpnpAction(out = @UpnpOutputArgument(name = OUT))
     public URL getMyURL() {
         return myURL;
     }
@@ -50,7 +52,7 @@ public class MyServiceWithStringConvertibles {
         this.myURL = myURL;
     }
 
-    @UpnpAction(out = @UpnpOutputArgument(name = "Out"))
+    @UpnpAction(out = @UpnpOutputArgument(name = OUT))
     public URI getMyURI() {
         return myURI;
     }
@@ -60,7 +62,7 @@ public class MyServiceWithStringConvertibles {
         this.myURI = myURI;
     }
 
-    @UpnpAction(out = @UpnpOutputArgument(name = "Out"))
+    @UpnpAction(out = @UpnpOutputArgument(name = OUT))
     public CSV<Integer> getMyNumbers() {
         CSVInteger wrapper = new CSVInteger();
         if (myNumbers != null)
@@ -76,7 +78,7 @@ public class MyServiceWithStringConvertibles {
         this.myNumbers = myNumbers;
     }
 
-    @UpnpAction(out = @UpnpOutputArgument(name = "Out"))
+    @UpnpAction(out = @UpnpOutputArgument(name = OUT))
     public MyStringConvertible getMyStringConvertible() {
         return myStringConvertible;
     }

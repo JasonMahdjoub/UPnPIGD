@@ -193,7 +193,7 @@ public class InvalidEventXMLProcessingTest {
         // the XML value of that state variable
         boolean found = false;
         for (StateVariableValue<RemoteService> stateVariableValue : message.getStateVariableValues()) {
-            if (stateVariableValue.getStateVariable().getName().equals("LastChange")
+            if ("LastChange".equals(stateVariableValue.getStateVariable().getName())
                 && stateVariableValue.getValue() != null) {
                 found = true;
                 String lastChange = (String) stateVariableValue.getValue();
@@ -207,7 +207,7 @@ public class InvalidEventXMLProcessingTest {
     }
 
 
-
+    @SuppressWarnings("PMD")
     public static void parseLastChangeXML(Element e, Map<String, String> m) throws ParserConfigurationException {
         Elements nl=e.children();
         if (!nl.isEmpty())

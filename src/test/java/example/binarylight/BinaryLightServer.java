@@ -13,6 +13,7 @@ import com.distrimind.upnp_igd.UpnpServiceImpl;
 
 import java.io.IOException;
 
+@SuppressWarnings("PMD")
 public class BinaryLightServer implements Runnable {
 
     public static void main(String[] args) throws Exception {
