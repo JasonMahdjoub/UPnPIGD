@@ -123,7 +123,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
         // Assemble message
         IncomingDatagramMessage<UpnpRequest> requestMessage;
         UpnpRequest upnpRequest = new UpnpRequest(UpnpRequest.Method.getByHttpName(requestMethod));
-        upnpRequest.setHttpMinorVersion(httpProtocol.toUpperCase(Locale.ROOT).equals("HTTP/1.1") ? 1 : 0);
+        upnpRequest.setHttpMinorVersion("HTTP/1.1".equals(httpProtocol.toUpperCase(Locale.ROOT)) ? 1 : 0);
         requestMessage = new IncomingDatagramMessage<>(upnpRequest, datagram.getAddress(), datagram.getPort(), receivedOnAddress);
 
         requestMessage.setHeaders(headers);
@@ -144,7 +144,7 @@ public class DatagramProcessorImpl implements DatagramProcessor {
         // Assemble the message
         IncomingDatagramMessage<?> responseMessage;
         UpnpResponse upnpResponse = new UpnpResponse(statusCode, statusMessage);
-        upnpResponse.setHttpMinorVersion(httpProtocol.toUpperCase(Locale.ROOT).equals("HTTP/1.1") ? 1 : 0);
+        upnpResponse.setHttpMinorVersion("HTTP/1.1".equals(httpProtocol.toUpperCase(Locale.ROOT)) ? 1 : 0);
         responseMessage = new IncomingDatagramMessage<>(upnpResponse, datagram.getAddress(), datagram.getPort(), receivedOnAddress);
 
         responseMessage.setHeaders(headers);

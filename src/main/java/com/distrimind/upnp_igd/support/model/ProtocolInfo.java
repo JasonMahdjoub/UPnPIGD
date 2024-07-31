@@ -32,6 +32,7 @@ public class ProtocolInfo {
     protected String contentFormat;
     protected String additionalInfo = WILDCARD;
 
+    @SuppressWarnings("PMD.AvoidReassigningParameters")
     public ProtocolInfo(String s) throws InvalidValueException {
         if (s == null) throw new NullPointerException();
         s = s.trim();

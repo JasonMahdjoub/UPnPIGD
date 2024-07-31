@@ -47,7 +47,7 @@ public class LastChange {
     final private Event event;
     final private LastChangeParser parser;
     private String previousValue;
-
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     public LastChange(String s) {
         throw new UnsupportedOperationException("This constructor is only for service binding detection");
     }

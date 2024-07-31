@@ -68,27 +68,35 @@ public class LoggingUtil {
      * will do nothing if the 'java.util.logging.config.file' property is set.
    
      *
-     * @param is An optional input stream that overrides the default logging properties.
+     * @param _is An optional input stream that overrides the default logging properties.
      * @throws IOException If reading the properties or instantiating handlers failed.
      */
-    public static void loadDefaultConfiguration(InputStream is) throws Exception {
+    @SuppressWarnings({"PMD.CloseResource", "PMD.UseTryWithResources", "PMD.CompareObjectsWithEquals"})
+    public static void loadDefaultConfiguration(InputStream _is) throws Exception {
         if (System.getProperty("java.util.logging.config.file") != null) return;
-
-        if (is == null) {
+        InputStream is;
+        if (_is == null) {
             // Fallback to default-logging.properties in the root of the classpath
             is = Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG);
         }
+        else
+            is=_is;
+        try {
+            if (is == null) return;
 
-        if (is == null) return;
+            List<String> handlerNames = new ArrayList<>();
 
-        List<String> handlerNames = new ArrayList<>();
+            LogManager.getLogManager().readConfiguration(
+                    spliceHandlers(is, handlerNames)
+            );
 
-        LogManager.getLogManager().readConfiguration(
-                spliceHandlers(is, handlerNames)
-        );
-
-        Handler[] handlers = instantiateHandlers(handlerNames);
-        resetRootHandler(handlers);
+            Handler[] handlers = instantiateHandlers(handlerNames);
+            resetRootHandler(handlers);
+        }
+        finally {
+            if (is!=_is)
+                is.close();
+        }
     }
 
     /**
@@ -138,7 +146,7 @@ public class LoggingUtil {
         for (Map.Entry<Object, Object> entry : props.entrySet()) {
 
             // Hold any 'handlers' property
-            if (entry.getKey().equals("handlers")) {
+            if ("handlers".equals(entry.getKey())) {
                 handlersProperties.add(entry.getValue().toString());
             } else {
                 sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");

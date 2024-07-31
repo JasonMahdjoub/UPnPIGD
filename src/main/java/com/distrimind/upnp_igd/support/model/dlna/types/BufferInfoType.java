@@ -59,7 +59,7 @@ public class BufferInfoType {
                     targetDuration = Long.parseLong(matcher.group(6));
                 }
                 if (matcher.group(7) != null) {
-                    fullnessReports = matcher.group(8).equals("1");
+                    fullnessReports = "1".equals(matcher.group(8));
                 }
                 return new BufferInfoType(dejitterSize, cdb, targetDuration, fullnessReports);
             } catch (NumberFormatException ignored) {

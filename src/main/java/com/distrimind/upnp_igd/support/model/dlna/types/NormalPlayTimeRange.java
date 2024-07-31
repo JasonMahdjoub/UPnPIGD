@@ -94,14 +94,17 @@ public class NormalPlayTimeRange {
     public static NormalPlayTimeRange valueOf(String s) throws InvalidValueException {
         return valueOf(s, false);
     }
-    
+
+    @SuppressWarnings("PMD.ImplicitSwitchFallThrough")
     public static NormalPlayTimeRange valueOf(String s, boolean mandatoryTimeEnd) throws InvalidValueException {
         if (s.startsWith(PREFIX)) {
-            NormalPlayTime timeStart, timeEnd = null, timeDuration = null;
+            NormalPlayTime timeStart;
+            NormalPlayTime timeEnd = null;
+            NormalPlayTime timeDuration = null;
             String[] params = s.substring(PREFIX.length()).split("[-/]");
             switch (params.length) {
                 case 3:
-                    if (!params[2].isEmpty() && !params[2].equals("*")) {
+                    if (!params[2].isEmpty() && !"*".equals(params[2])) {
                         timeDuration = NormalPlayTime.valueOf(params[2]);
                     }
                 case 2:

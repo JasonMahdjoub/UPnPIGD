@@ -29,7 +29,6 @@ import java.util.logging.Logger;
  */
 public abstract class GetCurrentTransportActions extends ActionCallback {
 
-    private static final Logger log = Logger.getLogger(GetCurrentTransportActions.class.getName());
 
     public GetCurrentTransportActions(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);

@@ -60,6 +60,7 @@ public class DLNAProtocolInfo extends ProtocolInfo {
         parseAdditionalInfo();
     }
 
+    @SuppressWarnings("PMD.LooseCoupling")
     public DLNAProtocolInfo(Protocol protocol, String network, String contentFormat, EnumMap<DLNAAttribute.Type, DLNAAttribute<?>> attributes) {
         super(protocol, network, contentFormat, "");
         this.attributes.putAll(attributes);

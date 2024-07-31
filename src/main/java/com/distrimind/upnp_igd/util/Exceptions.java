@@ -21,6 +21,7 @@ package com.distrimind.upnp_igd.util;
  */
 public class Exceptions {
 
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	public static Throwable unwrap(Throwable throwable) throws IllegalArgumentException {
 		if (throwable == null) {
 			throw new IllegalArgumentException("Cannot unwrap null throwable");

@@ -29,7 +29,6 @@ import java.util.logging.Logger;
  */
 public abstract class GetMediaInfo extends ActionCallback {
 
-    private static final Logger log = Logger.getLogger(GetMediaInfo.class.getName());
 
     public GetMediaInfo(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);

@@ -20,6 +20,7 @@ package com.distrimind.upnp_igd.support.shared;
  */
 public class AWTExceptionHandler {
 
+    @SuppressWarnings("PMD")
     public void handle(Throwable ex) {
         System.err.println("============= The application encountered an unrecoverable error, exiting... =============");
         ex.printStackTrace(System.err);

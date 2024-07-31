@@ -33,7 +33,7 @@ public class StateMachineBuilder {
 													  Object[] constructorArguments) {
         return (T)
                 Proxy.newProxyInstance(
-                        stateMachine.getClassLoader(),
+                        Thread.currentThread().getContextClassLoader(),
                         new Class[]{stateMachine},
                         new StateMachineInvocationHandler(
                                 Arrays.asList(stateMachine.getAnnotation(States.class).value()),

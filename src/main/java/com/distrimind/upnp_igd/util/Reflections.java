@@ -26,6 +26,7 @@ import java.util.Map;
 /**
  * @author Christian Bauer
  */
+@SuppressWarnings("PMD.AvoidAccessibilityAlteration")
 public class Reflections {
 
 	// ####################
@@ -226,7 +227,8 @@ public class Reflections {
 		}
 		List<Class<?>> typeArgumentsAsClasses = new ArrayList<>();
 		// resolve types by chasing down type variables.
-		for (Type baseType : actualTypeArguments) {
+		for (Type bt : actualTypeArguments) {
+			Type baseType=bt;
 			while (resolvedTypes.containsKey(baseType)) {
 				baseType = resolvedTypes.get(baseType);
 			}
@@ -265,12 +267,12 @@ public class Reflections {
 			field.setAccessible(true);
 			return get(field, target);
 		}
+		catch (RuntimeException e)
+		{
+			throw e;
+		}
 		catch (Exception e) {
-			if (e instanceof RuntimeException) {
-				throw (RuntimeException) e;
-			} else {
-				throw new IllegalArgumentException("exception setting: " + field.getName(), e);
-			}
+			throw new IllegalArgumentException("exception setting: " + field.getName(), e);
 		}
 		finally {
 			field.setAccessible(accessible);
@@ -283,14 +285,13 @@ public class Reflections {
 			field.setAccessible(true);
 			set(field, target, value);
 		}
-		catch (Exception e) {
-			if (e instanceof RuntimeException) {
-				throw (RuntimeException) e;
-			} else {
-				throw new IllegalArgumentException("exception setting: " + field.getName(), e);
-			}
+		catch (RuntimeException e)
+		{
+			throw e;
 		}
-		finally {
+		catch (Exception e) {
+			throw new IllegalArgumentException("exception setting: " + field.getName(), e);
+		}		finally {
 			field.setAccessible(accessible);
 		}
 	}
@@ -299,12 +300,12 @@ public class Reflections {
 		try {
 			return invoke(method, target, args);
 		}
+		catch (RuntimeException e)
+		{
+			throw e;
+		}
 		catch (Exception e) {
-			if (e instanceof RuntimeException) {
-				throw (RuntimeException) e;
-			} else {
-				throw new RuntimeException("exception invoking: " + method.getName(), e);
-			}
+			throw new RuntimeException("exception invoking: " + method.getName(), e);
 		}
 	}
 

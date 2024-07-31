@@ -59,7 +59,11 @@ import java.util.logging.Logger;
 public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandler {
 
     private static final Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
-    
+    public static final String FOR = " for: ";
+    public static final String SOAP_BODY_BEGIN = "===================================== SOAP BODY BEGIN ============================================";
+    public static final String SOAP_BODY_END = "-===================================== SOAP BODY END ============================================";
+    public static final String CAN_T_TRANSFORM_MESSAGE_PAYLOAD = "Can't transform message payload: ";
+
     protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
     	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
     }
@@ -68,7 +72,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     public <S extends Service<?, ?, ?>> void writeBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
 		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing body of " + requestMessage + " for: " + actionInvocation);
+			log.fine("Writing body of " + requestMessage + FOR + actionInvocation);
 		}
 
 		try {
@@ -81,13 +85,13 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             writeBodyRequest(d, body, requestMessage, actionInvocation);
 
             if (log.isLoggable(Level.FINER)) {
-                log.finer("===================================== SOAP BODY BEGIN ============================================");
+                log.finer(SOAP_BODY_BEGIN);
                 log.finer(requestMessage.getBodyString());
-                log.finer("-===================================== SOAP BODY END ============================================");
+                log.finer(SOAP_BODY_END);
             }
 
         } catch (Exception ex) {
-            throw new UnsupportedDataException("Can't transform message payload: " + ex, ex);
+            throw new UnsupportedDataException(CAN_T_TRANSFORM_MESSAGE_PAYLOAD + ex, ex);
         }
     }
 
@@ -95,7 +99,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     public <S extends Service<?, ?, ?>> void writeBody(ActionResponseMessage responseMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
 		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing body of " + responseMessage + " for: " + actionInvocation);
+			log.fine("Writing body of " + responseMessage + FOR + actionInvocation);
 		}
 
 		try {
@@ -112,13 +116,13 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             }
 
             if (log.isLoggable(Level.FINER)) {
-                log.finer("===================================== SOAP BODY BEGIN ============================================");
+                log.finer(SOAP_BODY_BEGIN);
                 log.finer(responseMessage.getBodyString());
-                log.finer("-===================================== SOAP BODY END ============================================");
+                log.finer(SOAP_BODY_END);
             }
 
         } catch (Exception ex) {
-            throw new UnsupportedDataException("Can't transform message payload: " + ex, ex);
+            throw new UnsupportedDataException(CAN_T_TRANSFORM_MESSAGE_PAYLOAD + ex, ex);
         }
     }
 
@@ -126,12 +130,12 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
 		if (log.isLoggable(Level.FINE)) {
-			log.fine("Reading body of " + requestMessage + " for: " + actionInvocation);
+			log.fine("Reading body of " + requestMessage + FOR + actionInvocation);
 		}
 		if (log.isLoggable(Level.FINER)) {
-            log.finer("===================================== SOAP BODY BEGIN ============================================");
+            log.finer(SOAP_BODY_BEGIN);
             log.finer(requestMessage.getBodyString());
-            log.finer("-===================================== SOAP BODY END ============================================");
+            log.finer(SOAP_BODY_END);
         }
 
         String body = getMessageBody(requestMessage);
@@ -149,7 +153,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             readBodyRequest(bodyElement, requestMessage, actionInvocation);
 
         } catch (Exception ex) {
-            throw new UnsupportedDataException("Can't transform message payload: " + ex, ex, body);
+            throw new UnsupportedDataException(CAN_T_TRANSFORM_MESSAGE_PAYLOAD + ex, ex, body);
         }
     }
 
@@ -157,12 +161,12 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     public <S extends Service<?, ?, ?>> void readBody(ActionResponseMessage responseMsg, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
 		if (log.isLoggable(Level.FINE)) {
-			log.fine("Reading body of " + responseMsg + " for: " + actionInvocation);
+			log.fine("Reading body of " + responseMsg + FOR + actionInvocation);
 		}
 		if (log.isLoggable(Level.FINER)) {
-            log.finer("===================================== SOAP BODY BEGIN ============================================");
+            log.finer(SOAP_BODY_BEGIN);
             log.finer(responseMsg.getBodyString());
-            log.finer("-===================================== SOAP BODY END ============================================");
+            log.finer(SOAP_BODY_END);
         }
 
         String body = getMessageBody(responseMsg);
@@ -186,7 +190,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             }
 
         } catch (Exception ex) {
-    		throw new UnsupportedDataException("Can't transform message payload: " + ex, ex, body);
+    		throw new UnsupportedDataException(CAN_T_TRANSFORM_MESSAGE_PAYLOAD + ex, ex, body);
         }
     }
 
@@ -466,7 +470,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             if (bodyChild.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
-            if (getUnprefixedNodeName(bodyChild).equals("Fault")) {
+            if ("Fault".equals(getUnprefixedNodeName(bodyChild))) {
 
                 receivedFaultElement = true;
 
@@ -478,7 +482,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                     if (faultChild.getNodeType() != Node.ELEMENT_NODE)
                         continue;
 
-                    if (getUnprefixedNodeName(faultChild).equals("detail")) {
+                    if ("detail".equals(getUnprefixedNodeName(faultChild))) {
 
                         NodeList detailChildren = faultChild.getChildNodes();
                         for (int x = 0; x < detailChildren.getLength(); x++) {
@@ -487,7 +491,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                             if (detailChild.getNodeType() != Node.ELEMENT_NODE)
                                 continue;
 
-                            if (getUnprefixedNodeName(detailChild).equals("UPnPError")) {
+                            if ("UPnPError".equals(getUnprefixedNodeName(detailChild))) {
 
                                 NodeList errorChildren = detailChild.getChildNodes();
                                 for (int y = 0; y < errorChildren.getLength(); y++) {
@@ -496,10 +500,10 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                                     if (errorChild.getNodeType() != Node.ELEMENT_NODE)
                                         continue;
 
-                                    if (getUnprefixedNodeName(errorChild).equals("errorCode"))
+                                    if ("errorCode".equals(getUnprefixedNodeName(errorChild)))
                                         errorCode = XMLUtil.getTextContent(errorChild);
 
-                                    if (getUnprefixedNodeName(errorChild).equals("errorDescription"))
+                                    if ("errorDescription".equals(getUnprefixedNodeName(errorChild)))
                                         errorDescription = XMLUtil.getTextContent(errorChild);
                                 }
                             }

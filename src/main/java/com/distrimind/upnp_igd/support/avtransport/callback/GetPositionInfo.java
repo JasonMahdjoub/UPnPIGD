@@ -29,7 +29,6 @@ import java.util.logging.Logger;
  */
 public abstract class GetPositionInfo extends ActionCallback {
 
-    private static final Logger log = Logger.getLogger(GetPositionInfo.class.getName());
 
     public GetPositionInfo(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);

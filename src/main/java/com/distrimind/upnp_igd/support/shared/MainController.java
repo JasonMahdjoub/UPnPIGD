@@ -36,12 +36,13 @@ import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * @author Christian Bauer
  */
 public abstract class MainController extends AbstractController<JFrame> {
-
+    static final Logger loggger = Logger.getLogger(MainController.class.getName());
     // Dependencies
     final private LogController logController;
 
@@ -55,7 +56,7 @@ public abstract class MainController extends AbstractController<JFrame> {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-            System.out.println("Unable to load native look and feel: " + ex);
+            loggger.log(Level.SEVERE, "Unable to load native look and feel: ", ex);
         }
 
         // Exception handler
@@ -119,10 +120,11 @@ public abstract class MainController extends AbstractController<JFrame> {
     public void dispose() {
         super.dispose();
         ShutdownWindow.INSTANCE.setVisible(true);
-        new Thread(() -> System.exit(0)).start();
+        //new Thread(() -> System.exit(0)).start();
     }
 
     public static class ShutdownWindow extends JWindow {
+        private static final long serialVersionUID = 1L;
         final public static JWindow INSTANCE = new ShutdownWindow();
 
         protected ShutdownWindow() {

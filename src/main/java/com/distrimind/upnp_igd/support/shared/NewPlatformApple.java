@@ -49,7 +49,7 @@ public class NewPlatformApple {
 
         public static Object newInstance(Object obj, ShutdownHandler shutdownHandler) {
             return Proxy.newProxyInstance(
-                    obj.getClass().getClassLoader(),
+                    Thread.currentThread().getContextClassLoader(),
                     obj.getClass().getInterfaces(),
                     new AppListenerProxy(obj, shutdownHandler)
             );
@@ -71,7 +71,7 @@ public class NewPlatformApple {
                 } else {
                     result = m.invoke(object, args);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 // Ignore
             }
             return result;

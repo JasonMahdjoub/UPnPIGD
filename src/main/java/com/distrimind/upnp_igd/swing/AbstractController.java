@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class AbstractController<V extends Container> implements Controller<V> {
 
-    private static final Logger log = Logger.getLogger(AbstractController.class.getName());
+    static final Logger log = Logger.getLogger(AbstractController.class.getName());
 
     private V view;
     private Controller<? extends Container> parentController;

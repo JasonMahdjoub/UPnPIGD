@@ -139,12 +139,14 @@ public abstract class DOMElement<CHILD extends DOMElement<CHILD, PARENT>, PARENT
 		return child;
 	}
 
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	public CHILD appendChild(CHILD el, boolean copy) {
 		el = adoptOrImport(getW3CElement().getOwnerDocument(), el, copy);
 		getW3CElement().appendChild(el.getW3CElement());
 		return el;
 	}
 
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	public CHILD replaceChild(CHILD original, CHILD replacement, boolean copy) {
 		replacement = adoptOrImport(getW3CElement().getOwnerDocument(), replacement, copy);
 		getW3CElement().replaceChild(replacement.getW3CElement(), original.getW3CElement());
@@ -169,6 +171,7 @@ public abstract class DOMElement<CHILD extends DOMElement<CHILD, PARENT>, PARENT
 		}
 	}
 
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	protected CHILD adoptOrImport(Document document, CHILD child, boolean copy) {
 		if (document != null) {
 			if (copy) {

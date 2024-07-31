@@ -88,7 +88,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 	}
 
 	public DOMParser(Source[] schemaSources) {
-		this.schemaSources = schemaSources;
+		this.schemaSources = schemaSources==null?null:schemaSources.clone();
 	}
 
 	public Schema getSchema() {
@@ -136,7 +136,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 			if (indent > 0) {
 				try {
 					transFactory.setAttribute("indent-number", indent);
-				} catch (IllegalArgumentException ex) {
+				} catch (IllegalArgumentException ignored) {
 					// Fuck you, Apache morons.
 				}
 			}
@@ -148,7 +148,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 			if (standalone) {
 				try {
 					transformer.setOutputProperty("http://www.oracle.com/xml/is-standalone", "yes");
-				} catch (IllegalArgumentException e) {
+				} catch (IllegalArgumentException ignored) {
 					// Expected on older versions
 				}
 			}
@@ -359,6 +359,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 	// This prints XHTML into HTML that IE understands, and that validates with W3C rules
 
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	public String printHTML(Document dom, int indent, boolean standalone, boolean doctype) throws ParserException {
 
 		// Make a copy, so we can remove stuff from the DOM that violates W3C when rendered as HTML (go figure!)
@@ -530,7 +531,6 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			boolean cont = true;
 			if (child.getNodeType() == visitor.nodeType) {
 				visitor.visit(child);
 				if (visitor.isHalted()) break;

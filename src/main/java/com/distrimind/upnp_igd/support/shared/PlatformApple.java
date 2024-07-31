@@ -52,7 +52,7 @@ public class PlatformApple {
 
         public static Object newInstance(Object obj, Controller<JFrame> appController) {
             return Proxy.newProxyInstance(
-                    obj.getClass().getClassLoader(),
+                    Thread.currentThread().getContextClassLoader(),
                     obj.getClass().getInterfaces(),
                     new AppListenerProxy(obj, appController)
             );
@@ -75,7 +75,7 @@ public class PlatformApple {
                 } else {
                     result = m.invoke(object, args);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 // Ignore
             }
             return result;

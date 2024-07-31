@@ -38,7 +38,6 @@ import java.util.logging.Logger;
  */
 public class UDN {
 
-    final private static Logger log = Logger.getLogger(UDN.class.getName());
 
     public static final String PREFIX = "uuid:";
 

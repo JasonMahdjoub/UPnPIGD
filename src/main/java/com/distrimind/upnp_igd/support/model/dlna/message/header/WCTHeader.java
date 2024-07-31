@@ -31,7 +31,7 @@ public class WCTHeader extends DLNAHeader<Boolean> {
     @Override
     public void setString(String s) throws InvalidHeaderException {
         if (pattern.matcher(s).matches()) {
-            setValue( s.equals("1"));
+            setValue( "1".equals(s));
             return;
         }
         throw new InvalidHeaderException("Invalid SCID header value: " + s);

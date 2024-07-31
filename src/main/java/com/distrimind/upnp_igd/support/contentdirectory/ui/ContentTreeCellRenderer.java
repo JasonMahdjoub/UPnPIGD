@@ -29,7 +29,7 @@ import java.awt.Component;
  * @author Christian Bauer
  */
 public class ContentTreeCellRenderer extends DefaultTreeCellRenderer {
-
+    private static final long serialVersionUID = 1L;
     @Override
 	public Component getTreeCellRendererComponent(
             JTree tree,

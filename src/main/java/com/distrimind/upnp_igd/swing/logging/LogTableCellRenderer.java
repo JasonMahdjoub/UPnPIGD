@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 
 /**
@@ -28,8 +29,10 @@ import java.util.logging.Level;
  */
 public abstract class LogTableCellRenderer extends DefaultTableCellRenderer {
 
+    private static final long serialVersionUID = 1L;
+
     // Only accessed by EDT
-    protected SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS");
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS", Locale.ROOT);
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value,

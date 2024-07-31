@@ -63,6 +63,7 @@ public abstract class LastChangeParser extends SAXParser {
         InstanceID,
         val;
 
+        @SuppressWarnings("PMD")
         public boolean equals(String s) {
             return this.name().equals(s);
         }

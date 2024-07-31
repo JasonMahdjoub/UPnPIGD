@@ -29,7 +29,6 @@ import java.util.logging.Logger;
  */
 public abstract class GetTransportInfo extends ActionCallback {
 
-    private static final Logger log = Logger.getLogger(GetTransportInfo.class.getName());
 
     public GetTransportInfo(Service<?, ?, ?> service) {
         this(new UnsignedIntegerFourBytes(0), service);

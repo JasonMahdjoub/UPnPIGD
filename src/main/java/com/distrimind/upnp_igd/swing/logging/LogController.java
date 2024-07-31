@@ -86,6 +86,7 @@ public abstract class LogController extends AbstractController<JPanel> {
         this(parentController, Expiration.SIXTY_SECONDS, logCategories);
     }
 
+	@SuppressWarnings("PMD")
     public LogController(Controller<? extends Container> parentController, Expiration expiration, List<LogCategory> logCategories) {
         super(new JPanel(new BorderLayout()), parentController);
 

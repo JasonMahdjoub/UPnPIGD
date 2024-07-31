@@ -143,13 +143,13 @@ public class SAXParser {
 		}
 	}
 
-
+	@SuppressWarnings("PMD.AvoidStringBufferField")
 	public static class Handler<I> extends DefaultHandler {
 
 		protected SAXParser parser;
 		protected I instance;
 		protected Handler<?> parent;
-		protected StringBuilder characters = new StringBuilder();
+		protected StringBuilder chars = new StringBuilder();
 		protected Attributes attributes;
 
 		public Handler(I instance) {
@@ -193,13 +193,13 @@ public class SAXParser {
 		}
 
 		public String getCharacters() {
-			return characters.toString();
+			return chars.toString();
 		}
 
 		@Override
 		public void startElement(String uri, String localName, String qName,
 								 Attributes attributes) throws SAXException {
-			this.characters = new StringBuilder();
+			this.chars = new StringBuilder();
 			this.attributes = new AttributesImpl(attributes); // see https://docstore.mik.ua/orelly/xml/sax2/ch05_01.htm, section 5.1.1
 			if (log.isLoggable(Level.FINER)) {
 				log.finer(getClass().getSimpleName() + " starting: " + localName);
@@ -208,7 +208,9 @@ public class SAXParser {
 
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
-			characters.append(ch, start, length);
+			if (chars.length()+length>1_000_000)
+				throw new SAXException();
+			chars.append(ch, start, length);
 		}
 
 		@Override

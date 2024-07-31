@@ -51,6 +51,8 @@ import java.util.Set;
  * @version 1.0
  * @since MaDKitLanEdition 1.0.0
  */
+
+@SuppressWarnings("PMD.UseEnumCollections")
 public class Common {
 	private static final Set<UpnpHeader.Type> allowedUpnpHeaders=new HashSet<>(Arrays.asList(UpnpHeader.Type.EXT, UpnpHeader.Type.ST, UpnpHeader.Type.SERVER, UpnpHeader.Type.USN, UpnpHeader.Type.LOCATION, UpnpHeader.Type.MAX_AGE));
 	static boolean isNotValidRemoteAddress(URL u, NetworkAddressFactory networkAddressFactory)

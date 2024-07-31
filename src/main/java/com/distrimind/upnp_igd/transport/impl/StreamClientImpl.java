@@ -127,6 +127,7 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
     }
 
     @Override
+	@SuppressWarnings("PMD.AvoidInstanceofChecksInCatchClause")
     public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) {
 
         final UpnpRequest requestOperation = requestMessage.getOperation();
@@ -160,7 +161,8 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
         } catch (ProtocolException ex) {
 			if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
             return null;
-        } catch (IOException ex) {
+        }
+		catch (IOException ex) {
 
             if (urlConnection == null) {
 				if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));

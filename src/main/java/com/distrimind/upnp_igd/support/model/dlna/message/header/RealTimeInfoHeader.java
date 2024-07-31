@@ -28,11 +28,12 @@ public class RealTimeInfoHeader extends DLNAHeader<NormalPlayTime> {
     }
 
     @Override
-    public void setString(String s) throws InvalidHeaderException {
+    public void setString(String _s) throws InvalidHeaderException {
+        String s=_s;
         if (s.startsWith(PREFIX)) {
             try {
                 s = s.substring(PREFIX.length());
-                setValue(s.equals("*") ? null : NormalPlayTime.valueOf(s) );
+                setValue("*".equals(s) ? null : NormalPlayTime.valueOf(s) );
                 return;
             } catch (Exception ignored) {}
         }

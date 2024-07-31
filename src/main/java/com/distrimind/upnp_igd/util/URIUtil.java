@@ -26,6 +26,8 @@ import java.util.BitSet;
  */
 public class URIUtil {
 
+	public static final String UTF_8 = "UTF-8";
+
 	/**
 	 * Guarantees that the returned URI is absolute, no matter what the argument is.
 	 *
@@ -38,6 +40,7 @@ public class URIUtil {
 		return createAbsoluteURI(base, URI.create(uri));
 	}
 
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	public static URI createAbsoluteURI(URI base, URI relativeOrNot) throws IllegalArgumentException {
 		if (base == null && !relativeOrNot.isAbsolute()) {
 			throw new IllegalArgumentException("Base URI is null and given URI is not absolute");
@@ -278,23 +281,23 @@ public class URIUtil {
 	}};
 
 	public static String encodePathSegment(final String pathSegment) {
-		return encode(PATH_SEGMENT, pathSegment, "UTF-8");
+		return encode(PATH_SEGMENT, pathSegment, UTF_8);
 	}
 
 	public static String encodePathParamName(final String pathParamName) {
-		return encode(PATH_PARAM_NAME, pathParamName, "UTF-8");
+		return encode(PATH_PARAM_NAME, pathParamName, UTF_8);
 	}
 
 	public static String encodePathParamValue(final String pathParamValue) {
-		return encode(PATH_PARAM_VALUE, pathParamValue, "UTF-8");
+		return encode(PATH_PARAM_VALUE, pathParamValue, UTF_8);
 	}
 
 	public static String encodeQueryNameOrValue(final String queryNameOrValue) {
-		return encode(QUERY, queryNameOrValue, "UTF-8");
+		return encode(QUERY, queryNameOrValue, UTF_8);
 	}
 
 	public static String encodeFragment(final String fragment) {
-		return encode(FRAGMENT, fragment, "UTF-8");
+		return encode(FRAGMENT, fragment, UTF_8);
 	}
 
 	public static String encode(BitSet allowedCharacters, String s, String charset) {

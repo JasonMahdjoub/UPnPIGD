@@ -81,6 +81,12 @@ public class DIDLParser extends SAXParser {
     final private static Logger log = Logger.getLogger(DIDLParser.class.getName());
 
     public static final String UNKNOWN_TITLE = "Unknown Title";
+    public static final String RESTRICTED = "restricted";
+    public static final String ITEM = "item";
+    public static final String RES = "res";
+    public static final String DESC = "desc";
+    public static final String NAME = "name";
+    public static final String PARENT_ID = "parentID";
 
     /**
      * Uses the current thread's context classloader to read and unmarshall the given resource.
@@ -140,14 +146,14 @@ public class DIDLParser extends SAXParser {
         Container container = new Container();
 
         container.setId(attributes.getValue("id"));
-        container.setParentID(attributes.getValue("parentID"));
+        container.setParentID(attributes.getValue(PARENT_ID));
 
         if ((attributes.getValue("childCount") != null))
             container.setChildCount(Integer.valueOf(attributes.getValue("childCount")));
 
         try {
             Boolean value = (Boolean) Datatype.Builtin.BOOLEAN.getDatatype().valueOf(
-                attributes.getValue("restricted")
+                attributes.getValue(RESTRICTED)
             );
             if (value != null)
                 container.setRestricted(value);
@@ -157,7 +163,7 @@ public class DIDLParser extends SAXParser {
             );
             if (value != null)
                 container.setSearchable(value);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // Ignore
         }
 
@@ -168,16 +174,16 @@ public class DIDLParser extends SAXParser {
         Item item = new Item();
 
         item.setId(attributes.getValue("id"));
-        item.setParentID(attributes.getValue("parentID"));
+        item.setParentID(attributes.getValue(PARENT_ID));
 
         try {
             Boolean value = (Boolean)Datatype.Builtin.BOOLEAN.getDatatype().valueOf(
-                    attributes.getValue("restricted")
+                    attributes.getValue(RESTRICTED)
             );
             if (value != null)
                 item.setRestricted(value);
 
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // Ignore
         }
 
@@ -368,13 +374,13 @@ public class DIDLParser extends SAXParser {
 
         if (container.getParentID() == null)
             throw new NullPointerException("Missing parent id on container: " + container);
-        containerElement.setAttribute("parentID", container.getParentID());
+        containerElement.setAttribute(PARENT_ID, container.getParentID());
 
         if (container.getChildCount() != null) {
             containerElement.setAttribute("childCount", Integer.toString(container.getChildCount()));
         }
 
-        containerElement.setAttribute("restricted", booleanToInt(container.isRestricted()));
+        containerElement.setAttribute(RESTRICTED, booleanToInt(container.isRestricted()));
         containerElement.setAttribute("searchable", booleanToInt(container.isSearchable()));
 
         String title = container.getTitle();
@@ -444,7 +450,7 @@ public class DIDLParser extends SAXParser {
             throw new RuntimeException("Missing 'upnp:class' element for item: " + item.getId());
         }
 
-        Element itemElement = appendNewElement(descriptor, parent, "item");
+        Element itemElement = appendNewElement(descriptor, parent, ITEM);
 
         if (item.getId() == null)
             throw new NullPointerException("Missing id on item: " + item);
@@ -452,11 +458,11 @@ public class DIDLParser extends SAXParser {
 
         if (item.getParentID() == null)
             throw new NullPointerException("Missing parent id on item: " + item);
-        itemElement.setAttribute("parentID", item.getParentID());
+        itemElement.setAttribute(PARENT_ID, item.getParentID());
 
         if (item.getRefID() != null)
             itemElement.setAttribute("refID", item.getRefID());
-        itemElement.setAttribute("restricted", booleanToInt(item.isRestricted()));
+        itemElement.setAttribute(RESTRICTED, booleanToInt(item.isRestricted()));
 
         String title = item.getTitle();
         if (title == null) {
@@ -514,7 +520,7 @@ public class DIDLParser extends SAXParser {
             throw new RuntimeException("Missing resource protocol info: " + resource);
         }
 
-        Element resourceElement = appendNewElement(descriptor, parent, "res", resource.getValue());
+        Element resourceElement = appendNewElement(descriptor, parent, RES, resource.getValue());
         resourceElement.setAttribute("protocolInfo", resource.getProtocolInfo().toString());
         if (resource.getImportUri() != null)
             resourceElement.setAttribute("importUri", resource.getImportUri().toString());
@@ -547,7 +553,7 @@ public class DIDLParser extends SAXParser {
             throw new RuntimeException("Missing namespace of description metadata: " + descMeta);
         }
 
-        Element descElement = appendNewElement(descriptor, parent, "desc");
+        Element descElement = appendNewElement(descriptor, parent, DESC);
         descElement.setAttribute("id", descMeta.getId());
         descElement.setAttribute("nameSpace", descMeta.getNameSpace().toString());
         if (descMeta.getType() != null)
@@ -604,7 +610,7 @@ public class DIDLParser extends SAXParser {
             DIDLObject.Property.UPNP.NAMESPACE.URI
         );
         if (clazz.getFriendlyName() != null && !clazz.getFriendlyName().isEmpty())
-            classElement.setAttribute("name", clazz.getFriendlyName());
+            classElement.setAttribute(NAME, clazz.getFriendlyName());
         if (appendDerivation)
             classElement.setAttribute("includeDerived", Boolean.toString(clazz.isIncludeDerived()));
     }
@@ -676,7 +682,7 @@ public class DIDLParser extends SAXParser {
                     getInstance().setClazz(
                         new DIDLObject.Class(
                             getCharacters(),
-                            getAttributes().getValue("name")
+                            getAttributes().getValue(NAME)
                         )
                     );
                 } else if ("artist".equals(localName)) {
@@ -847,14 +853,14 @@ public class DIDLParser extends SAXParser {
 					createContainerHandler(container, this);
 
 					break;
-				case "item":
+				case ITEM:
 
 					Item item = createItem(attributes);
 					getInstance().addItem(item);
 					createItemHandler(item, this);
 
 					break;
-				case "desc":
+				case DESC:
 
 					DescMeta<Document> desc = createDescMeta(attributes);
 					getInstance().addDescMetadata(desc);
@@ -890,21 +896,21 @@ public class DIDLParser extends SAXParser {
             if (!DIDLContent.NAMESPACE_URI.equals(uri)) return;
 
 			switch (localName) {
-				case "item":
+				case ITEM:
 
 					Item item = createItem(attributes);
 					getInstance().addItem(item);
 					createItemHandler(item, this);
 
 					break;
-				case "desc":
+				case DESC:
 
 					DescMeta<Document> desc = createDescMeta(attributes);
 					getInstance().addDescMetadata(desc);
 					createDescMetaHandler(desc, this);
 
 					break;
-				case "res":
+				case RES:
 
 					Res res = createResource(attributes);
 					if (res != null) {
@@ -933,7 +939,7 @@ public class DIDLParser extends SAXParser {
                     getInstance().getSearchClasses().add(
                         new DIDLObject.Class(
                             getCharacters(),
-                            getAttributes().getValue("name"),
+                            getAttributes().getValue(NAME),
                             "true".equals(getAttributes().getValue("includeDerived"))
                         )
                     );
@@ -941,7 +947,7 @@ public class DIDLParser extends SAXParser {
                     getInstance().getCreateClasses().add(
                         new DIDLObject.Class(
                             getCharacters(),
-                            getAttributes().getValue("name"),
+                            getAttributes().getValue(NAME),
                             "true".equals(getAttributes().getValue("includeDerived"))
                         )
                     );
@@ -975,7 +981,7 @@ public class DIDLParser extends SAXParser {
 
             if (!DIDLContent.NAMESPACE_URI.equals(uri)) return;
 
-            if (localName.equals("res")) {
+            if (RES.equals(localName)) {
 
                 Res res = createResource(attributes);
                 if (res != null) {
@@ -983,7 +989,7 @@ public class DIDLParser extends SAXParser {
                     createResHandler(res, this);
                 }
 
-            } else if (localName.equals("desc")) {
+            } else if (DESC.equals(localName)) {
 
                 DescMeta<Document> desc = createDescMeta(attributes);
                 getInstance().addDescMetadata(desc);
@@ -994,7 +1000,7 @@ public class DIDLParser extends SAXParser {
 
         @Override
         protected boolean isLastElement(String uri, String localName, String qName) {
-            if (DIDLContent.NAMESPACE_URI.equals(uri) && "item".equals(localName)) {
+            if (DIDLContent.NAMESPACE_URI.equals(uri) && ITEM.equals(localName)) {
                 if (getInstance().getTitle() == null) {
                     if (log.isLoggable(Level.WARNING)) log.warning("In DIDL content, missing 'dc:title' element for item: " + getInstance().getId());
                 }
@@ -1020,7 +1026,7 @@ public class DIDLParser extends SAXParser {
 
         @Override
         protected boolean isLastElement(String uri, String localName, String qName) {
-            return DIDLContent.NAMESPACE_URI.equals(uri) && "res".equals(localName);
+            return DIDLContent.NAMESPACE_URI.equals(uri) && RES.equals(localName);
         }
     }
 
@@ -1074,13 +1080,13 @@ public class DIDLParser extends SAXParser {
             current = (Element) current.getParentNode();
 
             // Reset this so we can continue parsing child nodes with this handler
-            characters = new StringBuilder();
+            chars = new StringBuilder();
             attributes = null;
         }
 
         @Override
         protected boolean isLastElement(String uri, String localName, String qName) {
-            return DIDLContent.NAMESPACE_URI.equals(uri) && "desc".equals(localName);
+            return DIDLContent.NAMESPACE_URI.equals(uri) && DESC.equals(localName);
         }
     }
 }

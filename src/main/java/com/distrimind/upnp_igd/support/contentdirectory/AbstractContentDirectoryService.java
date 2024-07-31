@@ -27,6 +27,7 @@ import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.model.types.csv.CSV;
 import com.distrimind.upnp_igd.model.types.csv.CSVString;
 import com.distrimind.upnp_igd.model.types.csv.ICSV;
+import com.distrimind.upnp_igd.support.avtransport.AbstractAVTransportService;
 import com.distrimind.upnp_igd.support.model.BrowseFlag;
 import com.distrimind.upnp_igd.support.model.BrowseResult;
 import com.distrimind.upnp_igd.support.model.DIDLContent;
@@ -56,30 +57,30 @@ import java.util.List;
                             @UpnpStateVariable(
                                     name = "A_ARG_TYPE_ObjectID",
                                     sendEvents = false,
-                                    datatype = "string"),
+                                    datatype = AbstractAVTransportService.STRING),
                             @UpnpStateVariable(
                                     name = "A_ARG_TYPE_Result",
                                     sendEvents = false,
-                                    datatype = "string"),
+                                    datatype = AbstractAVTransportService.STRING),
                             @UpnpStateVariable(
                                     name = "A_ARG_TYPE_BrowseFlag",
                                     sendEvents = false,
-                                    datatype = "string",
+                                    datatype = AbstractAVTransportService.STRING,
                                     allowedValuesEnum = BrowseFlag.class),
                             @UpnpStateVariable(
                                     name = "A_ARG_TYPE_Filter",
                                     sendEvents = false,
-                                    datatype = "string"),
+                                    datatype = AbstractAVTransportService.STRING),
                             @UpnpStateVariable(
                                     name = "A_ARG_TYPE_SortCriteria",
                                     sendEvents = false,
-                                    datatype = "string"),
+                                    datatype = AbstractAVTransportService.STRING),
                             @UpnpStateVariable(
                                     name = "A_ARG_TYPE_Index",
                                     sendEvents = false,
                                     datatype = "ui4"),
                             @UpnpStateVariable(
-                                    name = "A_ARG_TYPE_Count",
+                                    name = AbstractContentDirectoryService.A_ARG_TYPE_COUNT,
                                     sendEvents = false,
                                     datatype = "ui4"),
                             @UpnpStateVariable(
@@ -93,12 +94,13 @@ import java.util.List;
                             @UpnpStateVariable(
                                     name = "A_ARG_TYPE_SearchCriteria",
                                     sendEvents = false,
-                                    datatype = "string")
+                                    datatype = AbstractAVTransportService.STRING)
                     })
 
 public abstract class AbstractContentDirectoryService {
 
     public static final String CAPS_WILDCARD = "*";
+    public static final String A_ARG_TYPE_COUNT = "A_ARG_TYPE_Count";
 
     @UpnpStateVariable(sendEvents = false)
     final private ICSV<String> searchCapabilities;
@@ -173,10 +175,10 @@ public abstract class AbstractContentDirectoryService {
                                 stateVariable = "A_ARG_TYPE_Result",
                                 getterName = "getResult"),
             @UpnpOutputArgument(name = "NumberReturned",
-                                stateVariable = "A_ARG_TYPE_Count",
+                                stateVariable = A_ARG_TYPE_COUNT,
                                 getterName = "getCount"),
             @UpnpOutputArgument(name = "TotalMatches",
-                                stateVariable = "A_ARG_TYPE_Count",
+                                stateVariable = A_ARG_TYPE_COUNT,
                                 getterName = "getTotalMatches"),
             @UpnpOutputArgument(name = "UpdateID",
                                 stateVariable = "A_ARG_TYPE_UpdateID",
@@ -187,7 +189,7 @@ public abstract class AbstractContentDirectoryService {
             @UpnpInputArgument(name = "BrowseFlag") String browseFlag,
             @UpnpInputArgument(name = "Filter") String filter,
             @UpnpInputArgument(name = "StartingIndex", stateVariable = "A_ARG_TYPE_Index") UnsignedIntegerFourBytes firstResult,
-            @UpnpInputArgument(name = "RequestedCount", stateVariable = "A_ARG_TYPE_Count") UnsignedIntegerFourBytes maxResults,
+            @UpnpInputArgument(name = "RequestedCount", stateVariable = A_ARG_TYPE_COUNT) UnsignedIntegerFourBytes maxResults,
             @UpnpInputArgument(name = "SortCriteria") String orderBy)
             throws ContentDirectoryException {
 
@@ -234,10 +236,10 @@ public abstract class AbstractContentDirectoryService {
                                 stateVariable = "A_ARG_TYPE_Result",
                                 getterName = "getResult"),
             @UpnpOutputArgument(name = "NumberReturned",
-                                stateVariable = "A_ARG_TYPE_Count",
+                                stateVariable = A_ARG_TYPE_COUNT,
                                 getterName = "getCount"),
             @UpnpOutputArgument(name = "TotalMatches",
-                                stateVariable = "A_ARG_TYPE_Count",
+                                stateVariable = A_ARG_TYPE_COUNT,
                                 getterName = "getTotalMatches"),
             @UpnpOutputArgument(name = "UpdateID",
                                 stateVariable = "A_ARG_TYPE_UpdateID",
@@ -248,7 +250,7 @@ public abstract class AbstractContentDirectoryService {
             @UpnpInputArgument(name = "SearchCriteria") String searchCriteria,
             @UpnpInputArgument(name = "Filter") String filter,
             @UpnpInputArgument(name = "StartingIndex", stateVariable = "A_ARG_TYPE_Index") UnsignedIntegerFourBytes firstResult,
-            @UpnpInputArgument(name = "RequestedCount", stateVariable = "A_ARG_TYPE_Count") UnsignedIntegerFourBytes maxResults,
+            @UpnpInputArgument(name = "RequestedCount", stateVariable = A_ARG_TYPE_COUNT) UnsignedIntegerFourBytes maxResults,
             @UpnpInputArgument(name = "SortCriteria") String orderBy)
             throws ContentDirectoryException {
 

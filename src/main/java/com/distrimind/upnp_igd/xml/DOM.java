@@ -35,14 +35,14 @@ public abstract class DOM {
 	public static final String CDATA_BEGIN = "<![CDATA[";
 	public static final String CDATA_END = "]]>";
 
-	private final Document dom;
+	private final Document document;
 
 	public DOM(Document dom) {
-		this.dom = dom;
+		this.document = dom;
 	}
 
 	public Document getW3CDocument() {
-		return dom;
+		return document;
 	}
 
 	public Element createRoot(String name) {

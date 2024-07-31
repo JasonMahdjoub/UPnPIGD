@@ -272,16 +272,17 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
         return null;
     }
 
-    protected boolean isInSubnet(byte[] ip, byte[] network, short prefix) {
+    protected boolean isInSubnet(byte[] ip, byte[] network, short _prefix) {
         if (ip.length != network.length) {
             return false;
         }
 
-        if (prefix / 8 > ip.length) {
+        if (_prefix / 8 > ip.length) {
             return false;
         }
 
         int i = 0;
+		short prefix=_prefix;
         while (prefix >= 8 && i < ip.length) {
             if (ip[i] != network[i]) {
                 return false;

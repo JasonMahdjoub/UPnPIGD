@@ -160,11 +160,11 @@ public class Base64Coder
     public final static int NO_OPTIONS = 0;
     
     /** Specify encoding in first bit. Value is one. */
-    public final static int ENCODE = 1;
+    public final static int ENCODE_BIT = 1;
     
     
     /** Specify decoding in first bit. Value is zero. */
-    public final static int DECODE = 0;
+    public final static int DECODE_BIT = 0;
     
 
     /** Specify that data should be gzip-compressed in second bit. Value is two. */
@@ -660,53 +660,38 @@ public class Base64Coder
         }   // end if: null
         
         // Streams
-        java.io.ByteArrayOutputStream  baos  = null; 
-        java.io.OutputStream           b64os = null;
-        java.util.zip.GZIPOutputStream gzos  = null;
-        java.io.ObjectOutputStream     oos   = null;
-        
-        
-        try {
-            // ObjectOutputStream -> (GZIP) -> Base64 -> ByteArrayOutputStream
-            baos  = new java.io.ByteArrayOutputStream();
-            b64os = new Base64Coder.OutputStream( baos, ENCODE | options );
-            if( (options & GZIP) != 0 ){
-                // Gzip
-                gzos = new java.util.zip.GZIPOutputStream(b64os);
-                oos = new java.io.ObjectOutputStream( gzos );
-            } else {
-                // Not gzipped
-                oos = new java.io.ObjectOutputStream( b64os );
-            }
-            oos.writeObject( serializableObject );
-        }   // end try
-        catch( java.io.IOException e ) {
-            // Catch it and then throw it immediately so that
-            // the finally{} block is called for cleanup.
-            throw e;
-        }   // end catch
-        finally {
-            try{
-				if (oos != null) {
-					oos.close();
-				}
-			} catch(Exception ignored){}
-            try{
-				assert gzos != null;
-				gzos.close();  } catch(Exception ignored){}
-            try{ b64os.close(); } catch( Exception ignored){}
-            try{ baos.close();  } catch( Exception ignored){}
-        }   // end finally
-        
-        // Return value according to relevant encoding.
-        try {
-            return baos.toString(PREFERRED_ENCODING);
-        }   // end try
-        catch (java.io.UnsupportedEncodingException uue){
-            // Fall back to some Java default
-            return baos.toString();
-        }   // end catch
-        
+
+
+        try(java.io.ByteArrayOutputStream baos  = new java.io.ByteArrayOutputStream())
+        {
+
+            try (java.io.OutputStream b64os = new Base64Coder.OutputStream(baos, ENCODE_BIT | options); ) {
+                // ObjectOutputStream -> (GZIP) -> Base64 -> ByteArrayOutputStream
+
+                if ((options & GZIP) != 0) {
+                    // Gzip
+                    try(java.util.zip.GZIPOutputStream gzos = new java.util.zip.GZIPOutputStream(b64os);java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(gzos);)
+                    {
+                        oos.writeObject(serializableObject);
+                    }
+                } else {
+                    try(java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(b64os);)
+                    {
+                        oos.writeObject(serializableObject);
+                    }
+                    // Not gzipped
+
+                }
+            }   // end try
+            // Return value according to relevant encoding.
+            try {
+                return baos.toString(PREFERRED_ENCODING);
+            }   // end try
+            catch (java.io.UnsupportedEncodingException uue) {
+                // Fall back to some Java default
+                return baos.toString();
+            }   // end catch
+        }
     }   // end encode
     
     
@@ -913,43 +898,16 @@ public class Base64Coder
 
         // Compress?
         if( (options & GZIP) != 0 ) {
-            java.io.ByteArrayOutputStream  baos  = null;
-            java.util.zip.GZIPOutputStream gzos  = null;
-            Base64Coder.OutputStream            b64os = null;
 
-            try {
+            try (java.io.ByteArrayOutputStream  baos = new java.io.ByteArrayOutputStream();
+                 Base64Coder.OutputStream b64os=new Base64Coder.OutputStream( baos, ENCODE_BIT | options );
+                 java.util.zip.GZIPOutputStream gzos=new java.util.zip.GZIPOutputStream( b64os )
+            ){
                 // GZip -> Base64 -> ByteArray
-                baos = new java.io.ByteArrayOutputStream();
-                b64os = new Base64Coder.OutputStream( baos, ENCODE | options );
-                gzos  = new java.util.zip.GZIPOutputStream( b64os );
-
                 gzos.write( source, off, len );
-                gzos.close();
-            }   // end try
-            catch( java.io.IOException e ) {
-                // Catch it and then throw it immediately so that
-                // the finally{} block is called for cleanup.
-                throw e;
-            }   // end catch
-            finally {
-                try{
-					if (gzos != null) {
-						gzos.close();
-					}
-				} catch(Exception ignored){}
-                try{
-					if (b64os != null) {
-						b64os.close();
-					}
-				} catch(Exception ignored){}
-                try{
-					if (baos != null) {
-						baos.close();
-					}
-				} catch(Exception ignored){}
-            }   // end finally
+                return baos.toByteArray();
+            }
 
-            return baos.toByteArray();
         }   // end if: compress
 
         // Else, don't compress. Better not to use streams at all then.
@@ -1252,6 +1210,7 @@ public class Base64Coder
      * @throws NullPointerException if <code>s</code> is null
      * @since 1.4
      */
+    @SuppressWarnings("PMD.AvoidPrintStackTrace")
     public static byte[] decode( String s, int options ) throws java.io.IOException {
         
         if( s == null ){
@@ -1343,45 +1302,25 @@ public class Base64Coder
         // Decode and gunzip if necessary
         byte[] objBytes = decode( encodedObject, options );
         
-        java.io.ByteArrayInputStream  bais = null;
-        java.io.ObjectInputStream     ois  = null;
         Object obj;
         
-        try {
-            bais = new java.io.ByteArrayInputStream( objBytes );
+        try (java.io.ByteArrayInputStream  bais = new java.io.ByteArrayInputStream( objBytes )){
+
 
             // If no custom class loader is provided, use Java's builtin OIS.
-            if( loader == null ){
-                ois  = new java.io.ObjectInputStream( bais );
-            }   // end if: no loader provided
-
-            // Else make a customized object input stream that uses
-            // the provided class loader.
-            else {
-                ois = new java.io.ObjectInputStream(bais){
+            try( java.io.ObjectInputStream ois=(loader == null)?
+                    new java.io.ObjectInputStream( bais ):
+                    new java.io.ObjectInputStream(bais){
                     @Override
                     public Class<?> resolveClass(java.io.ObjectStreamClass streamClass)
                     throws java.io.IOException, ClassNotFoundException {
 						return Class.forName(streamClass.getName(), false, loader);   // Class loader knows of this class.
 					}   // end resolveClass
-                };  // end ois
-            }   // end else: no custom class loader
-        
-            obj = ois.readObject();
+                }) {
+                obj = ois.readObject();
+            }
         }   // end try
-        finally {
-            try{
-				if (bais != null) {
-					bais.close();
-				}
-			} catch(Exception ignored){}
-            try{
-				if (ois != null) {
-					ois.close();
-				}
-			} catch(Exception ignored){}
-        }   // end finally
-        
+
         return obj;
     }   // end decodeObject
     
@@ -1409,10 +1348,8 @@ public class Base64Coder
         }   // end iff
 
 		try (OutputStream bos = new OutputStream(
-				new java.io.FileOutputStream(filename), Base64Coder.ENCODE)) {
+				new java.io.FileOutputStream(filename), Base64Coder.ENCODE_BIT)) {
 			bos.write(dataToEncode);
-		} catch (IOException e) {
-			throw e; // Catch and throw to execute finally{} block
 		}
         
     }   // end encodeToFile
@@ -1435,10 +1372,8 @@ public class Base64Coder
     throws java.io.IOException {
 
 		try (OutputStream bos = new OutputStream(
-				new java.io.FileOutputStream(filename), Base64Coder.DECODE)) {
+				new java.io.FileOutputStream(filename), Base64Coder.DECODE_BIT)) {
 			bos.write(dataToDecode.getBytes(PREFERRED_ENCODING));
-		} catch (IOException e) {
-			throw e; // Catch and throw to execute finally{} block
 		}
         
     }   // end decodeToFile
@@ -1462,50 +1397,36 @@ public class Base64Coder
      */
     public static byte[] decodeFromFile( String filename )
     throws java.io.IOException {
-        
+
         byte[] decodedData;
-        Base64Coder.InputStream bis = null;
-        try
-        {
-            // Set up some useful variables
-            java.io.File file = new java.io.File( filename );
-            byte[] buffer;
-            int length   = 0;
-            int numBytes;
-            
-            // Check for size of file
-            if( file.length() > Integer.MAX_VALUE )
-            {
-                throw new java.io.IOException( "File is too big for this convenience method (" + file.length() + " bytes)." );
-            }   // end if: file too big for int index
-            buffer = new byte[ (int)file.length() ];
-            
-            // Open a stream
-            bis = new Base64Coder.InputStream(
-                      new java.io.BufferedInputStream( 
-                      new java.io.FileInputStream( file ) ), Base64Coder.DECODE );
-            
+        // Set up some useful variables
+        java.io.File file = new java.io.File(filename);
+        byte[] buffer;
+        int length = 0;
+        int numBytes;
+
+        // Check for size of file
+        if (file.length() > Integer.MAX_VALUE) {
+            throw new java.io.IOException("File is too big for this convenience method (" + file.length() + " bytes).");
+        }   // end if: file too big for int index
+        buffer = new byte[(int) file.length()];
+
+        // Open a stream
+        try (Base64Coder.InputStream bis = new Base64Coder.InputStream(
+                new java.io.BufferedInputStream(
+                        new java.io.FileInputStream(file)), Base64Coder.DECODE_BIT)) {
+
             // Read until done
-            while( ( numBytes = bis.read( buffer, length, 4096 ) ) >= 0 ) {
+            while ((numBytes = bis.read(buffer, length, 4096)) >= 0) {
                 length += numBytes;
             }   // end while
-            
+
             // Save in a variable to return
-            decodedData = new byte[ length ];
-            System.arraycopy( buffer, 0, decodedData, 0, length );
-            
-        }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and release to execute finally{}
-        }   // end catch: java.io.IOException
-        finally {
-            try{
-				if (bis != null) {
-					bis.close();
-				}
-			} catch(Exception ignored) {}
-        }   // end finally
-        
+            decodedData = new byte[length];
+            System.arraycopy(buffer, 0, decodedData, 0, length);
+        }
+
+
         return decodedData;
     }   // end decodeFromFile
     
@@ -1527,44 +1448,31 @@ public class Base64Coder
      */
     public static String encodeFromFile( String filename )
     throws java.io.IOException {
-        
+
         String encodedData;
-        Base64Coder.InputStream bis = null;
-        try
-        {
-            // Set up some useful variables
-            java.io.File file = new java.io.File( filename );
-            byte[] buffer = new byte[ Math.max((int)(file.length() * 1.4+1),40) ]; // Need max() for math on small files (v2.2.1); Need +1 for a few corner cases (v2.3.5)
-            int length   = 0;
-            int numBytes;
-            
-            // Open a stream
-            bis = new Base64Coder.InputStream(
-                      new java.io.BufferedInputStream( 
-                      new java.io.FileInputStream( file ) ), Base64Coder.ENCODE );
-            
+        // Set up some useful variables
+        java.io.File file = new java.io.File(filename);
+        byte[] buffer = new byte[Math.max((int) (file.length() * 1.4 + 1), 40)]; // Need max() for math on small files (v2.2.1); Need +1 for a few corner cases (v2.3.5)
+        int length = 0;
+        int numBytes;
+
+        // Open a stream
+        try (Base64Coder.InputStream bis = new Base64Coder.InputStream(
+                new java.io.BufferedInputStream(
+                        new java.io.FileInputStream(file)), Base64Coder.ENCODE_BIT)) {
+
             // Read until done
-            while( ( numBytes = bis.read( buffer, length, 4096 ) ) >= 0 ) {
+            while ((numBytes = bis.read(buffer, length, 4096)) >= 0) {
                 length += numBytes;
             }   // end while
-            
+
             // Save in a variable to return
-            encodedData = new String( buffer, 0, length, Base64Coder.PREFERRED_ENCODING );
-                
-        }   // end try
-        catch( java.io.IOException e ) {
-            throw e; // Catch and release to execute finally{}
-        }   // end catch: java.io.IOException
-        finally {
-            try{
-				if (bis != null) {
-					bis.close();
-				}
-			} catch(Exception ignored) {}
-        }   // end finally
-        
+            encodedData = new String(buffer, 0, length, Base64Coder.PREFERRED_ENCODING);
+        }
+
+
         return encodedData;
-        }   // end encodeFromFile
+    }   // end encodeFromFile
     
     /**
      * Reads <code>infile</code> and encodes it to <code>outfile</code>.
@@ -1581,8 +1489,6 @@ public class Base64Coder
 		try (java.io.OutputStream out = new java.io.BufferedOutputStream(
 				new java.io.FileOutputStream(outfile))) {
 			out.write(encoded.getBytes(StandardCharsets.US_ASCII)); // Strict, 7-bit output.
-		} catch (IOException e) {
-			throw e; // Catch and release to execute finally{}
 		}
     }   // end encodeFileToFile
 
@@ -1638,7 +1544,7 @@ public class Base64Coder
          * @since 1.3
          */
         public InputStream( java.io.InputStream in ) {
-            this( in, DECODE );
+            this( in, DECODE_BIT);
         }   // end constructor
         
         
@@ -1657,8 +1563,8 @@ public class Base64Coder
          *
          * @param in the <code>java.io.InputStream</code> from which to read data.
          * @param options Specified options
-         * @see Base64Coder#ENCODE
-         * @see Base64Coder#DECODE
+         * @see Base64Coder#ENCODE_BIT
+         * @see Base64Coder#DECODE_BIT
          * @see Base64Coder#DO_BREAK_LINES
          * @since 2.0
          */
@@ -1667,7 +1573,7 @@ public class Base64Coder
             super( in );
             this.options      = options; // Record for later
             this.breakLines   = (options & DO_BREAK_LINES) > 0;
-            this.encode       = (options & ENCODE) > 0;
+            this.encode       = (options & ENCODE_BIT) > 0;
             this.bufferLength = encode ? 4 : 3;
             this.buffer       = new byte[ bufferLength ];
             this.position     = -1;
@@ -1840,7 +1746,7 @@ public class Base64Coder
         private int     lineLength;
         private final boolean breakLines;
         private final byte[]  b4;         // Scratch used in a few places
-        private boolean suspendEncoding;
+        private boolean isSuspendEncoding;
         private final int     options;    // Record for later
         private final byte[]  decodabet;  // Local copies to avoid extra method calls
         
@@ -1851,7 +1757,7 @@ public class Base64Coder
          * @since 1.3
          */
         public OutputStream( java.io.OutputStream out ) {
-            this( out, ENCODE );
+            this( out, ENCODE_BIT);
         }   // end constructor
         
         
@@ -1869,20 +1775,20 @@ public class Base64Coder
          *
          * @param out the <code>java.io.OutputStream</code> to which data will be written.
          * @param options Specified options.
-         * @see Base64Coder#ENCODE
-         * @see Base64Coder#DECODE
+         * @see Base64Coder#ENCODE_BIT
+         * @see Base64Coder#DECODE_BIT
          * @see Base64Coder#DO_BREAK_LINES
          * @since 1.3
          */
         public OutputStream( java.io.OutputStream out, int options ) {
             super( out );
             this.breakLines   = (options & DO_BREAK_LINES) != 0;
-            this.encode       = (options & ENCODE) != 0;
+            this.encode       = (options & ENCODE_BIT) != 0;
             this.bufferLength = encode ? 3 : 4;
             this.buffer       = new byte[ bufferLength ];
             this.position     = 0;
             this.lineLength   = 0;
-            this.suspendEncoding = false;
+            this.isSuspendEncoding = false;
             this.b4           = new byte[4];
             this.options      = options;
             this.decodabet    = getDecodabet(options);
@@ -1905,7 +1811,7 @@ public class Base64Coder
         public void write(int theByte) 
         throws java.io.IOException {
             // Encoding suspended?
-            if( suspendEncoding ) {
+            if(isSuspendEncoding) {
                 this.out.write( theByte );
                 return;
             }   // end if: supsended
@@ -1960,7 +1866,7 @@ public class Base64Coder
         public void write( byte[] theBytes, int off, int len ) 
         throws java.io.IOException {
             // Encoding suspended?
-            if( suspendEncoding ) {
+            if(isSuspendEncoding) {
                 this.out.write( theBytes, off, len );
                 return;
             }   // end if: supsended
@@ -2022,7 +1928,7 @@ public class Base64Coder
          */
         public void suspendEncoding() throws java.io.IOException  {
             flushBase64();
-            this.suspendEncoding = true;
+            this.isSuspendEncoding = true;
         }   // end suspendEncoding
         
         
@@ -2034,7 +1940,7 @@ public class Base64Coder
          * @since 1.5.1
          */
         public void resumeEncoding() {
-            this.suspendEncoding = false;
+            this.isSuspendEncoding = false;
         }   // end resumeEncoding
         
         

@@ -149,12 +149,12 @@ public interface Datatype<V> {
 		}};
 
         private final String descriptorName;
-        private final Datatype<?> datatype;
+        private final Datatype<?> type;
 
         <VT> Builtin(String descriptorName, AbstractDatatype<VT> datatype) {
             datatype.setBuiltin(this); // Protected, we actually want this to be immutable
             this.descriptorName = descriptorName;
-            this.datatype = datatype;
+            this.type = datatype;
         }
 
         public String getDescriptorName() {
@@ -162,7 +162,7 @@ public interface Datatype<V> {
         }
 
         public Datatype<?> getDatatype() {
-            return datatype;
+            return type;
         }
 
         public static Builtin getByDescriptorName(String descriptorName) {

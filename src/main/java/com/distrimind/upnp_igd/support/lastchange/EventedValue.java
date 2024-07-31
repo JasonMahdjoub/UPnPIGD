@@ -56,7 +56,7 @@ public abstract class EventedValue<V> {
     protected V valueOf(Collection<Map.Entry<String,String>> attributes) throws InvalidValueException {
         V v = null;
         for (Map.Entry<String, String> attribute : attributes) {
-            if (attribute.getKey().equals("val")) v = valueOf(attribute.getValue());
+            if ("val".equals(attribute.getKey())) v = valueOf(attribute.getValue());
         }
         return v;
     }

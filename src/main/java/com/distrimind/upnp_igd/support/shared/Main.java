@@ -63,7 +63,7 @@ public abstract class Main implements ShutdownHandler, Thread.UncaughtExceptionH
             // Some UI stuff (of course, why would the OS L&F be the default -- too easy?!)
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             // Ignore...
         }
 
@@ -100,6 +100,7 @@ public abstract class Main implements ShutdownHandler, Thread.UncaughtExceptionH
     }
 
     @Override
+	@SuppressWarnings({"PMD.SystemPrintln", "PMD.DoNotTerminateVM"})
     public void uncaughtException(Thread thread, final Throwable throwable) {
 
         System.err.println("In thread '" + thread + "' uncaught exception: " + throwable);

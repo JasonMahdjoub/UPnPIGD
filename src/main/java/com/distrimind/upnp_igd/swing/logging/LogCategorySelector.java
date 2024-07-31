@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * @author Christian Bauer
  */
 public class LogCategorySelector extends JDialog {
-
+    private static final long serialVersionUID = 1L;
     protected final JPanel mainPanel = new JPanel();
 
     public LogCategorySelector(List<LogCategory> logCategories) {

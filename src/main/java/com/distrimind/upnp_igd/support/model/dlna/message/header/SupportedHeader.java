@@ -26,7 +26,8 @@ public class SupportedHeader extends DLNAHeader<String[]> {
     }
 
     @Override
-    public void setString(String s) throws InvalidHeaderException {
+    public void setString(String _s) throws InvalidHeaderException {
+        String s=_s;
         if (!s.isEmpty()) {
             if (s.endsWith(";"))
                 s = s.substring(0, s.length()-1);

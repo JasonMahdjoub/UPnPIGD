@@ -35,7 +35,9 @@ import javax.swing.tree.TreeSelectionModel;
  *
  * @author Christian Bauer
  */
+@SuppressWarnings("PMD.NonSerializableClass")
 public abstract class ContentTree extends JTree implements ContentBrowseActionCallbackCreator {
+    private static final long serialVersionUID = 1L;
 
     protected Container rootContainer;
     protected DefaultMutableTreeNode rootNode;

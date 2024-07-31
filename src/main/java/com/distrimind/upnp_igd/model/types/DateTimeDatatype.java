@@ -61,9 +61,10 @@ public class DateTimeDatatype extends AbstractDatatype<Calendar> {
         return sdt.format(value.getTime());
     }
 
-    protected String normalizeTimeZone(String value) {
+    protected String normalizeTimeZone(String _value) {
+        String value=_value;
         if (value.endsWith("Z")) {
-            value = value.substring(0, value.length() - 1) + "+0000";
+            value = _value.substring(0, _value.length() - 1) + "+0000";
         } else {
             char c = value.charAt(value.length() - 6);
             if ((value.length() > 7)

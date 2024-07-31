@@ -28,21 +28,21 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @author Christian Bauer
  */
 
-public interface Phase {
+public class Phase {
 
-    AnnotationLiteral<Alive> ALIVE = new AnnotationLiteral<>() {
+    public static AnnotationLiteral<Alive> ALIVE = new AnnotationLiteral<>() {
 		private static final long serialVersionUID = 1L;
 	};
 
-    AnnotationLiteral<Complete> COMPLETE = new AnnotationLiteral<>() {
+	public static AnnotationLiteral<Complete> COMPLETE = new AnnotationLiteral<>() {
 		private static final long serialVersionUID = 1L;
 	};
 
-    AnnotationLiteral<Byebye> BYEBYE = new AnnotationLiteral<>() {
+	public static AnnotationLiteral<Byebye> BYEBYE = new AnnotationLiteral<>() {
 		private static final long serialVersionUID = 1L;
 	};
 
-    AnnotationLiteral<Updated> UPDATED = new AnnotationLiteral<>() {
+	public static AnnotationLiteral<Updated> UPDATED = new AnnotationLiteral<>() {
 		private static final long serialVersionUID = 1L;
 	};
 

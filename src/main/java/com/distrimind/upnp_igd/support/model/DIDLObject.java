@@ -26,7 +26,10 @@ import java.util.Locale;
  * @author Christian Bauer
  * @author Mario Franco
  */
+@SuppressWarnings("PMD.ConstantsInInterface")
 public abstract class DIDLObject {
+
+    public static final String UNCHECKED = "unchecked";
 
     static public abstract class Property<V> {
 
@@ -629,6 +632,7 @@ public abstract class DIDLObject {
             this.includeDerived = includeDerived;
         }
 
+        @SuppressWarnings("PMD")
         public boolean equals(DIDLObject instance) {
             return getValue().equals(instance.getClazz().getValue());
 
@@ -809,7 +813,7 @@ public abstract class DIDLObject {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public <V> Property<V> getFirstProperty(java.lang.Class<? extends Property<V>> propertyClass) {
         for (Property<?> property : getProperties()) {
             if (propertyClass.isInstance(property)) return (Property<V>) property;
@@ -817,7 +821,7 @@ public abstract class DIDLObject {
         return null;
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public <V> Property<V> getLastProperty(java.lang.Class<? extends Property<V>> propertyClass) {
         Property<?> found = null;
         for (Property<?> property : getProperties()) {
@@ -830,7 +834,7 @@ public abstract class DIDLObject {
         return (Property<V>) found;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public <V> List<Property<V>> getProperties(java.lang.Class<? extends Property<V>> propertyClass) {
         List<Property<V>> list = new ArrayList<>();
         for (Property<?> property : getProperties()) {
@@ -840,7 +844,7 @@ public abstract class DIDLObject {
         return list;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
 	public <V> List<Property<V>> getPropertiesByNamespace(java.lang.Class<? extends Property.NAMESPACE> namespace) {
         List<Property<V>> list = new ArrayList<>();
         for (Property<?> property : getProperties()) {

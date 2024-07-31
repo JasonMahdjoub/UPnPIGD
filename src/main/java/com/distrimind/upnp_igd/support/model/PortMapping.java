@@ -134,7 +134,7 @@ public class PortMapping {
     }
 
     public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost == null || remoteHost.equals("-") || remoteHost.isEmpty() ? null : remoteHost;
+        this.remoteHost = remoteHost == null || "-".equals(remoteHost) || remoteHost.isEmpty() ? null : remoteHost;
     }
 
     public UnsignedIntegerTwoBytes getExternalPort() {
@@ -178,7 +178,7 @@ public class PortMapping {
     }
 
     public void setDescription(String description) {
-        this.description = description == null || description.equals("-") || description.isEmpty() ? null : description;
+        this.description = description == null || "-".equals(description) || description.isEmpty() ? null : description;
     }
 
     @Override

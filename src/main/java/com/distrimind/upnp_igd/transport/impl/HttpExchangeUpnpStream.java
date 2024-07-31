@@ -82,7 +82,7 @@ public abstract class HttpExchangeUpnpStream extends UpnpStream {
 
             // Protocol
             requestMessage.getOperation().setHttpMinorVersion(
-                    getHttpExchange().getProtocol().toUpperCase(Locale.ROOT).equals("HTTP/1.1") ? 1 : 0
+					"HTTP/1.1".equals(getHttpExchange().getProtocol().toUpperCase(Locale.ROOT)) ? 1 : 0
             );
 
 			if (log.isLoggable(Level.FINE)) {

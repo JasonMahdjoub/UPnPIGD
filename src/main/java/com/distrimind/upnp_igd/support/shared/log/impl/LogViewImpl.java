@@ -49,7 +49,7 @@ import java.util.List;
  */
 @Singleton
 public class LogViewImpl extends JPanel implements LogView {
-
+	private static final long serialVersionUID = 1L;
     @Inject
     protected LogCategories logCategories;
 
@@ -84,6 +84,7 @@ public class LogViewImpl extends JPanel implements LogView {
     protected Presenter presenter;
 
     @PostConstruct
+	@SuppressWarnings("PMD.CompareObjectsWithEquals")
     public void init() {
         setLayout(new BorderLayout());
 

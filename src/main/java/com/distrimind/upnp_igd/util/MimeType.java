@@ -52,7 +52,7 @@ public class MimeType {
 	}
 
 	public boolean isWildcardType() {
-		return this.getType().equals(WILDCARD);
+		return WILDCARD.equals(this.getType());
 	}
 
 	public String getSubtype() {
@@ -60,7 +60,7 @@ public class MimeType {
 	}
 
 	public boolean isWildcardSubtype() {
-		return this.getSubtype().equals(WILDCARD);
+		return WILDCARD.equals(this.getSubtype());
 	}
 
 	public Map<String, String> getParameters() {
@@ -70,14 +70,15 @@ public class MimeType {
 	public boolean isCompatible(MimeType other) {
 		if (other == null)
 			return false;
-		if (type.equals(WILDCARD) || other.type.equals(WILDCARD))
+		if (WILDCARD.equals(type) || WILDCARD.equals(other.type))
 			return true;
-		else if (type.equalsIgnoreCase(other.type) && (subtype.equals(WILDCARD) || other.subtype.equals(WILDCARD)))
+		else if (type.equalsIgnoreCase(other.type) && (WILDCARD.equals(subtype) || WILDCARD.equals(other.subtype)))
 			return true;
 		else
 			return this.type.equalsIgnoreCase(other.type) && this.subtype.equalsIgnoreCase(other.subtype);
 	}
 
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	public static MimeType valueOf(String stringValue) throws IllegalArgumentException {
 		if (stringValue == null) throw new IllegalArgumentException("String value is null");
 
@@ -87,11 +88,11 @@ public class MimeType {
 			params = stringValue.substring(semicolonIndex + 1).trim();
 			stringValue = stringValue.substring(0, semicolonIndex);
 		}
-		String major = null;
-		String subtype = null;
+		String major;
+		String subtype;
 		String[] paths = stringValue.split("/");
 
-		if (paths.length < 2 && stringValue.equals(WILDCARD)) {
+		if (paths.length < 2 && WILDCARD.equals(stringValue)) {
 
 			major = WILDCARD;
 			subtype = WILDCARD;

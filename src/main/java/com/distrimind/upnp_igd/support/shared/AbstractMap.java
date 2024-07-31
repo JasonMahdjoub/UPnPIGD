@@ -31,10 +31,10 @@ import java.util.*;
  *
  * @since 1.2
  */
-public abstract class AbstractMap<K, V> implements Map<K, V> {
+public abstract class AbstractMap<K, V> implements Map<K, V>, Cloneable{
 
     // Lazily initialized key set.
-    Set<K> keySet;
+    Set<K> keys;
 
     Collection<V> valuesCollection;
 
@@ -336,8 +336,8 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      */
     @Override
 	public Set<K> keySet() {
-        if (keySet == null) {
-            keySet = new AbstractSet<>() {
+        if (keys == null) {
+            keys = new AbstractSet<>() {
 				@Override
 				public boolean contains(Object object) {
 					return containsKey(object);
@@ -371,7 +371,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
 				}
 			};
         }
-        return keySet;
+        return keys;
     }
 
     /**
@@ -443,6 +443,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
      * this map contains itself as a key or a value, the string "(this Map)"
      * will appear in its place.
      */
+	@SuppressWarnings("PMD.CompareObjectsWithEquals")
     @Override public String toString() {
         if (isEmpty()) {
             return "{}";
@@ -520,10 +521,10 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
         return valuesCollection;
     }
 
-    @SuppressWarnings({"unchecked", "PMD.LooseCoupling"})
-    @Override protected Object clone() throws CloneNotSupportedException {
+    @SuppressWarnings({"unchecked", "PMD.LooseCoupling", "PMD.CloneMethodReturnTypeMustMatchClassName"})
+    @Override public Object clone() throws CloneNotSupportedException {
         AbstractMap<K, V> result = (AbstractMap<K, V>) super.clone();
-        result.keySet = null;
+        result.keys = null;
         result.valuesCollection = null;
         return result;
     }

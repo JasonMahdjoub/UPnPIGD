@@ -80,6 +80,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
     }
 
     @Override
+    @SuppressWarnings("PMD.CloseResource")
     synchronized public int addConnector(String host, int port) throws IOException {
         ServerConnector connector = new ServerConnector(server);
         connector.setHost(host);
@@ -104,6 +105,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
     }
 
     @Override
+    @SuppressWarnings("PMD.CloseResource")
     synchronized public void removeConnector(String host, int port)  {
         Connector[] connectors = server.getConnectors();
         for (Connector connector : connectors) {
@@ -196,6 +198,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
         return isConnectionOpen(request, " ".getBytes());
     }
 
+    @SuppressWarnings("PMD.CloseResource")
     public static boolean isConnectionOpen(HttpServletRequest request, byte[] heartbeat) {
         Request jettyRequest = (Request)request;
         HttpChannel connection=jettyRequest.getHttpChannel();

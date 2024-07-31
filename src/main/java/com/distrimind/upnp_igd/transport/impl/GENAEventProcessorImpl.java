@@ -129,7 +129,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     protected Element readPropertysetElement(Document d) {
 
         Element propertysetElement = d.getDocumentElement();
-        if (propertysetElement == null || !getUnprefixedNodeName(propertysetElement).equals("propertyset")) {
+        if (propertysetElement == null || !"propertyset".equals(getUnprefixedNodeName(propertysetElement))) {
             throw new RuntimeException("Root element was not 'propertyset'");
         }
         return propertysetElement;
@@ -161,7 +161,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
             if (propertysetChild.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
-            if (getUnprefixedNodeName(propertysetChild).equals("property")) {
+            if ("property".equals(getUnprefixedNodeName(propertysetChild))) {
 
                 NodeList propertyChildren = propertysetChild.getChildNodes();
 

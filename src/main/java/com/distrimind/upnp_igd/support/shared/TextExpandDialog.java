@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * @author Christian Bauer
  */
 public class TextExpandDialog extends JDialog {
-
+    private static final long serialVersionUID = 1L;
     // TODO: Make this a plugin SPI and let the plugin impl decide how text should be detected and rendered
 
     private static final Logger log = Logger.getLogger(TextExpandDialog.class.getName());

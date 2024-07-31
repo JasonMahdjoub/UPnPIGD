@@ -146,7 +146,7 @@ public class PositionInfo {
     }
 
     public long getTrackElapsedSeconds() {
-        return getRelTime() == null || getRelTime().equals("NOT_IMPLEMENTED") ? 0 : ModelUtil.fromTimeString(getRelTime());
+        return getRelTime() == null || "NOT_IMPLEMENTED".equals(getRelTime()) ? 0 : ModelUtil.fromTimeString(getRelTime());
     }
 
     public long getTrackRemainingSeconds() {

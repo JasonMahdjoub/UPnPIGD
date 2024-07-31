@@ -15,6 +15,7 @@
  package com.distrimind.upnp_igd.swing.logging;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.text.SimpleDateFormat;
 
@@ -69,7 +70,7 @@ public class LogMessage {
 
     @Override
     public String toString() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS", Locale.ROOT);
         return getLevel() + " - " +
                 dateFormat.format(new Date(getCreatedOn())) + " - " +
                 getThread() + " : " + 

@@ -158,6 +158,7 @@ public class IO {
 		}
 	}
 
+	@SuppressWarnings("PMD.CloseResource")
 	public static String readLines(InputStream is) throws IOException {
 		if (is == null) throw new IllegalArgumentException("Inputstream was null");
 
@@ -283,7 +284,7 @@ public class IO {
 			if (input != null) {
 				input.close();
 			}
-		} catch (IOException ioe) {
+		} catch (IOException ignored) {
 			// ignore
 		}
 	}
@@ -301,7 +302,7 @@ public class IO {
 			if (output != null) {
 				output.close();
 			}
-		} catch (IOException ioe) {
+		} catch (IOException ignored) {
 			// ignore
 		}
 	}
@@ -319,7 +320,7 @@ public class IO {
 			if (input != null) {
 				input.close();
 			}
-		} catch (IOException ioe) {
+		} catch (IOException ignored) {
 			// ignore
 		}
 	}
@@ -337,7 +338,7 @@ public class IO {
 			if (output != null) {
 				output.close();
 			}
-		} catch (IOException ioe) {
+		} catch (IOException ignored) {
 			// ignore
 		}
 	}
@@ -1131,6 +1132,7 @@ public class IO {
 	 * @throws NullPointerException if either input is null
 	 * @throws java.io.IOException          if an I/O error occurs
 	 */
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	public static boolean contentEquals(InputStream input1, InputStream input2)
 			throws IOException {
 		if (!(input1 instanceof BufferedInputStream)) {
@@ -1168,6 +1170,7 @@ public class IO {
 	 * @throws java.io.IOException          if an I/O error occurs
 	 * @since Commons IO 1.1
 	 */
+	@SuppressWarnings("PMD.AvoidReassigningParameters")
 	public static boolean contentEquals(Reader input1, Reader input2)
 			throws IOException {
 		if (!(input1 instanceof BufferedReader)) {
