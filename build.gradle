@@ -1,16 +1,5 @@
 
 
-// Apply the java-library plugin to add support for Java Library
-plugins {
-    id "java-library"
-    id "maven-publish"
-    id "eclipse"
-    id "idea"
-    id "signing"
-    id 'pmd'
-    //id "org.owasp.dependencycheck" version "6.1.0"
-}
-
 Properties props = new Properties()
 def propFile = new File(project.getProjectDir().getParentFile(), 'credentials.properties')
 def artifactoryUrl="https://artifactory.distri-mind.fr:443/artifactory"
@@ -40,265 +29,224 @@ if (propFile.canRead())
 }
 
 
-pmd {
-    consoleOutput = true
-    toolVersion = "7.4.0"
-    rulesMinimumPriority = 5
-    ruleSetFiles = files("pmd/pmd-rules.xml")
-}
 
 
 
-eclipse {
-    classpath {
-       downloadSources=true
-    }
-}
-
-// In this section you declare where to find the dependencies of your project
-
-repositories {
 
 
-    maven {
-        url "${artifactoryUrl}/gradle-release/"
-        if (artifactoryUser!="")
-        {
-            credentials {
-                username "${artifactoryUser}"
-                password "${artifactoryPwd}"
-            }
-        }
-    }
 
-}
 
-dependencies {
-    var cdiAPIVersion='4.1.0'
-    var jettyVersion='11.0.21'
-    var slf4jVersion='2.0.13'
-    var testngVersion='7.10.2'
-    var beanShellVersion='2.0b6'
-    var jsoupVersion='1.17.2'
-
-    implementation 'org.jsoup:jsoup:'+jsoupVersion
-
-    compileOnly 'jakarta.enterprise:jakarta.enterprise.cdi-api:'+cdiAPIVersion
-    compileOnly files('FlatLibs/AndroidStub-4.2.0.0.jar')
-    compileOnly 'org.eclipse.jetty:jetty-server:'+jettyVersion
-    compileOnly 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
-    compileOnly 'org.eclipse.jetty:jetty-client:'+jettyVersion
-
-    testImplementation 'jakarta.enterprise:jakarta.enterprise.cdi-api:'+cdiAPIVersion
-    testImplementation files('FlatLibs/AndroidStub-4.2.0.0.jar')
-    testImplementation 'org.eclipse.jetty:jetty-server:'+jettyVersion
-    testImplementation 'org.eclipse.jetty:jetty-servlet:'+jettyVersion
-    testImplementation 'org.eclipse.jetty:jetty-client:'+jettyVersion
-    testImplementation 'org.apache-extras.beanshell:bsh:'+beanShellVersion
-
-    testImplementation 'org.testng:testng:'+testngVersion
-    testImplementation 'org.slf4j:slf4j-api:'+slf4jVersion
-    testImplementation 'org.slf4j:slf4j-simple:'+slf4jVersion
-
-}
-def javaVersion = JavaVersion.VERSION_11
-java {
-
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-}
-
-/*idea {
-    project {
-        jdkName = javaVersion
-        languageLevel = javaVersion
-    }
-}*/
 
 version='1.1.0-STABLE'
+group='com.distrimind.upnp_igd'
 
 
-allprojects {
-	group='com.distrimind.upnp_igd'
+subprojects {
+    ext {
+        jettyVersion='12.0.12'
+        beanShellVersion='2.0b6'
+        jsoupVersion='1.17.2'
+        jakartaCdiAPIVersion='4.1.0'
+        jakartaServletVersion='6.0.0'//this version depends on used jetty version into Android module
+        slf4jVersion='2.0.13'
+        testngVersion='7.10.2'
 
-    compileJava.options.compilerArgs.addAll(['--release', javaVersion] as Collection<? extends String>)
+        javaVersion = JavaVersion.VERSION_11
+    }
+
+    apply plugin: 'java-library'
+    apply plugin: 'idea'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+    apply plugin: 'pmd'
+
+
+    compileJava.options.compilerArgs.addAll(['--release', ext.javaVersion] as Collection<? extends String>)
     javadoc.options.addStringOption("html5", "-quiet")
 
-    gradle.projectsEvaluated {
+    /*gradle.projectsEvaluated {
         tasks.withType(JavaCompile).tap {
             configureEach {
                 options.compilerArgs << "-Xlint:unchecked"
             }
         }
-    }
-}
-
-
-
-jar {
-    manifest {
-        attributes('Implementation-Title': project.name)
-        attributes('Automatic-Module-Name': 'com.distrimind.upnp_igd')
-        attributes('Implementation-Version': project.version)
-    }
-    from('COPYING') {
-        rename { fileName ->
-            "COPYING-"+project.name
-        }
-    }
-    from('NOTICE') {
-        rename { fileName ->
-            "NOTICE-"+project.name
-        }
-    }
-
-}
-
-
-tasks.register('sourcesJar', Jar) {
-    dependsOn classes
-
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
-    manifest {
-        attributes('Implementation-Title': project.name)
-        attributes('Automatic-Module-Name': 'com.distrimind.upnp_igd')
-        attributes('Implementation-Version': project.version)
-    }
-    from('COPYING') {
-        rename { fileName ->
-            "COPYING-"+project.name
-        }
-    }
-    from('NOTICE') {
-        rename { fileName ->
-            "NOTICE-"+project.name
-        }
-    }
-}
-
-tasks.register('javadocJar', Jar) {
-    dependsOn javadoc
-    archiveClassifier.set("javadoc")
-    from javadoc.destinationDir
-    manifest {
-        attributes('Implementation-Title': project.name)
-        attributes('Automatic-Module-Name': 'com.distrimind.upnp_igd')
-        attributes('Implementation-Version': project.version)
-    }
-    from('COPYING') {
-        rename { fileName ->
-            "COPYING-"+project.name
-        }
-    }
-    from('NOTICE') {
-        rename { fileName ->
-            "NOTICE-"+project.name
-        }
-    }
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
-
-
-test {
-     
-     // enable TestNG support (default is JUnit)
-   	useTestNG
-   	{
-   		suites 'src/test/AllTests.tng.xml'
-   	}
-  
-   // set heap size for the test JVM(s)
-   minHeapSize = "1m"
-   maxHeapSize = "6g"
-	/*testLogging {
-        events "passed", "skipped", "failed", "standardOut", "standardError"
     }*/
- }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            pom {
-                name = 'UPnPIGD'
-                description = 'UPnP IGD stack for Java and Android'
-                url = 'https://github.com/JasonMahdjoub/UPnPIGD'
-                developers {
-                    developer {
-                        id = 'cb'
-                        name = 'Christian Bauer'
-                        email = 'cb@4thline.com'
-                        organization = '4th Line GmbH, Switzerland'
-                        roles.add('Project Lead')
-                    }
-                    developer {
-                        id = 'jmahdjoub'
-                        name = 'Jason Mahdjoub'
-                        email = 'jason.mahdjoub@distri-mind.fr'
-                        organization = 'DistriMind'
-                    }
-                }
-                organization {
-                    name = 'DistriMind'
-                    url = 'https://github.com/JasonMahdjoub'
-                }
-                issueManagement {
-                    system = 'GitHub'
-                    url = 'https://github.com/JasonMahdjoub/UPnPIGD/issues'
-                }
-                scm {
-                    connection = 'https://github.com/JasonMahdjoub/UPnPIGD'
-                    developerConnection = connection
-                    url = connection
-                }
-                licenses {
-                    license {
-                        name = 'GNU LESSER GENERAL PUBLIC COPYING Version 2.1'
-                        url = 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt'
-                    }
-                }
-
-            }
-        }
-    }
     repositories {
+
+
         maven {
-            credentials {
-                username "${artifactoryUser}"
-                password "${artifactoryPwd}"
+            url "${artifactoryUrl}/gradle-release/"
+            if (artifactoryUser!="")
+            {
+                credentials {
+                    username "${artifactoryUser}"
+                    password "${artifactoryPwd}"
+                }
             }
-            url "${artifactoryUrl}/DistriMind-Public"
         }
-        maven {
-            credentials {
-                username "${sonatypeUser}"
-                password "${sonatypePwd}"
-            }
-            url "${sonatypeStagingUrl}"
-        }
+
     }
-}
-signing {
-    useGpgCmd()
-    required {!project.hasProperty('disableSigning')}
-    if (required) {
-        sign configurations.archives
-        sign publishing.publications.mavenJava
+    pmd {
+        consoleOutput = true
+        toolVersion = "7.4.0"
+        rulesMinimumPriority = 5
+        ruleSetFiles = files("../pmd/pmd-rules.xml")
     }
 
-}
 
-javadoc {
-    if(JavaVersion.current().isJava9Compatible()) {
+    version=parent.version
+
+
+    jar {
+        manifest {
+            attributes('Implementation-Title': project.name,
+                    'Implementation-Version': project.version)
+        }
+
+        manifest.attributes('Multi-Release': 'false')
+        manifest.attributes('Bundle-Name': jar.archiveBaseName)
+        manifest.attributes('Bundle-SymbolicName': jar.archiveBaseName)
+        manifest.attributes('Bundle-RequiredExecutionEnvironment': 'JavaSE-'+JavaVersion.VERSION_11)
+
+        from('../COPYING') {
+            rename { fileName ->
+                "COPYING-"+project.name
+            }
+        }
+        from('NOTICE') {
+            rename { fileName ->
+                "NOTICE-"+project.name
+            }
+        }
+    }
+
+
+    tasks.register('sourcesJar', Jar) {
+        dependsOn classes
+        manifest {
+            attributes('Implementation-Title': project.name,
+                    'Implementation-Version': project.version)
+        }
+        archiveClassifier.set("sources")
+        from sourceSets.main.allSource
+        from('../COPYING') {
+            rename { fileName ->
+                "COPYING-"+project.name
+            }
+        }
+        from('NOTICE') {
+            rename { fileName ->
+                "NOTICE-"+project.name
+            }
+        }
+    }
+
+    tasks.register('javadocJar', Jar) {
+        dependsOn javadoc
+        manifest {
+            attributes('Implementation-Title': project.name,
+                    'Implementation-Version': project.version)
+        }
+        archiveClassifier.set("javadoc")
+        from javadoc.destinationDir
+        from('../COPYING') {
+            rename { fileName ->
+                "COPYING-"+project.name
+            }
+        }
+        from('NOTICE') {
+            rename { fileName ->
+                "NOTICE-"+project.name
+            }
+        }
+    }
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+                pom {
+                    name = project.name
+                    description = 'UPnP IGD stack for Java and Android'
+                    url = 'https://github.com/JasonMahdjoub/UPnPIGD'
+                    developers {
+                        developer {
+                            id = 'cb'
+                            name = 'Christian Bauer'
+                            email = 'cb@4thline.com'
+                            organization = '4th Line GmbH, Switzerland'
+                            roles.add('Project Lead')
+                        }
+                        developer {
+                            id = 'jmahdjoub'
+                            name = 'Jason Mahdjoub'
+                            email = 'jason.mahdjoub@distri-mind.fr'
+                            organization = 'DistriMind'
+                        }
+                    }
+                    organization {
+                        name = 'DistriMind'
+                        url = 'https://github.com/JasonMahdjoub'
+                    }
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/JasonMahdjoub/UPnPIGD/issues'
+                    }
+                    scm {
+                        connection = 'https://github.com/JasonMahdjoub/UPnPIGD'
+                        developerConnection = connection
+                        url = connection
+                    }
+                    licenses {
+                        license {
+                            name = 'GNU LESSER GENERAL PUBLIC COPYING Version 2.1'
+                            url = 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt'
+                        }
+                    }
+
+                }
+            }
+        }
+        repositories {
+            maven {
+                credentials {
+                    username "${artifactoryUser}"
+                    password "${artifactoryPwd}"
+                }
+                url "${artifactoryUrl}/DistriMind-Public"
+            }
+            maven {
+                credentials {
+                    username "${sonatypeUser}"
+                    password "${sonatypePwd}"
+                }
+                url "${sonatypeStagingUrl}"
+            }
+        }
+    }
+    signing {
+        useGpgCmd()
+        required {!project.hasProperty('disableSigning')}
+        if (required) {
+            sign configurations.archives
+            sign publishing.publications.mavenJava
+        }
+
+    }
+    javadoc {
         options.addBooleanOption('html5', true)
     }
 }
+
+
+
+
+
+
+
+
+
+
 
