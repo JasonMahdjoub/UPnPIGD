@@ -63,7 +63,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
             new ExecutorThreadPool(getConfiguration().getRequestExecutorService()) {
                 @Override
                 protected void doStop() throws Exception {
-                    // Do nothing, don't shut down the Cling ExecutorService when Jetty stops!
+                    // Do nothing, don't shut down the UPnPIGD ExecutorService when Jetty stops!
                 }
             }
         );*/

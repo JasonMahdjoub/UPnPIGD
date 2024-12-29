@@ -22,7 +22,7 @@ package com.distrimind.upnp_igd.model;
  */
 public class UserConstants {
 
-    public static final String PRODUCT_TOKEN_NAME = "Cling";
+    public static final String PRODUCT_TOKEN_NAME = "UPnPIGD";
 
     public static final String PRODUCT_TOKEN_VERSION = "2.0";
 
