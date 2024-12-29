@@ -7,7 +7,7 @@ java {
 }
 
 dependencies {
-    implementation project(':UpnpIGD-Core')
+    implementation project(':UPnPIGD-Core')
     compileOnly files('FlatLibs/AndroidStub-4.2.0.0.jar')
 
 
@@ -19,7 +19,7 @@ dependencies {
 
 
 
-    testImplementation project(':UpnpIGD-Core').sourceSets.test.output
+    testImplementation project(':UPnPIGD-Core').sourceSets.test.output
     testImplementation files('FlatLibs/AndroidStub-4.2.0.0.jar')
 
 
@@ -35,7 +35,7 @@ dependencies {
     testImplementation 'org.slf4j:slf4j-simple:'+slf4jVersion
 }
 
-jar.archiveBaseName = "UpnpIGD-Android"
+jar.archiveBaseName = "UPnPIGD-Android"
 
 
 artifacts {

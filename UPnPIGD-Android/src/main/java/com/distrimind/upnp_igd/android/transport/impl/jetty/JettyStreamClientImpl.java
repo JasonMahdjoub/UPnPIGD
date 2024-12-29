@@ -20,8 +20,12 @@ import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 import com.distrimind.upnp_igd.transport.spi.AbstractStreamClient;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
-import org.eclipse.jetty.client.*;
-import org.eclipse.jetty.client.transport.HttpRequest;
+import org.eclipse.jetty.client.HttpRequest;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.util.BytesRequestContent;
+import org.eclipse.jetty.client.util.StringRequestContent;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
 
@@ -44,14 +48,14 @@ import java.util.logging.Logger;
  *
  * @author Christian Bauer
  */
-public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigurationImpl, HttpRequest> {
+public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConfigurationImpl, HttpRequest> {
 
     final private static Logger log = Logger.getLogger(StreamClient.class.getName());
 
     final protected StreamClientConfigurationImpl configuration;
     final protected HttpClient client;
 
-    public StreamClientImpl(StreamClientConfigurationImpl configuration) throws InitializationException {
+    public JettyStreamClientImpl(StreamClientConfigurationImpl configuration) throws InitializationException {
         this.configuration = configuration;
 
         log.info("Starting Jetty HttpClient...");

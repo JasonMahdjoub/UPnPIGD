@@ -20,7 +20,7 @@ Adapt into your build.gradle file, the next code :
 	...
 	dependencies {
 		...
-		api(group:'com.distrimind.upnp_igd', name: 'UPnPIGD-Core', version: '1.1.0-STABLE')
+		api(group:'com.distrimind.upnp_igd', name: 'UPnPIGD-Core', version: '1.2.0-BETA')
 		...
 	}
 	...
@@ -30,7 +30,7 @@ When using UPnPIGD into Android, if you want to use UPnPIGD functions, please us
 	...
 	dependencies {
 		...
-		implementation(group:'com.distrimind.upnp_igd', name: 'UPnPIGD-Android', version: '1.1.0-STABLE')
+		implementation(group:'com.distrimind.upnp_igd', name: 'UPnPIGD-Android', version: '1.2.0-BETA')
 		...
 	}
 	...
@@ -59,7 +59,7 @@ Adapt into your pom.xml file, the next code :
 			<dependency>
 				<groupId>com.distrimind.upnp_igd</groupId>
 				<artifactId>UPnPIGD-Core</artifactId>
-				<version>1.1.0-STABLE</version>
+				<version>1.2.0-BETA</version>
 			</dependency>
 			...
 		</dependencies>
@@ -73,7 +73,7 @@ When using UPnPIGD into Android, if you want to use UPnPIGD functions, please us
     <dependency>
         <groupId>com.distrimind.upnp_igd</groupId>
         <artifactId>UPnPIGD-Android</artifactId>
-        <version>1.1.0-STABLE</version>
+        <version>1.2.0-BETA</version>
     </dependency>
 	...
 ```

@@ -15,46 +15,42 @@
 package com.distrimind.upnp_igd.android.test.transport;
 
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
-import com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerConfigurationImpl;
-import com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerImpl;
-import com.distrimind.upnp_igd.android.transport.impl.jetty.JettyServletContainer;
+import com.distrimind.upnp_igd.transport.impl.StreamServerConfigurationImpl;
+import com.distrimind.upnp_igd.transport.impl.StreamServerImpl;
 import com.distrimind.upnp_igd.android.transport.impl.jetty.StreamClientConfigurationImpl;
-import com.distrimind.upnp_igd.android.transport.impl.jetty.StreamClientImpl;
+import com.distrimind.upnp_igd.android.transport.impl.jetty.JettyStreamClientImpl;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
-import jakarta.servlet.http.HttpServletRequest;
-
 
 /**
  * @author Christian Bauer
  */
-public class JettyServerJettyClientTest extends StreamServerClientTest {
+public class JDKServerJettyClientTest extends StreamServerClientTest {
 
     @Override
     public StreamServer<?> createStreamServer(int port) {
-        AsyncServletStreamServerConfigurationImpl configuration =
-            new AsyncServletStreamServerConfigurationImpl(
-                JettyServletContainer.INSTANCE,
-                port
-            );
-
-        return new AsyncServletStreamServerImpl(
-            configuration
-        ) {
-            @Override
-            protected boolean isConnectionOpen(HttpServletRequest request) {
-                return JettyServletContainer.isConnectionOpen(request);
-            }
-        };
+        return new StreamServerImpl(
+            new StreamServerConfigurationImpl(port)
+        );
     }
 
     @Override
     public StreamClient<?> createStreamClient(UpnpServiceConfiguration configuration) {
-        return new StreamClientImpl(
+        return new JettyStreamClientImpl(
             new StreamClientConfigurationImpl(
                 configuration.getSyncProtocolExecutorService(),
                 3
             )
         );
     }
+
+    // DISABLED, NOT SUPPORTED
+    @Override
+    public void checkAliveExpired() throws Exception {
+    }
+
+    @Override
+    public void checkAliveCancelled() throws Exception {
+    }
+
 }
