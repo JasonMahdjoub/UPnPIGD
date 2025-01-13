@@ -17,6 +17,8 @@ package com.distrimind.upnp_igd.registry;
 
 import com.distrimind.upnp_igd.model.ExpirationDetails;
 
+import java.util.Objects;
+
 /**
  * Internal class, required by {@link RegistryImpl}.
  *
@@ -61,7 +63,7 @@ class RegistryItem<K, I> {
     }
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return Objects.hashCode(key);
     }
 
     @Override
