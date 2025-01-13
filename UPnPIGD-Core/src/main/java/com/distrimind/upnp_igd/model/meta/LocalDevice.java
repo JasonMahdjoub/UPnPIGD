@@ -137,7 +137,11 @@ public class LocalDevice<T> extends Device<DeviceIdentity, LocalDevice<T>, Local
         super(identity, type, details, icons, services);
         this.deviceDetailsProvider = null;
     }
-
+    public LocalDevice(DeviceIdentity identity, DeviceType type, DeviceDetails details,
+                       Collection<LocalService<T>> services, List<LocalDevice<T>> embeddedDevices) throws ValidationException {
+        super(identity, type, details, null, services, embeddedDevices);
+        this.deviceDetailsProvider = null;
+    }
     public LocalDevice(DeviceIdentity identity, DeviceType type, DeviceDetails details,
                        Collection<Icon> icons, Collection<LocalService<T>> services, List<LocalDevice<T>> embeddedDevices) throws ValidationException {
         super(identity, type, details, icons, services, embeddedDevices);
@@ -149,7 +153,11 @@ public class LocalDevice<T> extends Device<DeviceIdentity, LocalDevice<T>, Local
         super(identity, version, type, details, icons, services, embeddedDevices);
         this.deviceDetailsProvider = null;
     }
-
+    public LocalDevice(DeviceIdentity identity, UDAVersion version, DeviceType type, DeviceDetailsProvider deviceDetailsProvider,
+                       Collection<LocalService<T>> services, List<LocalDevice<T>> embeddedDevices) throws ValidationException {
+        super(identity, version, type, null, null, services, embeddedDevices);
+        this.deviceDetailsProvider = deviceDetailsProvider;
+    }
     public LocalDevice(DeviceIdentity identity, UDAVersion version, DeviceType type, DeviceDetailsProvider deviceDetailsProvider,
                        Collection<Icon> icons, Collection<LocalService<T>> services, List<LocalDevice<T>> embeddedDevices) throws ValidationException {
         super(identity, version, type, null, icons, services, embeddedDevices);

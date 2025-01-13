@@ -52,12 +52,15 @@
 
     <test name="Examples">
         <packages>
+            <package name="example.igd"/>
             <package name="example.binarylight"/>
             <package name="example.controlpoint"/>
             <package name="example.registry"/>
             <package name="example.localservice"/>
         </packages>
     </test>
+
+
 
 
 </suite>
