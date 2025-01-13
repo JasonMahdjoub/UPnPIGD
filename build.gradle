@@ -33,6 +33,7 @@ version='1.2.0-BETA2'
 group='com.distrimind.upnp_igd'
 
 
+
 subprojects {
 
     apply plugin: 'java-library'
