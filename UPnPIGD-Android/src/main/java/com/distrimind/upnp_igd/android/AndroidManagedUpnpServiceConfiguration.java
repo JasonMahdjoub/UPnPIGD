@@ -279,6 +279,6 @@ public class AndroidManagedUpnpServiceConfiguration implements UpnpServiceConfig
     }
 
     protected ExecutorService createDefaultExecutorService() {
-        return new DefaultUpnpServiceConfiguration.ClingExecutor();
+        return new DefaultUpnpServiceConfiguration.UpnpIGDExecutor();
     }
 }
