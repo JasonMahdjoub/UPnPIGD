@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public abstract class NoMediaPresent<T extends AVTransport> extends AbstractState<T> {
 
-    final private static Logger log = Logger.getLogger(Stopped.class.getName());
+    final private static Logger log = Logger.getLogger(NoMediaPresent.class.getName());
 
     public NoMediaPresent(T transport) {
         super(transport);

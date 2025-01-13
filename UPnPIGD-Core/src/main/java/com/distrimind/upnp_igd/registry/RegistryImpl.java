@@ -54,7 +54,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class RegistryImpl implements Registry {
 
-    private static final Logger log = Logger.getLogger(Registry.class.getName());
+    private static final Logger log = Logger.getLogger(RegistryImpl.class.getName());
 
     protected UpnpService upnpService;
     protected RegistryMaintainer registryMaintainer;

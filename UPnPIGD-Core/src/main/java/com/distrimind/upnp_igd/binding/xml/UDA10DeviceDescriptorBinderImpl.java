@@ -71,7 +71,7 @@ import org.xml.sax.SAXParseException;
  */
 public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, ErrorHandler {
 
-    private static final Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
+    private static final Logger log = Logger.getLogger(UDA10DeviceDescriptorBinderImpl.class.getName());
     private final NetworkAddressFactory networkAddressFactory;
     static boolean isNotValidRemoteAddress(URL u, NetworkAddressFactory networkAddressFactory)
     {

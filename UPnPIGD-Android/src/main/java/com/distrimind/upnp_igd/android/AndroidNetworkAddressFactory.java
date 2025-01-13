@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
 
-    final private static Logger log = Logger.getLogger(AndroidUpnpServiceConfiguration.class.getName());
+    final private static Logger log = Logger.getLogger(AndroidNetworkAddressFactory.class.getName());
 
     public AndroidNetworkAddressFactory(int streamListenPort, int multicastPort) {
         super(streamListenPort, multicastPort);
@@ -71,7 +71,7 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
 					target = address;
 				}
 
-				if (field0 != null && target != null && hostName != null) {
+				if (target != null && hostName != null) {
 					field0.setAccessible(true);
 					field0.set(target, hostName);
 				} else {

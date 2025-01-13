@@ -52,7 +52,7 @@ import static com.distrimind.upnp_igd.binding.xml.Descriptor.Device.ELEMENT;
  */
 public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBinderImpl {
 
-    private static final Logger log = Logger.getLogger(DeviceDescriptorBinder.class.getName());
+    private static final Logger log = Logger.getLogger(UDA10DeviceDescriptorBinderSAXImpl.class.getName());
 
     public UDA10DeviceDescriptorBinderSAXImpl(NetworkAddressFactory networkAddressFactory) {
         super(networkAddressFactory);

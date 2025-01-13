@@ -97,7 +97,7 @@ import static org.testng.Assert.*;
  * <a class="citation" href="javacode://this#invokeActions(LocalDevice)" id="ai_settarget" style="include: SETTARGET; exclude: EXC2"/>
  * <p>
  * This action has one input argument of UPnP type "boolean". You can set a Java <code>boolean</code>
- * primitive or <code>Boolean</code> instance and it will be automatically converted. If you set an
+ * primitive or <code>Boolean</code> instance. It will be automatically converted. If you set an
  * invalid value for a particular argument, such as an instance with the wrong type,
  * an <code>InvalidValueException</code> will be thrown immediately.
  * </p>

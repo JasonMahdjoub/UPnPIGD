@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  */
 public class AnnotationStateVariableBinder {
 
-    private static final Logger log = Logger.getLogger(AnnotationLocalServiceBinder.class.getName());
+    private static final Logger log = Logger.getLogger(AnnotationStateVariableBinder.class.getName());
 
     protected UpnpStateVariable annotation;
     protected String name;

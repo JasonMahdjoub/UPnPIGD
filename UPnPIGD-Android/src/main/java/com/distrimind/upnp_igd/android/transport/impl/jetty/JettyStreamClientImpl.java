@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  */
 public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConfigurationImpl, HttpRequest> {
 
-    final private static Logger log = Logger.getLogger(StreamClient.class.getName());
+    final private static Logger log = Logger.getLogger(JettyStreamClientImpl.class.getName());
 
     final protected StreamClientConfigurationImpl configuration;
     final protected HttpClient client;

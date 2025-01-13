@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class AndroidManagedUpnpServiceConfiguration implements UpnpServiceConfiguration {
 
-    private static final Logger log = Logger.getLogger(DefaultUpnpServiceConfiguration.class.getName());
+    private static final Logger log = Logger.getLogger(AndroidManagedUpnpServiceConfiguration.class.getName());
 
     // TODO: All of these fields should be injected so users can provide values through CDI
 

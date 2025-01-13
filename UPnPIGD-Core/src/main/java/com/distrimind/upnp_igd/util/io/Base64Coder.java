@@ -79,7 +79,7 @@ import java.nio.charset.StandardCharsets;
  *      <a href="https://www.faqs.org/rfcs/rfc3548.html">RFC3548</a>.</li>
  *    <li><em>Throws exceptions instead of returning null values.</em> Because some operations
  *      (especially those that may permit the GZIP option) use IO streams, there
- *      is a possiblity of an java.io.IOException being thrown. After some discussion and
+ *      is a possiblity of a java.io.IOException being thrown. After some discussion and
  *      thought, I've changed the behavior of the methods to throw java.io.IOExceptions
  *      rather than return null if ever there's an error. I think this is more
  *      appropriate, though it will require some changes to your code. Sorry,
@@ -132,7 +132,7 @@ import java.nio.charset.StandardCharsets;
  *      Added the ability to GZip-compress objects before encoding them.</li>
  *  <li>v1.4 - Added helper methods to read/write files.</li>
  *  <li>v1.3.6 - Fixed OutputStream.flush() so that 'position' is reset.</li>
- *  <li>v1.3.5 - Added flag to turn on and off line breaks. Fixed bug in input stream
+ *  <li>v1.3.5 - Added flag to turn on and off-line breaks. Fixed bug in input stream
  *      where last buffer being read, if not completely full, was not returned.</li>
  *  <li>v1.3.4 - Fixed when "improperly padded stream" error was thrown at the wrong time.</li>
  *  <li>v1.3.3 - Fixed I/O streams which were totally messed up.</li>
@@ -604,7 +604,7 @@ public class Base64Coder
      *  
      * <p>As of v 2.3, if the object
      * cannot be serialized or there is another error,
-     * the method will throw an java.io.IOException. <b>This is new to v2.3!</b>
+     * the method will throw a java.io.IOException. <b>This is new to v2.3!</b>
      * In earlier versions, it just returned a null value, but
      * in retrospect that's a pretty poor way to handle it.</p>
      * 
@@ -665,17 +665,17 @@ public class Base64Coder
         try(java.io.ByteArrayOutputStream baos  = new java.io.ByteArrayOutputStream())
         {
 
-            try (java.io.OutputStream b64os = new Base64Coder.OutputStream(baos, ENCODE_BIT | options); ) {
+            try (java.io.OutputStream b64os = new Base64Coder.OutputStream(baos, ENCODE_BIT | options) ) {
                 // ObjectOutputStream -> (GZIP) -> Base64 -> ByteArrayOutputStream
 
                 if ((options & GZIP) != 0) {
                     // Gzip
-                    try(java.util.zip.GZIPOutputStream gzos = new java.util.zip.GZIPOutputStream(b64os);java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(gzos);)
+                    try(java.util.zip.GZIPOutputStream gzos = new java.util.zip.GZIPOutputStream(b64os);java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(gzos))
                     {
                         oos.writeObject(serializableObject);
                     }
                 } else {
-                    try(java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(b64os);)
+                    try(java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(b64os))
                     {
                         oos.writeObject(serializableObject);
                     }

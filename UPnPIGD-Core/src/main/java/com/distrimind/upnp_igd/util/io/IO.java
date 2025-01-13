@@ -51,11 +51,12 @@ public class IO {
 		if (subfiles==null)
 			return;
 		for (File file : subfiles) {
+			File f = new File(dir, file.getName().replace(from, to));
 			if (file.isDirectory()) {
 				recursiveRename(file, from, to);
-				file.renameTo(new File(dir, file.getName().replace(from, to)));
+				file.renameTo(f);
 			} else {
-				file.renameTo(new File(dir, file.getName().replace(from, to)));
+				file.renameTo(f);
 			}
 		}
 	}

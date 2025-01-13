@@ -57,7 +57,7 @@ import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
  */
 public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder, ErrorHandler {
 
-    private static final Logger log = Logger.getLogger(ServiceDescriptorBinder.class.getName());
+    private static final Logger log = Logger.getLogger(UDA10ServiceDescriptorBinderImpl.class.getName());
     private final NetworkAddressFactory networkAddressFactory;
     public UDA10ServiceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory)
     {

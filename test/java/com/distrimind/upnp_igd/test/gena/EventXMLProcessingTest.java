@@ -127,9 +127,11 @@ public class EventXMLProcessingTest {
     private static OutgoingEventRequestMessage getOutgoingEventRequestMessage(LocalService<GenaSampleData.LocalTestService> localService) throws Exception {
         List<URL> urls = new ArrayList<>() {
             private static final long serialVersionUID = 1L;
+
             {
-			add(SampleData.getLocalBaseURL());
-		}};
+                add(SampleData.getLocalBaseURL());
+            }
+        };
 
         LocalGENASubscription<GenaSampleData.LocalTestService> subscription =
                 new LocalGENASubscription<>(localService, 1800, urls) {

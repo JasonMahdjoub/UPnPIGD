@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  */
 public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletStreamServerConfigurationImpl> {
 
-    final private static Logger log = Logger.getLogger(StreamServer.class.getName());
+    final private static Logger log = Logger.getLogger(AsyncServletStreamServerImpl.class.getName());
 
     final protected AsyncServletStreamServerConfigurationImpl configuration;
     protected int localPort;

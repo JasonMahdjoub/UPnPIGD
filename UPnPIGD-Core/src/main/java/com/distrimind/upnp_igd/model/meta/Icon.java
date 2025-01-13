@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  */
 public class Icon implements Validatable {
 
-    final private static Logger log = Logger.getLogger(StateVariable.class.getName());
+    final private static Logger log = Logger.getLogger(Icon.class.getName());
     public static final String UPN_P_SPECIFICATION_VIOLATION_OF = "UPnP specification violation of: ";
 
     final private MimeType mimeType;

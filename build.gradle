@@ -34,10 +34,6 @@ group='com.distrimind.upnp_igd'
 
 
 subprojects {
-    ext {
-
-        javaVersion = JavaVersion.VERSION_11
-    }
 
     apply plugin: 'java-library'
     apply plugin: 'idea'
@@ -45,17 +41,20 @@ subprojects {
     apply plugin: 'signing'
     apply plugin: 'pmd'
 
-
-    compileJava.options.compilerArgs.addAll(['--release', ext.javaVersion] as Collection<? extends String>)
     javadoc.options.addStringOption("html5", "-quiet")
 
-    /*gradle.projectsEvaluated {
+    gradle.projectsEvaluated {
         tasks.withType(JavaCompile).tap {
             configureEach {
                 options.compilerArgs << "-Xlint:unchecked"
+                options.deprecation = true
             }
         }
-    }*/
+    }
+
+    javadoc {
+        options.addBooleanOption('html5', true)
+    }
 
     repositories {
 

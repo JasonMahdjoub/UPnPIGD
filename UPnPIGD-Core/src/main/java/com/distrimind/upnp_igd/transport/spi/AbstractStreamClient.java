@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractStreamClient<C extends StreamClientConfiguration, REQUEST> implements StreamClient<C> {
 
-    final private static Logger log = Logger.getLogger(StreamClient.class.getName());
+    final private static Logger log = Logger.getLogger(AbstractStreamClient.class.getName());
 
     @Override
     public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) throws InterruptedException {

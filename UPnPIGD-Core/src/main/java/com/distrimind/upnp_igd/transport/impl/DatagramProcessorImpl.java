@@ -36,7 +36,7 @@ import java.util.Locale;
  */
 public class DatagramProcessorImpl implements DatagramProcessor {
 
-    private static final Logger log = Logger.getLogger(DatagramProcessor.class.getName());
+    private static final Logger log = Logger.getLogger(DatagramProcessorImpl.class.getName());
 
     @Override
 	public IncomingDatagramMessage<?> read(InetAddress receivedOnAddress, DatagramPacket datagram) throws UnsupportedDataException {

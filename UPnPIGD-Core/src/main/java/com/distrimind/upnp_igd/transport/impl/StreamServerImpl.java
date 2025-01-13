@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  */
 public class StreamServerImpl implements StreamServer<StreamServerConfigurationImpl> {
 
-    private static final Logger log = Logger.getLogger(StreamServer.class.getName());
+    private static final Logger log = Logger.getLogger(StreamServerImpl.class.getName());
 
     final protected StreamServerConfigurationImpl configuration;
     protected HttpServer server;

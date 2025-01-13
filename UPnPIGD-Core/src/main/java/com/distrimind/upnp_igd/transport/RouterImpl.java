@@ -65,7 +65,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class RouterImpl implements Router {
 
-    private static final Logger log = Logger.getLogger(Router.class.getName());
+    private static final Logger log = Logger.getLogger(RouterImpl.class.getName());
 
     protected UpnpServiceConfiguration configuration;
     protected ProtocolFactory protocolFactory;

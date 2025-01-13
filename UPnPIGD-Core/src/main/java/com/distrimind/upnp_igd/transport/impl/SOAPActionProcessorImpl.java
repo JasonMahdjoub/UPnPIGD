@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  */
 public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandler {
 
-    private static final Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
+    private static final Logger log = Logger.getLogger(SOAPActionProcessorImpl.class.getName());
     public static final String FOR = " for: ";
     public static final String SOAP_BODY_BEGIN = "===================================== SOAP BODY BEGIN ============================================";
     public static final String SOAP_BODY_END = "-===================================== SOAP BODY END ============================================";

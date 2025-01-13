@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  */
 class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
 
-    private static final Logger log = Logger.getLogger(Registry.class.getName());
+    private static final Logger log = Logger.getLogger(RemoteItems.class.getName());
 
     RemoteItems(RegistryImpl registry) {
         super(registry);

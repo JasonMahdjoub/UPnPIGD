@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class SendingNotificationAlive extends SendingNotification {
 
-    final private static Logger log = Logger.getLogger(SendingNotification.class.getName());
+    final private static Logger log = Logger.getLogger(SendingNotificationAlive.class.getName());
 
     public SendingNotificationAlive(UpnpService upnpService, LocalDevice<?> device) {
         super(upnpService, device);

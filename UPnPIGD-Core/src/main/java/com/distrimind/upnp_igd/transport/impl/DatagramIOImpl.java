@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
 
-    private static final Logger log = Logger.getLogger(DatagramIO.class.getName());
+    private static final Logger log = Logger.getLogger(DatagramIOImpl.class.getName());
 
     /* Implementation notes for unicast/multicast UDP:
 

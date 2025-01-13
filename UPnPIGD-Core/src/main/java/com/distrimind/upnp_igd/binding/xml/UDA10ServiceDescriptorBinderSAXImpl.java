@@ -51,7 +51,7 @@ import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ELEMENT;
  */
 public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorBinderImpl {
 
-    private static final Logger log = Logger.getLogger(ServiceDescriptorBinder.class.getName());
+    private static final Logger log = Logger.getLogger(UDA10ServiceDescriptorBinderSAXImpl.class.getName());
 
     public UDA10ServiceDescriptorBinderSAXImpl(NetworkAddressFactory networkAddressFactory) {
         super(networkAddressFactory);

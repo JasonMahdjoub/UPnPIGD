@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  */
 public abstract class HttpExchangeUpnpStream extends UpnpStream {
 
-    private static final Logger log = Logger.getLogger(UpnpStream.class.getName());
+    private static final Logger log = Logger.getLogger(HttpExchangeUpnpStream.class.getName());
 
     private final HttpExchange httpExchange;
 

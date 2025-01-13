@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  */
 class LocalItems extends RegistryItems<LocalDevice<?>, LocalGENASubscription<?>> {
 
-    private static final Logger log = Logger.getLogger(Registry.class.getName());
+    private static final Logger log = Logger.getLogger(LocalItems.class.getName());
     
     protected Map<UDN, DiscoveryOptions> discoveryOptions = new HashMap<>();
     protected long lastAliveIntervalTimestamp = 0;

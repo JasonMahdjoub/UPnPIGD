@@ -50,28 +50,28 @@ public class Phase {
     @Qualifier
     @Target({FIELD, PARAMETER})
     @Retention(RUNTIME)
-	@interface Alive {
+	public @interface Alive {
 
     }
 
     @Qualifier
     @Target({FIELD, PARAMETER})
     @Retention(RUNTIME)
-	@interface Complete {
+	public @interface Complete {
 
     }
 
     @Qualifier
     @Target({FIELD, PARAMETER})
     @Retention(RUNTIME)
-	@interface Byebye {
+	public @interface Byebye {
 
     }
 
     @Qualifier
     @Target({FIELD, PARAMETER})
     @Retention(RUNTIME)
-	@interface Updated {
+	public @interface Updated {
 
     }
 

@@ -65,7 +65,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class ProtocolFactoryImpl implements ProtocolFactory {
 
-    final private static Logger log = Logger.getLogger(ProtocolFactory.class.getName());
+    final private static Logger log = Logger.getLogger(ProtocolFactoryImpl.class.getName());
 
     protected final UpnpService upnpService;
 

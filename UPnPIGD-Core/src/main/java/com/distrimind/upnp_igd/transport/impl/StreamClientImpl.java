@@ -69,7 +69,7 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
 
     final static String HACK_STREAM_HANDLER_SYSTEM_PROPERTY = "hackStreamHandlerProperty";
 
-    final private static Logger log = Logger.getLogger(StreamClient.class.getName());
+    final private static Logger log = Logger.getLogger(StreamClientImpl.class.getName());
 
     final protected StreamClientConfigurationImpl configuration;
 

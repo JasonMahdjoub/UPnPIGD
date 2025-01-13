@@ -49,7 +49,7 @@ import jakarta.enterprise.inject.Alternative;
 @Alternative
 public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 
-	private static final Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
+	private static final Logger log = Logger.getLogger(PullGENAEventProcessorImpl.class.getName());
 
 	@Override
 	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {

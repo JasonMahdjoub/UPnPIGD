@@ -51,7 +51,7 @@ import java.util.logging.Logger;
  */
 public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler {
 
-    private static final Logger log = Logger.getLogger(GENAEventProcessor.class.getName());
+    private static final Logger log = Logger.getLogger(GENAEventProcessorImpl.class.getName());
 
     protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
     	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();

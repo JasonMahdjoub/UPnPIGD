@@ -255,7 +255,7 @@ public class OutgoingSubscriptionLifecycleTest {
         Thread.sleep(1000);
 
         // notification should not have been received before the subscribe response
-        assertEquals(0, notificationCalled.size());
+        assertEquals(notificationCalled.size(), 0);
 
         // unlock subscription response
         subscribeResponseSemaphore.release();
@@ -264,7 +264,7 @@ public class OutgoingSubscriptionLifecycleTest {
         notifyThread.join();
 
         // notification should have been received after the subscribe response
-        assertEquals(1, notificationCalled.size());
+        assertEquals(notificationCalled.size(), 1);
 
         for (Boolean testAssertion : testAssertions) {
             assertTrue(testAssertion);

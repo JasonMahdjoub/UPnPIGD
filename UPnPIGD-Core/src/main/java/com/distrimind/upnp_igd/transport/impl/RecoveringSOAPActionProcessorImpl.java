@@ -54,7 +54,7 @@ import jakarta.enterprise.inject.Alternative;
 @Alternative
 public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorImpl {
 
-    private static final Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
+    private static final Logger log = Logger.getLogger(RecoveringSOAPActionProcessorImpl.class.getName());
 
     @Override
     public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {

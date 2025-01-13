@@ -58,7 +58,7 @@ import java.util.logging.Logger;
 
 public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration {
 
-    private static final Logger log = Logger.getLogger(DefaultUpnpServiceConfiguration.class.getName());
+    private static final Logger log = Logger.getLogger(ManagedUpnpServiceConfiguration.class.getName());
 
     // TODO: All of these fields should be injected so users can provide values through CDI
 

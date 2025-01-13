@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  */
 public class AnnotationActionBinder<T> {
 
-    private static final Logger log = Logger.getLogger(AnnotationLocalServiceBinder.class.getName());
+    private static final Logger log = Logger.getLogger(AnnotationActionBinder.class.getName());
 
     protected UpnpAction annotation;
     protected Method method;
@@ -217,12 +217,8 @@ public class AnnotationActionBinder<T> {
 
                 // Use the same class as the action method
                 Method getter = Reflections.getMethod(getMethod().getDeclaringClass(), getterName);
-                if (getter == null)
-                    throw new LocalServiceBindingException(
-                            "Declared getter method '" + getterName + "' not found on: " + getMethod().getDeclaringClass()
-                    );
 
-                validateType(stateVariable, getter.getReturnType());
+				validateType(stateVariable, getter.getReturnType());
 
                 return new GetterStateVariableAccessor(getter);
 
@@ -239,12 +235,8 @@ public class AnnotationActionBinder<T> {
 
             // Use the returned class
             Method getter = Reflections.getMethod(getMethod().getReturnType(), getterName);
-            if (getter == null)
-                throw new LocalServiceBindingException(
-                        "Declared getter method '" + getterName + "' not found on return type: " + getMethod().getReturnType()
-                );
 
-            validateType(stateVariable, getter.getReturnType());
+			validateType(stateVariable, getter.getReturnType());
 
             return new GetterStateVariableAccessor(getter);
 
