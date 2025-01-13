@@ -86,7 +86,7 @@ public class StateVariable<S extends Service<?, ?, ?>> implements Validatable {
             ));
         } else if (!ModelUtil.isValidUDAName(getName())) {
             if (log.isLoggable(Level.WARNING)) {
-                log.warning("UPnP specification violation of: " + getService().getDevice());
+                log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
                 log.warning("Invalid state variable name: " + this);
             }
         }

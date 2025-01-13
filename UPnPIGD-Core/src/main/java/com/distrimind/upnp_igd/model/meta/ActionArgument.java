@@ -131,12 +131,12 @@ public class ActionArgument<S extends Service<?, ?, ?>> implements Validatable {
 
             if (!ModelUtil.isValidUDAName(getName())) {
                 if (log.isLoggable(Level.WARNING)) {
-                    log.warning("UPnP specification violation of: " + getAction().getService().getDevice());
+                    log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getAction().getService().getDevice());
                     log.warning("Invalid argument name: " + this);
                 }
             } else if (getName().length() > 32) {
                 if (log.isLoggable(Level.WARNING)) {
-                    log.warning("UPnP specification violation of: " + getAction().getService().getDevice());
+                    log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getAction().getService().getDevice());
                     log.warning("Argument name should be less than 32 characters: " + this);
                 }
             }

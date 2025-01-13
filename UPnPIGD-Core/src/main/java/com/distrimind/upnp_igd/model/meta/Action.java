@@ -150,7 +150,7 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
             ));
         } else if (!ModelUtil.isValidUDAName(getName())) {
             if (log.isLoggable(Level.WARNING)) {
-                log.warning("UPnP specification violation of: " + getService().getDevice());
+                log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
                 log.warning("Invalid action name: " + this);
             }
         }
@@ -174,13 +174,13 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
             if (actionArgument.isReturnValue()) {
                 if (actionArgument.getDirection() == ActionArgument.Direction.IN) {
                     if (log.isLoggable(Level.WARNING)) {
-                        log.warning("UPnP specification violation of :" + getService().getDevice());
+                        log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
                         log.warning("Input argument can not have <retval/>");
                     }
                 } else {
                     if (retValueArgument != null) {
                         if (log.isLoggable(Level.WARNING)) {
-                            log.warning("UPnP specification violation of: " + getService().getDevice());
+                            log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
                             log.warning("Only one argument of action '" + getName() + "' can be <retval/>");
                         }
                     }
@@ -192,7 +192,7 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
             for (ActionArgument<S> a : getArguments()) {
                 if (a.getDirection() == ActionArgument.Direction.OUT) {
                     if (log.isLoggable(Level.WARNING)) {
-                        log.warning("UPnP specification violation of: " + getService().getDevice());
+                        log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
                         log.warning("Argument '" + retValueArgument.getName() + "' of action '" + getName() + "' is <retval/> but not the first OUT argument");
                     }
                 }
