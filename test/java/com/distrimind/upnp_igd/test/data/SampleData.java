@@ -28,11 +28,7 @@ import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 
 import java.lang.reflect.Constructor;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.Collection;
 
 import com.distrimind.upnp_igd.model.profile.DeviceDetailsProvider;
@@ -54,8 +50,8 @@ public class SampleData {
 
     public static URL getLocalBaseURL() {
         try {
-            return new URL("http://127.0.0.1:" + NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT + "/");
-        } catch (MalformedURLException e) {
+            return new URI("http://127.0.0.1:" + NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT + "/").toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
