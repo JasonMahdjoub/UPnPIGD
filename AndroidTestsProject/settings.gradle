@@ -1,0 +1,68 @@
+
+pluginManagement {
+
+    repositories {
+
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    Properties props = new Properties()
+    def propFile = new File('../../credentials.properties')
+    def artifactoryUrl="https://artifactory.distri-mind.fr:443/artifactory"
+    def artifactoryUser=""
+    def artifactoryPwd=""
+
+    if (propFile.canRead())
+    {
+        props.load(new FileInputStream(propFile))
+
+
+        if (props!=null && props.containsKey('artifactory_contextUrl'))
+            artifactoryUrl=props.get("artifactory_contextUrl")
+        if (props!=null && props.containsKey('artifactory_user'))
+            artifactoryUser=props.get("artifactory_user")
+        if (props!=null && props.containsKey('artifactory_password'))
+            artifactoryPwd=props.get("artifactory_password")
+    }
+    else
+        println "cannot read "+propFile
+    versionCatalogs {
+        jlibs {
+            from(files("../libs.versions.toml"))
+        }
+    }
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven {
+            url "${artifactoryUrl}/DistriMind-Public"
+            if (artifactoryUser!="")
+            {
+                credentials {
+                    username "${artifactoryUser}"
+                    password "${artifactoryPwd}"
+                }
+            }
+        }
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "AndroidTestsProject"
+include ':app'
+include 'UPnPIGD-Core'
+include 'UPnPIGD-Android'
+project(':UPnPIGD-Core').projectDir = file('../UPnPIGD-Core')
+project(':UPnPIGD-Android').projectDir = file('../UPnPIGD-Android')
+
+

@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-module com.distrimind.upnp_igd {
+module UPnPIGD_Core {
 
 
 	requires java.logging;

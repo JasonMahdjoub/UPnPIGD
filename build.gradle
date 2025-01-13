@@ -29,27 +29,12 @@ if (propFile.canRead())
 }
 
 
-
-
-
-
-
-
-
-
-version='1.2.0-BETA'
+version='1.2.0-BETA2'
 group='com.distrimind.upnp_igd'
 
 
 subprojects {
     ext {
-        jettyVersion='11.0.23'
-        beanShellVersion='2.0b6'
-        jsoupVersion='1.18.1'
-        jakartaCdiAPIVersion='4.0.1'
-        jakartaServletVersion='6.0.0'//this version depends on used jetty version into Android module
-        testngVersion='7.10.2'
-        slf4jVersion='2.0.13'
 
         javaVersion = JavaVersion.VERSION_11
     }
@@ -76,12 +61,12 @@ subprojects {
 
 
         maven {
-            url "${artifactoryUrl}/gradle-release/"
+            url = "${artifactoryUrl}/gradle-release/"
             if (artifactoryUser!="")
             {
                 credentials {
-                    username "${artifactoryUser}"
-                    password "${artifactoryPwd}"
+                    username = "${artifactoryUser}"
+                    password = "${artifactoryPwd}"
                 }
             }
         }
@@ -89,7 +74,7 @@ subprojects {
     }
     pmd {
         consoleOutput = true
-        toolVersion = "7.4.0"
+        toolVersion = "7.9.0"
         rulesMinimumPriority = 5
         ruleSetFiles = files("../pmd/pmd-rules.xml")
     }
@@ -97,7 +82,7 @@ subprojects {
 
     version=parent.version
 
-
+    def projectName=project.name
     jar {
         manifest {
             attributes('Implementation-Title': project.name,
@@ -111,12 +96,12 @@ subprojects {
 
         from('../COPYING') {
             rename { fileName ->
-                "COPYING-"+project.name
+                "COPYING-$projectName"
             }
         }
         from('NOTICE') {
             rename { fileName ->
-                "NOTICE-"+project.name
+                "NOTICE-$projectName"
             }
         }
     }
@@ -132,12 +117,12 @@ subprojects {
         from sourceSets.main.allSource
         from('../COPYING') {
             rename { fileName ->
-                "COPYING-"+project.name
+                "COPYING-$projectName"
             }
         }
         from('NOTICE') {
             rename { fileName ->
-                "NOTICE-"+project.name
+                "NOTICE-$projectName"
             }
         }
     }
@@ -152,14 +137,19 @@ subprojects {
         from javadoc.destinationDir
         from('../COPYING') {
             rename { fileName ->
-                "COPYING-"+project.name
+                "COPYING-$projectName"
             }
         }
         from('NOTICE') {
             rename { fileName ->
-                "NOTICE-"+project.name
+                "NOTICE-$projectName"
             }
         }
+    }
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
     }
     publishing {
         publications {
@@ -212,23 +202,23 @@ subprojects {
         repositories {
             maven {
                 credentials {
-                    username "${artifactoryUser}"
-                    password "${artifactoryPwd}"
+                    username = "${artifactoryUser}"
+                    password = "${artifactoryPwd}"
                 }
-                url "${artifactoryUrl}/DistriMind-Public"
+                url = "${artifactoryUrl}/DistriMind-Public"
             }
             maven {
                 credentials {
-                    username "${sonatypeUser}"
-                    password "${sonatypePwd}"
+                    username = "${sonatypeUser}"
+                    password = "${sonatypePwd}"
                 }
-                url "${sonatypeStagingUrl}"
+                url = "${sonatypeStagingUrl}"
             }
         }
     }
     signing {
         useGpgCmd()
-        required {!project.hasProperty('disableSigning')}
+        required = {!project.hasProperty('disableSigning')}
         if (required) {
             sign configurations.archives
             sign publishing.publications.mavenJava

@@ -39,7 +39,7 @@
          <trusted-key id="DDDEE87612E9FB95F5C8D91E411063A3A0FFD119" group="org.apache-extras.beanshell" name="bsh" version="2.0b6"/>
          <trusted-key id="E0D98C5FD55A8AF232290E58DEE12B9896F97E34" group="org.pcollections" name="pcollections" version="3.2.0"/>
          <trusted-key id="EBB241A545CB17C87FACB2EBD0BF1D737C9A1C22" group="net.sourceforge.pmd"/>
-         <trusted-key id="F3184BCD55F4D016E30D4C9BF42E87F9665015C9" group="org.jsoup" name="jsoup" version="1.18.1"/>
+         <trusted-key id="F3184BCD55F4D016E30D4C9BF42E87F9665015C9" group="org.jsoup" name="jsoup"/>
          <trusted-key id="F5FEBA84EB26C56457B2CF819E31AB27445478DB" group="org.infinispan"/>
          <trusted-key id="FA77DCFEF2EE6EB2DEBEDD2C012579464D01C06A" group="org.apache" name="apache" version="23"/>
          <trusted-key id="FF6E2C001948C5F2F38B0CC385911F425EC61B51" group="org.junit" name="junit-bom"/>
@@ -75,6 +75,18 @@
          <artifact name="testcontainers-bom-1.20.1.pom">
             <pgp value="2655176F748FD83725B4805FF2A01147D830C125"/>
          </artifact>
+      </component>
+      <component group="stub.android" name="AndroidStub" version="4.3.0.0">
+         <artifact name="AndroidStub-4.3.0.0.pom">
+            <sha512 value="726a6cf25c6efcac171ac08c416a7a55f59f13949e087c4f8c699d1c6d3cece682287c115dbf58338a8c8b9f6f21c6ef71c94e0e13d1a617b77529e3363aa9da"/>
+         </artifact>
+         <artifact name="AndroidStub-4.3.0.0.jar">
+            <sha512 value="cc724beed89dceefc3260ebc8f43075032bf77342a468cd4085cf26c7c4835dc7d945e012dc832c4b44df6effc51938756821408c101cdc2794b1962040345dc"/>
+         </artifact>
+         <artifact name="AndroidStub-4.3.0.0-sources.jar">
+            <sha512 value="047275cc356cfeeb57ce2675513805ccba45a597b1c3ca6ae4e40e0ef5d33018afc9ab12835155569eda2195a530683d43f172e27771884f47becad20a028134"/>
+         </artifact>
+
       </component>
    </components>
 </verification-metadata>

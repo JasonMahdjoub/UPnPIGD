@@ -14,7 +14,15 @@ include 'shared'
 include 'api'
 include 'services:webservice'
 */
+dependencyResolutionManagement {
+    versionCatalogs {
+        jlibs {
+            from(files("libs.versions.toml"))
+        }
+    }
+}
 rootProject.name = 'UPnPIGD'
 include 'UPnPIGD-Core'
 include 'UPnPIGD-Android'
+include 'UPnPIGD-Desktop'
 

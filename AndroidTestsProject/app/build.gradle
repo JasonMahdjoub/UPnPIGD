@@ -1,0 +1,62 @@
+
+
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+
+android {
+    namespace 'com.distrimind.upnp_igd'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.distrimind.upnp_igd"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    sourceSets {
+        androidTest.java.srcDirs += '../../test/java'
+        androidTest.resources.srcDirs += '../../test/resources'
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/NOTICE.md'
+    }
+}
+
+dependencies {
+    androidTestImplementation jlibs.jsoup
+
+    testImplementation jlibs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.testng
+
+    implementation project(':UPnPIGD-Android')
+
+    androidTestImplementation jlibs.jetty.server
+    androidTestImplementation jlibs.jetty.servlet
+    androidTestImplementation jlibs.jetty.client
+
+    androidTestImplementation jlibs.jakarta.enterprise.cdi.api
+
+    androidTestImplementation jlibs.bsh
+    androidTestImplementation libs.testng
+    androidTestImplementation jlibs.jsoup
+
+}

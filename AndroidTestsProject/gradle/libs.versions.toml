@@ -1,0 +1,15 @@
+[versions]
+agp = "8.5.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+testNGVersion='7.5.1'
+
+[libraries]
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+testng = { group = "org.testng", name = "testng", version.ref = "testNGVersion" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+

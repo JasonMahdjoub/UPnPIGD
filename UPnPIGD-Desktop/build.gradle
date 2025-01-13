@@ -1,0 +1,40 @@
+apply from: ("../common.gradle")
+
+group='com.distrimind.upnp_igd.desktop'
+
+sourceSets {
+    test {
+        java {
+            srcDirs += ['../test/java']
+        }
+        resources {
+            srcDirs += ['../test/resources']
+        }
+    }
+}
+dependencies {
+    api project(':UPnPIGD-Core')
+
+    testImplementation jlibs.jsoup
+    testImplementation jlibs.testng
+
+}
+
+jar.archiveBaseName = "UPnPIGD-Desktop"
+
+
+test {
+    systemProperty 'java.util.logging.config.file', file('src/test/resources/logging.properties').absolutePath
+    // enable TestNG support (default is JUnit)
+    useTestNG
+            {
+                suites '../test/AllTests.tng.xml'
+            }
+
+    // set heap size for the test JVM(s)
+    minHeapSize = "1m"
+    maxHeapSize = "6g"
+    /*testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }*/
+}

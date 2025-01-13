@@ -1,0 +1,20 @@
+[versions]
+jettyVersion='11.0.24'
+beanShellVersion='2.0b6'
+jsoupVersion='1.18.3'
+jakartaCdiAPIVersion='4.0.1'
+testngVersion='7.10.2'
+slf4jVersion='2.0.16'
+junitVersion = "4.13.2"
+androidStubVersion = "4.3.0.0"
+
+[libraries]
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoupVersion" }
+jakarta-enterprise-cdi-api = { group = "jakarta.enterprise", name = "jakarta.enterprise.cdi-api", version.ref = "jakartaCdiAPIVersion" }
+testng = { group = "org.testng", name = "testng", version.ref = "testngVersion" }
+jetty-server = { group = "org.eclipse.jetty", name = "jetty-server", version.ref = "jettyVersion" }
+jetty-servlet = { group = "org.eclipse.jetty", name = "jetty-servlet", version.ref = "jettyVersion" }
+jetty-client = { group = "org.eclipse.jetty", name = "jetty-client", version.ref = "jettyVersion" }
+bsh = { group = "org.apache-extras.beanshell", name = "bsh", version.ref = "beanShellVersion" }
+junit = { group = "junit", name = "junit", version.ref = "junitVersion" }
+androidStub = { group = "stub.android", name = "AndroidStub", version.ref = "androidStubVersion" }
