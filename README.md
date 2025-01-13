@@ -6,7 +6,7 @@ UPnP IGD
 This is a fork of UPnPIGD, the UPnP stack for Java and Android
 ------------------------------------------------------------
 
-The fork fix some security issues, and upgrade used libraries. Efforts were only made into UPNP IGD part. The project's goals are strict specification compliance, complete, clean and extensive APIs, as well as rich SPIs for easy customization.
+This project is a fork of [Cling](https://github.com/4thline/cling). It fixes some security issues, and upgrade used libraries. Efforts were only made into UPNP IGD part. The project's goals are strict specification compliance, complete, clean and extensive APIs, as well as rich SPIs for easy customization.
 
 UPnPIGD is Free Software, distributed under the terms of the [GNU Lesser General Public License, version 2.1](https://www.gnu.org/licenses/lgpl-2.1.html).
 
