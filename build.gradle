@@ -29,7 +29,7 @@ if (propFile.canRead())
 }
 
 
-version='1.2.0-BETA11'
+version='1.2.0-BETA12'
 group='com.distrimind.upnp_igd'
 
 
