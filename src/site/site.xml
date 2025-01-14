@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
 
     <skin>
-        <groupId>org.fourthline.site</groupId>
+        <groupId>com.distrimind.upnp_igd..site</groupId>
         <artifactId>fourthline-skin</artifactId>
         <version>1.0</version>
     </skin>
 
     <body>
         <head>
-            <link href="/projects/cling/index.xhtml" rel="p-parent"/>
+            <link href="/projects/upnp_igd/index.xhtml" rel="p-parent"/>
         </head>
     </body>
 

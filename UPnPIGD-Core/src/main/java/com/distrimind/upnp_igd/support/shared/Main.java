@@ -114,7 +114,6 @@ public abstract class Main implements ShutdownHandler, Thread.UncaughtExceptionH
 			StringBuilder text = new StringBuilder();
 
 			text.append("An exceptional error occurred!\nYou can try to continue or exit the application.\n\n");
-			text.append("Please tell us about this here:\nhttp://www.4thline.org/projects/mailinglists-cling.html\n\n");
 			text.append("-------------------------------------------------------------------------------------------------------------\n\n");
 			Writer stackTrace = new StringWriter();
 			throwable.printStackTrace(new PrintWriter(stackTrace));

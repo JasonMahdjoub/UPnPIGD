@@ -51,7 +51,7 @@ import java.util.List;
 public class DIDLContent {
 
     public static final String NAMESPACE_URI = "urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/";
-    public static final String DESC_WRAPPER_NAMESPACE_URI = "urn:fourthline-org:cling:support:content-directory-desc-1-0";
+    public static final String DESC_WRAPPER_NAMESPACE_URI = "urn:distrimind-com:upnp_igd:support:content-directory-desc-1-0";
 
     protected List<Container> containers = new ArrayList<>();
     protected List<Item> items = new ArrayList<>();

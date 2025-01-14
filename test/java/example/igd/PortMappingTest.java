@@ -60,7 +60,7 @@ import static org.testng.Assert.*;
  * </p>
  * <p>
  * If anything goes wrong, log messages with <code>WARNING</code> level will be created on the
- * category <code>org.fourthline.cling.support.igd.PortMappingListener</code>. You can override the
+ * category <code>com.distrimind.upnp_igd.support.igd.PortMappingListener</code>. You can override the
  * <code>PortMappingListener#handleFailureMessage(String)</code> method to customize this behavior.
  * </p>
  * <p>

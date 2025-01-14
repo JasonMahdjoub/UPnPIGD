@@ -42,6 +42,8 @@ import com.distrimind.upnp_igd.transport.spi.*;
 import com.distrimind.upnp_igd.util.Exceptions;
 import jakarta.enterprise.inject.Alternative;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -98,14 +100,54 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     final private int multicastPort;
     private NetworkAddressFactory networkAddressFactory;
 
+    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration()
+    {
+        return getDefaultUpnpServiceConfiguration(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
+    }
+    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort)
+    {
+        return getDefaultUpnpServiceConfiguration(streamListenPort, multicastPort, true);
+    }
+    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(boolean checkRuntime)
+    {
+        return getDefaultUpnpServiceConfiguration(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT, checkRuntime);
+    }
+    private static final Constructor<? extends UpnpServiceConfiguration> androidConstructor;
+    static
+    {
+        if (ModelUtil.ANDROID_RUNTIME)
+        {
+			try {
+				@SuppressWarnings("unchecked") Class<? extends UpnpServiceConfiguration> c=(Class<? extends UpnpServiceConfiguration>)Class.forName("com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration");
+                androidConstructor=c.getConstructor(int.class, int.class);
+			} catch (ClassNotFoundException | NoSuchMethodException e) {
+                throw new RuntimeException("The class com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration was not found. Please import UPnPIGD-Android library.", e);
+			}
+		}
+        else
+            androidConstructor=null;
+    }
+    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime)
+    {
+        if (ModelUtil.ANDROID_RUNTIME) {
+			try {
+				return androidConstructor.newInstance(streamListenPort, multicastPort);
+			} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+		}
+        else
+            return new DefaultUpnpServiceConfiguration(streamListenPort, multicastPort, checkRuntime);
+    }
+
     /**
      * Defaults to port '0', ephemeral.
      */
-    public DefaultUpnpServiceConfiguration() {
+    protected DefaultUpnpServiceConfiguration() {
         this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
     }
 
-    public DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) {
+    protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) {
         this(streamListenPort, multicastPort, true);
     }
 
@@ -387,7 +429,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
         protected final ThreadGroup group;
         protected final AtomicInteger threadNumber = new AtomicInteger(1);
-        protected final String namePrefix = "cling-";
+        protected final String namePrefix = "upnp_igd-";
 
         public UpnpIGDThreadFactory() {
             SecurityManager s = System.getSecurityManager();
@@ -409,5 +451,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
             return t;
         }
     }
+
+
 
 }

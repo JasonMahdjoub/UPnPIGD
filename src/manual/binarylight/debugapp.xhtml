@@ -118,13 +118,13 @@
                 <td class="nowrap">
                     <code>com.distrimind.upnp_igd.model.gena (FINER)</code><br/>
                     <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.ReceivingEvent (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.ReceivingSubscribe (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.ReceivingUnsubscribe (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.SendingEvent (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.SendingSubscribe (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.SendingUnsubscribe (FINER)</code><br/>
-                    <code>org.fourthline.cling.protocol.sync.SendingRenewal (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingEvent (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingSubscribe (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingUnsubscribe (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.SendingEvent (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.SendingSubscribe (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.SendingUnsubscribe (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.protocol.sync.SendingRenewal (FINER)</code><br/>
                 </td>
                 <td>GENA</td>
             </tr>
@@ -143,7 +143,7 @@
             <tbody>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.transport.Router (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.transport.Router (FINER)</code><br/>
                 </td>
                 <td>
                     Message Router
@@ -151,25 +151,25 @@
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.registry.Registry (FINER)</code><br/>
-                    <code>org.fourthline.cling.registry.LocalItems (FINER)</code><br/>
-                    <code>org.fourthline.cling.registry.RemoteItems (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.registry.Registry (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.registry.LocalItems (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.registry.RemoteItems (FINER)</code><br/>
                 </td>
                 <td>Registry</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.binding.annotations (FINER)</code><br/>
-                    <code>org.fourthline.cling.model.meta.LocalService (FINER)</code><br/>
-                    <code>org.fourthline.cling.model.action (FINER)</code><br/>
-                    <code>org.fourthline.cling.model.state (FINER)</code><br/>
-                    <code>org.fourthline.cling.model.DefaultServiceManager (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.binding.annotations (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.model.meta.LocalService (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.model.action (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.model.state (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.model.DefaultServiceManager (FINER)</code><br/>
                 </td>
                 <td>Local service binding &amp; invocation</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>org.fourthline.cling.controlpoint (FINER)</code><br/>
+                    <code>com.distrimind.upnp_igd.controlpoint (FINER)</code><br/>
                 </td>
                 <td>Control Point interaction</td>
             </tr>
@@ -189,20 +189,20 @@ handlers=org.seamless.util.logging.SystemOutLoggingHandler
 
 # Extra settings for various categories
 
-org.fourthline.cling.level=INFO
+com.distrimind.upnp_igd.level=INFO
 
-org.fourthline.cling.protocol.level=FINEST
+com.distrimind.upnp_igd.protocol.level=FINEST
 
-org.fourthline.cling.registry.Registry.level=FINER
-org.fourthline.cling.registry.LocalItems.level=FINER
-org.fourthline.cling.registry.RemoteItems.level=FINER ]]></pre></div>
+com.distrimind.upnp_igd.registry.Registry.level=FINER
+com.distrimind.upnp_igd.registry.LocalItems.level=FINER
+com.distrimind.upnp_igd.registry.RemoteItems.level=FINER ]]></pre></div>
 
         <p>
             You can now start your application with a system property that names your logging
             configuration:
         </p>
 
-        <div><pre><![CDATA[$ java -cp /path/to/seamless-jar-files:/path/to/cling-core.jar:classes/ \
+        <div><pre><![CDATA[$ java -cp /path/to/seamless-jar-files:/path/to/UPnPIGD-Core.jar:classes/ \
         -Djava.util.logging.config.file=/path/to/mylogging.properties \
         example.binaryLight.BinaryLightServer]]></pre></div>
 

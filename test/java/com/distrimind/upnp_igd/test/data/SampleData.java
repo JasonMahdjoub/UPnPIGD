@@ -290,7 +290,7 @@ public class SampleData {
     */
 
     public static void debugMsg(OutgoingDatagramMessage<?> msg) {
-        DatagramProcessor proc = new DefaultUpnpServiceConfiguration().getDatagramProcessor();
+        DatagramProcessor proc = DefaultUpnpServiceConfiguration.getDefaultUpnpServiceConfiguration().getDatagramProcessor();
         proc.write(msg);
     }
 

@@ -87,7 +87,7 @@ public class MyUpnpServiceConfiguration extends DefaultUpnpServiceConfiguration 
     public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
         return new com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerImpl(
             new com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerConfigurationImpl(
-                org.fourthline.cling.transport.impl.jetty.JettyServletContainer.INSTANCE,
+                com.distrimind.upnp_igd.transport.impl.jetty.JettyServletContainer.INSTANCE,
                 networkAddressFactory.getStreamListenPort()
             )
         );
