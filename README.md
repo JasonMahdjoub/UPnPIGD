@@ -16,80 +16,88 @@ How to use it ?
 
 Adapt into your build.gradle file, the next code :
 
-```
-	...
-	dependencies {
-		...
-		api(group:'com.distrimind.upnp_igd', name: 'UPnPIGD-Core', version: '1.2.0-BETA')
-		...
-	}
-	...
-```	
-When using UPnPIGD into Android, if you want to use UPnPIGD functions, please use this additionnal dependencies (minimum Java version is 11) :
-```
-	...
-	dependencies {
-		...
-		implementation(group:'com.distrimind.upnp_igd', name: 'UPnPIGD-Android', version: '1.2.0-BETA')
-		...
-	}
-	...
-```	
-Librairies are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
-```
-	...
-	repositories {
-		...
-		maven {
-	       		url "https://artifactory.distri-mind.fr/ui/native/gradle-release/"
-	   	}
-		...
-	}
-	...
-```
-To know what is the last updaloed version, please refer to versions availables here : [this repository](https://artifactory.distri-mind.fr/artifactory/DistriMind-Public/com/distrimind/upnp_igd/UPnPIGD/)
+ - When using UPnPIGD into desktop environment, please add this dependency (minimum Java version is 11) :
+    ```
+	    ...
+	    dependencies {
+		    ...
+		    api(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.2.0-BETA2')
+		    ...
+	    }
+	    ...
+    ```
+
+ - When using UPnPIGD into android environment, please add this dependency (minimum Java version is 11) :
+
+    ```
+	    ...
+	    dependencies {
+		    ...
+		    implementation(group:'com.distrimind.upnp_igd.android', name: 'UPnPIGD-Android', version: '1.2.0-BETA2')
+		    ...
+	    }
+	    ...
+    ```
+
+ - Libraries are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
+    ```
+        ...
+        repositories {
+            ...
+            maven {
+                    url "https://artifactory.distri-mind.fr/ui/native/gradle-release/"
+            }
+            ...
+        }
+        ...
+    ```
+
+To know what is the last uploaded version, please refer to versions available here : [this repository](https://artifactory.distri-mind.fr/ui/native/DistriMind-Public/com/distrimind/upnp_igd/UPnPIGD-Core/)
 ### With Maven :
 Adapt into your pom.xml file, the next code :
-```
-	...
-	<project>
-		...
-		<dependencies>
-			...
-			<dependency>
-				<groupId>com.distrimind.upnp_igd</groupId>
-				<artifactId>UPnPIGD-Core</artifactId>
-				<version>1.2.0-BETA</version>
-			</dependency>
-			...
-		</dependencies>
-		...
-	</project>
-	...
-```
-When using UPnPIGD into Android, if you want to use UPnPIGD functions, please use this additionnal dependencies (minimum Java version is 11) :
-```
-	...
-    <dependency>
-        <groupId>com.distrimind.upnp_igd</groupId>
-        <artifactId>UPnPIGD-Android</artifactId>
-        <version>1.2.0-BETA</version>
-    </dependency>
-	...
-```
-Librairies are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
-```
-	...
-	<repositories>
-		...
-		<repository>
-			<id>DistriMind-Public</id>
-			<url>https://artifactory.distri-mind.fr/ui/native/gradle-release/</url>
-		</repository>
-		...
-	</repositories>
-	...		
-```
-To know what last version has been uploaded, please refer to versions availables into [this repository](https://artifactory.distri-mind.fr/artifactory/DistriMind-Public/com/distrimind/upnp_igd/UPnPIGD/)
+ - When using UPnPIGD into desktop environment, please add this dependency (minimum Java version is 11) :
+    ```
+        ...
+        <project>
+            ...
+            <dependencies>
+                ...
+                <dependency>
+                    <groupId>com.distrimind.upnp_igd.desktop</groupId>
+                    <artifactId>UPnPIGD-Desktop</artifactId>
+                    <version>1.2.0-BETA2</version>
+                </dependency>
+                ...
+            </dependencies>
+            ...
+        </project>
+        ...
+    ```
+   
+ - When using UPnPIGD into android environment, please add this dependency (minimum Java version is 11) :
+    ```
+        ...
+        <dependency>
+            <groupId>com.distrimind.upnp_igd.android</groupId>
+            <artifactId>UPnPIGD-Android</artifactId>
+            <version>1.2.0-BETA2</version>
+        </dependency>
+        ...
+    ```
+   
+ - Libraries are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
+    ```
+        ...
+        <repositories>
+            ...
+            <repository>
+                <id>DistriMind-Public</id>
+                <url>https://artifactory.distri-mind.fr/ui/native/gradle-release/</url>
+            </repository>
+            ...
+        </repositories>
+        ...		
+    ```
+To know what last version has been uploaded, please refer to versions available into [this repository](https://artifactory.distri-mind.fr/ui/native/DistriMind-Public/com/distrimind/upnp_igd/UPnPIGD-Core/)
 
 
