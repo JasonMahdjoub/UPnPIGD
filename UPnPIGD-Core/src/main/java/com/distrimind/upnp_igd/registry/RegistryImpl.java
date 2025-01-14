@@ -132,6 +132,8 @@ public class RegistryImpl implements Registry {
     @Override
 	synchronized public boolean notifyDiscoveryStart(final RemoteDevice device) {
         // Exit if we have it already, this is atomic inside this method, finally
+		if (device.getIdentity()!=null && getUpnpService()!=null && getUpnpService().getRegistry()!=null && getUpnpService().getRegistry().getRemoteDevice(device.getIdentity().getUdn(), true) != null)
+			return false;
         if (getUpnpService().getRegistry().getRemoteDevice(device.getIdentity().getUdn(), true) != null) {
 			if (log.isLoggable(Level.FINER)) {
 				log.finer("Not notifying listeners, already registered: " + device);
