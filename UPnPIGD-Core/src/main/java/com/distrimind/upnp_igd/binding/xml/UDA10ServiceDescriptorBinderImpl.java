@@ -21,6 +21,7 @@ import com.distrimind.upnp_igd.binding.staging.MutableActionArgument;
 import com.distrimind.upnp_igd.binding.staging.MutableAllowedValueRange;
 import com.distrimind.upnp_igd.binding.staging.MutableService;
 import com.distrimind.upnp_igd.binding.staging.MutableStateVariable;
+import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.meta.*;
@@ -65,7 +66,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     }
     @Override
 	public <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, String descriptorXml) throws DescriptorBindingException, ValidationException {
-        if (descriptorXml == null || descriptorXml.isEmpty()) {
+        if (ModelUtil.checkDescriptionXMLNotValid(descriptorXml)) {
             throw new DescriptorBindingException("Null or empty descriptor");
         }
 

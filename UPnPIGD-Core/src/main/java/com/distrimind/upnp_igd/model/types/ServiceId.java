@@ -19,7 +19,6 @@ import com.distrimind.upnp_igd.model.Constants;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
@@ -33,23 +32,16 @@ public class ServiceId {
 
     public static final String UNKNOWN = "UNKNOWN";
 
-    public static final Pattern PATTERN =
-        Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):serviceId:(" + Constants.REGEX_ID + ")");
-
-    // Note: 'service' vs. 'serviceId'
-    public static final Pattern BROKEN_PATTERN =
-               Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_ID+ ")");
-
     private final String namespace;
     private final String id;
 
     public ServiceId(String namespace, String id) {
-        if (namespace != null && !namespace.matches(Constants.REGEX_NAMESPACE)) {
+        if (namespace != null && !Constants.getPatternNamespace().matcher(namespace).matches()) {
             throw new IllegalArgumentException("Service ID namespace contains illegal characters");
         }
         this.namespace = namespace;
 
-        if (id != null && !id.matches(Constants.REGEX_ID)) {
+        if (id != null && !Constants.getPatternId().matcher(id).matches()) {
             throw new IllegalArgumentException("Service ID suffix too long (64) or contains illegal characters");
         }
         this.id = id;
@@ -78,19 +70,19 @@ public class ServiceId {
             return serviceId;
 
         // Now try a generic ServiceId parse
-        Matcher matcher = ServiceId.PATTERN.matcher(s);
+        Matcher matcher = Constants.getPatternServiceId().matcher(s);
         if (matcher.matches() && matcher.groupCount() >= 2) {
             return new ServiceId(matcher.group(1), matcher.group(2));
         }
 
-        matcher = ServiceId.BROKEN_PATTERN.matcher(s);
+        matcher = Constants.getPatternBrokenServiceId().matcher(s);
         if (matcher.matches() && matcher.groupCount() >= 2) {
             return new ServiceId(matcher.group(1), matcher.group(2));
         }
 
         // TODO: UPNP VIOLATION: Kodak Media Server doesn't provide any service ID token
         // urn:upnp-org:serviceId:
-        matcher = Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):serviceId:").matcher(s);
+        matcher = Constants.getPatternServiceIdKodakMediaServer().matcher(s);
         if (matcher.matches() && matcher.groupCount() >= 1) {
             if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, no service ID token, defaulting to " + UNKNOWN + ": " + s);
             return new ServiceId(matcher.group(1), UNKNOWN);

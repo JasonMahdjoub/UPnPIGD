@@ -72,15 +72,18 @@ import static org.testng.Assert.*;
  */
 public class PortMappingTest {
 
+    public static final String IP_TEST = "192.168.0.123";
+    public static final String MY_PORT_MAPPING = "My Port Mapping";
+
     @Test
     public void addDeleteWithListener() throws Exception {
 
         PortMapping desiredMapping =                                    // DOC: PM1
                 new PortMapping(
                         8123,
-                        "192.168.0.123",
+                        IP_TEST,
                         PortMapping.Protocol.TCP,
-                        "My Port Mapping"
+                        MY_PORT_MAPPING
                 );
 
         UpnpService upnpService =
@@ -110,9 +113,9 @@ public class PortMappingTest {
         PortMapping desiredMapping =
                 new PortMapping(
                         8123,
-                        "192.168.0.123",
+                        IP_TEST,
                         PortMapping.Protocol.TCP,
-                        "My Port Mapping"
+                        MY_PORT_MAPPING
                 );
 
         UpnpService upnpService = new UpnpServiceImpl();
@@ -158,7 +161,7 @@ public class PortMappingTest {
                     }
                 }
         );
-        assertEquals(mapping[0].getInternalClient(), "192.168.0.123");
+        assertEquals(mapping[0].getInternalClient(), IP_TEST);
         assertEquals(mapping[0].getInternalPort().getValue().longValue(), 8123);
         assertTrue(mapping[0].isEnabled());
 
@@ -198,8 +201,8 @@ public class PortMappingTest {
             assertEquals(portMapping.getExternalPort().getValue(), Long.valueOf(8123));
             assertEquals(portMapping.getInternalPort().getValue(), Long.valueOf(8123));
             assertEquals(portMapping.getProtocol(), PortMapping.Protocol.TCP);
-            assertEquals(portMapping.getDescription(), "My Port Mapping");
-            assertEquals(portMapping.getInternalClient(), "192.168.0.123");
+            assertEquals(portMapping.getDescription(), MY_PORT_MAPPING);
+            assertEquals(portMapping.getInternalClient(), IP_TEST);
             assertEquals(portMapping.getLeaseDurationSeconds().getValue(), Long.valueOf(0));
 			assertFalse(portMapping.hasRemoteHost());
 			assertTrue(portMapping.hasDescription());
@@ -214,13 +217,14 @@ public class PortMappingTest {
             tests[1] = true;
         }
 
+        @Override
         public PortMapping getGenericPortMappingEntry(UnsignedIntegerTwoBytes index) {
             assertEquals(index.getValue().longValue(), 0);
             return new PortMapping(
                     8123,
-                    "192.168.0.123",
+                    IP_TEST,
                     PortMapping.Protocol.TCP,
-                    "My Port Mapping"
+                    MY_PORT_MAPPING
             );
         }
     }

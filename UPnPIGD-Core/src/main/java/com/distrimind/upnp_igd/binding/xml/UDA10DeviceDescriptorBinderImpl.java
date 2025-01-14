@@ -34,6 +34,7 @@ import com.distrimind.upnp_igd.binding.staging.MutableDevice;
 import com.distrimind.upnp_igd.binding.staging.MutableIcon;
 import com.distrimind.upnp_igd.binding.staging.MutableService;
 import com.distrimind.upnp_igd.binding.xml.Descriptor.Device.ELEMENT;
+import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.Namespace;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.XMLUtil;
@@ -102,7 +103,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
     @Override
     public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
 
-        if (descriptorXml == null || descriptorXml.isEmpty()) {
+        if (ModelUtil.checkDescriptionXMLNotValid(descriptorXml)) {
             throw new DescriptorBindingException("Null or empty descriptor");
         }
 

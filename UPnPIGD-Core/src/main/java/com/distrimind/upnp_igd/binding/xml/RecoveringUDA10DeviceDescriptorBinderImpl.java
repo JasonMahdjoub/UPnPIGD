@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.binding.xml;
 
+import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.Service;
@@ -127,7 +128,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
     }
 
     private String fixGarbageLeadingChars(String descriptorXml) {
-        if (descriptorXml == null)
+        if (ModelUtil.checkDescriptionXMLNotValid(descriptorXml))
             return null;
     		/* Recover this:
 
@@ -152,7 +153,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
     }
 
     protected String fixGarbageTrailingChars(String descriptorXml, DescriptorBindingException ex) {
-        if (descriptorXml==null)
+        if (ModelUtil.checkDescriptionXMLNotValid(descriptorXml))
             return null;
 
         int index = descriptorXml.indexOf(endRootTag);
@@ -168,12 +169,17 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
         }
         return null;
     }
-
+    private static final Pattern patternPrefix = Pattern.compile("The prefix \"(.*)\" for element");
+    private static final Pattern patternUndefinedPrefix = Pattern.compile("undefined prefix: ([^ ]*)");
+    private static final Pattern patternRoot = Pattern.compile("<root([^>]*)");
+    private static final Pattern patternRootEndRoot = Pattern.compile("<root[^>]*>(.*)</root>", Pattern.DOTALL);
     protected String fixMissingNamespaces(String descriptorXml, DescriptorBindingException ex) {
         // Windows: DescriptorBindingException: Could not parse device descriptor: org.seamless.xml.ParserException: org.xml.sax.SAXParseException: The prefix "dlna" for element "dlna:X_DLNADOC" is not bound.
         // Android: org.xmlpull.v1.XmlPullParserException: undefined prefix: dlna (position:START_TAG <{null}dlna:X_DLNADOC>@19:17 in java.io.StringReader@406dff48)
 
         // We can only handle certain exceptions, depending on their type and message
+        if (ModelUtil.checkDescriptionXMLNotValid(descriptorXml))
+            return null;
         Throwable cause = ex.getCause();
         if (!((cause instanceof SAXParseException) || (cause instanceof ParserException)))
             return null;
@@ -181,11 +187,10 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
         if (message == null)
             return null;
 
-        Pattern pattern = Pattern.compile("The prefix \"(.*)\" for element"); // Windows
-        Matcher matcher = pattern.matcher(message);
+
+        Matcher matcher = patternPrefix.matcher(message);
         if (!matcher.find() || matcher.groupCount() != 1) {
-            pattern = Pattern.compile("undefined prefix: ([^ ]*)"); // Android
-            matcher = pattern.matcher(message);
+            matcher = patternUndefinedPrefix.matcher(message);
             if (!matcher.find() || matcher.groupCount() != 1)
                 return null;
         }
@@ -195,8 +200,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
             log.warning("Fixing missing namespace declaration for: " + missingNS);
 
         // Extract <root> attributes
-        pattern = Pattern.compile("<root([^>]*)");
-        matcher = pattern.matcher(descriptorXml);
+        matcher = patternRoot.matcher(descriptorXml);
         if (!matcher.find() || matcher.groupCount() != 1) {
             if (log.isLoggable(Level.FINE))
                 log.fine("Could not find <root> element attributes");
@@ -208,8 +212,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
             log.fine("Preserving existing <root> element attributes/namespace declarations: " + matcher.group(0));
 
         // Extract <root> body
-        pattern = Pattern.compile("<root[^>]*>(.*)</root>", Pattern.DOTALL);
-        matcher = pattern.matcher(descriptorXml);
+        matcher = patternRootEndRoot.matcher(descriptorXml);
         if (!matcher.find() || matcher.groupCount() != 1) {
             log.fine("Could not extract body of <root> element");
             return null;

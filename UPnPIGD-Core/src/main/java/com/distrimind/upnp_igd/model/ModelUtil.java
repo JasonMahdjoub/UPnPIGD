@@ -76,13 +76,13 @@ public class ModelUtil {
     /**
      * @param name A UPnP device architecture "name" string.
      * @return <code>true</code> if the name is not empty, doesn't start with "xml", and
-     *         matches {@link Constants#REGEX_UDA_NAME}.
+     *         matches {@link Constants#getPatternUDAName()}.
      */
     public static boolean isValidUDAName(String name) {
         if (ANDROID_RUNTIME) {
             return name != null && !name.isEmpty();
         }
-        return name != null && !name.isEmpty() && !name.toLowerCase(Locale.ROOT).startsWith("xml") && name.matches(Constants.REGEX_UDA_NAME);
+        return name != null && !name.isEmpty() && !name.toLowerCase(Locale.ROOT).startsWith("xml") && Constants.getPatternUDAName().matcher(name).matches();
     }
 
     /**
@@ -250,5 +250,28 @@ public class ModelUtil {
         }
         throw new RuntimeException("Could not discover first network interface hardware address");
     }
+    public static int getTrimLength(String s)
+    {
+        int end = s.length();
+        int start = 0;
+        while ((start < end) && (s.charAt(start) <= ' ')) {
+            start++;
+        }
+        while ((start < end) && (s.charAt(end - 1) <= ' ')) {
+            end--;
+        }
+        return end-start;
+    }
+
+    public static boolean checkDescriptionXMLNotValid(String descriptorXml)
+    {
+        if (descriptorXml==null)
+            return true;
+        if (descriptorXml.isEmpty())
+            return true;
+		if (descriptorXml.length() > Constants.MAX_DESCRIPTOR_LENGTH)
+            return true;
+        return getTrimLength(descriptorXml)<=0;
+	}
 
 }

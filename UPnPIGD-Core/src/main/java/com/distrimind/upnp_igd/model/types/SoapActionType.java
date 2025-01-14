@@ -19,7 +19,6 @@ import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.ModelUtil;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
@@ -32,11 +31,6 @@ public class SoapActionType {
     public static final String MAGIC_CONTROL_NS = "schemas-upnp-org";
     public static final String MAGIC_CONTROL_TYPE = "control-1-0";
 
-    public static final Pattern PATTERN_MAGIC_CONTROL =
-            Pattern.compile(Constants.NS_UPNP_CONTROL_10 +"#("+Constants.REGEX_UDA_NAME+")");
-
-    public static final Pattern PATTERN =
-            Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_TYPE + "):([0-9]+)#("+Constants.REGEX_UDA_NAME+")");
 
     private final String namespace;
     private final String type;
@@ -75,14 +69,14 @@ public class SoapActionType {
     }
 
     public static SoapActionType valueOf(String s) throws InvalidValueException {
-        Matcher magicControlMatcher = SoapActionType.PATTERN_MAGIC_CONTROL.matcher(s);
+        Matcher magicControlMatcher = Constants.getPatternSOAPActionTypeMagicControl().matcher(s);
         
         try {
         	if (magicControlMatcher.matches()) {
         		return new SoapActionType(MAGIC_CONTROL_NS, MAGIC_CONTROL_TYPE, null, magicControlMatcher.group(1)); // throws IllegalArgumentException
         	}
 
-        	Matcher matcher = SoapActionType.PATTERN.matcher(s);
+        	Matcher matcher = Constants.getPatternSOAPActionType().matcher(s);
         	if (matcher.matches())
         		return new SoapActionType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)), matcher.group(4));
 

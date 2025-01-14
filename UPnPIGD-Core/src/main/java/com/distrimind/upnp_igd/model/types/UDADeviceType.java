@@ -17,7 +17,6 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.Constants;
 
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
@@ -29,9 +28,8 @@ public class UDADeviceType extends DeviceType {
 
     public static final String DEFAULT_NAMESPACE = "schemas-upnp-org";
 
-    // This pattern also accepts decimal versions, not only integers (as would be required by UDA), but cuts off fractions
-    public static final Pattern PATTERN =
-            Pattern.compile("urn:" + DEFAULT_NAMESPACE + ":device:(" + Constants.REGEX_TYPE + "):([0-9]+).*");
+
+
 
     public UDADeviceType(String type) {
         super(DEFAULT_NAMESPACE, type, 1);
@@ -42,7 +40,7 @@ public class UDADeviceType extends DeviceType {
     }
 
     public static UDADeviceType valueOf(String s) throws InvalidValueException {
-        Matcher matcher = PATTERN.matcher(s);
+        Matcher matcher = Constants.getPatternUDADeviceType().matcher(s);
         
         try {
         	if (matcher.matches())

@@ -19,7 +19,6 @@ import com.distrimind.upnp_igd.model.Constants;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
@@ -35,14 +34,6 @@ public class ServiceType {
 
     final private static Logger log = Logger.getLogger(ServiceType.class.getName());
 
-    public static final String URN = "urn:(";
-    public static final Pattern PATTERN =
-        Pattern.compile(URN + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_TYPE + "):([0-9]+).*");
-
-    // Note: 'serviceId' vs. 'service'
-    public static final Pattern BROKEN_PATTERN =
-        Pattern.compile(URN + Constants.REGEX_NAMESPACE + "):serviceId:(" + Constants.REGEX_TYPE + "):([0-9]+).*");
-
     private final String namespace;
     private final String type;
     private final int version;
@@ -53,12 +44,12 @@ public class ServiceType {
 
     public ServiceType(String namespace, String type, int version) {
 
-        if (namespace != null && !namespace.matches(Constants.REGEX_NAMESPACE)) {
+        if (namespace != null && !Constants.getPatternNamespace().matcher(namespace).matches()) {
             throw new IllegalArgumentException("Service type namespace contains illegal characters");
         }
         this.namespace = namespace;
 
-        if (type != null && !type.matches(Constants.REGEX_TYPE)) {
+        if (type != null && !Constants.getPatternType().matcher(type).matches()) {
             throw new IllegalArgumentException("Service type suffix too long (64) or contains illegal characters");
         }
         this.type = type;
@@ -103,19 +94,19 @@ public class ServiceType {
 
         // Now try a generic ServiceType parse
         try {
-            Matcher matcher = ServiceType.PATTERN.matcher(s);
+            Matcher matcher = Constants.getPatternService().matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 return new ServiceType(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3)));
             }
 
-            matcher = ServiceType.BROKEN_PATTERN.matcher(s);
+            matcher = Constants.getPatternBrokenService().matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 return new ServiceType(matcher.group(1), matcher.group(2), Integer.parseInt(matcher.group(3)));
             }
 
             // TODO: UPNP VIOLATION: EyeTV Netstream uses colons in service type token
             // urn:schemas-microsoft-com:service:pbda:tuner:1
-            matcher = Pattern.compile(URN + Constants.REGEX_NAMESPACE + "):service:(.+?):([0-9]+).*").matcher(s);
+            matcher = Constants.getPatternServiceEyeTV().matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
                 if (log.isLoggable(Level.WARNING)) log.warning(
@@ -129,7 +120,7 @@ public class ServiceType {
 
             // TODO: UPNP VIOLATION: Ceyton InfiniTV uses colons in service type token and 'serviceId' instead of 'service'
             // urn:schemas-opencable-com:serviceId:dri2:debug:1
-            matcher = Pattern.compile(URN + Constants.REGEX_NAMESPACE + "):serviceId:(.+?):([0-9]+).*").matcher(s);
+            matcher = Constants.getPatternServiceIniniTV().matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
                 if (log.isLoggable(Level.WARNING)) log.warning(

@@ -45,6 +45,11 @@ import java.util.List;
  */
 public class IGDSampleData {
 
+    public static final String REMOTE_HOST = "RemoteHost";
+    public static final String STRING = "string";
+    public static final String EXTERNAL_PORT = "ExternalPort";
+    public static final String PORT_MAPPING_PROTOCOL = "PortMappingProtocol";
+
     public static <T> LocalService<T> readService(Class<T> serviceClass) throws Exception {
         LocalService<T> service = new AnnotationLocalServiceBinder().read(serviceClass);
         service.setManager(
@@ -101,18 +106,18 @@ public class IGDSampleData {
             serviceType = @UpnpServiceType("WANIPConnection")
     )
     @UpnpStateVariables({
-            @UpnpStateVariable(name = "RemoteHost", datatype = "string", sendEvents = false),
-            @UpnpStateVariable(name = "ExternalPort", datatype = "ui2", sendEvents = false),
-            @UpnpStateVariable(name = "PortMappingProtocol", datatype = "string", sendEvents = false, allowedValuesEnum = PortMapping.Protocol.class),
+            @UpnpStateVariable(name = REMOTE_HOST, datatype = STRING, sendEvents = false),
+            @UpnpStateVariable(name = EXTERNAL_PORT, datatype = "ui2", sendEvents = false),
+            @UpnpStateVariable(name = PORT_MAPPING_PROTOCOL, datatype = STRING, sendEvents = false, allowedValuesEnum = PortMapping.Protocol.class),
             @UpnpStateVariable(name = "InternalPort", datatype = "ui2", sendEvents = false),
-            @UpnpStateVariable(name = "InternalClient", datatype = "string", sendEvents = false),
+            @UpnpStateVariable(name = "InternalClient", datatype = STRING, sendEvents = false),
             @UpnpStateVariable(name = "PortMappingEnabled", datatype = "boolean", sendEvents = false),
-            @UpnpStateVariable(name = "PortMappingDescription", datatype = "string", sendEvents = false),
+            @UpnpStateVariable(name = "PortMappingDescription", datatype = STRING, sendEvents = false),
             @UpnpStateVariable(name = "PortMappingLeaseDuration", datatype = "ui4", sendEvents = false),
-            @UpnpStateVariable(name = "ConnectionStatus", datatype = "string", sendEvents = false),
-            @UpnpStateVariable(name = "LastConnectionError", datatype = "string", sendEvents = false),
+            @UpnpStateVariable(name = "ConnectionStatus", datatype = STRING, sendEvents = false),
+            @UpnpStateVariable(name = "LastConnectionError", datatype = STRING, sendEvents = false),
             @UpnpStateVariable(name = "Uptime", datatype = "ui4", sendEvents = false),
-            @UpnpStateVariable(name = "ExternalIPAddress", datatype = "string", sendEvents = false),
+            @UpnpStateVariable(name = "ExternalIPAddress", datatype = STRING, sendEvents = false),
             @UpnpStateVariable(name = "PortMappingIndex", datatype = "ui2", sendEvents = false)
 
     })
@@ -120,9 +125,9 @@ public class IGDSampleData {
 
         @UpnpAction
         public void addPortMapping(
-                @UpnpInputArgument(name = "NewRemoteHost", stateVariable = "RemoteHost") String remoteHost,
-                @UpnpInputArgument(name = "NewExternalPort", stateVariable = "ExternalPort") UnsignedIntegerTwoBytes externalPort,
-                @UpnpInputArgument(name = "NewProtocol", stateVariable = "PortMappingProtocol") String protocol,
+                @UpnpInputArgument(name = "NewRemoteHost", stateVariable = REMOTE_HOST) String remoteHost,
+                @UpnpInputArgument(name = "NewExternalPort", stateVariable = EXTERNAL_PORT) UnsignedIntegerTwoBytes externalPort,
+                @UpnpInputArgument(name = "NewProtocol", stateVariable = PORT_MAPPING_PROTOCOL) String protocol,
                 @UpnpInputArgument(name = "NewInternalPort", stateVariable = "InternalPort") UnsignedIntegerTwoBytes internalPort,
                 @UpnpInputArgument(name = "NewInternalClient", stateVariable = "InternalClient") String internalClient,
                 @UpnpInputArgument(name = "NewEnabled", stateVariable = "PortMappingEnabled") Boolean enabled,
@@ -147,9 +152,9 @@ public class IGDSampleData {
 
         @UpnpAction
         public void deletePortMapping(
-                @UpnpInputArgument(name = "NewRemoteHost", stateVariable = "RemoteHost") String remoteHost,
-                @UpnpInputArgument(name = "NewExternalPort", stateVariable = "ExternalPort") UnsignedIntegerTwoBytes externalPort,
-                @UpnpInputArgument(name = "NewProtocol", stateVariable = "PortMappingProtocol") String protocol
+                @UpnpInputArgument(name = "NewRemoteHost", stateVariable = REMOTE_HOST) String remoteHost,
+                @UpnpInputArgument(name = "NewExternalPort", stateVariable = EXTERNAL_PORT) UnsignedIntegerTwoBytes externalPort,
+                @UpnpInputArgument(name = "NewProtocol", stateVariable = PORT_MAPPING_PROTOCOL) String protocol
         ) throws ActionException {
             try {
                 deletePortMapping(new PortMapping(
@@ -163,9 +168,9 @@ public class IGDSampleData {
         }
 
         @UpnpAction(out = {
-                @UpnpOutputArgument(name = "NewRemoteHost", stateVariable = "RemoteHost", getterName = "getRemoteHost"),
-                @UpnpOutputArgument(name = "NewExternalPort", stateVariable = "ExternalPort", getterName = "getExternalPort"),
-                @UpnpOutputArgument(name = "NewProtocol", stateVariable = "PortMappingProtocol", getterName = "getProtocol"),
+                @UpnpOutputArgument(name = "NewRemoteHost", stateVariable = REMOTE_HOST, getterName = "getRemoteHost"),
+                @UpnpOutputArgument(name = "NewExternalPort", stateVariable = EXTERNAL_PORT, getterName = "getExternalPort"),
+                @UpnpOutputArgument(name = "NewProtocol", stateVariable = PORT_MAPPING_PROTOCOL, getterName = "getProtocol"),
                 @UpnpOutputArgument(name = "NewInternalPort", stateVariable = "InternalPort", getterName = "getInternalPort"),
                 @UpnpOutputArgument(name = "NewInternalClient", stateVariable = "InternalClient", getterName = "getInternalClient"),
                 @UpnpOutputArgument(name = "NewEnabled", stateVariable = "PortMappingEnabled", getterName = "isEnabled"),

@@ -19,7 +19,6 @@ import com.distrimind.upnp_igd.model.Constants;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
@@ -37,30 +36,25 @@ public class UDAServiceId extends ServiceId {
     public static final String DEFAULT_NAMESPACE = "upnp-org";
     public static final String BROKEN_DEFAULT_NAMESPACE = "schemas-upnp-org"; // TODO: UPNP VIOLATION: Intel UPnP tools!
 
-    public static final Pattern PATTERN =
-            Pattern.compile("urn:" + DEFAULT_NAMESPACE + ":serviceId:(" + Constants.REGEX_ID+ ")");
 
-     // Note: 'service' vs. 'serviceId'
-    public static final Pattern BROKEN_PATTERN =
-            Pattern.compile("urn:" + BROKEN_DEFAULT_NAMESPACE + ":service:(" + Constants.REGEX_ID+ ")");
 
     public UDAServiceId(String id) {
         super(DEFAULT_NAMESPACE, id);
     }
 
     public static UDAServiceId valueOf(String s) throws InvalidValueException {
-        Matcher matcher = UDAServiceId.PATTERN.matcher(s);
+        Matcher matcher = Constants.getPatternUDAServiceID().matcher(s);
         if (matcher.matches() && matcher.groupCount() >= 1) {
             return new UDAServiceId(matcher.group(1));
         }
 
-        matcher = UDAServiceId.BROKEN_PATTERN.matcher(s);
+        matcher = Constants.getPatternBrokenUDAServiceID().matcher(s);
         if (matcher.matches() && matcher.groupCount() >= 1) {
             return new UDAServiceId(matcher.group(1));
         }
 
         // TODO: UPNP VIOLATION: Handle garbage sent by Eyecon Android app
-        matcher = Pattern.compile("urn:upnp-orgerviceId:urnchemas-upnp-orgervice:(" + Constants.REGEX_ID + ")").matcher(s);
+        matcher = Constants.getPatternEyeconAndroidApp().matcher(s);
         if (matcher.matches()) {
             if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, recovering from Eyecon garbage: " + s);
             return new UDAServiceId(matcher.group(1));
