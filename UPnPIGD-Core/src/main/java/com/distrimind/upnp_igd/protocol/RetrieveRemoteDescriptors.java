@@ -207,7 +207,10 @@ public class RetrieveRemoteDescriptors implements Runnable {
                     rd,
                     descriptorXML
             );
-
+			if (describedDevice==null) {
+				log.fine("Remote device not describable");
+				return;
+			}
 			if (log.isLoggable(Level.FINE)) {
 				log.fine("Remote device described (without services) notifying listeners: " + describedDevice);
 			}

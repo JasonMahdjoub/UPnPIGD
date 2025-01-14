@@ -66,7 +66,8 @@ public class MutableDevice<D extends Device<?, D, S>, S extends Service<?, D, S>
     }
 
     public D build(D prototype, UDAVersion deviceVersion, URL baseURL) throws ValidationException {
-
+        if (udn==null)
+            return null;
         List<D> embeddedDevicesList = new ArrayList<>();
         for (MutableDevice<D, S> embeddedDevice : embeddedDevices) {
             embeddedDevicesList.add(embeddedDevice.build(prototype, deviceVersion, baseURL));

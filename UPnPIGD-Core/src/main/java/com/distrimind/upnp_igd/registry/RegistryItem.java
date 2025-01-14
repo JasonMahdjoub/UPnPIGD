@@ -17,8 +17,6 @@ package com.distrimind.upnp_igd.registry;
 
 import com.distrimind.upnp_igd.model.ExpirationDetails;
 
-import java.util.Objects;
-
 /**
  * Internal class, required by {@link RegistryImpl}.
  *
@@ -31,10 +29,14 @@ class RegistryItem<K, I> {
     private ExpirationDetails expirationDetails = new ExpirationDetails();
 
     RegistryItem(K key) {
+        if (key==null)
+            throw new NullPointerException();
         this.key = key;
     }
 
     RegistryItem(K key, I item, int maxAgeSeconds) {
+        if (key==null)
+            throw new NullPointerException();
         this.key = key;
         this.item = item;
         this.expirationDetails = new ExpirationDetails(maxAgeSeconds);
@@ -63,7 +65,7 @@ class RegistryItem<K, I> {
     }
     @Override
     public int hashCode() {
-        return Objects.hashCode(key);
+        return key.hashCode();
     }
 
     @Override

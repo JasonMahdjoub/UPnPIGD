@@ -160,7 +160,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
     public <D extends Device<?, D, S>, S extends Service<?, D, S>> D buildInstance(D undescribedDevice, MutableDevice<D, S> descriptor) throws ValidationException {
         D res=descriptor.build(undescribedDevice);
-        if (res.getDetails()!=null && isNotValidRemoteAddress(res.getDetails().getBaseURL(), networkAddressFactory))
+        if (res!=null && res.getDetails()!=null && isNotValidRemoteAddress(res.getDetails().getBaseURL(), networkAddressFactory))
             return null;
 
         return res;
@@ -170,7 +170,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
         if (rootElement.getNamespaceURI() == null || !Descriptor.Device.NAMESPACE_URI.equals(rootElement.getNamespaceURI())) {
             if (log.isLoggable(Level.WARNING))
-                log.warning("Wrong XML namespace declared on root element: " + rootElement.getNamespaceURI());
+                log.fine("Wrong XML namespace declared on root element: " + rootElement.getNamespaceURI());
             return;
         }
 
@@ -193,7 +193,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
             } else if (ELEMENT.URLBase.equals(rootChild)) {
                 try {
                     String urlString = XMLUtil.getTextContent(rootChild);
-                    if (urlString != null && !urlString.isEmpty()) {
+                    if (!urlString.isEmpty()) {
                         // We hope it's  RFC 2396 and RFC 2732 compliant
                         descriptor.baseURL = new URL(urlString);
                     }

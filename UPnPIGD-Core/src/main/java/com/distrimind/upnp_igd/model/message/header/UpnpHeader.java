@@ -174,7 +174,7 @@ public abstract class UpnpHeader<T> {
 					log.finest("Trying to parse '" + type + "' with class: " + headerClass.getSimpleName());
 				}
 				upnpHeader = headerClass.getConstructor().newInstance();
-                if (headerValue != null) {
+                if (headerValue != null && !headerValue.trim().isEmpty()) {
                     upnpHeader.setString(headerValue);
                 }
                 return upnpHeader;

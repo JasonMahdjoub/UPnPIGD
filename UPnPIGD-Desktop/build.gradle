@@ -2,8 +2,8 @@
 group='com.distrimind.upnp_igd.desktop'
 java {
 
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
     compileJava.options.compilerArgs.addAll(['--release', sourceCompatibility] as Collection<? extends String>)
 }
 sourceSets {
