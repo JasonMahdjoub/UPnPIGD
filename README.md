@@ -1,7 +1,7 @@
 UPnP IGD
 ========
 
-[![CodeQL](https://github.com/JasonMahdjoub/UPnPIGD/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/JasonMahdjoub/MaDKitLanEdition/actions/workflows/codeql-analysis.yml)
+[![CodeQL](https://github.com/JasonMahdjoub/UPnPIGD/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/JasonMahdjoub/UPnPIGD/actions/workflows/codeql-analysis.yml)
 
 This is a fork of UPnPIGD, the UPnP stack for Java and Android
 ------------------------------------------------------------

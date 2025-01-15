@@ -1,16 +1,9 @@
+apply from: ("../common.gradle")
 group='com.distrimind.upnp_igd.android'
-
-java {
-
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-    compileJava.options.compilerArgs.addAll(['--release', sourceCompatibility] as Collection<? extends String>)
-}
 
 dependencies {
 
     api project(':UPnPIGD-Core')
-    compileOnly files('FlatLibs/AndroidStub-4.3.0.0.jar')
     compileOnly jlibs.androidStub
 
     compileOnly jlibs.jetty.server

@@ -1,0 +1,21 @@
+apply plugin: "java-library"
+def javaVersion=JavaVersion.VERSION_11
+java {
+
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    compileJava.options.compilerArgs.addAll(['--release', sourceCompatibility] as Collection<? extends String>)
+}
+javadoc.options.addStringOption("html5", "-quiet")
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.compilerArgs << "-Xlint:unchecked"
+            options.deprecation = true
+        }
+    }
+}
+
+javadoc {
+    options.addBooleanOption('html5', true)
+}
