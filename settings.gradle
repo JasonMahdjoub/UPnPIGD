@@ -22,7 +22,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = 'UPnPIGD'
-include 'UPnPIGD-Core'
+include 'UPnPIGD-Common'
 include 'UPnPIGD-Android'
 include 'UPnPIGD-Desktop'
 

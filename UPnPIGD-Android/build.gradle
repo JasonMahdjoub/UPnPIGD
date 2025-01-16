@@ -3,7 +3,7 @@ group='com.distrimind.upnp_igd.android'
 
 dependencies {
 
-    api project(':UPnPIGD-Core')
+    api project(':UPnPIGD-Common')
     compileOnly jlibs.androidStub
 
     compileOnly jlibs.jetty.server

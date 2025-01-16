@@ -12,7 +12,7 @@ sourceSets {
     }
 }
 dependencies {
-    api project(':UPnPIGD-Core')
+    api project(':UPnPIGD-Common')
 
     testImplementation jlibs.jsoup
     testImplementation jlibs.testng
