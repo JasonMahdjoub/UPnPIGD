@@ -15,13 +15,13 @@
 
 package com.distrimind.upnp_igd.support.avtransport.callback;
 
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.controlpoint.ActionCallback;
 import com.distrimind.upnp_igd.controlpoint.ControlPoint;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
-
-import java.util.logging.Logger;
 
 /**
  *
@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public abstract class Next extends ActionCallback {
 
-    private static final Logger log = Logger.getLogger(Next.class.getName());
+    final private static DMLogger log = Log.getLogger(Next.class);
 
     protected Next(ActionInvocation<?> actionInvocation, ControlPoint controlPoint) {
         super(actionInvocation, controlPoint);
@@ -50,6 +50,6 @@ public abstract class Next extends ActionCallback {
 
     @Override
     public void success(ActionInvocation<?> invocation) {
-        log.fine("Execution successful");
+        log.debug("Execution successful");
     }
 }

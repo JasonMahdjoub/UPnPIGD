@@ -17,6 +17,7 @@ dependencies {
 
     testImplementation jlibs.jsoup
     testImplementation jlibs.testng
+    testImplementation jlibs.slf4Jdk14
 
 }
 

@@ -27,8 +27,8 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.support.model.container.Container;
 import com.distrimind.upnp_igd.support.model.item.Item;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public abstract class ContentBrowseActionCallback extends Browse {
 
-    private static final Logger log = Logger.getLogger(ContentBrowseActionCallback.class.getName());
+    final private static DMLogger log = Log.getLogger(ContentBrowseActionCallback.class);
 
     final protected DefaultTreeModel treeModel;
     final protected DefaultMutableTreeNode treeNode;
@@ -72,7 +72,7 @@ public abstract class ContentBrowseActionCallback extends Browse {
 
     @Override
 	public void received(final ActionInvocation<?> actionInvocation, DIDLContent didl) {
-        log.fine("Received browse action DIDL descriptor, creating tree nodes");
+        log.debug("Received browse action DIDL descriptor, creating tree nodes");
         final List<DefaultMutableTreeNode> childNodes = new ArrayList<>();
 
         try {
@@ -112,8 +112,8 @@ public abstract class ContentBrowseActionCallback extends Browse {
             }
 
         } catch (Exception ex) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Creating DIDL tree nodes failed: " + ex);
+			if (log.isDebugEnabled()) {
+				log.debug("Creating DIDL tree nodes failed: ", ex);
 			}
 			actionInvocation.setFailure(
                     new ActionException(ErrorCode.ACTION_FAILED, "Can't create tree child nodes: " + ex, ex)
@@ -135,8 +135,8 @@ public abstract class ContentBrowseActionCallback extends Browse {
     }
 
     protected void updateTreeModel(final List<DefaultMutableTreeNode> childNodes) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Adding nodes to tree: " + childNodes.size());
+		if (log.isDebugEnabled()) {
+            log.debug("Adding nodes to tree: " + childNodes.size());
 		}
 		// Remove all "old" children such as the loading/progress messages
         removeChildren();

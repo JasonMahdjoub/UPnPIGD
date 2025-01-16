@@ -26,8 +26,8 @@ import com.distrimind.upnp_igd.model.UnsupportedDataException;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 
 import java.net.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation based on a single shared (receive/send) UDP <code>MulticastSocket</code>.
@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
 
-    private static final Logger log = Logger.getLogger(DatagramIOImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(DatagramIOImpl.class);
 
     /* Implementation notes for unicast/multicast UDP:
 
@@ -83,7 +83,7 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
             // TODO: UPNP VIOLATION: The spec does not prohibit using the 1900 port here again, however, the
             // Netgear ReadyNAS miniDLNA implementation will no longer answer if it has to send search response
             // back via UDP unicast to port 1900... so we use an ephemeral port
-			if (log.isLoggable(Level.INFO)) log.info("Creating bound socket (for datagram input/output) on: " + bindAddress);
+			if (log.isInfoEnabled()) log.info("Creating bound socket (for datagram input/output) on: " + bindAddress);
             localAddress = new InetSocketAddress(bindAddress, 0);
             socket = new MulticastSocket(localAddress);
             socket.setTimeToLive(configuration.getTimeToLive());
@@ -102,8 +102,8 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
 
     @Override
 	public void run() {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
+		if (log.isDebugEnabled()) {
+            log.debug("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
 		}
 
 		while (true) {
@@ -121,8 +121,8 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
                         );
                 if (receivedOnLocalAddress==null)
                     continue;
-				if (log.isLoggable(Level.FINE)) {
-					log.fine(
+				if (log.isDebugEnabled()) {
+					log.debug(
 							"UDP datagram received from: "
 									+ datagram.getAddress().getHostAddress()
 									+ ":" + datagram.getPort()
@@ -137,17 +137,17 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
                 router.received(idm);
 
             } catch (SocketException ex) {
-                log.fine("Socket closed");
+                log.debug("Socket closed");
                 break;
             } catch (UnsupportedDataException ex) {
-				if (log.isLoggable(Level.INFO)) log.info("Could not read datagram: " + ex.getMessage());
+				if (log.isInfoEnabled()) log.info("Could not read datagram: ", ex);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         }
         try {
             if (!socket.isClosed()) {
-                log.fine("Closing unicast socket");
+                log.debug("Closing unicast socket");
                 socket.close();
             }
         } catch (Exception ex) {
@@ -157,13 +157,13 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
 
     @Override
 	synchronized public void send(OutgoingDatagramMessage<?> message) {
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("Sending message from address: " + localAddress);
+        if (log.isDebugEnabled()) {
+            log.debug("Sending message from address: " + localAddress);
         }
         DatagramPacket packet = datagramProcessor.write(message);
 
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("Sending UDP datagram packet to: " + message.getDestinationAddress() + ":" + message.getDestinationPort());
+        if (log.isDebugEnabled()) {
+            log.debug("Sending UDP datagram packet to: " + message.getDestinationAddress() + ":" + message.getDestinationPort());
         }
         
         send(packet);
@@ -171,20 +171,20 @@ public class DatagramIOImpl implements DatagramIO<DatagramIOConfigurationImpl> {
 
     @Override
 	synchronized public void send(DatagramPacket datagram) {
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("Sending message from address: " + localAddress);
+        if (log.isDebugEnabled()) {
+            log.debug("Sending message from address: " + localAddress);
         }
             
         try {
             socket.send(datagram);
         } catch (SocketException ex) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Socket closed, aborting datagram send to: " + datagram.getAddress());
+			if (log.isDebugEnabled()) {
+				log.debug("Socket closed, aborting datagram send to: " + datagram.getAddress());
 			}
 		} catch (RuntimeException ex) {
             throw ex;
         } catch (Exception ex) {
-			if (log.isLoggable(Level.SEVERE)) log.log(Level.SEVERE, "Exception sending datagram to: " + datagram.getAddress() + ": " + ex, ex);
+			if (log.isErrorEnabled()) log.error("Exception sending datagram to: " + datagram.getAddress() + ": ", ex);
         }
     }
 }

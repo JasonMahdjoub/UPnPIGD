@@ -26,8 +26,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * @author Christian Bauer
@@ -36,7 +36,7 @@ public class TextExpandDialog extends JDialog {
     private static final long serialVersionUID = 1L;
     // TODO: Make this a plugin SPI and let the plugin impl decide how text should be detected and rendered
 
-    private static final Logger log = Logger.getLogger(TextExpandDialog.class.getName());
+    final private static DMLogger log = Log.getLogger(TextExpandDialog.class);
 
     public TextExpandDialog(Frame frame, String text) {
         super(frame);
@@ -57,7 +57,7 @@ public class TextExpandDialog extends JDialog {
                     }
                 }.print(text, 2, false);
             } catch (Exception ex) {
-                if (log.isLoggable(Level.SEVERE)) log.severe("Error pretty printing XML: " + ex);
+                if (log.isErrorEnabled()) log.error("Error pretty printing XML: ", ex);
                 pretty = text;
             }
         } else if (text.startsWith("http-get")) {

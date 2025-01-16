@@ -26,8 +26,8 @@ import com.distrimind.upnp_igd.model.message.gena.OutgoingSubscribeRequestMessag
 import com.distrimind.upnp_igd.UpnpService;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Establishing a GENA event subscription with a remote host.
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  */
 public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessage, IncomingSubscribeResponseMessage> {
 
-    final private static Logger log = Logger.getLogger(SendingSubscribe.class.getName());
+    final private static DMLogger log = Log.getLogger(SendingSubscribe.class);
 
     final protected RemoteGENASubscription subscription;
 
@@ -74,15 +74,15 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
 	protected IncomingSubscribeResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().hasCallbackURLs()) {
-            log.fine("Subscription failed, no active local callback URLs available (network disabled?)");
+            log.debug("Subscription failed, no active local callback URLs available (network disabled?)");
             getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
 					() -> subscription.fail(null)
 			);
             return null;
         }
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Sending subscription request: " + getInputMessage());
+		if (log.isDebugEnabled()) {
+            log.debug("Sending subscription request: " + getInputMessage());
 		}
 
 		try {
@@ -106,21 +106,21 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
             final IncomingSubscribeResponseMessage responseMessage = new IncomingSubscribeResponseMessage(response);
 
             if (response.getOperation().isFailed()) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Subscription failed, response was: " + responseMessage);
+				if (log.isDebugEnabled()) {
+					log.debug("Subscription failed, response was: " + responseMessage);
 				}
 				getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
 						() -> subscription.fail(responseMessage.getOperation())
 				);
             } else if (!responseMessage.isValidHeaders()) {
-                log.severe("Subscription failed, invalid or missing (SID, Timeout) response headers");
+                log.error("Subscription failed, invalid or missing (SID, Timeout) response headers");
                 getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
 						() -> subscription.fail(responseMessage.getOperation())
 				);
             } else {
 
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Subscription established, adding to registry, response was: " + response);
+				if (log.isDebugEnabled()) {
+					log.debug("Subscription established, adding to registry, response was: " + response);
 				}
 				subscription.setSubscriptionId(responseMessage.getSubscriptionId());
                 subscription.setActualSubscriptionDurationSeconds(responseMessage.getSubscriptionDurationSeconds());
@@ -139,7 +139,7 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
     }
 
     protected void onSubscriptionFailure() {
-        log.fine("Subscription failed");
+        log.debug("Subscription failed");
         getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
 				() -> subscription.fail(null)
 		);

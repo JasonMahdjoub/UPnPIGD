@@ -24,8 +24,8 @@ import com.distrimind.upnp_igd.model.gena.RemoteGENASubscription;
 import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.model.message.gena.OutgoingUnsubscribeRequestMessage;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Disconnecting a GENA event subscription with a remote host.
@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  */
 public class SendingUnsubscribe extends SendingSync<OutgoingUnsubscribeRequestMessage, StreamResponseMessage> {
 
-    final private static Logger log = Logger.getLogger(SendingUnsubscribe.class.getName());
+    final private static DMLogger log = Log.getLogger(SendingUnsubscribe.class);
 
     final protected RemoteGENASubscription subscription;
 
@@ -58,8 +58,8 @@ public class SendingUnsubscribe extends SendingSync<OutgoingUnsubscribeRequestMe
     @Override
 	protected StreamResponseMessage executeSync() throws RouterException {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Sending unsubscribe request: " + getInputMessage());
+		if (log.isDebugEnabled()) {
+            log.debug("Sending unsubscribe request: " + getInputMessage());
 		}
 
 		StreamResponseMessage response = null;
@@ -78,16 +78,16 @@ public class SendingUnsubscribe extends SendingSync<OutgoingUnsubscribeRequestMe
         getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
 				() -> {
 					if (response == null) {
-						log.fine("Unsubscribe failed, no response received");
+						log.debug("Unsubscribe failed, no response received");
 						subscription.end(CancelReason.UNSUBSCRIBE_FAILED, null);
 					} else if (response.getOperation().isFailed()) {
-						if (log.isLoggable(Level.FINE)) {
-							log.fine("Unsubscribe failed, response was: " + response);
+						if (log.isDebugEnabled()) {
+							log.debug("Unsubscribe failed, response was: " + response);
 						}
 						subscription.end(CancelReason.UNSUBSCRIBE_FAILED, response.getOperation());
 					} else {
-						if (log.isLoggable(Level.FINE)) {
-							log.fine("Unsubscribe successful, response was: " + response);
+						if (log.isDebugEnabled()) {
+							log.debug("Unsubscribe successful, response was: " + response);
 						}
 						subscription.end(null, response.getOperation());
 					}

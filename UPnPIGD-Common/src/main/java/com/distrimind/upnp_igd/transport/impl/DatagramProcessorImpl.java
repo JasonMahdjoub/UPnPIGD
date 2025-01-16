@@ -16,9 +16,9 @@
 package com.distrimind.upnp_igd.transport.impl;
 
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.model.message.*;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
@@ -36,17 +36,17 @@ import java.util.Locale;
  */
 public class DatagramProcessorImpl implements DatagramProcessor {
 
-    private static final Logger log = Logger.getLogger(DatagramProcessorImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(DatagramProcessorImpl.class);
 
     @Override
 	public IncomingDatagramMessage<?> read(InetAddress receivedOnAddress, DatagramPacket datagram) throws UnsupportedDataException {
 
         try {
 
-            if (log.isLoggable(Level.FINER)) {
-                log.finer("===================================== DATAGRAM BEGIN ============================================");
-                log.finer(new String(datagram.getData(), StandardCharsets.UTF_8));
-                log.finer("-===================================== DATAGRAM END =============================================");
+            if (log.isTraceEnabled()) {
+				log.trace("===================================== DATAGRAM BEGIN ============================================");
+                log.trace(new String(datagram.getData(), StandardCharsets.UTF_8));
+                log.trace("-===================================== DATAGRAM END =============================================");
             }
 
             ByteArrayInputStream is = new ByteArrayInputStream(datagram.getData());
@@ -93,19 +93,19 @@ public class DatagramProcessorImpl implements DatagramProcessor {
 
         messageData.append(message.getHeaders().toString()).append("\r\n");
 
-        if (log.isLoggable(Level.FINER)) {
-            log.finer("Writing message data for: " + message);
-            log.finer("---------------------------------------------------------------------------------");
-            log.finer(messageData.substring(0, messageData.length() - 2)); // Don't print the blank lines
-            log.finer("---------------------------------------------------------------------------------");
+        if (log.isTraceEnabled()) {
+            log.trace("Writing message data for: " + message);
+            log.trace("---------------------------------------------------------------------------------");
+            log.trace(messageData.substring(0, messageData.length() - 2)); // Don't print the blank lines
+            log.trace("---------------------------------------------------------------------------------");
         }
 
 		// According to HTTP 1.0 RFC, headers and their values are US-ASCII
 		// TODO: Probably should look into escaping rules, too
 		byte[] data = messageData.toString().getBytes(StandardCharsets.US_ASCII);
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing new datagram packet with " + data.length + " bytes for: " + message);
+		if (log.isDebugEnabled()) {
+            log.debug("Writing new datagram packet with " + data.length + " bytes for: " + message);
 		}
 		return new DatagramPacket(data, data.length, message.getDestinationAddress(), message.getDestinationPort());
 

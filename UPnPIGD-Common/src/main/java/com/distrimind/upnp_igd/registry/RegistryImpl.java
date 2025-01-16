@@ -43,8 +43,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation of {@link Registry}.
@@ -54,7 +54,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class RegistryImpl implements Registry {
 
-    private static final Logger log = Logger.getLogger(RegistryImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(RegistryImpl.class);
 
     protected UpnpService upnpService;
     protected RegistryMaintainer registryMaintainer;
@@ -68,13 +68,13 @@ public class RegistryImpl implements Registry {
      */
     @Inject
     public RegistryImpl(UpnpService upnpService) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Creating Registry: " + getClass().getName());
+		if (log.isDebugEnabled()) {
+            log.debug("Creating Registry: " + getClass().getName());
 		}
 
 		this.upnpService = upnpService;
 
-        log.fine("Starting registry background maintenance...");
+        log.debug("Starting registry background maintenance...");
         registryMaintainer = createRegistryMaintainer();
         if (registryMaintainer != null) {
             getConfiguration().getRegistryMaintainerExecutor().execute(registryMaintainer);
@@ -135,8 +135,8 @@ public class RegistryImpl implements Registry {
 		if (device.getIdentity()!=null && getUpnpService()!=null && getUpnpService().getRegistry()!=null && getUpnpService().getRegistry().getRemoteDevice(device.getIdentity().getUdn(), true) != null)
 			return false;
         if (getUpnpService().getRegistry().getRemoteDevice(device.getIdentity().getUdn(), true) != null) {
-			if (log.isLoggable(Level.FINER)) {
-				log.finer("Not notifying listeners, already registered: " + device);
+			if (log.isTraceEnabled()) {
+				log.trace("Not notifying listeners, already registered: " + device);
 			}
 			return false;
         }
@@ -418,15 +418,15 @@ public class RegistryImpl implements Registry {
     // When you call this, make sure you have the Router lock before this lock is obtained!
     @Override
 	synchronized public void shutdown() {
-        log.fine("Shutting down registry...");
+        log.debug("Shutting down registry...");
 
         if (registryMaintainer != null)
             registryMaintainer.stop();
         
         // Final cleanup run to flush out pending executions which might
         // not have been caught by the maintainer before it stopped
-		if (log.isLoggable(Level.FINEST)) {
-			log.finest("Executing final pending operations on shutdown: " + pendingExecutions.size());
+		if (log.isTraceEnabled()) {
+			log.trace("Executing final pending operations on shutdown: " + pendingExecutions.size());
 		}
 		runPendingExecutions(false);
 
@@ -449,7 +449,7 @@ public class RegistryImpl implements Registry {
     @Override
 	synchronized public void pause() {
         if (registryMaintainer != null) {
-            log.fine("Pausing registry maintenance");
+            log.debug("Pausing registry maintenance");
             runPendingExecutions(true);
             registryMaintainer.stop();
             registryMaintainer = null;
@@ -459,7 +459,7 @@ public class RegistryImpl implements Registry {
     @Override
 	synchronized public void resume() {
         if (registryMaintainer == null) {
-            log.fine("Resuming registry maintenance");
+            log.debug("Resuming registry maintenance");
             remoteItems.resume();
             registryMaintainer = createRegistryMaintainer();
             if (registryMaintainer != null) {
@@ -477,16 +477,16 @@ public class RegistryImpl implements Registry {
 
     synchronized void maintain() {
 
-        if (log.isLoggable(Level.FINEST))
-            log.finest("Maintaining registry...");
+        if (log.isTraceEnabled())
+            log.trace("Maintaining registry...");
 
         // Remove expired resources
         Iterator<RegistryItem<URI, Resource<?>>> it = resourceItems.iterator();
         while (it.hasNext()) {
             RegistryItem<URI, Resource<?>> item = it.next();
             if (item.getExpirationDetails().hasExpired()) {
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Removing expired resource: " + item);
+                if (log.isTraceEnabled())
+                    log.trace("Removing expired resource: " + item);
                 it.remove();
             }
         }
@@ -512,8 +512,8 @@ public class RegistryImpl implements Registry {
     }
 
     synchronized void runPendingExecutions(boolean async) {
-        if (log.isLoggable(Level.FINEST))
-            log.finest("Executing pending operations: " + pendingExecutions.size());
+        if (log.isTraceEnabled())
+            log.trace("Executing pending operations: " + pendingExecutions.size());
         for (Runnable pendingExecution : pendingExecutions) {
             if (async)
                 getConfiguration().getAsyncProtocolExecutor().execute(pendingExecution);
@@ -528,26 +528,26 @@ public class RegistryImpl implements Registry {
     /* ############################################################################################################ */
 
     public void printDebugLog() {
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("====================================    REMOTE   ================================================");
+        if (log.isDebugEnabled()) {
+            log.debug("====================================    REMOTE   ================================================");
 
             for (RemoteDevice remoteDevice : remoteItems.get()) {
-                log.fine(remoteDevice.toString());
+                log.debug(remoteDevice.toString());
             }
 
-            log.fine("====================================    LOCAL    ================================================");
+            log.debug("====================================    LOCAL    ================================================");
 
             for (LocalDevice<?> localDevice : localItems.get()) {
-                log.fine(localDevice.toString());
+                log.debug(localDevice.toString());
             }
 
-            log.fine("====================================  RESOURCES  ================================================");
+            log.debug("====================================  RESOURCES  ================================================");
 
             for (RegistryItem<URI, Resource<?>> resourceItem : resourceItems) {
-                log.fine(resourceItem.toString());
+                log.debug(resourceItem.toString());
             }
 
-            log.fine("=================================================================================================");
+            log.debug("=================================================================================================");
 
         }
 
@@ -575,7 +575,7 @@ public class RegistryImpl implements Registry {
             RemoteGENASubscription subscription = getRemoteSubscription(subscriptionId);
             while (subscription == null && !pendingSubscriptionsLock.isEmpty()) {
                 try {
-                    log.finest("Subscription not found, waiting for pending subscription procedure to terminate.");
+                    log.trace("Subscription not found, waiting for pending subscription procedure to terminate.");
                     pendingSubscriptionsLock.wait();
                 } catch (InterruptedException ignored) {
                 }

@@ -30,8 +30,8 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Implementation based on Servlet 3.0 API.
@@ -40,7 +40,7 @@ import java.util.logging.Logger;
  */
 public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletStreamServerConfigurationImpl> {
 
-    final private static Logger log = Logger.getLogger(AsyncServletStreamServerImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(AsyncServletStreamServerImpl.class);
 
     final protected AsyncServletStreamServerConfigurationImpl configuration;
     protected int localPort;
@@ -58,14 +58,14 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
     @Override
 	synchronized public void init(InetAddress bindAddress, final Router router, NetworkAddressFactory networkAddressFactory) throws InitializationException {
         try {
-            if (log.isLoggable(Level.FINE))
-                log.fine("Setting executor service on servlet container adapter");
+            if (log.isDebugEnabled())
+                log.debug("Setting executor service on servlet container adapter");
             getConfiguration().getServletContainerAdapter().setExecutorService(
                 router.getConfiguration().getStreamServerExecutorService()
             );
 
-            if (log.isLoggable(Level.FINE))
-                log.fine("Adding connector: " + bindAddress + ":" + getConfiguration().getListenPort());
+            if (log.isDebugEnabled())
+                log.debug("Adding connector: " + bindAddress + ":" + getConfiguration().getListenPort());
             hostAddress = bindAddress.getHostAddress();
             if (hostAddress==null)
                 throw new InitializationException("");
@@ -116,8 +116,8 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
 
             	final long startTime = System.currentTimeMillis();
             	final int counter = mCounter++;
-                if (log.isLoggable(Level.FINE))
-                	log.fine(String.format("HttpServlet.service(): id: %3d, request URI: %s", counter, req.getRequestURI()));
+                if (log.isDebugEnabled())
+                	log.debug(String.format("HttpServlet.service(): id: %3d, request URI: %s", counter, req.getRequestURI()));
 
                 AsyncContext async = req.startAsync();
                 async.setTimeout(getConfiguration().getAsyncTimeoutSeconds()* 1000L);
@@ -127,31 +127,31 @@ public class AsyncServletStreamServerImpl implements StreamServer<AsyncServletSt
                     @Override
                     public void onTimeout(AsyncEvent arg0) throws IOException {
                         long duration = System.currentTimeMillis() - startTime;
-                        if (log.isLoggable(Level.FINE))
-                            log.fine(String.format("AsyncListener.onTimeout(): id: %3d, duration: %,4d, request: %s", counter, duration, arg0.getSuppliedRequest()));
+                        if (log.isDebugEnabled())
+                            log.debug(String.format("AsyncListener.onTimeout(): id: %3d, duration: %,4d, request: %s", counter, duration, arg0.getSuppliedRequest()));
                     }
 
 
                     @Override
                     public void onStartAsync(AsyncEvent arg0) throws IOException {
-                        if (log.isLoggable(Level.FINE))
-                            log.fine(String.format("AsyncListener.onStartAsync(): id: %3d, request: %s", counter, arg0.getSuppliedRequest()));
+                        if (log.isDebugEnabled())
+                            log.debug(String.format("AsyncListener.onStartAsync(): id: %3d, request: %s", counter, arg0.getSuppliedRequest()));
                     }
 
 
                     @Override
                     public void onError(AsyncEvent arg0) throws IOException {
                         long duration = System.currentTimeMillis() - startTime;
-                        if (log.isLoggable(Level.FINE))
-                            log.fine(String.format("AsyncListener.onError(): id: %3d, duration: %,4d, response: %s", counter, duration, arg0.getSuppliedResponse()));
+                        if (log.isDebugEnabled())
+                            log.debug(String.format("AsyncListener.onError(): id: %3d, duration: %,4d, response: %s", counter, duration, arg0.getSuppliedResponse()));
                     }
 
 
                     @Override
                     public void onComplete(AsyncEvent arg0) throws IOException {
                         long duration = System.currentTimeMillis() - startTime;
-                        if (log.isLoggable(Level.FINE))
-                            log.fine(String.format("AsyncListener.onComplete(): id: %3d, duration: %,4d, response: %s", counter, duration, arg0.getSuppliedResponse()));
+                        if (log.isDebugEnabled())
+                            log.debug(String.format("AsyncListener.onComplete(): id: %3d, duration: %,4d, response: %s", counter, duration, arg0.getSuppliedResponse()));
                     }
 
                 });

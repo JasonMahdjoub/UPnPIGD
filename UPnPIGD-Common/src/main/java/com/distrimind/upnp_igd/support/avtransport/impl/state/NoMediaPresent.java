@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.support.avtransport.impl.state;
 
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.support.avtransport.lastchange.AVTransportVariable;
 import com.distrimind.upnp_igd.support.model.AVTransport;
 import com.distrimind.upnp_igd.support.model.TransportAction;
@@ -23,21 +24,21 @@ import com.distrimind.upnp_igd.support.model.TransportState;
 
 import java.net.URI;
 import java.util.List;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
 
 /**
  * @author Christian Bauer
  */
 public abstract class NoMediaPresent<T extends AVTransport> extends AbstractState<T> {
 
-    final private static Logger log = Logger.getLogger(NoMediaPresent.class.getName());
+    final private static DMLogger log = Log.getLogger(NoMediaPresent.class);
 
     public NoMediaPresent(T transport) {
         super(transport);
     }
 
     public void onEntry() {
-        log.fine("Setting transport state to NO_MEDIA_PRESENT");
+        log.debug("Setting transport state to NO_MEDIA_PRESENT");
         getTransport().setTransportInfo(
                 new TransportInfo(
                         TransportState.NO_MEDIA_PRESENT,

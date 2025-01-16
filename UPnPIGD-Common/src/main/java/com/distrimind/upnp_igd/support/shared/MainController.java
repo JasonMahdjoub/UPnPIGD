@@ -15,6 +15,9 @@
 
 package com.distrimind.upnp_igd.support.shared;
 
+import com.distrimind.flexilogxml.log.Handler;
+import com.distrimind.flexilogxml.log.LogManager;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.util.logging.LoggingUtil;
 import com.distrimind.upnp_igd.swing.AbstractController;
@@ -22,7 +25,6 @@ import com.distrimind.upnp_igd.swing.Application;
 import com.distrimind.upnp_igd.swing.logging.LogCategory;
 import com.distrimind.upnp_igd.swing.logging.LogController;
 import com.distrimind.upnp_igd.swing.logging.LogMessage;
-import com.distrimind.upnp_igd.swing.logging.LoggingHandler;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -33,16 +35,14 @@ import javax.swing.UIManager;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import org.slf4j.event.Level;
 
 /**
  * @author Christian Bauer
  */
 public abstract class MainController extends AbstractController<JFrame> {
-    static final Logger loggger = Logger.getLogger(MainController.class.getName());
+    final DMLogger logger = Log.getLogger(MainController.class);
     // Dependencies
     final private LogController logController;
 
@@ -56,7 +56,7 @@ public abstract class MainController extends AbstractController<JFrame> {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-            loggger.log(Level.SEVERE, "Unable to load native look and feel: ", ex);
+            logger.error(() -> "Unable to load native look and feel: ", ex);
         }
 
         // Exception handler
@@ -64,9 +64,9 @@ public abstract class MainController extends AbstractController<JFrame> {
 
         // Shutdown behavior
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			if (getUpnpService() != null)
-				getUpnpService().shutdown();
-		}));
+            if (getUpnpService() != null)
+                getUpnpService().shutdown();
+        }));
 
         // Logging UI
         logController = new LogController(this, logCategories) {
@@ -87,16 +87,11 @@ public abstract class MainController extends AbstractController<JFrame> {
 
         // Wire UI into JUL
         // Don't reset JUL root logger but add if there is a JUL config file
-        Handler handler = new LoggingHandler() {
-            @Override
-			protected void log(LogMessage msg) {
-                logController.pushMessage(msg);
-            }
-        };
+        Handler handler = logRecord -> logController.pushMessage(new LogMessage(logRecord));
         if (System.getProperty("java.util.logging.config.file") == null) {
             LoggingUtil.resetRootHandler(handler);
         } else {
-            LogManager.getLogManager().getLogger("").addHandler(handler);
+            LogManager.addHandler(handler);
         }
     }
 

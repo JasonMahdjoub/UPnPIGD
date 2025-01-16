@@ -20,8 +20,8 @@ import com.distrimind.upnp_igd.model.ValidationError;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Integrity rule for a state variable, restricting its values to a range with steps.
@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class StateVariableAllowedValueRange implements Validatable {
 
-    final private static Logger log = Logger.getLogger(StateVariableAllowedValueRange.class.getName());
+    final private static DMLogger log = Log.getLogger(StateVariableAllowedValueRange.class);
 
     final private long minimum;
     final private long maximum;
@@ -44,7 +44,7 @@ public class StateVariableAllowedValueRange implements Validatable {
 
     public StateVariableAllowedValueRange(long minimum, long maximum, long step) {
         if (minimum > maximum) {
-            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, allowed value range minimum '" + minimum
+            if (log.isWarnEnabled()) log.warn("UPnP specification violation, allowed value range minimum '" + minimum
                                 + "' is greater than maximum '" + maximum + "', switching values.");
             this.minimum = maximum;
             this.maximum = minimum;

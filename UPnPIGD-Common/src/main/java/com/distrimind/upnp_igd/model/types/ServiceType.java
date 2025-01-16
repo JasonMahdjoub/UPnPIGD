@@ -17,8 +17,8 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.Constants;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import java.util.regex.Matcher;
 
 /**
@@ -32,7 +32,7 @@ import java.util.regex.Matcher;
  */
 public class ServiceType {
 
-    final private static Logger log = Logger.getLogger(ServiceType.class.getName());
+    final private static DMLogger log = Log.getLogger(ServiceType.class);
 
     private final String namespace;
     private final String type;
@@ -109,7 +109,7 @@ public class ServiceType {
             matcher = Constants.getPatternServiceEyeTV().matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
-                if (log.isLoggable(Level.WARNING)) log.warning(
+                if (log.isWarnEnabled()) log.warn(
                     "UPnP specification violation, replacing invalid service type token '"
                         + matcher.group(2)
                         + "' with: "
@@ -123,7 +123,7 @@ public class ServiceType {
             matcher = Constants.getPatternServiceIniniTV().matcher(s);
             if (matcher.matches() && matcher.groupCount() >= 3) {
                 String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
-                if (log.isLoggable(Level.WARNING)) log.warning(
+                if (log.isWarnEnabled()) log.warn(
                     "UPnP specification violation, replacing invalid service type token '"
                     + matcher.group(2)
                     + "' with: "

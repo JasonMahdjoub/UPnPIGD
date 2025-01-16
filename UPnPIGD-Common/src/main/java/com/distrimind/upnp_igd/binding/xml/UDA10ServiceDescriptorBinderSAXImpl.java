@@ -39,8 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ATTRIBUTE;
 import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ELEMENT;
@@ -52,7 +52,7 @@ import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ELEMENT;
  */
 public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorBinderImpl {
 
-    private static final Logger log = Logger.getLogger(UDA10ServiceDescriptorBinderSAXImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(UDA10ServiceDescriptorBinderSAXImpl.class);
 
     public UDA10ServiceDescriptorBinderSAXImpl(NetworkAddressFactory networkAddressFactory) {
         super(networkAddressFactory);
@@ -66,7 +66,7 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
         }
 
         try {
-            log.fine("Reading service from XML descriptor");
+            log.debug("Reading service from XML descriptor");
 
             SAXParser parser = new SAXParser();
 
@@ -249,7 +249,7 @@ public class UDA10ServiceDescriptorBinderSAXImpl extends UDA10ServiceDescriptorB
                         getInstance().direction = ActionArgument.Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
                     } catch (IllegalArgumentException ex) {
                         // TODO: UPNP VIOLATION: Pelco SpectraIV-IP uses illegal value INOUT
-                        if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation: Invalid action argument direction, assuming 'IN': " + directionString);
+                        if (log.isWarnEnabled()) log.warn("UPnP specification violation: Invalid action argument direction, assuming 'IN': " + directionString);
                         getInstance().direction = ActionArgument.Direction.IN;
                     }
                     break;

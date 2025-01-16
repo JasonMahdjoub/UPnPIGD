@@ -25,8 +25,8 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Encapsulates all optional metadata about a device.
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public class DeviceDetails implements Validatable {
 
-    final private static Logger log = Logger.getLogger(DeviceDetails.class.getName());
+    final private static DMLogger log = Log.getLogger(DeviceDetails.class);
 
     final private URL baseURL;
     final private String friendlyName;
@@ -206,15 +206,15 @@ public class DeviceDetails implements Validatable {
         if (getUpc() != null) {
             // This is broken in more than half of the devices I've tested, so let's not even bother with a warning
             if (getUpc().length() != 12) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("UPnP specification violation, UPC must be 12 digits: " + getUpc());
+				if (log.isDebugEnabled()) {
+					log.debug("UPnP specification violation, UPC must be 12 digits: " + getUpc());
 				}
 			} else {
                 try {
                     Long.parseLong(getUpc());
                 } catch (NumberFormatException ex) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("UPnP specification violation, UPC must be 12 digits all-numeric: " + getUpc());
+					if (log.isDebugEnabled()) {
+						log.debug("UPnP specification violation, UPC must be 12 digits all-numeric: " + getUpc());
 					}
 				}
             }

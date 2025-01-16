@@ -14,18 +14,19 @@
  */
 package com.distrimind.upnp_igd.xml;
 
+import com.distrimind.upnp_igd.Log;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
 
 /**
  * @author Michael Pujos
  */
 public class XmlPullParserUtils {
 
-	final private static Logger log = Logger.getLogger(XmlPullParserUtils.class.getName());
+	final private static DMLogger log = Log.getLogger(XmlPullParserUtils.class);
 
 	public static boolean isNullOrEmpty(String s) {
 		return s == null || s.isEmpty();
@@ -78,7 +79,7 @@ public class XmlPullParserUtils {
 		}
 
 		if (isFixed) {
-			log.warning("fixed badly encoded entities in XML");
+			log.warn("fixed badly encoded entities in XML");
 		}
 
 		return fixedXml.toString();

@@ -21,8 +21,8 @@ import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Supertype for all synchronously executing protocols, handling reception of UPnP messages and return a response.
@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  */
 public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends StreamResponseMessage> extends ReceivingAsync<IN> {
 
-    final private static Logger log = Logger.getLogger(ReceivingSync.class.getName());
+    final private static DMLogger log = Log.getLogger(ReceivingSync.class);
 
     final protected RemoteClientInfo remoteClientInfo;
     protected OUT outputMessage;
@@ -65,8 +65,8 @@ public abstract class ReceivingSync<IN extends StreamRequestMessage, OUT extends
         outputMessage = executeSync();
 
         if (outputMessage != null && !getRemoteClientInfo().getExtraResponseHeaders().isEmpty()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Setting extra headers on response message: " + getRemoteClientInfo().getExtraResponseHeaders().size());
+			if (log.isDebugEnabled()) {
+				log.debug("Setting extra headers on response message: " + getRemoteClientInfo().getExtraResponseHeaders().size());
 			}
 			outputMessage.getHeaders().putAll(getRemoteClientInfo().getExtraResponseHeaders());
         }

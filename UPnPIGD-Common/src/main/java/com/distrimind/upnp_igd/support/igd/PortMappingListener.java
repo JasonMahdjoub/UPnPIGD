@@ -30,8 +30,8 @@ import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.support.model.PortMapping;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Maintains UPnP port mappings on an InternetGatewayDevice automatically.
@@ -66,7 +66,7 @@ import java.util.logging.Logger;
  */
 public class PortMappingListener extends DefaultRegistryListener {
 
-    private static final Logger log = Logger.getLogger(PortMappingListener.class.getName());
+    final private static DMLogger log = Log.getLogger(PortMappingListener.class);
 
     public static final DeviceType IGD_DEVICE_TYPE = new UDADeviceType("InternetGatewayDevice", 1);
     public static final DeviceType CONNECTION_DEVICE_TYPE = new UDADeviceType("WANConnectionDevice", 1);
@@ -93,8 +93,8 @@ public class PortMappingListener extends DefaultRegistryListener {
         Service<?, ?, ?> connectionService;
         if ((connectionService = discoverConnectionService(device)) == null) return;
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Activating port mappings on: " + connectionService);
+		if (log.isDebugEnabled()) {
+            log.debug("Activating port mappings on: " + connectionService);
 		}
 
 		final List<PortMapping> activeForService = new ArrayList<>();
@@ -103,8 +103,8 @@ public class PortMappingListener extends DefaultRegistryListener {
 
                 @Override
                 public void success(ActionInvocation<?> invocation) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Port mapping added: " + pm);
+					if (log.isDebugEnabled()) {
+						log.debug("Port mapping added: " + pm);
 					}
 					activeForService.add(pm);
                 }
@@ -143,15 +143,15 @@ public class PortMappingListener extends DefaultRegistryListener {
             final Iterator<PortMapping> it = activeEntry.getValue().iterator();
             while (it.hasNext()) {
                 final PortMapping pm = it.next();
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Trying to delete port mapping on IGD: " + pm);
+				if (log.isDebugEnabled()) {
+					log.debug("Trying to delete port mapping on IGD: " + pm);
 				}
 				new PortMappingDelete(activeEntry.getKey(), registry.getUpnpService().getControlPoint(), pm) {
 
                     @Override
                     public void success(ActionInvocation<?> invocation) {
-						if (log.isLoggable(Level.FINE)) {
-							log.fine("Port mapping deleted: " + pm);
+						if (log.isDebugEnabled()) {
+							log.debug("Port mapping deleted: " + pm);
 						}
 						it.remove();
                     }
@@ -174,23 +174,23 @@ public class PortMappingListener extends DefaultRegistryListener {
 
         Collection<? extends Device<?, ?, ?>> connectionDevices = device.findDevices(CONNECTION_DEVICE_TYPE);
         if (connectionDevices.isEmpty()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("IGD doesn't support '" + CONNECTION_DEVICE_TYPE + "': " + device);
+			if (log.isDebugEnabled()) {
+				log.debug("IGD doesn't support '" + CONNECTION_DEVICE_TYPE + "': " + device);
 			}
 			return null;
         }
 
         Device<?, ?, ?> connectionDevice = connectionDevices.iterator().next();
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Using first discovered WAN connection device: " + connectionDevice);
+		if (log.isDebugEnabled()) {
+            log.debug("Using first discovered WAN connection device: " + connectionDevice);
 		}
 
 		Service<?, ?, ?> ipConnectionService = connectionDevice.findService(IP_SERVICE_TYPE);
         Service<?, ?, ?> pppConnectionService = connectionDevice.findService(PPP_SERVICE_TYPE);
 
         if (ipConnectionService == null && pppConnectionService == null) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("IGD doesn't support IP or PPP WAN connection service: " + device);
+			if (log.isDebugEnabled()) {
+				log.debug("IGD doesn't support IP or PPP WAN connection service: " + device);
 			}
 		}
 
@@ -198,7 +198,7 @@ public class PortMappingListener extends DefaultRegistryListener {
     }
 
     protected void handleFailureMessage(String s) {
-        log.warning(s);
+        log.warn(s);
     }
 
 }

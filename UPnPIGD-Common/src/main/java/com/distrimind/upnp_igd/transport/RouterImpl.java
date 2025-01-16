@@ -51,8 +51,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation of network message router.
@@ -65,7 +65,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class RouterImpl implements Router {
 
-    private static final Logger log = Logger.getLogger(RouterImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(RouterImpl.class);
 
     protected UpnpServiceConfiguration configuration;
     protected ProtocolFactory protocolFactory;
@@ -91,7 +91,7 @@ public class RouterImpl implements Router {
      */
     @Inject
     public RouterImpl(UpnpServiceConfiguration configuration, ProtocolFactory protocolFactory) {
-        if (log.isLoggable(Level.INFO)) log.info("Creating Router: " + getClass().getName());
+        if (log.isInfoEnabled()) log.info("Creating Router: " + getClass().getName());
         this.configuration = configuration;
         this.protocolFactory = protocolFactory;
     }
@@ -127,7 +127,7 @@ public class RouterImpl implements Router {
         try {
             if (!enabled) {
                 try {
-                    log.fine("Starting networking services...");
+                    log.debug("Starting networking services...");
                     networkAddressFactory = getConfiguration().createNetworkAddressFactory();
 
                     startInterfaceBasedTransports(networkAddressFactory.getNetworkInterfaces());
@@ -160,33 +160,33 @@ public class RouterImpl implements Router {
         lock(writeLock);
         try {
             if (enabled) {
-                log.fine("Disabling network services...");
+                log.debug("Disabling network services...");
 
                 if (streamClient != null) {
-                    log.fine("Stopping stream client connection management/pool");
+                    log.debug("Stopping stream client connection management/pool");
                     streamClient.stop();
                     streamClient = null;
                 }
 
                 for (Map.Entry<InetAddress, StreamServer<?>> entry : streamServers.entrySet()) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Stopping stream server on address: " + entry.getKey());
+					if (log.isDebugEnabled()) {
+						log.debug("Stopping stream server on address: " + entry.getKey());
 					}
 					entry.getValue().stop();
                 }
                 streamServers.clear();
 
                 for (Map.Entry<NetworkInterface, MulticastReceiver<?>> entry : multicastReceivers.entrySet()) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Stopping multicast receiver on interface: " + entry.getKey().getDisplayName());
+					if (log.isDebugEnabled()) {
+						log.debug("Stopping multicast receiver on interface: " + entry.getKey().getDisplayName());
 					}
 					entry.getValue().stop();
                 }
                 multicastReceivers.clear();
 
                 for (Map.Entry<InetAddress, DatagramIO<?>> entry : datagramIOs.entrySet()) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Stopping datagram I/O on address: " + entry.getKey());
+					if (log.isDebugEnabled()) {
+						log.debug("Stopping datagram I/O on address: " + entry.getKey());
 					}
 					entry.getValue().stop();
                 }
@@ -215,11 +215,11 @@ public class RouterImpl implements Router {
     @Override
     public void handleStartFailure(InitializationException ex) throws InitializationException {
         if (ex instanceof NoNetworkException) {
-            if (log.isLoggable(Level.INFO)) log.info("Unable to initialize network router, no network found.");
+            if (log.isInfoEnabled()) log.info("Unable to initialize network router, no network found.");
         } else {
-            if (log.isLoggable(Level.SEVERE)) {
-                log.severe("Unable to initialize network router: " + ex);
-                log.severe("Cause: " + Exceptions.unwrap(ex));
+            if (log.isErrorEnabled()) {
+                log.error("Unable to initialize network router: ", ex);
+                log.error("Cause: ", Exceptions.unwrap(ex));
             }
         }
     }
@@ -275,23 +275,23 @@ public class RouterImpl implements Router {
     @Override
 	public void received(IncomingDatagramMessage<?> msg) {
         if (!enabled) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Router disabled, ignoring incoming message: " + msg);
+			if (log.isDebugEnabled()) {
+				log.debug("Router disabled, ignoring incoming message: " + msg);
 			}
 			return;
         }
         try {
             ReceivingAsync<?> protocol = getProtocolFactory().createReceivingAsync(msg);
             if (protocol == null) {
-                if (log.isLoggable(Level.FINEST))
-                    log.finest("No protocol, ignoring received message: " + msg);
+                if (log.isTraceEnabled())
+                    log.trace("No protocol, ignoring received message: " + msg);
                 return;
             }
-            if (log.isLoggable(Level.FINE))
-                log.fine("Received asynchronous message: " + msg);
+            if (log.isDebugEnabled())
+                log.debug("Received asynchronous message: " + msg);
             getConfiguration().getAsyncProtocolExecutor().execute(protocol);
         } catch (ProtocolCreationException ex) {
-            if (log.isLoggable(Level.WARNING)) log.warning("Handling received datagram failed - " + Exceptions.unwrap(ex).toString());
+            if (log.isWarnEnabled()) log.warn("Handling received datagram failed - ", Exceptions.unwrap(ex));
         }
     }
 
@@ -304,13 +304,13 @@ public class RouterImpl implements Router {
     @Override
 	public void received(UpnpStream stream) {
         if (!enabled) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Router disabled, ignoring incoming: " + stream);
+			if (log.isDebugEnabled()) {
+				log.debug("Router disabled, ignoring incoming: " + stream);
 			}
 			return;
         }
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Received synchronous stream: " + stream);
+		if (log.isDebugEnabled()) {
+            log.debug("Received synchronous stream: " + stream);
 		}
 		getConfiguration().getSyncProtocolExecutorService().execute(stream);
     }
@@ -329,8 +329,8 @@ public class RouterImpl implements Router {
                     datagramIO.send(msg);
                 }
             } else {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Router disabled, not sending datagram: " + msg);
+				if (log.isDebugEnabled()) {
+					log.debug("Router disabled, not sending datagram: " + msg);
 				}
 			}
         } finally {
@@ -351,13 +351,13 @@ public class RouterImpl implements Router {
         try {
             if (enabled) {
                 if (streamClient == null) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("No StreamClient available, not sending: " + msg);
+					if (log.isDebugEnabled()) {
+						log.debug("No StreamClient available, not sending: " + msg);
 					}
 					return null;
                 }
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Sending via TCP unicast stream: " + msg);
+				if (log.isDebugEnabled()) {
+					log.debug("Sending via TCP unicast stream: " + msg);
 				}
 				try {
                     return streamClient.sendRequest(msg);
@@ -365,8 +365,8 @@ public class RouterImpl implements Router {
                     throw new RouterException("Sending stream request was interrupted", ex);
                 }
             } else {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Router disabled, not sending stream request: " + msg);
+				if (log.isDebugEnabled()) {
+					log.debug("Router disabled, not sending stream request: " + msg);
 				}
 				return null;
             }
@@ -392,16 +392,16 @@ public class RouterImpl implements Router {
                 for (Map.Entry<InetAddress, DatagramIO<?>> entry : datagramIOs.entrySet()) {
                     InetAddress broadcast = networkAddressFactory.getBroadcastAddress(entry.getKey());
                     if (broadcast != null) {
-						if (log.isLoggable(Level.FINE)) {
-							log.fine("Sending UDP datagram to broadcast address: " + broadcast.getHostAddress());
+						if (log.isDebugEnabled()) {
+							log.debug("Sending UDP datagram to broadcast address: " + broadcast.getHostAddress());
 						}
 						DatagramPacket packet = new DatagramPacket(bytes, bytes.length, broadcast, 9);
                         entry.getValue().send(packet);
                     }
                 }
             } else {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Router disabled, not broadcasting bytes: " + bytes.length);
+				if (log.isDebugEnabled()) {
+					log.debug("Router disabled, not broadcasting bytes: " + bytes.length);
 				}
 			}
         } finally {
@@ -416,11 +416,11 @@ public class RouterImpl implements Router {
             // We only have the MulticastReceiver as an interface-based transport
             MulticastReceiver<?> multicastReceiver = getConfiguration().createMulticastReceiver(networkAddressFactory);
             if (multicastReceiver == null) {
-                if (log.isLoggable(Level.INFO)) log.info("Configuration did not create a MulticastReceiver for: " + networkInterface);
+                if (log.isInfoEnabled()) log.info("Configuration did not create a MulticastReceiver for: " + networkInterface);
             } else {
                 try {
-                    if (log.isLoggable(Level.FINE))
-                        log.fine("Init multicast receiver on interface: " + networkInterface.getDisplayName());
+                    if (log.isDebugEnabled())
+                        log.debug("Init multicast receiver on interface: " + networkInterface.getDisplayName());
                     multicastReceiver.init(
                         networkInterface,
                         this,
@@ -431,13 +431,13 @@ public class RouterImpl implements Router {
                     multicastReceivers.put(networkInterface, multicastReceiver);
                 } catch (InitializationException ex) {
                     /* TODO: What are some recoverable exceptions for this?
-                    log.warning(
+                    log.warn(
                         "Ignoring network interface '"
                             + networkInterface.getDisplayName()
                             + "' init failure of MulticastReceiver: " + ex.toString());
-                    if (log.isLoggable(Level.FINE))
-                        log.log(Level.FINE, "Initialization exception root cause", Exceptions.unwrap(ex));
-                    log.warning("Removing unusable interface " + interface);
+                    if (log.isDebugEnabled())
+                        log.debug("Initialization exception root cause", Exceptions.unwrap(ex));
+                    log.warn("Removing unusable interface " + interface);
                     it.remove();
                     continue; // Don't need to try anything else on this interface
                     */
@@ -447,8 +447,8 @@ public class RouterImpl implements Router {
         }
 
         for (Map.Entry<NetworkInterface, MulticastReceiver<?>> entry : multicastReceivers.entrySet()) {
-            if (log.isLoggable(Level.FINE))
-                log.fine("Starting multicast receiver on interface: " + entry.getKey().getDisplayName());
+            if (log.isDebugEnabled())
+                log.debug("Starting multicast receiver on interface: " + entry.getKey().getDisplayName());
             getConfiguration().getMulticastReceiverExecutor().execute(entry.getValue());
         }
     }
@@ -460,21 +460,21 @@ public class RouterImpl implements Router {
             // HTTP servers
             StreamServer<?> streamServer = getConfiguration().createStreamServer(networkAddressFactory);
             if (streamServer == null) {
-                if (log.isLoggable(Level.INFO)) log.info("Configuration did not create a StreamServer for: " + address);
+                if (log.isInfoEnabled()) log.info("Configuration did not create a StreamServer for: " + address);
             } else {
                 try {
-                    if (log.isLoggable(Level.FINE))
-                        log.fine("Init stream server on address: " + address);
+                    if (log.isDebugEnabled())
+                        log.debug("Init stream server on address: " + address);
                     streamServer.init(address, this, networkAddressFactory);
                     streamServers.put(address, streamServer);
                 } catch (InitializationException ex) {
                     // Try to recover
                     Throwable cause = Exceptions.unwrap(ex);
                     if (cause instanceof BindException) {
-                        if (log.isLoggable(Level.WARNING)) log.warning("Failed to init StreamServer: " + cause);
-                        if (log.isLoggable(Level.FINE))
-                            log.log(Level.FINE, "Initialization exception root cause", cause);
-                        if (log.isLoggable(Level.WARNING)) log.warning("Removing unusable address: " + address);
+                        if (log.isWarnEnabled()) log.warn("Failed to init StreamServer: ", cause);
+                        if (log.isDebugEnabled())
+                            log.debug("Initialization exception root cause", cause);
+                        if (log.isWarnEnabled()) log.warn("Removing unusable address: " + address);
                         addresses.remove();
                         continue; // Don't try anything else with this address
                     }
@@ -485,21 +485,21 @@ public class RouterImpl implements Router {
             // Datagram I/O
             DatagramIO<?> datagramIO = getConfiguration().createDatagramIO(networkAddressFactory);
             if (datagramIO == null) {
-                if (log.isLoggable(Level.INFO)) log.info("Configuration did not create a StreamServer for: " + address);
+                if (log.isInfoEnabled()) log.info("Configuration did not create a StreamServer for: " + address);
             } else {
                 try {
-                    if (log.isLoggable(Level.FINE))
-                        log.fine("Init datagram I/O on address: " + address);
+                    if (log.isDebugEnabled())
+                        log.debug("Init datagram I/O on address: " + address);
                     datagramIO.init(networkAddressFactory, address, this, getConfiguration().getDatagramProcessor());
                     datagramIOs.put(address, datagramIO);
                 } catch (InitializationException ex) {
                     /* TODO: What are some recoverable exceptions for this?
                     Throwable cause = Exceptions.unwrap(ex);
                     if (cause instanceof BindException) {
-                        log.warning("Failed to init datagram I/O: " + cause);
-                        if (log.isLoggable(Level.FINE))
-                            log.log(Level.FINE, "Initialization exception root cause", cause);
-                        log.warning("Removing unusable address: " + address);
+                        log.warn("Failed to init datagram I/O: ", cause);
+                        if (log.isDebugEnabled())
+                            log.debug("Initialization exception root cause", cause);
+                        log.warn("Removing unusable address: " + address);
                         addresses.remove();
                         continue; // Don't try anything else with this address
                     }
@@ -510,26 +510,26 @@ public class RouterImpl implements Router {
         }
 
         for (Map.Entry<InetAddress, StreamServer<?>> entry : streamServers.entrySet()) {
-            if (log.isLoggable(Level.FINE))
-                log.fine("Starting stream server on address: " + entry.getKey());
+            if (log.isDebugEnabled())
+                log.debug("Starting stream server on address: " + entry.getKey());
             getConfiguration().getStreamServerExecutorService().execute(entry.getValue());
         }
 
         for (Map.Entry<InetAddress, DatagramIO<?>> entry : datagramIOs.entrySet()) {
-            if (log.isLoggable(Level.FINE))
-                log.fine("Starting datagram I/O on address: " + entry.getKey());
+            if (log.isDebugEnabled())
+                log.debug("Starting datagram I/O on address: " + entry.getKey());
             getConfiguration().getDatagramIOExecutor().execute(entry.getValue());
         }
     }
 
     protected void lock(Lock lock, int timeoutMilliseconds) throws RouterException {
         try {
-			if (log.isLoggable(Level.FINEST)) {
-				log.finest("Trying to obtain lock with timeout milliseconds '" + timeoutMilliseconds + "': " + lock.getClass().getSimpleName());
+			if (log.isTraceEnabled()) {
+                log.trace("Trying to obtain lock with timeout milliseconds '" + timeoutMilliseconds + "': " + lock.getClass().getSimpleName());
 			}
 			if (lock.tryLock(timeoutMilliseconds, TimeUnit.MILLISECONDS)) {
-				if (log.isLoggable(Level.FINEST)) {
-					log.finest("Acquired router lock: " + lock.getClass().getSimpleName());
+				if (log.isTraceEnabled()) {
+					log.trace("Acquired router lock: " + lock.getClass().getSimpleName());
 				}
 			} else {
                 throw new RouterException(
@@ -549,8 +549,8 @@ public class RouterImpl implements Router {
     }
 
     protected void unlock(Lock lock) {
-		if (log.isLoggable(Level.FINEST)) {
-			log.finest("Releasing router lock: " + lock.getClass().getSimpleName());
+		if (log.isTraceEnabled()) {
+			log.trace("Releasing router lock: " + lock.getClass().getSimpleName());
 		}
 		lock.unlock();
     }

@@ -14,14 +14,14 @@
  */
  package com.distrimind.upnp_igd.swing.logging;
 
-import java.util.Arrays;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+import com.distrimind.flexilogxml.log.Handler;
+import com.distrimind.flexilogxml.log.LogRecord;
 
-/**
+
+ /**
  * @author Christian Bauer
  */
-public abstract class LoggingHandler extends Handler {
+public abstract class LoggingHandler implements Handler {
 
     public int sourcePathElements = 3;
 
@@ -33,26 +33,19 @@ public abstract class LoggingHandler extends Handler {
     }
 
     @Override
-	public void publish(LogRecord logRecord) {
+    public void pushNewLog(LogRecord logRecord) {
         LogMessage logMessage = new LogMessage(
-                logRecord.getLevel(),
-                getSource(logRecord),
-                logRecord.getMessage()
+                logRecord,
+                getSource(logRecord)
         );
 
         log(logMessage);
     }
 
-    @Override
-	public void flush() {
-    }
-
-    @Override
-	public void close() throws SecurityException {
-    }
 
     protected String getSource(LogRecord record) {
-        StringBuilder sb = new StringBuilder(180);
+        return "";
+        /*StringBuilder sb = new StringBuilder(180);
         String[] split = record.getSourceClassName().split("\\.");
         if (split.length > sourcePathElements) {
             split = Arrays.copyOfRange(split, split.length-sourcePathElements, split.length);
@@ -61,7 +54,7 @@ public abstract class LoggingHandler extends Handler {
             sb.append(s).append(".");
         }
         sb.append(record.getSourceMethodName());
-        return sb.toString();
+        return sb.toString();*/
     }
 
     protected abstract void log(LogMessage msg);

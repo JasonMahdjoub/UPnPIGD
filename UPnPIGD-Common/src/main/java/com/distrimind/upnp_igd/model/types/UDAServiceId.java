@@ -17,8 +17,8 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.Constants;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import java.util.regex.Matcher;
 
 /**
@@ -31,7 +31,7 @@ import java.util.regex.Matcher;
  */
 public class UDAServiceId extends ServiceId {
 	
-	private static final Logger log = Logger.getLogger(UDAServiceId.class.getName());
+	final private static DMLogger log = Log.getLogger(UDAServiceId.class);
 
     public static final String DEFAULT_NAMESPACE = "upnp-org";
     public static final String BROKEN_DEFAULT_NAMESPACE = "schemas-upnp-org"; // TODO: UPNP VIOLATION: Intel UPnP tools!
@@ -56,7 +56,7 @@ public class UDAServiceId extends ServiceId {
         // TODO: UPNP VIOLATION: Handle garbage sent by Eyecon Android app
         matcher = Constants.getPatternEyeconAndroidApp().matcher(s);
         if (matcher.matches()) {
-            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, recovering from Eyecon garbage: " + s);
+            if (log.isWarnEnabled()) log.warn("UPnP specification violation, recovering from Eyecon garbage: " + s);
             return new UDAServiceId(matcher.group(1));
         }
 
@@ -65,7 +65,7 @@ public class UDAServiceId extends ServiceId {
            "ConnectionManager".equals(s) ||
            "RenderingControl".equals(s) ||
            "AVTransport".equals(s)) {
-            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, fixing broken Service ID: " + s);
+            if (log.isWarnEnabled()) log.warn("UPnP specification violation, fixing broken Service ID: " + s);
             return new UDAServiceId(s);
         }
 

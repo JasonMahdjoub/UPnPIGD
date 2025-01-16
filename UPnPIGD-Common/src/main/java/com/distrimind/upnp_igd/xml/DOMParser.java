@@ -57,8 +57,8 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
  */
 public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityResolver {
 
-	private static final Logger log = Logger.getLogger(DOMParser.class.getName());
+	final private static DMLogger log = Log.getLogger(DOMParser.class);
 
 	public static final URL XML_SCHEMA_RESOURCE =
 			Thread.currentThread().getContextClassLoader().getResource("org/seamless/schemas/xml.xsd");
@@ -241,16 +241,16 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 	public void validate(URL url) throws ParserException {
 		if (url == null) throw new IllegalArgumentException("Can't validate null URL");
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Validating XML of URL: " + url);
+		if (log.isDebugEnabled()) {
+            log.debug("Validating XML of URL: " + url);
 		}
 		validate(new StreamSource(url.toString()));
 	}
 
 	public void validate(String string) throws ParserException {
 		if (string == null) throw new IllegalArgumentException("Can't validate null string");
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Validating XML string characters: " + string.length());
+		if (log.isDebugEnabled()) {
+            log.debug("Validating XML string characters: " + string.length());
 		}
 		validate(new SAXSource(new InputSource(new StringReader(string))));
 	}
@@ -301,8 +301,8 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 	public Object getXPathResult(Node context, XPath xpath, String expr, QName result) {
 		try {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Evaluating xpath query: " + expr);
+			if (log.isDebugEnabled()) {
+				log.debug("Evaluating xpath query: " + expr);
 			}
 			return xpath.evaluate(expr, context, result);
 		} catch (Exception ex) {
@@ -429,7 +429,7 @@ public abstract class DOMParser<D extends DOM> implements ErrorHandler, EntityRe
 
 	@Override
 	public void warning(SAXParseException e) throws SAXException {
-		if (log.isLoggable(Level.WARNING)) log.warning(e.toString());
+		if (log.isWarnEnabled()) log.warn(e.toString());
 	}
 
 	@Override

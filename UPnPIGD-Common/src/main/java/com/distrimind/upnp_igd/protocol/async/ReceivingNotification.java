@@ -28,8 +28,8 @@ import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.model.types.UDN;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Handles reception of notification messages.
@@ -72,7 +72,7 @@ import java.util.logging.Logger;
  */
 public class ReceivingNotification extends ReceivingAsync<IncomingNotificationRequest> {
 
-    final private static Logger log = Logger.getLogger(ReceivingNotification.class.getName());
+    final private static DMLogger log = Log.getLogger(ReceivingNotification.class);
 
     public ReceivingNotification(UpnpService upnpService, IncomingDatagramMessage<UpnpRequest> inputMessage) {
         super(upnpService, new IncomingNotificationRequest(inputMessage));
@@ -83,51 +83,51 @@ public class ReceivingNotification extends ReceivingAsync<IncomingNotificationRe
 
         UDN udn = getInputMessage().getUDN();
         if (udn == null) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Ignoring notification message without UDN: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Ignoring notification message without UDN: " + getInputMessage());
 			}
 			return;
         }
 
         RemoteDeviceIdentity rdIdentity = new RemoteDeviceIdentity(getInputMessage());
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Received device notification: " + rdIdentity);
+		if (log.isDebugEnabled()) {
+            log.debug("Received device notification: " + rdIdentity);
 		}
 
 		RemoteDevice rd;
         try {
             rd = new RemoteDevice(rdIdentity);
         } catch (ValidationException ex) {
-			if (log.isLoggable(Level.WARNING)) log.warning("Validation errors of device during discovery: " + rdIdentity);
+			if (log.isWarnEnabled()) log.warn("Validation errors of device during discovery: " + rdIdentity);
             for (ValidationError validationError : ex.getErrors()) {
-				if (log.isLoggable(Level.WARNING)) log.warning(validationError.toString());
+				if (log.isWarnEnabled()) log.warn(validationError.toString());
             }
             return;
         }
 
         if (getInputMessage().isAliveMessage()) {
 
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Received device ALIVE advertisement, descriptor location is: " + rdIdentity.getDescriptorURL());
+			if (log.isDebugEnabled()) {
+				log.debug("Received device ALIVE advertisement, descriptor location is: " + rdIdentity.getDescriptorURL());
 			}
 
 			if (rdIdentity.getDescriptorURL() == null) {
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Ignoring message without location URL header: " + getInputMessage());
+				if (log.isTraceEnabled()) {
+					log.trace("Ignoring message without location URL header: " + getInputMessage());
 				}
 				return;
             }
 
             if (rdIdentity.getMaxAgeSeconds() == null) {
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Ignoring message without max-age header: " + getInputMessage());
+				if (log.isTraceEnabled()) {
+					log.trace("Ignoring message without max-age header: " + getInputMessage());
 				}
 				return;
             }
 
             if (getUpnpService().getRegistry().update(rdIdentity)) {
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Remote device was already known: " + udn);
+				if (log.isTraceEnabled()) {
+					log.trace("Remote device was already known: " + udn);
 				}
 				return;
             }
@@ -140,17 +140,17 @@ public class ReceivingNotification extends ReceivingAsync<IncomingNotificationRe
 
         } else if (getInputMessage().isByeByeMessage()) {
 
-            log.fine("Received device BYEBYE advertisement");
+            log.debug("Received device BYEBYE advertisement");
             boolean removed = getUpnpService().getRegistry().removeDevice(rd);
             if (removed) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Removed remote device from registry: " + rd);
+				if (log.isDebugEnabled()) {
+					log.debug("Removed remote device from registry: " + rd);
 				}
 			}
 
         } else {
-			if (log.isLoggable(Level.FINER)) {
-				log.finer("Ignoring unknown notification message: " + getInputMessage());
+			if (log.isTraceEnabled()) {
+				log.trace("Ignoring unknown notification message: " + getInputMessage());
 			}
 		}
 

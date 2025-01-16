@@ -43,8 +43,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ATTRIBUTE;
 import static com.distrimind.upnp_igd.binding.xml.Descriptor.Service.ELEMENT;
@@ -58,7 +58,7 @@ import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
  */
 public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder, ErrorHandler {
 
-    private static final Logger log = Logger.getLogger(UDA10ServiceDescriptorBinderImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(UDA10ServiceDescriptorBinderImpl.class);
     private final NetworkAddressFactory networkAddressFactory;
     public UDA10ServiceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory)
     {
@@ -71,8 +71,8 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         }
 
         try {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Populating service from XML descriptor: " + undescribedService);
+			if (log.isDebugEnabled()) {
+				log.debug("Populating service from XML descriptor: " + undescribedService);
 			}
 
 			DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
@@ -99,8 +99,8 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     @Override
     public <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, Document dom) throws DescriptorBindingException, ValidationException {
         try {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Populating service from DOM: " + undescribedService);
+			if (log.isDebugEnabled()) {
+				log.debug("Populating service from DOM: " + undescribedService);
 			}
 
 			// Read the XML into a mutable descriptor graph
@@ -166,8 +166,8 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
             } else if (ELEMENT.serviceStateTable.equals(rootChild)) {
                 hydrateServiceStateTableList(descriptor, rootChild);
             } else {
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Ignoring unknown element: " + rootChild.getNodeName());
+				if (log.isTraceEnabled()) {
+					log.trace("Ignoring unknown element: " + rootChild.getNodeName());
 				}
 			}
         }
@@ -259,7 +259,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
                     actionArgument.direction = ActionArgument.Direction.valueOf(directionString.toUpperCase(Locale.ROOT));
                 } catch (IllegalArgumentException ex) {
                     // TODO: UPNP VIOLATION: Pelco SpectraIV-IP uses illegal value INOUT
-                    if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation: Invalid action argument direction, assuming 'IN': " + directionString);
+                    if (log.isWarnEnabled()) log.warn("UPnP specification violation: Invalid action argument direction, assuming 'IN': " + directionString);
                     actionArgument.direction = ActionArgument.Direction.IN;
                 }
             } else if (ELEMENT.relatedStateVariable.equals(argumentNodeChild)) {
@@ -363,8 +363,8 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     @Override
 	public String generate(Service<?, ?, ?> service) throws DescriptorBindingException {
         try {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Generating XML descriptor from service model: " + service);
+			if (log.isDebugEnabled()) {
+				log.debug("Generating XML descriptor from service model: " + service);
 			}
 
 			return XMLUtil.documentToString(buildDOM(service));
@@ -378,8 +378,8 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
 	public Document buildDOM(Service<?, ?, ?> service) throws DescriptorBindingException {
 
         try {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Generating XML descriptor from service model: " + service);
+			if (log.isDebugEnabled()) {
+				log.debug("Generating XML descriptor from service model: " + service);
 			}
 
 			DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
@@ -445,7 +445,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         appendNewElementIfNotNull(descriptor, actionArgumentElement, ELEMENT.direction, actionArgument.getDirection().toString().toLowerCase(Locale.ROOT));
         if (actionArgument.isReturnValue()) {
             // TODO: UPNP VIOLATION: WMP12 will discard RenderingControl service if it contains <retval> tags
-            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation: Not producing <retval> element to be compatible with WMP12: " + actionArgument);
+            if (log.isWarnEnabled()) log.warn("UPnP specification violation: Not producing <retval> element to be compatible with WMP12: " + actionArgument);
             // appendNewElement(descriptor, actionArgumentElement, ELEMENT.retval);
         }
         appendNewElementIfNotNull(descriptor, actionArgumentElement, ELEMENT.relatedStateVariable, actionArgument.getRelatedStateVariableName());
@@ -509,7 +509,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
     }
     @Override
     public void warning(SAXParseException e) throws SAXException {
-        if (log.isLoggable(Level.WARNING)) log.warning(e.toString());
+        if (log.isWarnEnabled()) log.warn(e.toString());
     }
     @Override
     public void error(SAXParseException e) throws SAXException {

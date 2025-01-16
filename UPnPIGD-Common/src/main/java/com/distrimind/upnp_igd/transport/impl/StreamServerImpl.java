@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Implementation based on the built-in SUN JDK 6.0 HTTP Server.
@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  */
 public class StreamServerImpl implements StreamServer<StreamServerConfigurationImpl> {
 
-    private static final Logger log = Logger.getLogger(StreamServerImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(StreamServerImpl.class);
 
     final protected StreamServerConfigurationImpl configuration;
     protected HttpServer server;
@@ -67,7 +67,7 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
             server = HttpServer.create(socketAddress, configuration.getTcpConnectionBacklog());
             server.createContext("/", new RequestHttpHandler(router, networkAddressFactory));
 
-            if (log.isLoggable(Level.INFO)) log.info("Created server (for receiving TCP streams) on: " + server.getAddress());
+            if (log.isInfoEnabled()) log.info("Created server (for receiving TCP streams) on: " + server.getAddress());
 
         } catch (Exception ex) {
             throw new InitializationException("Could not initialize " + getClass().getSimpleName() + ": " + ex, ex);
@@ -86,14 +86,14 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
 
     @Override
 	synchronized public void run() {
-        log.fine("Starting StreamServer...");
+        log.debug("Starting StreamServer...");
         // Starts a new thread but inherits the properties of the calling thread
         server.start();
     }
 
     @Override
 	synchronized public void stop() {
-        log.fine("Stopping StreamServer...");
+        log.debug("Stopping StreamServer...");
         if (server != null) server.stop(1);
     }
 
@@ -123,8 +123,8 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
                 return;
             // And we pass control to the service, which will (hopefully) start a new thread immediately, so we can
             // continue the receiving thread ASAP
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Received HTTP exchange: " + httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI());
+			if (log.isDebugEnabled()) {
+				log.debug("Received HTTP exchange: " + httpExchange.getRequestMethod() + " " + httpExchange.getRequestURI());
 			}
 			router.received(
                 new HttpExchangeUpnpStream(router.getProtocolFactory(), httpExchange) {
@@ -144,7 +144,7 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
    
      */
     protected boolean isConnectionOpen(HttpExchange exchange) {
-        log.warning("Can't check client connection, socket access impossible on JDK webserver!");
+        log.warn("Can't check client connection, socket access impossible on JDK webserver!");
         return true;
     }
 

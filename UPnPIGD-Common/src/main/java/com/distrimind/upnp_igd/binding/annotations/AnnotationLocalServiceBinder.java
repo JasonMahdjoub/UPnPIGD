@@ -41,8 +41,8 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Reads {@link LocalService} metadata from annotations.
@@ -51,12 +51,12 @@ import java.util.logging.Logger;
  */
 public class AnnotationLocalServiceBinder implements LocalServiceBinder {
 
-    private static final Logger log = Logger.getLogger(AnnotationLocalServiceBinder.class.getName());
+    final private static DMLogger log = Log.getLogger(AnnotationLocalServiceBinder.class);
 
     @Override
     public <T> LocalService<T> read(Class<T> clazz) throws LocalServiceBindingException {
-        if (log.isLoggable(Level.FINE))
-            log.fine("Reading and binding annotations of service implementation class: " + clazz);
+        if (log.isDebugEnabled())
+            log.debug("Reading and binding annotations of service implementation class: " + clazz);
 
         // Read the service ID and service type from the annotation
         if (clazz.isAnnotationPresent(UpnpService.class)) {
@@ -105,11 +105,11 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
             return new LocalService<>(type, id, actions, stateVariables, stringConvertibleTypes, supportsQueryStateVariables);
 
         } catch (ValidationException ex) {
-            if (log.isLoggable(Level.SEVERE))
-                log.severe("Could not validate device model: " + ex);
+            if (log.isErrorEnabled())
+                log.error("Could not validate device model: ", ex);
             for (ValidationError validationError : ex.getErrors()) {
-                if (log.isLoggable(Level.SEVERE))
-                    log.severe(validationError.toString());
+                if (log.isErrorEnabled())
+                    log.error(validationError.toString());
             }
             throw new LocalServiceBindingException("Validation of model failed, check the log");
         }
@@ -169,8 +169,8 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
                 } else if (getter != null) {
                     accessor = new GetterStateVariableAccessor(getter);
                 } else {
-                    if (log.isLoggable(Level.FINER))
-                        log.finer("No field or getter found for state variable, skipping accessor: " + v.name());
+                    if (log.isTraceEnabled())
+                        log.trace("No field or getter found for state variable, skipping accessor: " + v.name());
                 }
 
                 @SuppressWarnings("unchecked") StateVariable<LocalService<T>> stateVar =(StateVariable<LocalService<T>>)

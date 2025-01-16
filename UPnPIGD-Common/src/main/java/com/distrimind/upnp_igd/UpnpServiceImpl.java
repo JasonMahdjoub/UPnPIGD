@@ -28,8 +28,8 @@ import com.distrimind.upnp_igd.transport.RouterImpl;
 import com.distrimind.upnp_igd.util.Exceptions;
 
 import jakarta.enterprise.inject.Alternative;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation of {@link UpnpService}, starts immediately on construction.
@@ -49,7 +49,7 @@ import java.util.logging.Logger;
 @Alternative
 public class UpnpServiceImpl implements UpnpService {
 
-    private static final Logger log = Logger.getLogger(UpnpServiceImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(UpnpServiceImpl.class);
 
     protected final UpnpServiceConfiguration configuration;
     protected final ControlPoint controlPoint;
@@ -67,7 +67,7 @@ public class UpnpServiceImpl implements UpnpService {
 
     public UpnpServiceImpl(UpnpServiceConfiguration configuration, RegistryListener... registryListeners) {
         this.configuration = configuration;
-        if (log.isLoggable(Level.INFO)) {
+        if (log.isInfoEnabled()) {
             log.info(">>> Starting UPnP service...");
 
             log.info("Using configuration: " + getConfiguration().getClass().getName());
@@ -167,11 +167,11 @@ public class UpnpServiceImpl implements UpnpService {
         } catch (RouterException ex) {
             Throwable cause = Exceptions.unwrap(ex);
             if (cause instanceof InterruptedException) {
-                if (log.isLoggable(Level.INFO))
-                    log.log(Level.INFO, "Router shutdown was interrupted: " + ex, cause);
+                if (log.isInfoEnabled())
+                    log.info("Router shutdown was interrupted: " + ex, cause);
             } else {
-                if (log.isLoggable(Level.SEVERE))
-                    log.log(Level.SEVERE, "Router error on shutdown: " + ex, cause);
+                if (log.isErrorEnabled())
+                    log.error("Router error on shutdown: " + ex, cause);
             }
         }
     }

@@ -16,8 +16,8 @@
 package com.distrimind.upnp_igd.model.meta;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.model.ServiceReference;
 import com.distrimind.upnp_igd.model.ValidationError;
@@ -33,7 +33,7 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
  */
 public abstract class Service<DI extends DeviceIdentity, D extends Device<DI, D, ?>, S extends Service<DI, D, ?>> {
 
-	final private static Logger log = Logger.getLogger(Service.class.getName());
+	final private static DMLogger log = Log.getLogger(Service.class);
 
     final private ServiceType serviceType;
     final private ServiceId serviceId;
@@ -188,9 +188,9 @@ public abstract class Service<DI extends DeviceIdentity, D extends Device<DI, D,
                 List<ValidationError> actionErrors = action.validate();
             	if(!actionErrors.isEmpty()) {
                     actions.remove(action.getName()); // Remove it
-                    if (log.isLoggable(Level.WARNING)) log.warning("Discarding invalid action of service '" + getServiceId() + "': " + action.getName());
+                    if (log.isWarnEnabled()) log.warn("Discarding invalid action of service '" + getServiceId() + "': " + action.getName());
                     for (ValidationError actionError : actionErrors) {
-                        if (log.isLoggable(Level.WARNING)) log.warning("Invalid action '" + action.getName() + "': " + actionError);
+                        if (log.isWarnEnabled()) log.warn("Invalid action '" + action.getName() + "': " + actionError);
                     }
             	}
             }

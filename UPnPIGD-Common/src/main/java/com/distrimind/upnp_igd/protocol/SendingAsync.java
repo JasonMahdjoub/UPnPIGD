@@ -19,8 +19,8 @@ import com.distrimind.upnp_igd.transport.RouterException;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.util.Exceptions;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Supertype for all synchronously executing protocols, sending UPnP messages.
@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  */
 public abstract class SendingAsync implements Runnable {
 
-    final private static Logger log = Logger.getLogger(SendingAsync.class.getName());
+    final private static DMLogger log = Log.getLogger(SendingAsync.class);
 
     private final UpnpService upnpService;
 
@@ -56,10 +56,10 @@ public abstract class SendingAsync implements Runnable {
         } catch (Exception ex) {
             Throwable cause = Exceptions.unwrap(ex);
             if (cause instanceof InterruptedException) {
-                if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "Interrupted protocol '" + getClass().getSimpleName() + "': " + ex, cause);
+                if (log.isInfoEnabled()) log.info("Interrupted protocol '" + getClass().getSimpleName() + "': " + ex, cause);
             } else {
                 throw new RuntimeException(
-                    "Fatal error while executing protocol '" + getClass().getSimpleName() + "': " + ex, ex
+                    "Fatal error while executing protocol '" + getClass().getSimpleName() + "': ", ex
                 );
             }
         }

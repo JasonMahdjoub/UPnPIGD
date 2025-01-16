@@ -15,8 +15,8 @@
 
 package com.distrimind.upnp_igd.model.message.control;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.UpnpRequest;
@@ -37,7 +37,7 @@ import java.net.URL;
  */
 public class OutgoingActionRequestMessage extends StreamRequestMessage implements ActionRequestMessage {
 
-    private static final Logger log = Logger.getLogger(OutgoingActionRequestMessage.class.getName());
+    final private static DMLogger log = Log.getLogger(OutgoingActionRequestMessage.class);
 
     final private String actionNamespace;
 
@@ -69,7 +69,7 @@ public class OutgoingActionRequestMessage extends StreamRequestMessage implement
 
         SoapActionHeader soapActionHeader;
         if (action instanceof QueryStateVariableAction) {
-            log.fine("Adding magic control SOAP action header for state variable query action");
+            log.debug("Adding magic control SOAP action header for state variable query action");
             soapActionHeader = new SoapActionHeader(
                     new SoapActionType(
                             SoapActionType.MAGIC_CONTROL_NS, SoapActionType.MAGIC_CONTROL_TYPE, null, action.getName()
@@ -90,8 +90,8 @@ public class OutgoingActionRequestMessage extends StreamRequestMessage implement
         if (getOperation().getMethod().equals(UpnpRequest.Method.POST)) {
 
             getHeaders().add(UpnpHeader.Type.SOAPACTION, soapActionHeader);
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Added SOAP action header: " + soapActionHeader);
+			if (log.isDebugEnabled()) {
+				log.debug("Added SOAP action header: " + soapActionHeader);
 			}
 
         /* TODO: Finish the M-POST crap (or not)
@@ -101,7 +101,7 @@ public class OutgoingActionRequestMessage extends StreamRequestMessage implement
 
             getHeaders().add(UpnpHeader.Type.SOAPACTION, soapActionHeader);
             getHeaders().setPrefix(UpnpHeader.Type.SOAPACTION, "01");
-            log.fine("Added SOAP action header with prefix '01': " + getHeaders().getFirstHeader(UpnpHeader.Type.SOAPACTION).getString());
+            log.debug("Added SOAP action header with prefix '01': " + getHeaders().getFirstHeader(UpnpHeader.Type.SOAPACTION).getString());
             */
 
         } else {

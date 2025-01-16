@@ -20,8 +20,8 @@ import com.distrimind.upnp_igd.util.Exceptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.model.message.header.InvalidHeaderException;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 
@@ -37,7 +37,7 @@ import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
  */
 public abstract class DLNAHeader<T> extends UpnpHeader<T> {
 
-    final private static Logger log = Logger.getLogger(DLNAHeader.class.getName());
+    final private static DMLogger log = Log.getLogger(DLNAHeader.class);
 
     /**
      * Maps a standardized DLNA header to potential header subtypes.
@@ -134,22 +134,22 @@ public abstract class DLNAHeader<T> extends UpnpHeader<T> {
         for (int i = 0; i < type.getHeaderTypes().size() && upnpHeader == null; i++) {
             Class<? extends DLNAHeader<?>> headerClass = type.getHeaderTypes().get(i);
             try {
-				if (log.isLoggable(Level.FINEST)) {
-					log.finest("Trying to parse '" + type + "' with class: " + headerClass.getSimpleName());
+				if (log.isTraceEnabled()) {
+					log.trace("Trying to parse '" + type + "' with class: " + headerClass.getSimpleName());
 				}
 				upnpHeader = headerClass.getConstructor().newInstance();
                 if (headerValue != null) {
                     upnpHeader.setString(headerValue);
                 }
             } catch (InvalidHeaderException ex) {
-				if (log.isLoggable(Level.FINEST)) {
-					log.finest("Invalid header value for tested type: " + headerClass.getSimpleName() + " - " + ex.getMessage());
+				if (log.isTraceEnabled()) {
+					log.trace("Invalid header value for tested type: " + headerClass.getSimpleName() + " - ", ex.getMessage());
 				}
 				upnpHeader = null;
             } catch (Exception ex) {
-                if (log.isLoggable(Level.SEVERE)) {
-                    log.severe("Error instantiating header of type '" + type + "' with value: " + headerValue);
-                    log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));
+                if (log.isErrorEnabled()) {
+                    log.error("Error instantiating header of type '" + type + "' with value: " + headerValue);
+                    log.error("Exception root cause: ", Exceptions.unwrap(ex));
                 }
 
             }

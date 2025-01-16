@@ -16,6 +16,7 @@
 package com.distrimind.upnp_igd.android;
 
 import com.distrimind.upnp_igd.DefaultUpnpServiceConfiguration;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
@@ -36,7 +37,7 @@ import jakarta.inject.Inject;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
 
 /**
  * Adapter for CDI environments.
@@ -46,7 +47,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class AndroidManagedUpnpServiceConfiguration implements UpnpServiceConfiguration {
 
-    private static final Logger log = Logger.getLogger(AndroidManagedUpnpServiceConfiguration.class.getName());
+    final private static DMLogger log = Log.getLogger(AndroidManagedUpnpServiceConfiguration.class);
 
     // TODO: All of these fields should be injected so users can provide values through CDI
 
@@ -246,7 +247,7 @@ public class AndroidManagedUpnpServiceConfiguration implements UpnpServiceConfig
 
     @Override
     public void shutdown() {
-        log.fine("Shutting down default executor service");
+        log.debug("Shutting down default executor service");
         getDefaultExecutorService().shutdownNow();
     }
 

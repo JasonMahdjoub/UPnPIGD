@@ -30,8 +30,8 @@ import jakarta.inject.Inject;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation.
@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class ControlPointImpl implements ControlPoint {
 
-    private static final Logger log = Logger.getLogger(ControlPointImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(ControlPointImpl.class);
 
     protected UpnpServiceConfiguration configuration;
     protected ProtocolFactory protocolFactory;
@@ -56,8 +56,8 @@ public class ControlPointImpl implements ControlPoint {
 
     @Inject
     public ControlPointImpl(UpnpServiceConfiguration configuration, ProtocolFactory protocolFactory, Registry registry) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Creating ControlPoint: " + getClass().getName());
+		if (log.isDebugEnabled()) {
+            log.debug("Creating ControlPoint: " + getClass().getName());
 		}
 
 		this.configuration = configuration;
@@ -101,8 +101,8 @@ public class ControlPointImpl implements ControlPoint {
 
     @Override
 	public void search(UpnpHeader<?> searchType, int mxSeconds) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Sending asynchronous search for: " + searchType.getString());
+		if (log.isDebugEnabled()) {
+            log.debug("Sending asynchronous search for: " + searchType.getString());
 		}
 		getConfiguration().getAsyncProtocolExecutor().execute(
                 getProtocolFactory().createSendingSearch(searchType, mxSeconds)
@@ -116,8 +116,8 @@ public class ControlPointImpl implements ControlPoint {
     @Override
 	@SuppressWarnings("PMD.CloseResource")
 	public Future<?> execute(ActionCallback callback) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Invoking action in background: " + callback);
+		if (log.isDebugEnabled()) {
+            log.debug("Invoking action in background: " + callback);
 		}
 		callback.setControlPoint(this);
         ExecutorService executor = getConfiguration().getSyncProtocolExecutorService();
@@ -126,8 +126,8 @@ public class ControlPointImpl implements ControlPoint {
 
     @Override
 	public void execute(SubscriptionCallback callback) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Invoking subscription in background: " + callback);
+		if (log.isDebugEnabled()) {
+            log.debug("Invoking subscription in background: " + callback);
 		}
 		callback.setControlPoint(this);
         getConfiguration().getSyncProtocolExecutorService().execute(callback);

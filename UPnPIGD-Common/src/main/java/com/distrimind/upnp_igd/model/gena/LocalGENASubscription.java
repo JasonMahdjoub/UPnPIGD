@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * An incoming subscription to a local service.
@@ -55,7 +55,7 @@ import java.util.logging.Logger;
  */
 public abstract class LocalGENASubscription<T> extends GENASubscription<LocalService<T>> implements PropertyChangeListener {
 
-    private static final Logger log = Logger.getLogger(LocalGENASubscription.class.getName());
+    final private static DMLogger log = Log.getLogger(LocalGENASubscription.class);
 
     final List<URL> callbackURLs;
 
@@ -74,21 +74,20 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
 
         setSubscriptionDuration(requestedDurationSeconds);
 
-        log.fine("Reading initial state of local service at subscription time");
+        log.debug("Reading initial state of local service at subscription time");
         long currentTime = new Date().getTime();
         this.currentValues.clear();
 
         Collection<StateVariableValue<LocalService<T>>> values = getService().getManager().getCurrentState();
-
-		if (log.isLoggable(Level.FINER)) {
-			log.finer("Got evented state variable values: " + values.size());
+		if (log.isTraceEnabled()) {
+			log.trace("Got evented state variable values: " + values.size());
 		}
 
 		for (StateVariableValue<LocalService<T>> value : values) {
             this.currentValues.put(value.getStateVariable().getName(), value);
 
-            if (log.isLoggable(Level.FINER)) {
-                log.finer("Read state variable value '" + value.getStateVariable().getName() + "': " + value);
+            if (log.isTraceEnabled()) {
+				log.trace("Read state variable value '" + value.getStateVariable().getName() + "': " + value);
             }
 
             // Preserve "last sent" state for future moderation
@@ -125,7 +124,7 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
         try {
             getService().getManager().getPropertyChangeSupport().removePropertyChangeListener(this);
         } catch (Exception ex) {
-			if (log.isLoggable(Level.WARNING)) log.warning("Removal of local service property change listener failed: " + Exceptions.unwrap(ex));
+			if (log.isWarnEnabled()) log.warn("Removal of local service property change listener failed: ", Exceptions.unwrap(ex));
         }
         ended(reason);
     }
@@ -139,8 +138,8 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
 	synchronized public void propertyChange(PropertyChangeEvent e) {
         if (!ServiceManager.EVENTED_STATE_VARIABLES.equals(e.getPropertyName())) return;
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Eventing triggered, getting state for subscription: " + getSubscriptionId());
+		if (log.isDebugEnabled()) {
+            log.debug("Eventing triggered, getting state for subscription: " + getSubscriptionId());
 		}
 
 		long currentTime = new Date().getTime();
@@ -152,8 +151,8 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
         for (StateVariableValue<?> newValue : newValues) {
             String name = newValue.getStateVariable().getName();
             if (!excludedVariables.contains(name)) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Adding state variable value to current values of event: " + newValue.getStateVariable() + " = " + newValue);
+				if (log.isDebugEnabled()) {
+					log.debug("Adding state variable value to current values of event: " + newValue.getStateVariable() + " = " + newValue);
 				}
 				currentValues.put(newValue.getStateVariable().getName(), (StateVariableValue<LocalService<T>>) newValue);
 
@@ -166,15 +165,16 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
         }
 
         if (!currentValues.isEmpty()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Propagating new state variable values to subscription: " + this);
+
+			if (log.isDebugEnabled()) {
+				log.debug("Propagating new state variable values to subscription: " + this);
 			}
 			// TODO: I'm not happy with this design, this dispatches to a separate thread which _then_
             // is supposed to lock and read the values off this instance. That obviously doesn't work
             // so it's currently a hack in SendingEvent.java
             eventReceived();
         } else {
-            log.fine("No state variable values for event (all moderated out?), not triggering event");
+            log.debug("No state variable values for event (all moderated out?), not triggering event");
         }
     }
 
@@ -197,16 +197,17 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
 
             if (stateVariable.getEventDetails().getEventMaximumRateMilliseconds() == 0 &&
                     stateVariable.getEventDetails().getEventMinimumDelta() == 0) {
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Variable is not moderated: " + stateVariable);
+
+				if (log.isTraceEnabled()) {
+					log.trace("Variable is not moderated: " + stateVariable);
 				}
 				continue;
             }
 
             // That should actually never happen, because we always "send" it as the initial state/event
             if (!lastSentTimestamp.containsKey(stateVariableName)) {
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Variable is moderated but was never sent before: " + stateVariable);
+				if (log.isTraceEnabled()) {
+					log.trace("Variable is moderated but was never sent before: " + stateVariable);
 				}
 				continue;
             }
@@ -215,8 +216,9 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
                 long timestampLastSent = lastSentTimestamp.get(stateVariableName);
                 long timestampNextSend = timestampLastSent + (stateVariable.getEventDetails().getEventMaximumRateMilliseconds());
                 if (currentTime <= timestampNextSend) {
-					if (log.isLoggable(Level.FINER)) {
-						log.finer("Excluding state variable with maximum rate: " + stateVariable);
+
+					if (log.isTraceEnabled()) {
+						log.trace("Excluding state variable with maximum rate: " + stateVariable);
 					}
 					excludedVariables.add(stateVariableName);
                     continue;
@@ -230,16 +232,16 @@ public abstract class LocalGENASubscription<T> extends GENASubscription<LocalSer
                 long minDelta = stateVariable.getEventDetails().getEventMinimumDelta();
 
                 if (newValue > oldValue && newValue - oldValue < minDelta) {
-					if (log.isLoggable(Level.FINER)) {
-						log.finer("Excluding state variable with minimum delta: " + stateVariable);
+					if (log.isTraceEnabled()) {
+						log.trace("Excluding state variable with minimum delta: " + stateVariable);
 					}
 					excludedVariables.add(stateVariableName);
                     continue;
                 }
 
                 if (newValue < oldValue && oldValue - newValue < minDelta) {
-					if (log.isLoggable(Level.FINER)) {
-						log.finer("Excluding state variable with minimum delta: " + stateVariable);
+					if (log.isTraceEnabled()) {
+						log.trace("Excluding state variable with minimum delta: " + stateVariable);
 					}
 					excludedVariables.add(stateVariableName);
                 }

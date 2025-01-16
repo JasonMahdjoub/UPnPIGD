@@ -15,8 +15,8 @@
 
 package com.distrimind.upnp_igd.registry;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Runs periodically and calls {@link RegistryImpl#maintain()}.
@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class RegistryMaintainer implements Runnable {
 
-    private static final Logger log = Logger.getLogger(RegistryMaintainer.class.getName());
+    final private static DMLogger log = Log.getLogger(RegistryMaintainer.class);
 
     final private RegistryImpl registry;
     final private int sleepIntervalMillis;
@@ -38,16 +38,16 @@ public class RegistryMaintainer implements Runnable {
     }
 
     public void stop() {
-        if (log.isLoggable(Level.FINE))
-            log.fine("Setting stopped status on thread");
+        if (log.isDebugEnabled())
+            log.debug("Setting stopped status on thread");
         stopped = true;
     }
 
     @Override
 	public void run() {
         stopped = false;
-        if (log.isLoggable(Level.FINE))
-            log.fine("Running registry maintenance loop every milliseconds: " + sleepIntervalMillis);
+        if (log.isDebugEnabled())
+            log.debug("Running registry maintenance loop every milliseconds: " + sleepIntervalMillis);
         while (!stopped) {
 
             try {
@@ -58,7 +58,7 @@ public class RegistryMaintainer implements Runnable {
             }
 
         }
-        log.fine("Stopped status on thread received, ending maintenance loop");
+        log.debug("Stopped status on thread received, ending maintenance loop");
     }
 
 }

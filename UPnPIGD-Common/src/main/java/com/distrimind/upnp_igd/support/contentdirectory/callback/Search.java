@@ -26,8 +26,8 @@ import com.distrimind.upnp_igd.support.model.DIDLContent;
 import com.distrimind.upnp_igd.support.model.SearchResult;
 import com.distrimind.upnp_igd.support.model.SortCriterion;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Invokes a "Search" action, parses the result.
@@ -54,7 +54,7 @@ public abstract class Search extends ActionCallback {
         }
     }
 
-    private static final Logger log = Logger.getLogger(Search.class.getName());
+    final private static DMLogger log = Log.getLogger(Search.class);
 
     /**
      * Search with first result 0 and {@link #getDefaultMaxResults()}, filters with {@link #CAPS_WILDCARD}.
@@ -70,8 +70,8 @@ public abstract class Search extends ActionCallback {
                   long firstResult, Long maxResults, SortCriterion... orderBy) {
         super(new ActionInvocation<>(service.getAction("Search")));
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Creating browse action for container ID: " + containerId);
+		if (log.isDebugEnabled()) {
+            log.debug("Creating browse action for container ID: " + containerId);
 		}
 
 		getActionInvocation().setInput("ContainerID", containerId);
@@ -93,7 +93,7 @@ public abstract class Search extends ActionCallback {
 
     @Override
     public void success(ActionInvocation<?> actionInvocation) {
-        log.fine("Successful search action, reading output argument values");
+        log.debug("Successful search action, reading output argument values");
 
         SearchResult result = new SearchResult(
                 actionInvocation.getOutput("Result").getValue().toString(),

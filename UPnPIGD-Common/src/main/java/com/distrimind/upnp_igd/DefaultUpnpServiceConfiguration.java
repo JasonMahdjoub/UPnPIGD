@@ -52,8 +52,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default configuration data of a typical UPnP stack.
@@ -83,7 +83,7 @@ import java.util.logging.Logger;
 @Alternative
 public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration {
 
-    private static final Logger log = Logger.getLogger(DefaultUpnpServiceConfiguration.class.getName());
+    final private static DMLogger log = Log.getLogger(DefaultUpnpServiceConfiguration.class);
 
     final private int streamListenPort;
 
@@ -330,7 +330,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
     @Override
     public void shutdown() {
-        log.fine("Shutting down default executor service");
+        log.debug("Shutting down default executor service");
         getDefaultExecutorService().shutdownNow();
     }
     protected NetworkAddressFactory getNetworkAddressFactory() {
@@ -384,7 +384,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
                      @Override
                      public void rejectedExecution(Runnable runnable, ThreadPoolExecutor threadPoolExecutor) {
                          // Log and discard
-                         if (log.isLoggable(Level.INFO))
+                         if (log.isInfoEnabled())
                             log.info("Thread pool rejected execution of " + runnable.getClass());
                          super.rejectedExecution(runnable, threadPoolExecutor);
                      }
@@ -415,10 +415,10 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
                     // if it's a CDI component).
                     return;
                 }
-                if (log.isLoggable(Level.WARNING)) {
+                if (log.isWarnEnabled()) {
                     // Log only
-                    log.warning("Thread terminated " + runnable + " abruptly with exception: " + throwable);
-                    log.warning("Root cause: " + cause);
+                    log.warn("Thread terminated " + runnable + " abruptly with exception: " + throwable);
+                    log.warn("Root cause: ", cause);
                 }
             }
         }

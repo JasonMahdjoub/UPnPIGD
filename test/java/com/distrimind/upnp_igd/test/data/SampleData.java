@@ -218,7 +218,7 @@ public class SampleData {
             if (cause instanceof ValidationException) {
                 ValidationException ex = (ValidationException) cause;
                 for (ValidationError validationError : ex.getErrors()) {
-                    log.severe(validationError.toString());
+                    log.error(validationError.toString());
                 }
             }
 */

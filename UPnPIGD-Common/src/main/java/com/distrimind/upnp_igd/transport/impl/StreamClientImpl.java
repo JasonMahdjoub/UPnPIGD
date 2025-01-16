@@ -39,8 +39,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation based on the JDK's <code>HttpURLConnection</code>.
@@ -69,7 +69,7 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
 
     final static String HACK_STREAM_HANDLER_SYSTEM_PROPERTY = "hackStreamHandlerProperty";
 
-    final private static Logger log = Logger.getLogger(StreamClientImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(StreamClientImpl.class);
 
     final protected StreamClientConfigurationImpl configuration;
 
@@ -95,14 +95,14 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
             );
         }
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Using persistent HTTP stream client connections: " + configuration.isUsePersistentConnections());
+		if (log.isDebugEnabled()) {
+            log.debug("Using persistent HTTP stream client connections: " + configuration.isUsePersistentConnections());
 		}
 		System.setProperty("http.keepAlive", Boolean.toString(configuration.isUsePersistentConnections()));
 
         // Hack the environment to allow additional HTTP methods
         /*if (System.getProperty(HACK_STREAM_HANDLER_SYSTEM_PROPERTY) == null) {
-            log.fine("Setting custom static URLStreamHandlerFactory to work around bad JDK defaults");
+            log.debug("Setting custom static URLStreamHandlerFactory to work around bad JDK defaults");
             try {
                 // Use reflection to avoid dependency on sun.net package so this class at least
                 // loads on Android, even if it doesn't work...
@@ -131,8 +131,8 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
     public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) {
 
         final UpnpRequest requestOperation = requestMessage.getOperation();
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Preparing HTTP request message with method '" + requestOperation.getHttpMethodName() + "': " + requestMessage);
+		if (log.isDebugEnabled()) {
+            log.debug("Preparing HTTP request message with method '" + requestOperation.getHttpMethodName() + "': " + requestMessage);
 		}
 
 		URL url = URIUtil.toURL(requestOperation.getURI());
@@ -152,43 +152,43 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
             applyRequestProperties(urlConnection, requestMessage);
             applyRequestBody(urlConnection, requestMessage);
 
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Sending HTTP request: " + requestMessage);
+			if (log.isDebugEnabled()) {
+				log.debug("Sending HTTP request: " + requestMessage);
 			}
 			inputStream = urlConnection.getInputStream();
             return createResponse(urlConnection, inputStream);
 
         } catch (ProtocolException ex) {
-			if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
+			if (log.isWarnEnabled()) log.warn("HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
             return null;
         }
 		catch (IOException ex) {
 
             if (urlConnection == null) {
-				if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
+				if (log.isWarnEnabled()) log.warn("HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
                 return null;
             }
 
             if (ex instanceof SocketTimeoutException) {
-				if (log.isLoggable(Level.INFO)) log.info(
+				if (log.isInfoEnabled()) log.info(
                     "Timeout of " + getConfiguration().getTimeoutSeconds()
                         + " seconds while waiting for HTTP request to complete, aborting: " + requestMessage
                 	);
                 return null;
             }
 
-            if (log.isLoggable(Level.FINE))
-                log.fine("Exception occurred, trying to read the error stream: " + Exceptions.unwrap(ex));
+            if (log.isDebugEnabled())
+                log.debug("Exception occurred, trying to read the error stream: ", Exceptions.unwrap(ex));
             try {
                 inputStream = urlConnection.getErrorStream();
                 return createResponse(urlConnection, inputStream);
             } catch (Exception errorEx) {
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Could not read error stream: " + errorEx);
+                if (log.isDebugEnabled())
+                    log.debug("Could not read error stream: " + errorEx);
                 return null;
             }
         } catch (Exception ex) {
-			if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
+			if (log.isWarnEnabled()) log.warn("HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
             return null;
 
         } finally {
@@ -226,14 +226,14 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
     }
 
     protected void applyHeaders(HttpURLConnection urlConnection, IHeaders headers) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing headers on HttpURLConnection: " + headers.size());
+		if (log.isDebugEnabled()) {
+            log.debug("Writing headers on HttpURLConnection: " + headers.size());
 		}
 		for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             for (String v : entry.getValue()) {
                 String headerName = entry.getKey();
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Setting header '" + headerName + "': " + v);
+				if (log.isDebugEnabled()) {
+					log.debug("Setting header '" + headerName + "': " + v);
 				}
 				urlConnection.setRequestProperty(headerName, v);
             }
@@ -260,9 +260,9 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
     protected StreamResponseMessage createResponse(HttpURLConnection urlConnection, InputStream inputStream) throws Exception {
 
         if (urlConnection.getResponseCode() == -1) {
-			if (log.isLoggable(Level.WARNING)) {
-				log.warning("Received an invalid HTTP response: " + urlConnection.getURL());
-				log.warning("Is your UPnPIGD-based server sending connection heartbeats with " +
+			if (log.isWarnEnabled()) {
+				log.warn("Received an invalid HTTP response: " + urlConnection.getURL());
+				log.warn("Is your UPnPIGD-based server sending connection heartbeats with " +
 						"RemoteClientInfo#isRequestCancelled? This client can't handle " +
 						"heartbeats, read the manual.");
 			}
@@ -272,8 +272,8 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
         // Status
         UpnpResponse responseOperation = new UpnpResponse(urlConnection.getResponseCode(), urlConnection.getResponseMessage());
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Received response: " + responseOperation);
+		if (log.isDebugEnabled()) {
+            log.debug("Received response: " + responseOperation);
 		}
 
 		// Message
@@ -290,20 +290,20 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
 
         if (bodyBytes != null && bodyBytes.length > 0 && responseMessage.isContentTypeMissingOrText()) {
 
-            log.fine("Response contains textual entity body, converting then setting string on message");
+            log.debug("Response contains textual entity body, converting then setting string on message");
             responseMessage.setBodyCharacters(bodyBytes);
 
         } else if (bodyBytes != null && bodyBytes.length > 0) {
 
-            log.fine("Response contains binary entity body, setting bytes on message");
+            log.debug("Response contains binary entity body, setting bytes on message");
             responseMessage.setBody(UpnpMessage.BodyType.BYTES, bodyBytes);
 
         } else {
-            log.fine("Response did not contain entity body");
+            log.debug("Response did not contain entity body");
         }
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Response message complete: " + responseMessage);
+		if (log.isDebugEnabled()) {
+            log.debug("Response message complete: " + responseMessage);
 		}
 		return responseMessage;
     }

@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd;
 
+import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.UDA10DeviceDescriptorBinderImpl;
@@ -48,7 +49,6 @@ import com.distrimind.upnp_igd.transport.spi.StreamServer;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.logging.Logger;
 
 /**
  * Adapter for CDI environments.
@@ -58,7 +58,7 @@ import java.util.logging.Logger;
 
 public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration {
 
-    private static final Logger log = Logger.getLogger(ManagedUpnpServiceConfiguration.class.getName());
+    final private static DMLogger log = Log.getLogger(ManagedUpnpServiceConfiguration.class);
 
     // TODO: All of these fields should be injected so users can provide values through CDI
 
@@ -256,7 +256,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
 
     @Override
     public void shutdown() {
-        log.fine("Shutting down default executor service");
+        log.debug("Shutting down default executor service");
         getDefaultExecutorService().shutdownNow();
     }
 

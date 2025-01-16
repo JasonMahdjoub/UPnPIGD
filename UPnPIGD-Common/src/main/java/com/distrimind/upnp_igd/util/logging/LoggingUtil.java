@@ -14,6 +14,9 @@
  */
  package com.distrimind.upnp_igd.util.logging;
 
+import com.distrimind.flexilogxml.log.Handler;
+import com.distrimind.flexilogxml.log.LogManager;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,9 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * Simplifies dealing with JUL oddities.
@@ -49,55 +49,6 @@ public class LoggingUtil {
 
     public static final String DEFAULT_CONFIG = "default-logging.properties";
 
-    /**
-     * Loads the default logging configuration properties from the classpath.
-     * <p>
-     * This method will do nothing if the 'java.util.logging.config.file' property is set.
-   
-     *
-     * @throws IOException If reading the properties or instantiating handlers failed.
-     */
-    public static void loadDefaultConfiguration() throws Exception {
-        loadDefaultConfiguration(null);
-    }
-
-    /**
-     * Loads the given logging configuration from the classpath.
-     * <p>
-     * If the given input stream is null, the default properties will be loaded. This method
-     * will do nothing if the 'java.util.logging.config.file' property is set.
-   
-     *
-     * @param _is An optional input stream that overrides the default logging properties.
-     * @throws IOException If reading the properties or instantiating handlers failed.
-     */
-    @SuppressWarnings({"PMD.CloseResource", "PMD.UseTryWithResources", "PMD.CompareObjectsWithEquals"})
-    public static void loadDefaultConfiguration(InputStream _is) throws Exception {
-        if (System.getProperty("java.util.logging.config.file") != null) return;
-        InputStream is;
-        if (_is == null) {
-            // Fallback to default-logging.properties in the root of the classpath
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG);
-        }
-        else
-            is=_is;
-        try {
-            if (is == null) return;
-
-            List<String> handlerNames = new ArrayList<>();
-
-            LogManager.getLogManager().readConfiguration(
-                    spliceHandlers(is, handlerNames)
-            );
-
-            Handler[] handlers = instantiateHandlers(handlerNames);
-            resetRootHandler(handlers);
-        }
-        finally {
-            if (is!=_is)
-                is.close();
-        }
-    }
 
     /**
      * Loads a handler class with the current context classloader.
@@ -105,7 +56,7 @@ public class LoggingUtil {
      * The JUL manager will load handler classes with the system classloader, causing deployment problems. This
      * method will load a handler class through the curren thread's context classloader and instantiate it with
      * the default constructor.
-   
+
      *
      * @param handlerNames A list of handler class names.
      * @return An array of instantiated handlers.
@@ -126,7 +77,7 @@ public class LoggingUtil {
      * <p>
      * All handler (class) names are added to the supplied list and an input stream with the same
      * properties, except for the 'handler' properties, is returned.
-   
+
      *
      * @param is       The properties input stream
      * @param handlers All handler (class) names are added to this list.
@@ -170,19 +121,11 @@ public class LoggingUtil {
      * <p>
      * This method removes all loggers which might have been configured on the JUL root logger
      * handlers (such as the broken default two-line-system-err handler) and adds the given handlers.
-   
+
      *
      * @param h An array of handlers to use with the root logger.
      */
     public static void resetRootHandler(Handler... h) {
-        Logger rootLogger = LogManager.getLogManager().getLogger("");
-        Handler[] handlers = rootLogger.getHandlers();
-        for (Handler handler : handlers) {
-            rootLogger.removeHandler(handler);
-        }
-        for (Handler handler : h) {
-            if (handler != null)
-                LogManager.getLogManager().getLogger("").addHandler(handler);
-        }
+        LogManager.resetHandlers(h);
     }
 }

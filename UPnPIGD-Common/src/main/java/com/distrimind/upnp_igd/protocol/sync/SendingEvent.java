@@ -17,8 +17,8 @@ package com.distrimind.upnp_igd.protocol.sync;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.protocol.SendingSync;
 import com.distrimind.upnp_igd.transport.RouterException;
@@ -44,7 +44,7 @@ import java.net.URL;
  */
 public class SendingEvent extends SendingSync<OutgoingEventRequestMessage, StreamResponseMessage> {
 
-    final private static Logger log = Logger.getLogger(SendingEvent.class.getName());
+    final private static DMLogger log = Log.getLogger(SendingEvent.class);
 
     final protected String subscriptionId;
     final protected Collection<OutgoingEventRequestMessage> requestMessages;
@@ -74,8 +74,8 @@ public class SendingEvent extends SendingSync<OutgoingEventRequestMessage, Strea
     @Override
 	protected StreamResponseMessage executeSync() throws RouterException {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Sending event for subscription: " + subscriptionId);
+		if (log.isDebugEnabled()) {
+            log.debug("Sending event for subscription: " + subscriptionId);
 		}
 
 		StreamResponseMessage lastResponse = null;
@@ -83,20 +83,20 @@ public class SendingEvent extends SendingSync<OutgoingEventRequestMessage, Strea
         for (OutgoingEventRequestMessage requestMessage : requestMessages) {
 
             if (currentSequence.getValue() == 0) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Sending initial event message to callback URL: " + requestMessage.getUri());
+				if (log.isDebugEnabled()) {
+					log.debug("Sending initial event message to callback URL: " + requestMessage.getUri());
 				}
 			} else {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Sending event message '"+currentSequence+"' to callback URL: " + requestMessage.getUri());
+				if (log.isDebugEnabled()) {
+					log.debug("Sending event message '"+currentSequence+"' to callback URL: " + requestMessage.getUri());
 				}
 			}
 
 
             // Send request
             lastResponse = getUpnpService().getRouter().send(requestMessage);
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Received event callback response: " + lastResponse);
+			if (log.isDebugEnabled()) {
+				log.debug("Received event callback response: " + lastResponse);
 			}
 
 		}

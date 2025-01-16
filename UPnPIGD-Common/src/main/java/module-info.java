@@ -13,14 +13,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-module UPnPIGD_Core {
+module UPnPIGD_Common {
 
 
-	requires java.logging;
 	requires jdk.httpserver;
 	requires org.jsoup;
-	requires static java.desktop;
 	requires static jakarta.cdi;
+	requires static java.desktop;
+
+	requires FlexiLogXML_Common;
+	requires org.slf4j;
 
 
 	exports com.distrimind.upnp_igd;

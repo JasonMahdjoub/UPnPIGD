@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.protocol.ReceivingAsync;
 import com.distrimind.upnp_igd.registry.Registry;
@@ -66,9 +66,9 @@ import com.distrimind.upnp_igd.model.types.UDN;
  */
 public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
-    final private static Logger log = Logger.getLogger(ReceivingSearch.class.getName());
+    final private static DMLogger log = Log.getLogger(ReceivingSearch.class);
 
-    private static final boolean LOG_ENABLED = log.isLoggable(Level.FINE);
+    private static final boolean LOG_ENABLED = log.isDebugEnabled();
 
     final protected Random randomGenerator = new Random();
 
@@ -80,13 +80,13 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 	protected void execute() throws RouterException {
         if (getUpnpService().getRouter() == null) {
             // TODO: http://mailinglists.945824.n3.nabble.com/rare-NPE-on-start-tp3078213p3142767.html
-            log.fine("Router hasn't completed initialization, ignoring received search message");
+            log.debug("Router hasn't completed initialization, ignoring received search message");
             return;
         }
 
         if (!getInputMessage().isMANSSDPDiscover()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Invalid search request, no or invalid MAN ssdp:discover header: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Invalid search request, no or invalid MAN ssdp:discover header: " + getInputMessage());
 			}
 			return;
         }
@@ -94,8 +94,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         UpnpHeader<?> searchTarget = getInputMessage().getSearchTarget();
 
         if (searchTarget == null) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Invalid search request, did not contain ST header: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Invalid search request, did not contain ST header: " + getInputMessage());
 			}
 			return;
         }
@@ -103,7 +103,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         List<NetworkAddress> activeStreamServers =
             getUpnpService().getRouter().getActiveStreamServers(getInputMessage().getLocalAddress());
         if (activeStreamServers.isEmpty()) {
-            log.fine("Aborting search response, no active stream servers found (network disabled?)");
+            log.debug("Aborting search response, no active stream servers found (network disabled?)");
             return;
         }
 
@@ -118,8 +118,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         Integer mx = getInputMessage().getMX();
 
         if (mx == null) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Invalid search request, did not contain MX header: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Invalid search request, did not contain MX header: " + getInputMessage());
 			}
 			return false;
         }
@@ -132,8 +132,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         // Only wait if there is something to wait for
         if (!getUpnpService().getRegistry().getLocalDevices().isEmpty()) {
             int sleepTime = randomGenerator.nextInt(mx * 1000);
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Sleeping " + sleepTime + " milliseconds to avoid flooding with search responses");
+			if (log.isDebugEnabled()) {
+				log.debug("Sleeping " + sleepTime + " milliseconds to avoid flooding with search responses");
 			}
 			Thread.sleep(sleepTime);
         }
@@ -163,13 +163,13 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             sendSearchResponseServiceType((ServiceType) searchTarget.getValue(), activeStreamServer);
 
         } else {
-			if (log.isLoggable(Level.WARNING)) log.warning("Non-implemented search request target: " + searchTarget.getClass());
+			if (log.isWarnEnabled()) log.warn("Non-implemented search request target: " + searchTarget.getClass());
         }
     }
 
     protected void sendSearchResponseAll(NetworkAddress activeStreamServer) throws RouterException {
         if (LOG_ENABLED) {
-			if (log.isLoggable(Level.FINE)) log.fine("Responding to 'all' search with advertisement messages for all local devices");
+			if (log.isDebugEnabled()) log.debug("Responding to 'all' search with advertisement messages for all local devices");
         }
         for (LocalDevice<?> localDevice : getUpnpService().getRegistry().getLocalDevices()) {
 
@@ -178,8 +178,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
 
             // We are re-using the regular notification messages here but override the NT with the ST header
             if (LOG_ENABLED) {
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Sending root device messages: " + localDevice);
+				if (log.isTraceEnabled()) {
+					log.trace("Sending root device messages: " + localDevice);
 				}
 			}
             List<OutgoingSearchResponse> rootDeviceMsgs =
@@ -191,8 +191,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             if (localDevice.hasEmbeddedDevices()) {
                 for (LocalDevice<?> embeddedDevice : localDevice.findEmbeddedDevices()) {
                     if (LOG_ENABLED) {
-						if (log.isLoggable(Level.FINER)) {
-							log.finer("Sending embedded device messages: " + embeddedDevice);
+						if (log.isTraceEnabled()) {
+							log.trace("Sending embedded device messages: " + embeddedDevice);
 						}
 					}
                     List<OutgoingSearchResponse> embeddedDeviceMsgs =
@@ -207,7 +207,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
                     createServiceTypeMessages(localDevice, activeStreamServer);
             if (!serviceTypeMsgs.isEmpty()) {
                 if (LOG_ENABLED) {
-                    log.finer("Sending service type messages");
+                    log.trace("Sending service type messages");
                 }
                 for (OutgoingSearchResponse upnpMessage : serviceTypeMsgs) {
                     getUpnpService().getRouter().send(upnpMessage);
@@ -274,7 +274,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
     }
 
     protected void sendSearchResponseRootDevices(NetworkAddress activeStreamServer) throws RouterException {
-        log.fine("Responding to root device search with advertisement messages for all local root devices");
+        log.debug("Responding to root device search with advertisement messages for all local root devices");
         for (LocalDevice<?> device : getUpnpService().getRegistry().getLocalDevices()) {
 
             if (isAdvertisementDisabled(device))
@@ -298,8 +298,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             if (isAdvertisementDisabled((LocalDevice<?>)device))
                 return;
 
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Responding to UDN device search: " + udn);
+			if (log.isDebugEnabled()) {
+				log.debug("Responding to UDN device search: " + udn);
 			}
 			OutgoingSearchResponse message =
                 new OutgoingSearchResponseUDN(
@@ -313,8 +313,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
     }
 
     protected void sendSearchResponseDeviceType(DeviceType deviceType, NetworkAddress activeStreamServer) throws RouterException{
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Responding to device type search: " + deviceType);
+		if (log.isDebugEnabled()) {
+            log.debug("Responding to device type search: " + deviceType);
 		}
 		Collection<Device<?, ?, ?>> devices = getUpnpService().getRegistry().getDevices(deviceType);
         for (Device<?, ?, ?> device : devices) {
@@ -323,8 +323,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
                 if (isAdvertisementDisabled((LocalDevice<?>)device))
                     continue;
 
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Sending matching device type search result for: " + device);
+				if (log.isTraceEnabled()) {
+					log.trace("Sending matching device type search result for: " + device);
 				}
 				OutgoingSearchResponse message =
                     new OutgoingSearchResponseDeviceType(
@@ -339,8 +339,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
     }
 
     protected void sendSearchResponseServiceType(ServiceType serviceType, NetworkAddress activeStreamServer) throws RouterException {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Responding to service type search: " + serviceType);
+		if (log.isDebugEnabled()) {
+            log.debug("Responding to service type search: " + serviceType);
 		}
 		Collection<Device<?, ?, ?>> devices = getUpnpService().getRegistry().getDevices(serviceType);
         for (Device<?, ?, ?> device : devices) {
@@ -349,8 +349,8 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
                 if (isAdvertisementDisabled((LocalDevice<?>)device))
                     continue;
 
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Sending matching service type search result: " + device);
+				if (log.isTraceEnabled()) {
+					log.trace("Sending matching service type search result: " + device);
 				}
 				OutgoingSearchResponse message =
                     new OutgoingSearchResponseServiceType(

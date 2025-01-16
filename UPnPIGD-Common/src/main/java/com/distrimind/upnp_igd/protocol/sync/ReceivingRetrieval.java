@@ -38,8 +38,8 @@ import com.distrimind.upnp_igd.model.resource.ServiceDescriptorResource;
 import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Handles reception of device/service descriptor and icon retrieval messages.
@@ -56,7 +56,7 @@ import java.util.logging.Logger;
  */
 public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, StreamResponseMessage> {
 
-    final private static Logger log = Logger.getLogger(ReceivingRetrieval.class.getName());
+    final private static DMLogger log = Log.getLogger(ReceivingRetrieval.class);
 
     public ReceivingRetrieval(UpnpService upnpService, StreamRequestMessage inputMessage) {
         super(upnpService, inputMessage);
@@ -66,8 +66,8 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
 	protected StreamResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().hasHostHeader()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Ignoring message, missing HOST header: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Ignoring message, missing HOST header: " + getInputMessage());
 			}
 			return new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.PRECONDITION_FAILED));
         }
@@ -79,8 +79,8 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
         if (foundResource == null) {
             foundResource = onResourceNotFound(requestedURI);
             if (foundResource == null) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("No local resource found: " + getInputMessage());
+				if (log.isDebugEnabled()) {
+					log.debug("No local resource found: " + getInputMessage());
 				}
 				return null;
             }
@@ -97,8 +97,8 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
 
             if (DeviceDescriptorResource.class.isAssignableFrom(resource.getClass())) {
 
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Found local device matching relative request URI: " + requestedURI);
+				if (log.isDebugEnabled()) {
+					log.debug("Found local device matching relative request URI: " + requestedURI);
 				}
 				LocalDevice<?> device = (LocalDevice<?>) resource.getModel();
 
@@ -116,8 +116,8 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
             } else if (ServiceDescriptorResource.class.isAssignableFrom(resource.getClass())) {
 
 
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Found local service matching relative request URI: " + requestedURI);
+				if (log.isDebugEnabled()) {
+					log.debug("Found local service matching relative request URI: " + requestedURI);
 				}
 				LocalService<?> service = (LocalService<?>) resource.getModel();
 
@@ -131,24 +131,24 @@ public class ReceivingRetrieval extends ReceivingSync<StreamRequestMessage, Stre
 
             } else if (IconResource.class.isAssignableFrom(resource.getClass())) {
 
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Found local icon matching relative request URI: " + requestedURI);
+				if (log.isDebugEnabled()) {
+					log.debug("Found local icon matching relative request URI: " + requestedURI);
 				}
 				Icon icon = (Icon) resource.getModel();
                 response = new StreamResponseMessage(icon.getData(), icon.getMimeType());
 
             } else {
 
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Ignoring GET for found local resource: " + resource);
+				if (log.isDebugEnabled()) {
+					log.debug("Ignoring GET for found local resource: " + resource);
 				}
 				return null;
             }
 
         } catch (DescriptorBindingException ex) {
-			if (log.isLoggable(Level.WARNING)) {
-				log.warning("Error generating requested device/service descriptor: " + ex);
-				log.log(Level.WARNING, "Exception root cause: ", Exceptions.unwrap(ex));
+			if (log.isWarnEnabled()) {
+				log.warn("Error generating requested device/service descriptor: ", ex);
+				log.warn("Exception root cause: ", Exceptions.unwrap(ex));
 			}
             response = new StreamResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
         }

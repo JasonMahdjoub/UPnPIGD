@@ -17,8 +17,8 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.Constants;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import java.util.regex.Matcher;
 
 /**
@@ -32,7 +32,7 @@ import java.util.regex.Matcher;
  */
 public class DeviceType {
 
-    final private static Logger log = Logger.getLogger(DeviceType.class.getName());
+    final private static DMLogger log = Log.getLogger(DeviceType.class);
 
     public static final String UNKNOWN = "UNKNOWN";
 
@@ -102,7 +102,7 @@ public class DeviceType {
                 // urn:schemas-upnp-org:device::1
                 matcher = Constants.getPatternDeviceEscient().matcher(s);
                 if (matcher.matches() && matcher.groupCount() >= 2) {
-                    if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, no device type token, defaulting to " + UNKNOWN + ": " + s);
+                    if (log.isWarnEnabled()) log.warn("UPnP specification violation, no device type token, defaulting to " + UNKNOWN + ": " + s);
                     return new DeviceType(matcher.group(1), UNKNOWN, Integer.parseInt(matcher.group(2)));
                 }
 
@@ -111,7 +111,7 @@ public class DeviceType {
                 matcher = Constants.getPatternDeviceEyeTV().matcher(s);
                 if (matcher.matches() && matcher.groupCount() >= 3) {
                     String cleanToken = matcher.group(2).replaceAll("[^a-zA-Z_0-9\\-]", "-");
-                    if (log.isLoggable(Level.WARNING)) log.warning(
+                    if (log.isWarnEnabled()) log.warn(
                             "UPnP specification violation, replacing invalid device type token '"
                                     + matcher.group(2)
                                     + "' with: "

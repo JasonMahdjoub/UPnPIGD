@@ -14,21 +14,21 @@
  */
  package com.distrimind.upnp_igd.swing.logging;
 
+import com.distrimind.flexilogxml.log.LogRecord;
+import org.slf4j.event.Level;
+
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.text.SimpleDateFormat;
 
 /**
  * @author Christian Bauer
  */
 public class LogMessage {
-    
-    private final Level level;
-    private final Long createdOn = new Date().getTime();
+
+    private final LogRecord logRecord;
     private final String thread = Thread.currentThread().getName();
     private final String source;
-    private final String message;
 
     public LogMessage(String message) {
         this(Level.INFO, message);
@@ -43,17 +43,24 @@ public class LogMessage {
     }
 
     public LogMessage(Level level, String source, String message) {
-        this.level = level;
-        this.source = source;
-        this.message = message;
+        this(new LogRecord(level, message), source);
+    }
+    public LogMessage(LogRecord logRecord) {
+        this(logRecord, null);
+    }
+    public LogMessage(LogRecord logRecord, String source) {
+        if (logRecord==null)
+            throw new NullPointerException();
+        this.logRecord=logRecord;
+        this.source=source;
     }
 
     public Level getLevel() {
-        return level;
+        return logRecord.getLevel();
     }
 
     public Long getCreatedOn() {
-        return createdOn;
+        return logRecord.getCreatedOnUTC();
     }
 
     public String getThread() {
@@ -65,7 +72,7 @@ public class LogMessage {
     }
 
     public String getMessage() {
-        return message;
+        return logRecord.getMessage();
     }
 
     @Override
@@ -73,7 +80,7 @@ public class LogMessage {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS", Locale.ROOT);
         return getLevel() + " - " +
                 dateFormat.format(new Date(getCreatedOn())) + " - " +
-                getThread() + " : " + 
+                getThread() + " : " +
                 getSource() + " : " +
                 getMessage();
     }

@@ -15,8 +15,8 @@
 
 package com.distrimind.upnp_igd.model;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
@@ -28,7 +28,7 @@ import com.distrimind.upnp_igd.model.types.InvalidValueException;
  */
 public class VariableValue {
 
-    final private static Logger log = Logger.getLogger(VariableValue.class.getName());
+    final private static DMLogger log = Log.getLogger(VariableValue.class);
 
     final private Datatype<?> datatype;
     final private Object value;
@@ -98,7 +98,7 @@ public class VariableValue {
                     (cp >= 0x20 && cp <= 0xD7FF) ||
                     (cp >= 0xE000 && cp <= 0xFFFD) ||
                     (cp >= 0x10000 && cp <= 0x10FFFF))) {
-                if (log.isLoggable(Level.WARNING)) log.warning("Found invalid XML char code: " + cp);
+                if (log.isWarnEnabled()) log.warn("Found invalid XML char code: " + cp);
             }
             i += Character.charCount(cp);
         }

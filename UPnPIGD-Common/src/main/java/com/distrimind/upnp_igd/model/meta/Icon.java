@@ -31,8 +31,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * The metadata of a device icon, might include the actual image data of a local icon.
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  */
 public class Icon implements Validatable {
 
-    final private static Logger log = Logger.getLogger(Icon.class.getName());
+    final private static DMLogger log = Log.getLogger(Icon.class);
     public static final String UPN_P_SPECIFICATION_VIOLATION_OF = "UPnP specification violation of: ";
 
     final private MimeType mimeType;
@@ -163,30 +163,30 @@ public class Icon implements Validatable {
     @Override
 	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<>();
-        if (log.isLoggable(Level.WARNING)) {
+        if (log.isWarnEnabled()) {
 
             if (getMimeType() == null) {
-                if (log.isLoggable(Level.WARNING)) {
-                    log.warning(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
-                    log.warning("Invalid icon, missing mime type: " + this);
+                if (log.isWarnEnabled()) {
+                    log.warn(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
+                    log.warn("Invalid icon, missing mime type: " + this);
                 }
             }
             if (getWidth() == 0) {
-                if (log.isLoggable(Level.WARNING)) {
-                    log.warning(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
-                    log.warning("Invalid icon, missing width: " + this);
+                if (log.isWarnEnabled()) {
+                    log.warn(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
+                    log.warn("Invalid icon, missing width: " + this);
                 }
             }
             if (getHeight() == 0) {
-                if (log.isLoggable(Level.WARNING)) {
-                    log.warning(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
-                    log.warning("Invalid icon, missing height: " + this);
+                if (log.isWarnEnabled()) {
+                    log.warn(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
+                    log.warn("Invalid icon, missing height: " + this);
                 }
             }
             if (getDepth() == 0) {
-                if (log.isLoggable(Level.WARNING)) {
-                    log.warning(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
-                    log.warning("Invalid icon, missing bitmap depth: " + this);
+                if (log.isWarnEnabled()) {
+                    log.warn(UPN_P_SPECIFICATION_VIOLATION_OF + getDevice());
+                    log.warn("Invalid icon, missing bitmap depth: " + this);
                 }
             }
 

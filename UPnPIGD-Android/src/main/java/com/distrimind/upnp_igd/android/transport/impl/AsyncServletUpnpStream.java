@@ -34,8 +34,8 @@ import java.net.URI;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Implementation based on Servlet 3.0 API.
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  */
 public abstract class AsyncServletUpnpStream extends UpnpStream implements AsyncListener {
 
-    final private static Logger log = Logger.getLogger(AsyncServletUpnpStream.class.getName());
+    final private static DMLogger log = Log.getLogger(AsyncServletUpnpStream.class);
 
     final protected AsyncContext asyncContext;
     final protected HttpServletRequest request;
@@ -84,7 +84,7 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
         } catch (IllegalStateException ex) {
             // If Jetty's connection, for whatever reason, is in an illegal state, this will be thrown,
             // and we can "probably" ignore it. The request is complete, no matter how it ended.
-            if (log.isLoggable(Level.INFO)) log.info("Error calling servlet container's AsyncContext#complete() method: " + ex);
+            if (log.isInfoEnabled()) log.info("Error calling servlet container's AsyncContext#complete() method: ", ex);
         }
     }
 
@@ -92,32 +92,32 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
     public void run() {
         try {
             StreamRequestMessage requestMessage = readRequestMessage();
-            if (log.isLoggable(Level.FINER))
-                log.finer("Processing new request message: " + requestMessage);
+            if (log.isTraceEnabled())
+                log.trace("Processing new request message: " + requestMessage);
 
             responseMessage = process(requestMessage);
 
             if (responseMessage != null) {
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Preparing HTTP response message: " + responseMessage);
+                if (log.isTraceEnabled())
+                    log.trace("Preparing HTTP response message: " + responseMessage);
                 writeResponseMessage(responseMessage);
             } else {
                 // If it's null, it's 404
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Sending HTTP response status: " + HttpURLConnection.HTTP_NOT_FOUND);
+                if (log.isTraceEnabled())
+                    log.trace("Sending HTTP response status: " + HttpURLConnection.HTTP_NOT_FOUND);
                 getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
 
         } catch (Throwable t) {
-            if (log.isLoggable(Level.INFO)) log.info("Exception occurred during UPnP stream processing: " + t);
-            if (log.isLoggable(Level.FINER)) {
-                log.log(Level.FINER, "Cause: " + Exceptions.unwrap(t), Exceptions.unwrap(t));
+            if (log.isInfoEnabled()) log.info("Exception occurred during UPnP stream processing: " + t);
+            if (log.isTraceEnabled()) {
+                log.trace("Cause: ", Exceptions.unwrap(t));
             }
             if (!getResponse().isCommitted()) {
-                if (log.isLoggable(Level.FINER)) log.finer("Response hasn't been committed, returning INTERNAL SERVER ERROR to client");
+                if (log.isTraceEnabled()) log.trace("Response hasn't been committed, returning INTERNAL SERVER ERROR to client");
                 getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } else {
-                if (log.isLoggable(Level.INFO)) log.info("Could not return INTERNAL SERVER ERROR to client, response was already committed");
+                if (log.isInfoEnabled()) log.info("Could not return INTERNAL SERVER ERROR to client, response was already committed");
             }
             responseException(t);
         } finally {
@@ -133,22 +133,22 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
 
     @Override
     public void onComplete(AsyncEvent event) throws IOException {
-        if (log.isLoggable(Level.FINER))
-            log.finer("Completed asynchronous processing of HTTP request: " + event.getSuppliedRequest());
+        if (log.isTraceEnabled())
+            log.trace("Completed asynchronous processing of HTTP request: " + event.getSuppliedRequest());
         responseSent(responseMessage);
     }
 
     @Override
     public void onTimeout(AsyncEvent event) throws IOException {
-        if (log.isLoggable(Level.FINER))
-            log.finer("Asynchronous processing of HTTP request timed out: " + event.getSuppliedRequest());
+        if (log.isTraceEnabled())
+            log.trace("Asynchronous processing of HTTP request timed out: " + event.getSuppliedRequest());
         responseException(new Exception("Asynchronous request timed out"));
     }
 
     @Override
     public void onError(AsyncEvent event) throws IOException {
-        if (log.isLoggable(Level.FINER))
-            log.finer("Asynchronous processing of HTTP request error: " + event.getThrowable());
+        if (log.isTraceEnabled())
+            log.trace("Asynchronous processing of HTTP request error: " + event.getThrowable());
         responseException(event.getThrowable());
     }
 
@@ -157,8 +157,8 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
         String requestMethod = getRequest().getMethod();
         String requestURI = getRequest().getRequestURI();
 
-        if (log.isLoggable(Level.FINER))
-            log.finer("Processing HTTP request: " + requestMethod + " " + requestURI);
+        if (log.isTraceEnabled())
+            log.trace("Processing HTTP request: " + requestMethod + " " + requestURI);
 
         StreamRequestMessage requestMessage;
         try {
@@ -196,32 +196,32 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
 		try (InputStream is = getRequest().getInputStream()) {
 			bodyBytes = IO.readBytes(is);
 		}
-        if (log.isLoggable(Level.FINER))
-            log.finer("Reading request body bytes: " + bodyBytes.length);
+        if (log.isTraceEnabled())
+            log.trace("Reading request body bytes: " + bodyBytes.length);
 
         if (bodyBytes.length > 0 && requestMessage.isContentTypeMissingOrText()) {
 
-            if (log.isLoggable(Level.FINER))
-                log.finer("Request contains textual entity body, converting then setting string on message");
+            if (log.isTraceEnabled())
+                log.trace("Request contains textual entity body, converting then setting string on message");
             requestMessage.setBodyCharacters(bodyBytes);
 
         } else if (bodyBytes.length > 0) {
 
-            if (log.isLoggable(Level.FINER))
-                log.finer("Request contains binary entity body, setting bytes on message");
+            if (log.isTraceEnabled())
+                log.trace("Request contains binary entity body, setting bytes on message");
             requestMessage.setBody(UpnpMessage.BodyType.BYTES, bodyBytes);
 
         } else {
-            if (log.isLoggable(Level.FINER))
-                log.finer("Request did not contain entity body");
+            if (log.isTraceEnabled())
+                log.trace("Request did not contain entity body");
         }
 
         return requestMessage;
     }
 
     protected void writeResponseMessage(StreamResponseMessage responseMessage) throws IOException {
-        if (log.isLoggable(Level.FINER))
-            log.finer("Sending HTTP response status: " + responseMessage.getOperation().getStatusCode());
+        if (log.isTraceEnabled())
+            log.trace("Sending HTTP response status: " + responseMessage.getOperation().getStatusCode());
 
         getResponse().setStatus(responseMessage.getOperation().getStatusCode());
 
@@ -240,7 +240,7 @@ public abstract class AsyncServletUpnpStream extends UpnpStream implements Async
 
         if (contentLength > 0) {
             getResponse().setContentLength(contentLength);
-            log.finer("Response message has body, writing bytes to stream...");
+            log.trace("Response message has body, writing bytes to stream...");
             IO.writeBytes(getResponse().getOutputStream(), responseBodyBytes);
         }
     }

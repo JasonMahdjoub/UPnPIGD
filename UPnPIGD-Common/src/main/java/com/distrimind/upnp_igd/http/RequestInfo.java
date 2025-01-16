@@ -16,15 +16,11 @@ package com.distrimind.upnp_igd.http;
  */
 
 
-import java.util.logging.Logger;
-
 /**
  * @author Christian Bauer
  * @author Michael Pujos
  */
 public class RequestInfo {
-
-	final static Logger log = Logger.getLogger(RequestInfo.class.getName());
 
 	public static boolean isPS3Request(String userAgent, String avClientInfo) {
 		return ((userAgent != null && userAgent.contains("PLAYSTATION 3")) ||

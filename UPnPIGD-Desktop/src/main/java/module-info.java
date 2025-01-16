@@ -14,6 +14,6 @@
  */
 
 module UPnPIGD_Desktop {
-	requires UPnPIGD_Core;
+	requires UPnPIGD_Common;
 }
 

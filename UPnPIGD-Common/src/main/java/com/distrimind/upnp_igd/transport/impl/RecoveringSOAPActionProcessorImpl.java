@@ -15,8 +15,8 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.message.control.ActionRequestMessage;
@@ -54,7 +54,7 @@ import jakarta.enterprise.inject.Alternative;
 @Alternative
 public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorImpl {
 
-    private static final Logger log = Logger.getLogger(RecoveringSOAPActionProcessorImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(RecoveringSOAPActionProcessorImpl.class);
 
     @Override
     public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
@@ -66,7 +66,7 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
             if (!requestMessage.isBodyNonEmptyString())
                 throw ex;
 
-            if (log.isLoggable(Level.WARNING)) log.warning("Trying to recover from invalid SOAP XML request: " + ex);
+            if (log.isWarnEnabled()) log.warn("Trying to recover from invalid SOAP XML request: ", ex);
             String body = getMessageBody(requestMessage);
 
             // TODO: UPNP VIOLATION: TwonkyMobile sends unencoded '&' in SetAVTransportURI action calls:
@@ -93,7 +93,7 @@ public class RecoveringSOAPActionProcessorImpl extends PullSOAPActionProcessorIm
             if (!responseMsg.isBodyNonEmptyString())
                 throw ex;
 
-            if (log.isLoggable(Level.WARNING)) log.warning("Trying to recover from invalid SOAP XML response: " + ex);
+            if (log.isWarnEnabled()) log.warn("Trying to recover from invalid SOAP XML response: ", ex);
             String body = getMessageBody(responseMsg);
 
             // TODO: UPNP VIOLATION: TwonkyMobile doesn't properly encode '&'

@@ -27,8 +27,8 @@ import com.distrimind.upnp_igd.support.model.BrowseResult;
 import com.distrimind.upnp_igd.support.model.DIDLContent;
 import com.distrimind.upnp_igd.support.model.SortCriterion;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Invokes a "Browse" action, parses the result.
@@ -55,7 +55,7 @@ public abstract class Browse extends ActionCallback {
         }
     }
 
-    private static final Logger log = Logger.getLogger(Browse.class.getName());
+    final private static DMLogger log = Log.getLogger(Browse.class);
 
     /**
      * Browse with first result 0 and {@link #getDefaultMaxResults()}, filters with {@link #CAPS_WILDCARD}.
@@ -72,8 +72,8 @@ public abstract class Browse extends ActionCallback {
 
         super(new ActionInvocation<>(service.getAction("Browse")));
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Creating browse action for object ID: " + objectID);
+		if (log.isDebugEnabled()) {
+            log.debug("Creating browse action for object ID: " + objectID);
 		}
 
 		getActionInvocation().setInput("ObjectID", objectID);
@@ -94,7 +94,7 @@ public abstract class Browse extends ActionCallback {
 
     @Override
 	public void success(ActionInvocation<?> invocation) {
-        log.fine("Successful browse action, reading output argument values");
+        log.debug("Successful browse action, reading output argument values");
 
         BrowseResult result = new BrowseResult(
                 invocation.getOutput("Result").getValue().toString(),
@@ -138,10 +138,10 @@ public abstract class Browse extends ActionCallback {
 
     public boolean receivedRaw(ActionInvocation<?> actionInvocation, BrowseResult browseResult) {
         /*
-        if (log.isLoggable(Level.FINER)) {
-            log.finer("-------------------------------------------------------------------------------------");
-            log.finer("\n" + XML.pretty(browseResult.getDidl()));
-            log.finer("-------------------------------------------------------------------------------------");
+        if (log.isTraceEnabled()) {
+            log.trace("-------------------------------------------------------------------------------------");
+            log.trace("\n" + XML.pretty(browseResult.getDidl()));
+            log.trace("-------------------------------------------------------------------------------------");
         }
         */
         return true;

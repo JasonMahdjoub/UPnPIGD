@@ -17,8 +17,8 @@ package com.distrimind.upnp_igd.model.types;
 
 import com.distrimind.upnp_igd.model.Constants;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import java.util.regex.Matcher;
 
 /**
@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
  */
 public class ServiceId {
 
-    final private static Logger log = Logger.getLogger(ServiceId.class.getName());
+    final private static DMLogger log = Log.getLogger(ServiceId.class);
 
     public static final String UNKNOWN = "UNKNOWN";
 
@@ -84,14 +84,14 @@ public class ServiceId {
         // urn:upnp-org:serviceId:
         matcher = Constants.getPatternServiceIdKodakMediaServer().matcher(s);
         if (matcher.matches() && matcher.groupCount() >= 1) {
-            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, no service ID token, defaulting to " + UNKNOWN + ": " + s);
+            if (log.isWarnEnabled()) log.warn("UPnP specification violation, no service ID token, defaulting to " + UNKNOWN + ": " + s);
             return new ServiceId(matcher.group(1), UNKNOWN);
         }
 
         // TODO: UPNP VIOLATION: PS Audio Bridge has invalid service IDs
         String[] tokens = s.split("[:]");
         if (tokens.length == 4) {
-            if (log.isLoggable(Level.WARNING)) log.warning("UPnP specification violation, trying a simple colon-split of: " + s);
+            if (log.isWarnEnabled()) log.warn("UPnP specification violation, trying a simple colon-split of: " + s);
             return new ServiceId(tokens[1], tokens[3]);
         }
 

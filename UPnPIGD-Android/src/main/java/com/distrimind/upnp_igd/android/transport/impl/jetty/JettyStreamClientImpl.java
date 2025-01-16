@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Implementation based on Jetty 8 client API.
@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  */
 public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConfigurationImpl, HttpRequest> {
 
-    final private static Logger log = Logger.getLogger(JettyStreamClientImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(JettyStreamClientImpl.class);
 
     final protected StreamClientConfigurationImpl configuration;
     final protected HttpClient client;
@@ -97,8 +97,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
     protected HttpRequest createRequest(StreamRequestMessage requestMessage) {
         UpnpRequest requestOperation=requestMessage.getOperation();
 
-        if (log.isLoggable(Level.FINE))
-            log.fine(
+        if (log.isDebugEnabled())
+            log.debug(
                     "Preparing HTTP request message with method '"
                             + requestOperation.getHttpMethodName()
                             + "': " + requestMessage
@@ -108,8 +108,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
 
         //set headers
         IUpnpHeaders headers = requestMessage.getHeaders();
-        if (log.isLoggable(Level.FINE))
-            log.fine("Writing headers on HttpContentExchange: " + headers.size());
+        if (log.isDebugEnabled())
+            log.debug("Writing headers on HttpContentExchange: " + headers.size());
         // TODO Always add the Host header
         // TODO: ? setRequestHeader(UpnpHeader.Type.HOST.getHttpName(), );
         // Add the default user agent if not already set on the message
@@ -121,8 +121,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             for (String v : entry.getValue()) {
                 String headerName = entry.getKey();
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Setting header '" + headerName + "': " + v);
+                if (log.isDebugEnabled())
+                    log.debug("Setting header '" + headerName + "': " + v);
                 request.addHeader(new HttpField(headerName, v));
             }
         }
@@ -130,8 +130,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
         //set body
         if (requestMessage.hasBody()) {
             if (requestMessage.getBodyType() == UpnpMessage.BodyType.STRING) {
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Writing textual request body: " + requestMessage);
+                if (log.isDebugEnabled())
+                    log.debug("Writing textual request body: " + requestMessage);
 
 
                 String charset =
@@ -143,8 +143,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
                 request.body(body);
 
             } else {
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Writing binary request body: " + requestMessage);
+                if (log.isDebugEnabled())
+                    log.debug("Writing binary request body: " + requestMessage);
 
                 if (requestMessage.getContentTypeHeader() == null)
                     throw new RuntimeException(
@@ -166,8 +166,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
 			@Override
 			public StreamResponseMessage call() throws Exception {
 
-				if (log.isLoggable(Level.FINE))
-					log.fine("Sending HTTP request: " + requestMessage);
+				if (log.isDebugEnabled())
+					log.debug("Sending HTTP request: " + requestMessage);
 				final Callable<StreamResponseMessage> callable = this;
 				final AtomicReference<StreamResponseMessage> result = new AtomicReference<>(null);
 				final AtomicBoolean responseOK = new AtomicBoolean(false);
@@ -180,8 +180,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
 									s == null ? null : s.getStatusMsg()
 							);
 
-					if (log.isLoggable(Level.FINE))
-						log.fine("Received response: " + responseOperation);
+					if (log.isDebugEnabled())
+						log.debug("Received response: " + responseOperation);
 
 					StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
 
@@ -199,8 +199,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
 					byte[] bytes = ((ContentResponse) response).getContent();
 					if (bytes != null && bytes.length > 0 && responseMessage.isContentTypeMissingOrText()) {
 
-						if (log.isLoggable(Level.FINE))
-							log.fine("Response contains textual entity body, converting then setting string on message");
+						if (log.isDebugEnabled())
+							log.debug("Response contains textual entity body, converting then setting string on message");
 						try {
 							responseMessage.setBodyCharacters(bytes);
 						} catch (UnsupportedEncodingException ex) {
@@ -209,17 +209,17 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
 
 					} else if (bytes != null && bytes.length > 0) {
 
-						if (log.isLoggable(Level.FINE))
-							log.fine("Response contains binary entity body, setting bytes on message");
+						if (log.isDebugEnabled())
+							log.debug("Response contains binary entity body, setting bytes on message");
 						responseMessage.setBody(UpnpMessage.BodyType.BYTES, bytes);
 
 					} else {
-						if (log.isLoggable(Level.FINE))
-							log.fine("Response did not contain entity body");
+						if (log.isDebugEnabled())
+							log.debug("Response did not contain entity body");
 					}
 
-					if (log.isLoggable(Level.FINE))
-						log.fine("Response message complete: " + responseMessage);
+					if (log.isDebugEnabled())
+						log.debug("Response message complete: " + responseMessage);
 					result.set(responseMessage);
 					synchronized (callable) {
 						responseOK.set(true);
@@ -258,7 +258,7 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
         try {
             client.stop();
         } catch (Exception ex) {
-			if (log.isLoggable(Level.INFO)) log.info("Error stopping HTTP client: " + ex);
+			if (log.isInfoEnabled()) log.info("Error stopping HTTP client: ", ex);
         }
     }
 
@@ -284,12 +284,12 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
 
         @Override
         protected void onConnectionFailed(Throwable t) {
-            log.log(Level.WARNING, "HTTP connection failed: " + requestMessage, Exceptions.unwrap(t));
+            log.warn("HTTP connection failed: " + requestMessage, Exceptions.unwrap(t));
         }
 
         @Override
         protected void onException(Throwable t) {
-            log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(t));
+            log.warn("HTTP request failed: " + requestMessage, Exceptions.unwrap(t));
         }
 
         public StreamClientConfigurationImpl getConfiguration() {
@@ -302,8 +302,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
 
         protected void applyRequestURLMethod() {
             final UpnpRequest requestOperation = getRequestMessage().getOperation();
-            if (log.isLoggable(Level.FINE))
-                log.fine(
+            if (log.isDebugEnabled())
+                log.debug(
                     "Preparing HTTP request message with method '"
                         + requestOperation.getHttpMethodName()
                         + "': " + getRequestMessage()
@@ -316,8 +316,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
         protected void applyRequestHeaders() {
             // Headers
             UpnpHeaders headers = getRequestMessage().getHeaders();
-            if (log.isLoggable(Level.FINE))
-                log.fine("Writing headers on HttpContentExchange: " + headers.size());
+            if (log.isDebugEnabled())
+                log.debug("Writing headers on HttpContentExchange: " + headers.size());
             // TODO Always add the Host header
             // TODO: ? setRequestHeader(UpnpHeader.Type.HOST.getHttpName(), );
             // Add the default user agent if not already set on the message
@@ -332,8 +332,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
             for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
                 for (String v : entry.getValue()) {
                     String headerName = entry.getKey();
-                    if (log.isLoggable(Level.FINE))
-                        log.fine("Setting header '" + headerName + "': " + v);
+                    if (log.isDebugEnabled())
+                        log.debug("Setting header '" + headerName + "': " + v);
                     addRequestHeader(headerName, v);
                 }
             }
@@ -343,8 +343,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
             // Body
             if (getRequestMessage().hasBody()) {
                 if (getRequestMessage().getBodyType() == UpnpMessage.BodyType.STRING) {
-                    if (log.isLoggable(Level.FINE))
-                        log.fine("Writing textual request body: " + getRequestMessage());
+                    if (log.isDebugEnabled())
+                        log.debug("Writing textual request body: " + getRequestMessage());
 
                     MimeType contentType =
                         getRequestMessage().getContentTypeHeader() != null
@@ -367,8 +367,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
                     setRequestContent(buffer);
 
                 } else {
-                    if (log.isLoggable(Level.FINE))
-                        log.fine("Writing binary request body: " + getRequestMessage());
+                    if (log.isDebugEnabled())
+                        log.debug("Writing binary request body: " + getRequestMessage());
 
                     if (getRequestMessage().getContentTypeHeader() == null)
                         throw new RuntimeException(
@@ -393,8 +393,8 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
                     UpnpResponse.Status.getByStatusCode(getResponseStatus()).getStatusMsg()
                 );
 
-            if (log.isLoggable(Level.FINE))
-                log.fine("Received response: " + responseOperation);
+            if (log.isDebugEnabled())
+                log.debug("Received response: " + responseOperation);
 
             StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
 
@@ -412,27 +412,27 @@ public class JettyStreamClientImpl extends AbstractStreamClient<StreamClientConf
             byte[] bytes = getResponseContentBytes();
             if (bytes != null && bytes.length > 0 && responseMessage.isContentTypeMissingOrText()) {
 
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Response contains textual entity body, converting then setting string on message");
+                if (log.isDebugEnabled())
+                    log.debug("Response contains textual entity body, converting then setting string on message");
                 try {
                     responseMessage.setBodyCharacters(bytes);
                 } catch (UnsupportedEncodingException ex) {
-                    throw new RuntimeException("Unsupported character encoding: " + ex, ex);
+                    throw new RuntimeException("Unsupported character encoding: ", ex);
                 }
 
             } else if (bytes != null && bytes.length > 0) {
 
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Response contains binary entity body, setting bytes on message");
+                if (log.isDebugEnabled())
+                    log.debug("Response contains binary entity body, setting bytes on message");
                 responseMessage.setBody(UpnpMessage.BodyType.BYTES, bytes);
 
             } else {
-                if (log.isLoggable(Level.FINE))
-                    log.fine("Response did not contain entity body");
+                if (log.isDebugEnabled())
+                    log.debug("Response did not contain entity body");
             }
 
-            if (log.isLoggable(Level.FINE))
-                log.fine("Response message complete: " + responseMessage);
+            if (log.isDebugEnabled())
+                log.debug("Response message complete: " + responseMessage);
             return responseMessage;
         }
     }*/

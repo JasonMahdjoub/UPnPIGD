@@ -23,8 +23,8 @@ import com.distrimind.upnp_igd.model.message.header.MXHeader;
 import com.distrimind.upnp_igd.model.message.header.STAllHeader;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Sending search request messages using the supplied search type.
@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  */
 public class SendingSearch extends SendingAsync {
 
-    final private static Logger log = Logger.getLogger(SendingSearch.class.getName());
+    final private static DMLogger log = Log.getLogger(SendingSearch.class);
 
     private final UpnpHeader<?> searchTarget;
     private final int mxSeconds;
@@ -82,8 +82,8 @@ public class SendingSearch extends SendingAsync {
     @Override
 	protected void execute() throws RouterException {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Executing search for target: " + searchTarget.getString() + " with MX seconds: " + getMxSeconds());
+		if (log.isDebugEnabled()) {
+            log.debug("Executing search for target: " + searchTarget.getString() + " with MX seconds: " + getMxSeconds());
 		}
 
 		OutgoingSearchRequest msg = new OutgoingSearchRequest(searchTarget, getMxSeconds());
@@ -95,8 +95,8 @@ public class SendingSearch extends SendingAsync {
                 getUpnpService().getRouter().send(msg);
 
                 // UDA 1.0 is silent about this but UDA 1.1 recommends "a few hundred milliseconds"
-				if (log.isLoggable(Level.FINER)) {
-					log.finer("Sleeping " + getBulkIntervalMilliseconds() + " milliseconds");
+				if (log.isTraceEnabled()) {
+					log.trace("Sleeping " + getBulkIntervalMilliseconds() + " milliseconds");
 				}
 				Thread.sleep(getBulkIntervalMilliseconds());
 

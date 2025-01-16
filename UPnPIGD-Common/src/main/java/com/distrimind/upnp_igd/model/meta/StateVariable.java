@@ -23,8 +23,8 @@ import com.distrimind.upnp_igd.model.types.Datatype;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * The metadata of a named state variable.
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  */
 public class StateVariable<S extends Service<?, ?, ?>> implements Validatable {
 
-    final private static Logger log = Logger.getLogger(StateVariable.class.getName());
+    final private static DMLogger log = Log.getLogger(StateVariable.class);
 
     final private String name;
     final private StateVariableTypeDetails type;
@@ -85,9 +85,9 @@ public class StateVariable<S extends Service<?, ?, ?>> implements Validatable {
                     "StateVariable without name of: " + getService()
             ));
         } else if (!ModelUtil.isValidUDAName(getName())) {
-            if (log.isLoggable(Level.WARNING)) {
-                log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
-                log.warning("Invalid state variable name: " + this);
+            if (log.isWarnEnabled()) {
+                log.warn(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
+                log.warn("Invalid state variable name: " + this);
             }
         }
 

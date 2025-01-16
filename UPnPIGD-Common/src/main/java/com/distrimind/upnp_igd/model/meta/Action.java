@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Describes an action and its input/output arguments.
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  */
 public class Action<S extends Service<?, ?, ?>> implements Validatable {
 
-    final private static Logger log = Logger.getLogger(Action.class.getName());
+    final private static DMLogger log = Log.getLogger(Action.class);
 
     final private String name;
     final private List<ActionArgument<S>> arguments;
@@ -149,9 +149,9 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
                     "Action without name of: " + getService()
             ));
         } else if (!ModelUtil.isValidUDAName(getName())) {
-            if (log.isLoggable(Level.WARNING)) {
-                log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
-                log.warning("Invalid action name: " + this);
+            if (log.isWarnEnabled()) {
+                log.warn(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
+                log.warn("Invalid action name: " + this);
             }
         }
 
@@ -173,15 +173,15 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
             // Check retval
             if (actionArgument.isReturnValue()) {
                 if (actionArgument.getDirection() == ActionArgument.Direction.IN) {
-                    if (log.isLoggable(Level.WARNING)) {
-                        log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
-                        log.warning("Input argument can not have <retval/>");
+                    if (log.isWarnEnabled()) {
+                        log.warn(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
+                        log.warn("Input argument can not have <retval/>");
                     }
                 } else {
                     if (retValueArgument != null) {
-                        if (log.isLoggable(Level.WARNING)) {
-                            log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
-                            log.warning("Only one argument of action '" + getName() + "' can be <retval/>");
+                        if (log.isWarnEnabled()) {
+                            log.warn(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
+                            log.warn("Only one argument of action '" + getName() + "' can be <retval/>");
                         }
                     }
                     retValueArgument = actionArgument;
@@ -191,9 +191,9 @@ public class Action<S extends Service<?, ?, ?>> implements Validatable {
         if (retValueArgument != null) {
             for (ActionArgument<S> a : getArguments()) {
                 if (a.getDirection() == ActionArgument.Direction.OUT) {
-                    if (log.isLoggable(Level.WARNING)) {
-                        log.warning(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
-                        log.warning("Argument '" + retValueArgument.getName() + "' of action '" + getName() + "' is <retval/> but not the first OUT argument");
+                    if (log.isWarnEnabled()) {
+                        log.warn(Icon.UPN_P_SPECIFICATION_VIOLATION_OF + getService().getDevice());
+                        log.warn("Argument '" + retValueArgument.getName() + "' of action '" + getName() + "' is <retval/> but not the first OUT argument");
                     }
                 }
             }

@@ -29,8 +29,8 @@ import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * A singleton wrapper of a <code>org.eclipse.jetty.server.Server</code>.
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  */
 public class JettyServletContainer implements ServletContainerAdapter {
 
-    final private static Logger log = Logger.getLogger(JettyServletContainer.class.getName());
+    final private static DMLogger log = Log.getLogger(JettyServletContainer.class);
 
     // Singleton
     public static final JettyServletContainer INSTANCE = new JettyServletContainer();
@@ -98,7 +98,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
             try {
                 connector.start();
             } catch (Exception ex) {
-                if (log.isLoggable(Level.SEVERE)) log.severe("Couldn't start connector: " + connector + " " + ex);
+                if (log.isErrorEnabled()) log.error("Couldn't start connector: " + connector + " ", ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -117,7 +117,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
                         try {
                             connector.stop();
                         } catch (Exception ex) {
-                            if (log.isLoggable(Level.SEVERE)) log.severe("Couldn't stop connector: " + connector + " " + ex);
+                            if (log.isErrorEnabled()) log.error("Couldn't stop connector: " + connector + " ", ex);
                             throw new RuntimeException(ex);
                         }
                     }
@@ -137,7 +137,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
         if (server.getHandler() != null) {
             return;
         }
-        if (log.isLoggable(Level.INFO)) log.info("Registering UPnP servlet under context path: " + contextPath);
+        if (log.isInfoEnabled()) log.info("Registering UPnP servlet under context path: " + contextPath);
         ServletContextHandler servletHandler =
             new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         if (contextPath != null && !contextPath.isEmpty())
@@ -154,7 +154,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
             try {
                 server.start();
             } catch (Exception ex) {
-                if (log.isLoggable(Level.SEVERE)) log.severe("Couldn't start Jetty server: " + ex);
+                if (log.isErrorEnabled()) log.error("Couldn't start Jetty server: " , ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -167,7 +167,7 @@ public class JettyServletContainer implements ServletContainerAdapter {
             try {
                 server.stop();
             } catch (Exception ex) {
-                if (log.isLoggable(Level.SEVERE)) log.severe("Couldn't stop Jetty server: " + ex);
+                if (log.isErrorEnabled()) log.error("Couldn't stop Jetty server: ", ex);
                 throw new RuntimeException(ex);
             } finally {
                 resetServer();
@@ -204,8 +204,8 @@ public class JettyServletContainer implements ServletContainerAdapter {
         boolean res;
         final String remoteAddress=request.getRemoteAddr();
         try {
-            if (log.isLoggable(Level.FINE))
-                log.fine("Checking if client connection is still open: " + remoteAddress);
+            if (log.isDebugEnabled())
+                log.debug("Checking if client connection is still open: " + remoteAddress);
             if (!request.isAsyncSupported() || !request.isAsyncStarted()) {
                 res=false;
             }
@@ -227,8 +227,8 @@ public class JettyServletContainer implements ServletContainerAdapter {
             res=false;
         }
 
-        if (!res && log.isLoggable(Level.FINE))
-            log.fine("Client connection has been closed: " + remoteAddress);
+        if (!res && log.isDebugEnabled())
+            log.debug("Client connection has been closed: " + remoteAddress);
         return res;
 
     }

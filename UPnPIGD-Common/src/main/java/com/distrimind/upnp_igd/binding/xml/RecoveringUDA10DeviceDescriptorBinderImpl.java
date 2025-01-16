@@ -26,8 +26,8 @@ import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 import org.xml.sax.SAXParseException;
 
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  */
 public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescriptorBinderImpl {
 
-    private static final Logger log = Logger.getLogger(RecoveringUDA10DeviceDescriptorBinderImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(RecoveringUDA10DeviceDescriptorBinderImpl.class);
     static final String endRootTag = "</root>";
     public RecoveringUDA10DeviceDescriptorBinderImpl(NetworkAddressFactory networkAddressFactory) {
         super(networkAddressFactory);
@@ -57,8 +57,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                 device = super.describe(undescribedDevice, descriptorXml);
                 return device;
             } catch (DescriptorBindingException ex) {
-                if (log.isLoggable(Level.WARNING))
-                    log.warning("Regular parsing failed: " + Exceptions.unwrap(ex).getMessage());
+                if (log.isWarnEnabled())
+                    log.warn("Regular parsing failed: ", Exceptions.unwrap(ex).getMessage());
                 originalException = ex;
             }
 
@@ -71,8 +71,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                     device = super.describe(undescribedDevice, fixedXml);
                     return device;
                 } catch (DescriptorBindingException ex) {
-                    if (log.isLoggable(Level.WARNING))
-                        log.warning("Removing leading garbage didn't work: " + Exceptions.unwrap(ex).getMessage());
+                    if (log.isWarnEnabled())
+                        log.warn("Removing leading garbage didn't work: ", Exceptions.unwrap(ex));
                 }
             }
 
@@ -82,8 +82,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                     device = super.describe(undescribedDevice, fixedXml);
                     return device;
                 } catch (DescriptorBindingException ex) {
-                    if (log.isLoggable(Level.WARNING))
-                        log.warning("Removing trailing garbage didn't work: " + Exceptions.unwrap(ex).getMessage());
+                    if (log.isWarnEnabled())
+                        log.warn("Removing trailing garbage didn't work: ", Exceptions.unwrap(ex));
                 }
             }
 
@@ -97,8 +97,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                         device = super.describe(undescribedDevice, fixedXml);
                         return device;
                     } catch (DescriptorBindingException ex) {
-                        if (log.isLoggable(Level.WARNING))
-                            log.warning("Fixing namespace prefix didn't work: " + Exceptions.unwrap(ex).getMessage());
+                        if (log.isWarnEnabled())
+                            log.warn("Fixing namespace prefix didn't work: ", Exceptions.unwrap(ex));
                         lastException = ex;
                     }
                 } else {
@@ -112,8 +112,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
                     device = super.describe(undescribedDevice, fixedXml);
                     return device;
                 } catch (DescriptorBindingException ex) {
-                    if (log.isLoggable(Level.WARNING))
-                        log.warning("Fixing XML entities didn't work: " + Exceptions.unwrap(ex).getMessage());
+                    if (log.isWarnEnabled())
+                        log.warn("Fixing XML entities didn't work: ", Exceptions.unwrap(ex));
                 }
             }
 
@@ -158,13 +158,13 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
 
         int index = descriptorXml.indexOf(endRootTag);
         if (index == -1) {
-            if (log.isLoggable(Level.WARNING))
-                log.warning("No closing </root> element in descriptor");
+            if (log.isWarnEnabled())
+                log.warn("No closing </root> element in descriptor");
             return null;
         }
         if (descriptorXml.length() != index + endRootTag.length()) {
-            if (log.isLoggable(Level.WARNING))
-                log.warning("Detected garbage characters after <root> node, removing"+(ex==null?"":ex.getMessage()));
+            if (log.isWarnEnabled())
+                log.warn("Detected garbage characters after <root> node, removing"+(ex==null?"":ex.getMessage()));
             return descriptorXml.substring(0, index) + endRootTag;
         }
         return null;
@@ -196,25 +196,25 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
         }
 
         String missingNS = matcher.group(1);
-        if (log.isLoggable(Level.WARNING))
-            log.warning("Fixing missing namespace declaration for: " + missingNS);
+        if (log.isWarnEnabled())
+            log.warn("Fixing missing namespace declaration for: " + missingNS);
 
         // Extract <root> attributes
         matcher = patternRoot.matcher(descriptorXml);
         if (!matcher.find() || matcher.groupCount() != 1) {
-            if (log.isLoggable(Level.FINE))
-                log.fine("Could not find <root> element attributes");
+            if (log.isDebugEnabled())
+                log.debug("Could not find <root> element attributes");
             return null;
         }
 
         String rootAttributes = matcher.group(1);
-        if (log.isLoggable(Level.FINE))
-            log.fine("Preserving existing <root> element attributes/namespace declarations: " + matcher.group(0));
+        if (log.isDebugEnabled())
+            log.debug("Preserving existing <root> element attributes/namespace declarations: " + matcher.group(0));
 
         // Extract <root> body
         matcher = patternRootEndRoot.matcher(descriptorXml);
         if (!matcher.find() || matcher.groupCount() != 1) {
-            log.fine("Could not extract body of <root> element");
+            log.debug("Could not extract body of <root> element");
             return null;
         }
 

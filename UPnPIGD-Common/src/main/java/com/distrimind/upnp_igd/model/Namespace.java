@@ -18,8 +18,8 @@ package com.distrimind.upnp_igd.model;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.model.meta.Device;
@@ -57,7 +57,7 @@ import com.distrimind.upnp_igd.util.URIUtil;
  */
 public class Namespace {
 
-    final private static Logger log = Logger.getLogger(Namespace.class.getName());
+    final private static DMLogger log = Log.getLogger(Namespace.class);
 
     public static final String DEVICE = "/dev";
     public static final String SERVICE = "/svc";
@@ -158,14 +158,14 @@ public class Namespace {
         Set<Resource<?>> resources = new HashSet<>();
         List<ValidationError> errors = new ArrayList<>();
 
-        log.fine("Discovering local resources of device graph");
+        log.debug("Discovering local resources of device graph");
         Collection<Resource<?>> discoveredResources = device.discoverResources(this);
         for (Resource<?> resource : discoveredResources) {
-			if (log.isLoggable(Level.FINER)) {
-				log.finer("Discovered: " + resource);
+			if (log.isTraceEnabled()) {
+				log.trace("Discovered: " + resource);
 			}
 			if (!resources.add(resource)) {
-                log.finer("Local resource already exists, queueing validation error");
+                log.trace("Local resource already exists, queueing validation error");
                 errors.add(new ValidationError(
                     getClass(),
                     "resources",

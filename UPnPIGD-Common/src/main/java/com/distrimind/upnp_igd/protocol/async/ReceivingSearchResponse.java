@@ -28,8 +28,8 @@ import com.distrimind.upnp_igd.model.meta.RemoteDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.model.types.UDN;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Handles reception of search response messages.
@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class ReceivingSearchResponse extends ReceivingAsync<IncomingSearchResponse> {
 
-    final private static Logger log = Logger.getLogger(ReceivingSearchResponse.class.getName());
+    final private static DMLogger log = Log.getLogger(ReceivingSearchResponse.class);
 
     public ReceivingSearchResponse(UpnpService upnpService, IncomingDatagramMessage<UpnpResponse> inputMessage) {
         super(upnpService, new IncomingSearchResponse(inputMessage));
@@ -53,28 +53,28 @@ public class ReceivingSearchResponse extends ReceivingAsync<IncomingSearchRespon
 	protected void execute() throws RouterException {
 
         if (!getInputMessage().isSearchResponseMessage()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Ignoring invalid search response message: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Ignoring invalid search response message: " + getInputMessage());
 			}
 			return;
         }
 
         UDN udn = getInputMessage().getRootDeviceUDN();
         if (udn == null) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Ignoring search response message without UDN: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Ignoring search response message without UDN: " + getInputMessage());
 			}
 			return;
         }
 
         RemoteDeviceIdentity rdIdentity = new RemoteDeviceIdentity(getInputMessage());
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Received device search response: " + rdIdentity);
+		if (log.isDebugEnabled()) {
+            log.debug("Received device search response: " + rdIdentity);
 		}
 
 		if (getUpnpService().getRegistry().update(rdIdentity)) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Remote device was already known: " + udn);
+			if (log.isDebugEnabled()) {
+				log.debug("Remote device was already known: " + udn);
 			}
 			return;
         }
@@ -83,23 +83,23 @@ public class ReceivingSearchResponse extends ReceivingAsync<IncomingSearchRespon
         try {
             rd = new RemoteDevice(rdIdentity);
         } catch (ValidationException ex) {
-			if (log.isLoggable(Level.WARNING)) log.warning("Validation errors of device during discovery: " + rdIdentity);
+			if (log.isWarnEnabled()) log.warn("Validation errors of device during discovery: " + rdIdentity);
             for (ValidationError validationError : ex.getErrors()) {
-				if (log.isLoggable(Level.WARNING)) log.warning(validationError.toString());
+				if (log.isWarnEnabled()) log.warn(validationError.toString());
             }
             return;
         }
 
         if (rdIdentity.getDescriptorURL() == null) {
-			if (log.isLoggable(Level.FINER)) {
-				log.finer("Ignoring message without location URL header: " + getInputMessage());
+			if (log.isTraceEnabled()) {
+				log.trace("Ignoring message without location URL header: " + getInputMessage());
 			}
 			return;
         }
 
         if (rdIdentity.getMaxAgeSeconds() == null) {
-			if (log.isLoggable(Level.FINER)) {
-				log.finer("Ignoring message without max-age header: " + getInputMessage());
+			if (log.isTraceEnabled()) {
+				log.trace("Ignoring message without max-age header: " + getInputMessage());
 			}
 			return;
         }

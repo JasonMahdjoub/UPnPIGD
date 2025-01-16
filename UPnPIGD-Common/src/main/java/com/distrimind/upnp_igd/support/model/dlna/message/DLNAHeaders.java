@@ -19,8 +19,8 @@ import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.support.model.dlna.message.header.DLNAHeader;
 
@@ -32,7 +32,7 @@ import com.distrimind.upnp_igd.support.model.dlna.message.header.DLNAHeader;
  */
 public class DLNAHeaders extends UpnpHeaders implements IDLNAHeaders {
 
-    private static final Logger logger = Logger.getLogger(DLNAHeaders.class.getName());
+    final private static DMLogger logger = Log.getLogger(DLNAHeaders.class);
 
     protected Map<DLNAHeader.Type, List<UpnpHeader<?>>> parsedDLNAHeaders;
 
@@ -53,21 +53,21 @@ public class DLNAHeaders extends UpnpHeaders implements IDLNAHeaders {
         
         // This runs as late as possible and only when necessary (getter called and map is dirty)
         parsedDLNAHeaders = new LinkedHashMap<>();
-        if (logger.isLoggable(Level.FINE)) logger.log(Level.FINE, "Parsing all HTTP headers for known UPnP headers: {0}", size());
+        if (logger.isDebugEnabled()) logger.debug("Parsing all HTTP headers for known UPnP headers: {0}", size());
         for (Entry<String, List<String>> entry : entrySet()) {
 
             if (entry.getKey() == null) continue; // Oh yes, the JDK has 'null' HTTP headers
 
             DLNAHeader.Type type = DLNAHeader.Type.getByHttpName(entry.getKey());
             if (type == null) {
-                if (logger.isLoggable(Level.FINE)) logger.log(Level.FINE, "Ignoring non-UPNP HTTP header: {0}", entry.getKey());
+                if (logger.isDebugEnabled()) logger.debug("Ignoring non-UPNP HTTP header: {0}", entry.getKey());
                 continue;
             }
 
             for (String value : entry.getValue()) {
                 UpnpHeader<?> upnpHeader = DLNAHeader.newInstance(type, value);
                 if (upnpHeader == null || upnpHeader.getValue() == null) {
-                    if (logger.isLoggable(Level.FINE)) logger.log(Level.FINE, "Ignoring known but non-parsable header (value violates the UDA specification?) '{0}': {1}", new Object[]{type.getHttpName(), value});
+                    if (logger.isDebugEnabled()) logger.debug("Ignoring known but non-parsable header (value violates the UDA specification?) '{0}': {1}", type.getHttpName(), value);
                 } else {
                     addParsedValue(type, upnpHeader);
                 }
@@ -76,7 +76,7 @@ public class DLNAHeaders extends UpnpHeaders implements IDLNAHeaders {
     }
 
     protected void addParsedValue(DLNAHeader.Type type, UpnpHeader<?> value) {
-        logger.log(Level.FINE, "Adding parsed header: {0}", value);
+        logger.debug("Adding parsed header: {0}", value);
 		List<UpnpHeader<?>> list = parsedDLNAHeaders.computeIfAbsent(type, k -> new LinkedList<>());
 		list.add(value);
     }
@@ -154,18 +154,18 @@ public class DLNAHeaders extends UpnpHeaders implements IDLNAHeaders {
 
     @Override
     public void log() {
-        if (logger.isLoggable(Level.FINE)) {
+        if (logger.isDebugEnabled()) {
             super.log();
             if (parsedDLNAHeaders != null && !parsedDLNAHeaders.isEmpty()) {
-                logger.fine("########################## PARSED DLNA HEADERS ##########################");
+                logger.debug("########################## PARSED DLNA HEADERS ##########################");
                 for (Map.Entry<DLNAHeader.Type, List<UpnpHeader<?>>> entry : parsedDLNAHeaders.entrySet()) {
-                    if (logger.isLoggable(Level.FINE)) logger.log(Level.FINE, "=== TYPE: {0}", entry.getKey());
+                    if (logger.isDebugEnabled()) logger.debug("=== TYPE: {0}", entry.getKey());
                     for (UpnpHeader<?> upnpHeader : entry.getValue()) {
-                        logger.log(Level.FINE, "HEADER: {0}", upnpHeader);
+                        logger.debug("HEADER: {0}", upnpHeader);
                     }
                 }
             }
-            logger.fine("####################################################################");
+            logger.debug("####################################################################");
         }
     }
 

@@ -21,7 +21,9 @@ Adapt into your build.gradle file, the next code :
 	    ...
 	    dependencies {
 		    ...
-		    api(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.2.0-BETA14')
+		    implementation(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.2.0-BETA16')
+            //optional :
+            implementation(group:'org.slf4j', name: 'slf4j-jdk14', version: '2.0.16')
 		    ...
 	    }
 	    ...
@@ -33,24 +35,24 @@ Adapt into your build.gradle file, the next code :
 	    ...
 	    dependencies {
 		    ...
-		    implementation(group:'com.distrimind.upnp_igd.android', name: 'UPnPIGD-Android', version: '1.2.0-BETA14')
+		    implementation(group:'com.distrimind.upnp_igd.android', name: 'UPnPIGD-Android', version: '1.2.0-BETA16')
 		    ...
 	    }
 	    ...
     ```
 
- - Libraries are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
-    ```
-        ...
-        repositories {
-            ...
-            maven {
-                    url "https://artifactory.distri-mind.fr/ui/native/gradle-release/"
-            }
-            ...
-        }
-        ...
-    ```
+   - Libraries are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
+      ```
+          ...
+          repositories {
+              ...
+              maven {
+                      url "https://artifactory.distri-mind.fr/ui/native/gradle-release/"
+              }
+              ...
+          }
+          ...
+      ```
 
 To know what is the last uploaded version, please refer to versions available here : [this repository](https://artifactory.distri-mind.fr/ui/native/DistriMind-Public/com/distrimind/upnp_igd/UPnPIGD-Core/)
 ### With Maven :
@@ -65,8 +67,14 @@ Adapt into your pom.xml file, the next code :
                 <dependency>
                     <groupId>com.distrimind.upnp_igd.desktop</groupId>
                     <artifactId>UPnPIGD-Desktop</artifactId>
-                    <version>1.2.0-BETA14</version>
+                    <version>1.2.0-BETA16</version>
                 </dependency>
+                <-- optional -->
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jdk14</artifactId>
+                    <version>2.0.16</version>
+                </dependency>   
                 ...
             </dependencies>
             ...
@@ -80,7 +88,7 @@ Adapt into your pom.xml file, the next code :
         <dependency>
             <groupId>com.distrimind.upnp_igd.android</groupId>
             <artifactId>UPnPIGD-Android</artifactId>
-            <version>1.2.0-BETA14</version>
+            <version>1.2.0-BETA16</version>
         </dependency>
         ...
     ```

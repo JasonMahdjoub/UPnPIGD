@@ -20,15 +20,15 @@ import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * @author Christian Bauer
  */
 public abstract class SetAVTransportURI extends ActionCallback {
 
-    private static final Logger log = Logger.getLogger(SetAVTransportURI.class.getName());
+    final private static DMLogger log = Log.getLogger(SetAVTransportURI.class);
 
     public SetAVTransportURI(Service<?, ?, ?> service, String uri) {
         this(new UnsignedIntegerFourBytes(0), service, uri, null);
@@ -44,8 +44,8 @@ public abstract class SetAVTransportURI extends ActionCallback {
 
     public SetAVTransportURI(UnsignedIntegerFourBytes instanceId, Service<?, ?, ?> service, String uri, String metadata) {
         super(new ActionInvocation<>(service.getAction("SetAVTransportURI")));
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Creating SetAVTransportURI action for URI: " + uri);
+		if (log.isDebugEnabled()) {
+            log.debug("Creating SetAVTransportURI action for URI: " + uri);
 		}
 		getActionInvocation().setInput("InstanceID", instanceId);
         getActionInvocation().setInput("CurrentURI", uri);
@@ -54,6 +54,6 @@ public abstract class SetAVTransportURI extends ActionCallback {
 
     @Override
     public void success(ActionInvocation<?> invocation) {
-        log.fine("Execution successful");
+        log.debug("Execution successful");
     }
 }

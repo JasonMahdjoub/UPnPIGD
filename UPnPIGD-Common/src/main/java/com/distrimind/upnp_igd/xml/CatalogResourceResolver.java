@@ -25,8 +25,8 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Another namespace-URI-to-whatever (namespace, context, resolver, map) magic thingy.
@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  */
 public class CatalogResourceResolver implements LSResourceResolver {
 
-	private static final Logger log = Logger.getLogger(CatalogResourceResolver.class.getName());
+	final private static DMLogger log = Log.getLogger(CatalogResourceResolver.class);
 
 	private final Map<URI, URL> catalog;
 
@@ -51,13 +51,13 @@ public class CatalogResourceResolver implements LSResourceResolver {
 
 	@Override
 	public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
-		if (log.isLoggable(Level.FINEST)) {
-			log.finest("Trying to resolve system identifier URI in catalog: " + systemId);
+		if (log.isTraceEnabled()) {
+			log.trace("Trying to resolve system identifier URI in catalog: " + systemId);
 		}
 		URL systemURL;
 		if ((systemURL = catalog.get(URI.create(systemId))) != null) {
-			if (log.isLoggable(Level.FINEST)) {
-				log.finest("Loading catalog resource: " + systemURL);
+			if (log.isTraceEnabled()) {
+                log.trace("Loading catalog resource: " + systemURL);
 			}
 			try {
 				Input i = new Input(systemURL.openStream());
@@ -69,7 +69,7 @@ public class CatalogResourceResolver implements LSResourceResolver {
 				throw new RuntimeException(ex);
 			}
 		}
-		if (log.isLoggable(Level.INFO)) log.info(
+		if (log.isInfoEnabled()) log.info(
 				"System identifier not found in catalog, continuing with default resolution " +
 						"(this most likely means remote HTTP request!): " + systemId
 			);

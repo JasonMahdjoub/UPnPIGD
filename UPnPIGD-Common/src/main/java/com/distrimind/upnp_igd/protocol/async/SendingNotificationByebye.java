@@ -20,8 +20,8 @@ import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.types.NotificationSubtype;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Sending <em>BYEBYE</em> notification messages for a registered local device.
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class SendingNotificationByebye extends SendingNotification {
 
-    final private static Logger log = Logger.getLogger(SendingNotificationByebye.class.getName());
+    final private static DMLogger log = Log.getLogger(SendingNotificationByebye.class);
 
     public SendingNotificationByebye(UpnpService upnpService, LocalDevice<?> device) {
         super(upnpService, device);
@@ -47,8 +47,8 @@ public class SendingNotificationByebye extends SendingNotification {
 
     @Override
     protected void execute() throws RouterException {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Sending byebye messages ("+getBulkRepeat()+" times) for: " + getDevice());
+		if (log.isDebugEnabled()) {
+            log.debug("Sending byebye messages ("+getBulkRepeat()+" times) for: " + getDevice());
 		}
 		super.execute();
     }

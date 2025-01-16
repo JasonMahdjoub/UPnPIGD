@@ -22,8 +22,8 @@ import java.net.*;
 import java.security.Permission;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  *
@@ -41,12 +41,12 @@ import java.util.logging.Logger;
  */
 public class FixedSunURLStreamHandler implements URLStreamHandlerFactory {
 
-    final private static Logger log = Logger.getLogger(FixedSunURLStreamHandler.class.getName());
+    final private static DMLogger log = Log.getLogger(FixedSunURLStreamHandler.class);
 
     @Override
 	public URLStreamHandler createURLStreamHandler(String protocol) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Creating new URLStreamHandler for protocol: " + protocol);
+		if (log.isDebugEnabled()) {
+            log.debug("Creating new URLStreamHandler for protocol: " + protocol);
 		}
 		if ("http".equals(protocol)) {
             return new URLStreamHandler() {

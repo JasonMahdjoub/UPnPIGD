@@ -24,8 +24,8 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * This factory tries to work around and patch some Android bugs.
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
 
-    final private static Logger log = Logger.getLogger(AndroidNetworkAddressFactory.class.getName());
+    final private static DMLogger log = Log.getLogger(AndroidNetworkAddressFactory.class);
 
     public AndroidNetworkAddressFactory(int streamListenPort, int multicastPort) {
         super(streamListenPort, multicastPort);
@@ -79,8 +79,8 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
 				}
 
 			} catch (Exception ex) {
-				if (log.isLoggable(Level.SEVERE))
-					log.log(Level.SEVERE,
+				if (log.isErrorEnabled())
+					log.error(
 							"Failed injecting hostName to work around Android InetAddress DNS bug: " + address,
 							ex
 					);
@@ -111,8 +111,8 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
         } catch (Exception ex) {
             // TODO: ICS bug on some models with network interface disappearing while enumerated
             // http://code.google.com/p/android/issues/detail?id=33661
-			if (log.isLoggable(Level.WARNING))
-            	log.warning("Exception while enumerating network interfaces, trying once more: " + ex);
+			if (log.isWarnEnabled())
+            	log.warn("Exception while enumerating network interfaces, trying once more: ", ex);
             super.discoverNetworkInterfaces();
         }
     }

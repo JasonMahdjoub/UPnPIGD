@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite thread-count="24" name="Default Suite">
+  <test thread-count="24" name="testControl">
+    <classes>
+      <class name="com.distrimind.upnp_igd.test.control.ActionInvokeIncomingTest"/>
+      <class name="com.distrimind.upnp_igd.test.control.ActionInvokeOutgoingTest"/>
+      <class name="com.distrimind.upnp_igd.test.control.ActionXMLProcessingTest"/>
+      <class name="com.distrimind.upnp_igd.test.control.InvalidActionXMLProcessingTest"/>
+    </classes>
+  </test> <!-- testControl -->
+  <test thread-count="24" name="testGena">
+    <classes>
+      <class name="com.distrimind.upnp_igd.test.gena.EventXMLProcessingTest"/>
+      <class name="com.distrimind.upnp_igd.test.gena.IncomingSubscriptionLifecycleTest"/>
+      <class name="com.distrimind.upnp_igd.test.control.InvalidActionXMLProcessingTest"/>
+      <class name="com.distrimind.upnp_igd.test.gena.OutgoingSubscriptionFailureTest"/>
+      <class name="com.distrimind.upnp_igd.test.gena.OutgoingSubscriptionLifecycleTest"/>
+    </classes>
+  </test> <!-- testGena -->
+  <test thread-count="24" name="testLocal">
+    <classes>
+      <class name="com.distrimind.upnp_igd.test.local.LocalActionInvocationCSVTest"/>
+      <class name="com.distrimind.upnp_igd.test.local.LocalActionInvocationDatatypesTest"/>
+      <class name="com.distrimind.upnp_igd.test.local.LocalActionInvocationEnumTest"/>
+      <class name="com.distrimind.upnp_igd.test.local.LocalActionInvocationNullTest"/>
+      <class name="com.distrimind.upnp_igd.test.local.LocalDeviceBindingAdvertisementTest"/>
+    </classes>
+  </test> <!-- testLocal -->
+  <test thread-count="24" name="testModel">
+    <classes>
+      <class name="com.distrimind.upnp_igd.test.model.profile.DeviceDetailsProviderTest"/>
+      <class name="com.distrimind.upnp_igd.test.model.DatagramParsingTest"/>
+      <class name="com.distrimind.upnp_igd.test.model.DatatypesTest"/>
+      <class name="com.distrimind.upnp_igd.test.model.DeviceGraphTest"/>
+      <class name="com.distrimind.upnp_igd.test.model.HeaderParsingTest"/>
+      <class name="com.distrimind.upnp_igd.test.model.IconTest"/>
+      <class name="com.distrimind.upnp_igd.test.model.IncompatibilityTest"/>
+      <class name="com.distrimind.upnp_igd.test.model.LocalServiceBindingDatatypesTest"/>
+      <class name="com.distrimind.upnp_igd.test.model.UtilTest"/>
+    </classes>
+  </test> <!-- testModel -->
+  <test thread-count="24" name="testProtocol">
+    <classes>
+      <class name="com.distrimind.upnp_igd.test.protocol.ProtocolFactoryTest"/>
+    </classes>
+  </test> <!-- testProtocol -->
+  <test thread-count="24" name="testResources">
+    <classes>
+      <class name="com.distrimind.upnp_igd.test.resources.DeviceDescriptorRetrievalTest"/>
+      <class name="com.distrimind.upnp_igd.test.resources.InvalidUDA10DeviceDescriptorParsingTest"/>
+      <class name="com.distrimind.upnp_igd.test.resources.ServiceDescriptorRetrievalTest"/>
+      <class name="com.distrimind.upnp_igd.test.resources.UDA10DeviceDescriptorParsingTest"/>
+      <class name="com.distrimind.upnp_igd.test.resources.UDA10ServiceDescriptorParsingTest"/>
+    </classes>
+  </test> <!-- testResources -->
+  <test thread-count="24" name="testSSDP">
+    <classes>
+      <class name="com.distrimind.upnp_igd.test.ssdp.AdvertisementTest"/>
+      <class name="com.distrimind.upnp_igd.test.ssdp.NotifyAliveConcurrentTest"/>
+      <class name="com.distrimind.upnp_igd.test.ssdp.NotifyTest"/>
+      <class name="com.distrimind.upnp_igd.test.ssdp.RegistryExpirationTest"/>
+      <class name="com.distrimind.upnp_igd.test.ssdp.SearchReceivedTest"/>
+      <class name="com.distrimind.upnp_igd.test.ssdp.SearchResponseTest"/>
+    </classes>
+  </test> <!-- testSSDP -->
+</suite> <!-- Default Suite -->
+

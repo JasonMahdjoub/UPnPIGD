@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd;
 
+import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.controlpoint.ControlPoint;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.RemoteDevice;
@@ -33,7 +34,6 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Inject;
 
-import java.util.logging.Logger;
 
 /**
  * Adapter for CDI environments.
@@ -59,7 +59,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class ManagedUpnpService implements UpnpService {
 
-    final private static Logger log = Logger.getLogger(ManagedUpnpService.class.getName());
+    final private static DMLogger log = Log.getLogger(ManagedUpnpService.class);
 
     @Inject
     RegistryListenerAdapter registryListenerAdapter;

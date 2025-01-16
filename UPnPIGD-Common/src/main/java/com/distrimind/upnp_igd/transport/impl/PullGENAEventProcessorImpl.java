@@ -16,8 +16,8 @@
 package com.distrimind.upnp_igd.transport.impl;
 
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.model.message.gena.IncomingEventRequestMessage;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
@@ -49,17 +49,17 @@ import jakarta.enterprise.inject.Alternative;
 @Alternative
 public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 
-	private static final Logger log = Logger.getLogger(PullGENAEventProcessorImpl.class.getName());
+	final private static DMLogger log = Log.getLogger(PullGENAEventProcessorImpl.class);
 
 	@Override
 	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Reading body of: " + requestMessage);
+		if (log.isDebugEnabled()) {
+            log.debug("Reading body of: " + requestMessage);
 		}
-		if (log.isLoggable(Level.FINER)) {
-            log.finer("===================================== GENA BODY BEGIN ============================================");
-            log.finer(requestMessage.getBody() != null ? requestMessage.getBody().toString() : null);
-            log.finer("-===================================== GENA BODY END ============================================");
+		if (log.isTraceEnabled()) {
+            log.trace("===================================== GENA BODY BEGIN ============================================");
+            log.trace(requestMessage.getBody() != null ? requestMessage.getBody().toString() : null);
+            log.trace("-===================================== GENA BODY END ============================================");
         }
 
         String body = getMessageBody(requestMessage);
@@ -126,8 +126,8 @@ public class PullGENAEventProcessorImpl extends GENAEventProcessorImpl {
 		String stateVariableName = element.tagName();
 		for (StateVariable<RemoteService> stateVariable : stateVariables) {
 			if (stateVariable.getName().equals(stateVariableName)) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Reading state variable value: " + stateVariableName);
+				if (log.isDebugEnabled()) {
+					log.debug("Reading state variable value: " + stateVariableName);
 				}
 				String value = getAllText(element);
 				message.getStateVariableValues().add(new StateVariableValue<>(stateVariable, value));

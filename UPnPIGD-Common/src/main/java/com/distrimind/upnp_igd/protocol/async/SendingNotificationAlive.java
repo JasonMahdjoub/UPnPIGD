@@ -20,8 +20,8 @@ import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.types.NotificationSubtype;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Sending <em>ALIVE</em> notification messages for a registered local device.
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class SendingNotificationAlive extends SendingNotification {
 
-    final private static Logger log = Logger.getLogger(SendingNotificationAlive.class.getName());
+    final private static DMLogger log = Log.getLogger(SendingNotificationAlive.class);
 
     public SendingNotificationAlive(UpnpService upnpService, LocalDevice<?> device) {
         super(upnpService, device);
@@ -38,8 +38,8 @@ public class SendingNotificationAlive extends SendingNotification {
 
     @Override
     protected void execute() throws RouterException {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Sending alive messages ("+getBulkRepeat()+" times) for: " + getDevice());
+		if (log.isDebugEnabled()) {
+            log.debug("Sending alive messages ("+getBulkRepeat()+" times) for: " + getDevice());
 		}
 		super.execute();
     }

@@ -9,6 +9,7 @@ junitVersion = "4.13.2"
 androidStubVersion = "4.3.0.0"
 dmFlexiLogXML='1.2.2-STABLE'
 
+
 [libraries]
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoupVersion" }
 jakarta-enterprise-cdi-api = { group = "jakarta.enterprise", name = "jakarta.enterprise.cdi-api", version.ref = "jakartaCdiAPIVersion" }
@@ -22,3 +23,4 @@ androidStub = { group = "stub.android", name = "AndroidStub", version.ref = "and
 dm-flexi-logxml-common = { group = "com.distrimind.flexilogxml", name = "DM-FlexiLogXML-Common", version.ref = "dmFlexiLogXML" }
 dm-flexi-logxml-desktop = { group = "com.distrimind.flexilogxml.desktop", name = "DM-FlexiLogXML-Desktop", version.ref = "dmFlexiLogXML" }
 dm-flexi-logxml-android = { group = "com.distrimind.flexilogxml.android", name = "DM-FlexiLogXML-Android", version.ref = "dmFlexiLogXML" }
+slf4Jdk14 = { group = "org.slf4j", name = "slf4j-jdk14", version.ref = "slf4jVersion" }

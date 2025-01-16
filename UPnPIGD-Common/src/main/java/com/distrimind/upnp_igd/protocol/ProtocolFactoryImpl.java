@@ -15,6 +15,8 @@
 
 package com.distrimind.upnp_igd.protocol;
 
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.transport.RouterException;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.model.Namespace;
@@ -54,8 +56,6 @@ import jakarta.inject.Inject;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Default implementation, directly instantiates the appropriate protocols.
@@ -65,7 +65,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class ProtocolFactoryImpl implements ProtocolFactory {
 
-    final private static Logger log = Logger.getLogger(ProtocolFactoryImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(ProtocolFactoryImpl.class);
 
     protected final UpnpService upnpService;
 
@@ -75,8 +75,8 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
 
     @Inject
     public ProtocolFactoryImpl(UpnpService upnpService) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Creating ProtocolFactory: " + getClass().getName());
+		if (log.isDebugEnabled()) {
+            log.debug("Creating ProtocolFactory: " + getClass().getName());
 		}
 		this.upnpService = upnpService;
     }
@@ -89,8 +89,8 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
     @Override
 	@SuppressWarnings("unchecked")
 	public ReceivingAsync<?> createReceivingAsync(IncomingDatagramMessage<?> message) throws ProtocolCreationException {
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("Creating protocol for incoming asynchronous: " + message);
+        if (log.isDebugEnabled()) {
+            log.debug("Creating protocol for incoming asynchronous: " + message);
         }
 
         if (message.getOperation() instanceof UpnpRequest) {
@@ -148,20 +148,20 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
                     return true;
             }
         } catch (InvalidValueException ex) {
-			if (log.isLoggable(Level.FINEST)) {
-				log.finest("Not a named service type header value: " + usnHeader);
+			if (log.isTraceEnabled()) {
+                log.trace("Not a named service type header value: " + usnHeader);
 			}
 		}
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Service advertisement not supported, dropping it: " + usnHeader);
+		if (log.isDebugEnabled()) {
+            log.debug("Service advertisement not supported, dropping it: " + usnHeader);
 		}
 		return false;
     }
 
     @Override
 	public ReceivingSync<?, ?> createReceivingSync(StreamRequestMessage message) throws ProtocolCreationException {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Creating protocol for incoming synchronous: " + message);
+		if (log.isDebugEnabled()) {
+            log.debug("Creating protocol for incoming synchronous: " + message);
 		}
 
 		if (message.getOperation().getMethod().equals(UpnpRequest.Method.GET)) {
@@ -193,7 +193,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
             // TODO: UPNP VIOLATION: Yamaha does the same
             // /dev/9ab0c000-f668-11de-9976-00a0de870fd4/svc/upnp-org/RenderingControl/event/cb><http://10.189.150.197:42082/dev/9ab0c000-f668-11de-9976-00a0de870fd4/svc/upnp-org/RenderingControl/event/cb
             if (message.getUri().getPath().contains(Namespace.EVENTS + Namespace.CALLBACK_FILE)) {
-                if (log.isLoggable(Level.WARNING)) log.warning("Fixing trailing garbage in event message path: " + message.getUri().getPath());
+                if (log.isWarnEnabled()) log.warn("Fixing trailing garbage in event message path: " + message.getUri().getPath());
                 String invalid = message.getUri().toString();
                 message.setUri(
                     URI.create(invalid.substring(

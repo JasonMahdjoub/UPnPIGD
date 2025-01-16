@@ -14,6 +14,8 @@
  */
  package com.distrimind.upnp_igd.swing.logging;
 
+import org.slf4j.event.Level;
+
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -22,73 +24,71 @@ import java.awt.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Level;
 
-/**
- * @author Christian Bauer
- */
-public abstract class LogTableCellRenderer extends DefaultTableCellRenderer {
+ /**
+  * @author Christian Bauer
+  */
+ public abstract class LogTableCellRenderer extends DefaultTableCellRenderer {
 
-    private static final long serialVersionUID = 1L;
+     private static final long serialVersionUID = 1L;
 
-    // Only accessed by EDT
-    protected SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS", Locale.ROOT);
+     // Only accessed by EDT
+     protected SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS", Locale.ROOT);
 
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value,
-                                                   boolean isSelected, boolean hasFocus,
-                                                   int row, int column) {
+     @Override
+     public Component getTableCellRendererComponent(JTable table, Object value,
+                                                    boolean isSelected, boolean hasFocus,
+                                                    int row, int column) {
 
-        LogMessage message = (LogMessage) value;
+         LogMessage message = (LogMessage) value;
 
-        switch (column) {
-            case 0:
-                if (message.getLevel().equals(Level.SEVERE) ||
-                        message.getLevel().equals(Level.WARNING)) {
+         switch (column) {
+             case 0:
+                 if (message.getLevel().equals(org.slf4j.event.Level.ERROR) ||
+                         message.getLevel().equals(org.slf4j.event.Level.WARN)) {
 
-                    return new JLabel(getWarnErrorIcon());
+                     return new JLabel(getWarnErrorIcon());
 
-                } else if (message.getLevel().equals(Level.FINE)) {
+                 } else if (message.getLevel().equals(org.slf4j.event.Level.DEBUG)) {
 
-                    return new JLabel(getDebugIcon());
+                     return new JLabel(getDebugIcon());
 
-                } else if (message.getLevel().equals(Level.FINER) ||
-                        message.getLevel().equals(Level.FINEST)) {
+                 } else if (message.getLevel().equals(Level.TRACE)) {
 
-                    return new JLabel(getTraceIcon());
+                     return new JLabel(getTraceIcon());
 
 
-                } else {
+                 } else {
 
-                    return new JLabel(getInfoIcon());
+                     return new JLabel(getInfoIcon());
 
-                }
+                 }
 
-            case 1:
-                Date date = new Date(message.getCreatedOn());
-                return super.getTableCellRendererComponent(
-                        table, dateFormat.format(date), isSelected, hasFocus, row, column
-                );
-            case 2:
-                return super.getTableCellRendererComponent(
-                        table, message.getThread(), isSelected, hasFocus, row, column
-                );
-            case 3:
-                return super.getTableCellRendererComponent(
-                        table, message.getSource(), isSelected, hasFocus, row, column
-                );
-            default:
-                return super.getTableCellRendererComponent(
-                        table, message.getMessage().replaceAll("\n", "<NL>").replaceAll("\r", "<CR>"), isSelected, hasFocus, row, column
-                );
-        }
-    }
+             case 1:
+                 Date date = new Date(message.getCreatedOn());
+                 return super.getTableCellRendererComponent(
+                         table, dateFormat.format(date), isSelected, hasFocus, row, column
+                 );
+             case 2:
+                 return super.getTableCellRendererComponent(
+                         table, message.getThread(), isSelected, hasFocus, row, column
+                 );
+             case 3:
+                 return super.getTableCellRendererComponent(
+                         table, message.getSource(), isSelected, hasFocus, row, column
+                 );
+             default:
+                 return super.getTableCellRendererComponent(
+                         table, message.getMessage().replaceAll("\n", "<NL>").replaceAll("\r", "<CR>"), isSelected, hasFocus, row, column
+                 );
+         }
+     }
 
-    protected abstract ImageIcon getWarnErrorIcon();
+     protected abstract ImageIcon getWarnErrorIcon();
 
-    protected abstract ImageIcon getInfoIcon();
+     protected abstract ImageIcon getInfoIcon();
 
-    protected abstract ImageIcon getDebugIcon();
+     protected abstract ImageIcon getDebugIcon();
 
-    protected abstract ImageIcon getTraceIcon();
-}
+     protected abstract ImageIcon getTraceIcon();
+ }

@@ -21,8 +21,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
  */
 public abstract class LastChangeParser extends SAXParser {
 
-    final private static Logger log = Logger.getLogger(LastChangeParser.class.getName());
+    final private static DMLogger log = Log.getLogger(LastChangeParser.class);
 
     public enum CONSTANTS {
         Event,
@@ -106,22 +106,22 @@ public abstract class LastChangeParser extends SAXParser {
         Event event = new Event();
         new RootHandler(event, this);
 
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("Parsing 'LastChange' event XML content");
-            log.fine("===================================== 'LastChange' BEGIN ============================================");
-            log.fine(xml);
-            log.fine("====================================== 'LastChange' END  ============================================");
+        if (log.isDebugEnabled()) {
+            log.debug("Parsing 'LastChange' event XML content");
+            log.debug("===================================== 'LastChange' BEGIN ============================================");
+            log.debug(xml);
+            log.debug("====================================== 'LastChange' END  ============================================");
         }
         parse(new InputSource(new StringReader(xml)));
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Parsed event with instances IDs: " + event.getInstanceIDs().size());
+		if (log.isDebugEnabled()) {
+            log.debug("Parsed event with instances IDs: " + event.getInstanceIDs().size());
 		}
-		if (log.isLoggable(Level.FINEST)) {
+		if (log.isTraceEnabled()) {
             for (InstanceID instanceID : event.getInstanceIDs()) {
-                log.finest("InstanceID '" + instanceID.getId() + "' has values: " + instanceID.getValues().size());
+                log.trace("InstanceID '" + instanceID.getId() + "' has values: " + instanceID.getValues().size());
                 for (EventedValue<?> eventedValue : instanceID.getValues()) {
-                    log.finest(eventedValue.getName() + " => " + eventedValue.getValue());
+                    log.trace(eventedValue.getName() + " => " + eventedValue.getValue());
                 }
             }
         }
@@ -177,7 +177,7 @@ public abstract class LastChangeParser extends SAXParser {
                     getInstance().getValues().add(esv);
             } catch (Exception ex) {
                 // Don't exit, just log a warning
-                if (log.isLoggable(Level.WARNING)) log.warning("Error reading event XML, ignoring value: " + Exceptions.unwrap(ex));
+                if (log.isWarnEnabled()) log.warn("Error reading event XML, ignoring value: ", Exceptions.unwrap(ex));
             }
         }
 

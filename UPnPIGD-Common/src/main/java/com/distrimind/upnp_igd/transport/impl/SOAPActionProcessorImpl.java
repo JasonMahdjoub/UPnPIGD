@@ -48,8 +48,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation based on the <em>W3C DOM</em> XML processing API.
@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  */
 public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandler {
 
-    private static final Logger log = Logger.getLogger(SOAPActionProcessorImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(SOAPActionProcessorImpl.class);
     public static final String FOR = " for: ";
     public static final String SOAP_BODY_BEGIN = "===================================== SOAP BODY BEGIN ============================================";
     public static final String SOAP_BODY_END = "-===================================== SOAP BODY END ============================================";
@@ -71,8 +71,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     @Override
     public <S extends Service<?, ?, ?>> void writeBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing body of " + requestMessage + FOR + actionInvocation);
+		if (log.isDebugEnabled()) {
+            log.debug("Writing body of " + requestMessage + FOR + actionInvocation);
 		}
 
 		try {
@@ -84,10 +84,10 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
             writeBodyRequest(d, body, requestMessage, actionInvocation);
 
-            if (log.isLoggable(Level.FINER)) {
-                log.finer(SOAP_BODY_BEGIN);
-                log.finer(requestMessage.getBodyString());
-                log.finer(SOAP_BODY_END);
+            if (log.isTraceEnabled()) {
+				log.trace(SOAP_BODY_BEGIN);
+                log.trace(requestMessage.getBodyString());
+                log.trace(SOAP_BODY_END);
             }
 
         } catch (Exception ex) {
@@ -98,8 +98,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     @Override
     public <S extends Service<?, ?, ?>> void writeBody(ActionResponseMessage responseMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing body of " + responseMessage + FOR + actionInvocation);
+		if (log.isDebugEnabled()) {
+            log.debug("Writing body of " + responseMessage + FOR + actionInvocation);
 		}
 
 		try {
@@ -115,10 +115,10 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                 writeBodyResponse(d, body, responseMessage, actionInvocation);
             }
 
-            if (log.isLoggable(Level.FINER)) {
-                log.finer(SOAP_BODY_BEGIN);
-                log.finer(responseMessage.getBodyString());
-                log.finer(SOAP_BODY_END);
+            if (log.isTraceEnabled()) {
+				log.trace(SOAP_BODY_BEGIN);
+                log.trace(responseMessage.getBodyString());
+                log.trace(SOAP_BODY_END);
             }
 
         } catch (Exception ex) {
@@ -129,13 +129,13 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     @Override
     public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Reading body of " + requestMessage + FOR + actionInvocation);
+		if (log.isDebugEnabled()) {
+            log.debug("Reading body of " + requestMessage + FOR + actionInvocation);
 		}
-		if (log.isLoggable(Level.FINER)) {
-            log.finer(SOAP_BODY_BEGIN);
-            log.finer(requestMessage.getBodyString());
-            log.finer(SOAP_BODY_END);
+		if (log.isTraceEnabled()) {
+            log.trace(SOAP_BODY_BEGIN);
+            log.trace(requestMessage.getBodyString());
+            log.trace(SOAP_BODY_END);
         }
 
         String body = getMessageBody(requestMessage);
@@ -160,13 +160,13 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     @Override
     public <S extends Service<?, ?, ?>> void readBody(ActionResponseMessage responseMsg, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Reading body of " + responseMsg + FOR + actionInvocation);
+		if (log.isDebugEnabled()) {
+            log.debug("Reading body of " + responseMsg + FOR + actionInvocation);
 		}
-		if (log.isLoggable(Level.FINER)) {
-            log.finer(SOAP_BODY_BEGIN);
-            log.finer(responseMsg.getBodyString());
-            log.finer(SOAP_BODY_END);
+		if (log.isTraceEnabled()) {
+            log.trace(SOAP_BODY_BEGIN);
+            log.trace(responseMsg.getBodyString());
+            log.trace(SOAP_BODY_END);
         }
 
         String body = getMessageBody(responseMsg);
@@ -291,8 +291,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                                                 ActionRequestMessage message,
                                                 ActionInvocation<S> actionInvocation) {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing action request element: " + actionInvocation.getAction().getName());
+		if (log.isDebugEnabled()) {
+            log.debug("Writing action request element: " + actionInvocation.getAction().getName());
 		}
 
 		Element actionRequestElement = d.createElementNS(
@@ -309,8 +309,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                                                ActionInvocation<S> actionInvocation) {
         NodeList bodyChildren = bodyElement.getChildNodes();
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Looking for action request element matching namespace:" + message.getActionNamespace());
+		if (log.isDebugEnabled()) {
+            log.debug("Looking for action request element matching namespace:" + message.getActionNamespace());
 		}
 
 		for (int i = 0; i < bodyChildren.getLength(); i++) {
@@ -326,8 +326,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                     throw new UnsupportedDataException(
                         "Illegal or missing namespace on action request element: " + bodyChild
                     );
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Reading action request element: " + unprefixedName);
+				if (log.isDebugEnabled()) {
+					log.debug("Reading action request element: " + unprefixedName);
 				}
 				return (Element) bodyChild;
             }
@@ -344,8 +344,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                                                  ActionResponseMessage message,
                                                  ActionInvocation<S> actionInvocation) {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing action response element: " + actionInvocation.getAction().getName());
+		if (log.isDebugEnabled()) {
+            log.debug("Writing action response element: " + actionInvocation.getAction().getName());
 		}
 		Element actionResponseElement = d.createElementNS(
                 message.getActionNamespace(),
@@ -366,13 +366,13 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                 continue;
 
             if (getUnprefixedNodeName(bodyChild).equals(actionInvocation.getAction().getName() + "Response")) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Reading action response element: " + getUnprefixedNodeName(bodyChild));
+				if (log.isDebugEnabled()) {
+					log.debug("Reading action response element: " + getUnprefixedNodeName(bodyChild));
 				}
 				return (Element) bodyChild;
             }
         }
-        log.fine("Could not read action response element");
+        log.debug("Could not read action response element");
         return null;
     }
 
@@ -383,8 +383,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                                              ActionInvocation<S> actionInvocation) {
 
         for (ActionArgument<S> argument : actionInvocation.getAction().getInputArguments()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Writing action input argument: " + argument.getName());
+			if (log.isDebugEnabled()) {
+				log.debug("Writing action input argument: " + argument.getName());
 			}
 			String value = actionInvocation.getInput(argument) != null ? actionInvocation.getInput(argument).toString() : "";
             XMLUtil.appendNewElement(d, actionRequestElement, argument.getName(), value);
@@ -408,8 +408,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                                               ActionInvocation<S> actionInvocation) {
 
         for (ActionArgument<S> argument : actionInvocation.getAction().getOutputArguments()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Writing action output argument: " + argument.getName());
+			if (log.isDebugEnabled()) {
+				log.debug("Writing action output argument: " + argument.getName());
 			}
 			String value = actionInvocation.getOutput(argument) != null ? actionInvocation.getOutput(argument).toString() : "";
             XMLUtil.appendNewElement(d, actionResponseElement, argument.getName(), value);
@@ -447,8 +447,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         int errorCode = actionInvocation.getFailure().getErrorCode();
         String errorDescription = actionInvocation.getFailure().getMessage();
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing fault element: " + errorCode + " - " + errorDescription);
+		if (log.isDebugEnabled()) {
+            log.debug("Writing fault element: " + errorCode + " - " + errorDescription);
 		}
 
 		XMLUtil.appendNewElement(d, upnpErrorElement, "errorCode", Integer.toString(errorCode));
@@ -518,13 +518,13 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                 int numericCode = Integer.parseInt(errorCode);
                 ErrorCode standardErrorCode = ErrorCode.getByCode(numericCode);
                 if (standardErrorCode != null) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
+					if (log.isDebugEnabled()) {
+						log.debug("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
 					}
 					return new ActionException(standardErrorCode, errorDescription, false);
                 } else {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Reading fault element: " + numericCode + " - " + errorDescription);
+					if (log.isDebugEnabled()) {
+						log.debug("Reading fault element: " + numericCode + " - " + errorDescription);
 					}
 					return new ActionException(numericCode, errorDescription);
                 }
@@ -584,8 +584,8 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
                         ErrorCode.ARGUMENT_VALUE_INVALID,
                         "Could not find argument '" + arg.getName() + "' node");
             }
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Reading action argument: " + arg.getName());
+			if (log.isDebugEnabled()) {
+				log.debug("Reading action argument: " + arg.getName());
 			}
 			String value = XMLUtil.getTextContent(node);
             values.add(createValue(arg, value));
@@ -659,7 +659,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     @Override
 	public void warning(SAXParseException e) throws SAXException {
-        if (log.isLoggable(Level.WARNING)) log.warning(e.toString());
+        if (log.isWarnEnabled()) log.warn(e.toString());
     }
 
     @Override

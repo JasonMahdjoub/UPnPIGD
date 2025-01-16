@@ -28,8 +28,8 @@ import com.distrimind.upnp_igd.model.types.UDN;
 
 import java.net.URI;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Describes either a root or embedded device.
@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  */
 public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, S>, S extends Service<DI, D, S>> implements Validatable {
 
-    final private static Logger log = Logger.getLogger(Device.class.getName());
+    final private static DMLogger log = Log.getLogger(Device.class);
     public static final String UNCHECKED = "unchecked";
 
     final private DI identity;
@@ -88,7 +88,7 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
                     if(iconErrors.isEmpty()) {
                         validIcons.add(icon);
                     } else {
-                        if (log.isLoggable(Level.WARNING)) log.warning("Discarding invalid '" + icon + "': " + iconErrors);
+                        if (log.isWarnEnabled()) log.warn("Discarding invalid '" + icon + "': " + iconErrors);
                     }
                 }
             }
@@ -119,9 +119,9 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device<DI, D, 
 
         List<ValidationError> errors = validate();
         if (!errors.isEmpty()) {
-            if (log.isLoggable(Level.FINEST)) {
+            if (log.isTraceEnabled()) {
                 for (ValidationError error : errors) {
-                    log.finest(error.toString());
+                    log.trace(error.toString());
                 }
             }
             throw new ValidationException("Validation of device graph failed, call getErrors() on exception", errors);

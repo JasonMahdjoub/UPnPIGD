@@ -41,8 +41,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * State-machine based implementation of AVTransport service.
@@ -81,7 +81,7 @@ import java.util.logging.Logger;
  */
 public class AVTransportService<T extends AVTransport> extends AbstractAVTransportService {
 
-    final private static Logger log = Logger.getLogger(AVTransportService.class.getName());
+    final private static DMLogger log = Log.getLogger(AVTransportService.class);
 
     final private Map<Long, AVTransportStateMachine> stateMachines = new ConcurrentHashMap<>();
 
@@ -310,14 +310,14 @@ public class AVTransportService<T extends AVTransport> extends AbstractAVTranspo
             long id = instanceId.getValue();
             AVTransportStateMachine stateMachine = stateMachines.get(id);
             if (stateMachine == null && id == 0 && createDefaultTransport) {
-                log.fine("Creating default transport instance with ID '0'");
+                log.debug("Creating default transport instance with ID '0'");
                 stateMachine = createStateMachine(instanceId);
                 stateMachines.put(id, stateMachine);
             } else if (stateMachine == null) {
                 throw new AVTransportException(AVTransportErrorCode.INVALID_INSTANCE_ID);
             }
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Found transport control with ID '" + id + "'");
+			if (log.isDebugEnabled()) {
+				log.debug("Found transport control with ID '" + id + "'");
 			}
 			return stateMachine;
         }

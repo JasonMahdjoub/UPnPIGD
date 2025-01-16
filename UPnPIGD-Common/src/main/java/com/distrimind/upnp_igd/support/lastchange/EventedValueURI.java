@@ -22,15 +22,15 @@ import com.distrimind.upnp_igd.util.Exceptions;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * @author Christian Bauer
  */
 public class EventedValueURI extends EventedValue<URI> {
 
-    final private static Logger log = Logger.getLogger(EventedValueURI.class.getName());
+    final private static DMLogger log = Log.getLogger(EventedValueURI.class);
 
     public EventedValueURI(URI value) {
         super(value);
@@ -47,7 +47,7 @@ public class EventedValueURI extends EventedValue<URI> {
             // to parse whatever devices give us, like the Roku which sends "unknown url".
             return super.valueOf(s);
         } catch (InvalidValueException ex) {
-            if (log.isLoggable(Level.INFO)) log.info("Ignoring invalid URI in evented value '" + s +"': " + Exceptions.unwrap(ex));
+            if (log.isInfoEnabled()) log.info("Ignoring invalid URI in evented value '" + s +"': ", Exceptions.unwrap(ex));
             return null;
         }
     }

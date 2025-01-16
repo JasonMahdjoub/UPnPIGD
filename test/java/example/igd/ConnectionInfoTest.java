@@ -44,7 +44,8 @@ import static org.testng.Assert.assertEquals;
  */
 public class ConnectionInfoTest {
 
-    @Test
+    @SuppressWarnings({"SingleStatementInBlock", "unchecked", "CastCanBeRemovedNarrowingVariableType"})
+	@Test
     public void testStatusInfo() throws Exception {
 
         final boolean[] tests = new boolean[1];
@@ -85,7 +86,8 @@ public class ConnectionInfoTest {
 
     }
 
-    @Test
+    @SuppressWarnings({"CastCanBeRemovedNarrowingVariableType", "unchecked"})
+	@Test
     public void testIPAddress() throws Exception {
 
         final boolean[] tests = new boolean[1];
@@ -118,7 +120,7 @@ public class ConnectionInfoTest {
         for (boolean test : tests) {
             assert test;
         }
-        for (boolean test : ((LocalService<TestConnection>) service).getManager().getImplementation().tests) {
+		for (boolean test : ((LocalService<TestConnection>) service).getManager().getImplementation().tests) {
             assert test;
         }
 

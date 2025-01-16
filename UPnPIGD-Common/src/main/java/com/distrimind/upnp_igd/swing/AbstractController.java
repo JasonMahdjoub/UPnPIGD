@@ -24,15 +24,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * @author Christian Bauer
  */
 public class AbstractController<V extends Container> implements Controller<V> {
 
-    static final Logger log = Logger.getLogger(AbstractController.class.getName());
+    final private static DMLogger log = Log.getLogger(AbstractController.class);
 
     private V view;
     private Controller<? extends Container> parentController;
@@ -101,7 +101,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
      */
     @Override
 	public void dispose() {
-        log.fine("Disposing controller");
+        log.debug("Disposing controller");
         Iterator<Controller<?>> it = subControllers.iterator();
         while (it.hasNext()) {
             Controller<?> subcontroller = it.next();
@@ -148,8 +148,8 @@ public class AbstractController<V extends Container> implements Controller<V> {
      */
     @Override
     public <E extends Event<?>> void registerEventListener(Class<E> eventClass, EventListener<E> eventListener) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Registering listener: " + eventListener + " for event type: " + eventClass.getName());
+		if (log.isDebugEnabled()) {
+            log.debug("Registering listener: " + eventListener + " for event type: " + eventClass.getName());
 		}
 		java.util.List<EventListener<?>> listenersForEvent = eventListeners.get(eventClass);
         if (listenersForEvent == null) {
@@ -187,35 +187,35 @@ public class AbstractController<V extends Container> implements Controller<V> {
     @Override
 	public <PAYLOAD> void fireEvent(Event<PAYLOAD> event, boolean global) {
         if (!event.alreadyFired(this)) {
-            log.finest("Event has not been fired already");
+            log.trace("Event has not been fired already");
             if (eventListeners.get(event.getClass()) != null) {
-				if (log.isLoggable(Level.FINEST)) {
-					log.finest("Have listeners for this type of event: " + eventListeners.get(event.getClass()));
+				if (log.isTraceEnabled()) {
+					log.trace("Have listeners for this type of event: " + eventListeners.get(event.getClass()));
 				}
 				for (EventListener<?> eventListener : eventListeners.get(event.getClass())) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Processing event: " + event.getClass().getName() + " with listener: " + eventListener.getClass().getName());
+					if (log.isDebugEnabled()) {
+						log.debug("Processing event: " + event.getClass().getName() + " with listener: " + eventListener.getClass().getName());
 					}
 					eventListener.handleUntypedEvent(event);
                 }
             }
             event.addFiredInController(this);
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Passing event: " + event.getClass().getName() + " DOWN in the controller hierarchy");
+			if (log.isDebugEnabled()) {
+				log.debug("Passing event: " + event.getClass().getName() + " DOWN in the controller hierarchy");
 			}
 			for (Controller<?> subController : subControllers) subController.fireEvent(event, global);
         } else {
-            log.finest("Event already fired here, ignoring...");
+            log.trace("Event already fired here, ignoring...");
         }
         if (getParentController() != null
                 && !event.alreadyFired(getParentController())
                 && global) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Passing event: " + event.getClass().getName() + " UP in the controller hierarchy");
+			if (log.isDebugEnabled()) {
+				log.debug("Passing event: " + event.getClass().getName() + " UP in the controller hierarchy");
 			}
 			getParentController().fireEvent(event, true);
         } else {
-            log.finest("Event does not propagate up the tree from here");
+            log.trace("Event does not propagate up the tree from here");
         }
     }
 
@@ -239,12 +239,12 @@ public class AbstractController<V extends Container> implements Controller<V> {
 
             if (action != null) {
                 // This controller can handle the action
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Handling command: " + actionCommand + " with action: " + action.getClass());
+				if (log.isDebugEnabled()) {
+					log.debug("Handling command: " + actionCommand + " with action: " + action.getClass());
 				}
 				try {
                     preActionExecute();
-                    log.fine("Dispatching to action for execution");
+                    log.debug("Dispatching to action for execution");
                     action.executeInController(this, actionEvent);
                     postActionExecute();
                 } catch (RuntimeException ex) {
@@ -259,7 +259,7 @@ public class AbstractController<V extends Container> implements Controller<V> {
             } else {
                 // Let's try the parent controller in the hierarchy
                 if (getParentController() != null) {
-                    log.fine("Passing action on to parent controller");
+                    log.debug("Passing action on to parent controller");
                     parentController.actionPerformed(actionEvent);
                 } else {
                     throw new RuntimeException("Nobody is responsible for action command: " + actionCommand);

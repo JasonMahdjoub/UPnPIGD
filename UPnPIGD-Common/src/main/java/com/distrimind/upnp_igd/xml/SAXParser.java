@@ -35,15 +35,15 @@ import javax.xml.validation.SchemaFactory;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * @author Christian Bauer
  */
 public class SAXParser {
 
-	final private static Logger log = Logger.getLogger(SAXParser.class.getName());
+	final private static DMLogger log = Log.getLogger(SAXParser.class);
 
 	public static final URI XML_SCHEMA_NAMESPACE =
 			URI.create("https://www.w3.org/2001/xml.xsd");
@@ -201,8 +201,8 @@ public class SAXParser {
 								 Attributes attributes) throws SAXException {
 			this.chars = new StringBuilder();
 			this.attributes = new AttributesImpl(attributes); // see https://docstore.mik.ua/orelly/xml/sax2/ch05_01.htm, section 5.1.1
-			if (log.isLoggable(Level.FINER)) {
-				log.finer(getClass().getSimpleName() + " starting: " + localName);
+			if (log.isTraceEnabled()) {
+				log.trace(getClass().getSimpleName() + " starting: " + localName);
 			}
 		}
 
@@ -218,15 +218,15 @@ public class SAXParser {
 							   String qName) throws SAXException {
 
 			if (isLastElement(uri, localName, qName)) {
-				if (log.isLoggable(Level.FINER)) {
-					log.finer(getClass().getSimpleName() + ": last element, switching to parent: " + localName);
+				if (log.isTraceEnabled()) {
+					log.trace(getClass().getSimpleName() + ": last element, switching to parent: " + localName);
 				}
 				switchToParent();
 				return;
 			}
 
-			if (log.isLoggable(Level.FINER)) {
-				log.finer(getClass().getSimpleName() + " ending: " + localName);
+			if (log.isTraceEnabled()) {
+				log.trace(getClass().getSimpleName() + " ending: " + localName);
 			}
 		}
 

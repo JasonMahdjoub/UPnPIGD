@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Transforms known and standardized DLNA attributes from/to string representation.
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public abstract class DLNAAttribute<T> {
 
-    final private static Logger log = Logger.getLogger(DLNAAttribute.class.getName());
+    final private static DMLogger log = Log.getLogger(DLNAAttribute.class);
 
     /**
      * Maps a standardized DLNA attribute to potential attribute subtypes.
@@ -128,22 +128,22 @@ public abstract class DLNAAttribute<T> {
         for (int i = 0; i < type.getAttributeTypes().size() && attr == null; i++) {
             Class<? extends DLNAAttribute<?>> attributeClass = type.getAttributeTypes().get(i);
             try {
-				if (log.isLoggable(Level.FINEST)) {
-					log.finest("Trying to parse DLNA '" + type + "' with class: " + attributeClass.getSimpleName());
+				if (log.isTraceEnabled()) {
+					log.trace("Trying to parse DLNA '" + type + "' with class: " + attributeClass.getSimpleName());
 				}
 				attr = attributeClass.getConstructor().newInstance();
                 if (attributeValue != null) {
                     attr.setString(attributeValue, contentFormat);
                 }
             } catch (InvalidDLNAProtocolAttributeException ex) {
-				if (log.isLoggable(Level.FINEST)) {
-					log.finest("Invalid DLNA attribute value for tested type: " + attributeClass.getSimpleName() + " - " + ex.getMessage());
+				if (log.isTraceEnabled()) {
+					log.trace("Invalid DLNA attribute value for tested type: " + attributeClass.getSimpleName() + " - ", ex.getMessage());
 				}
 				attr = null;
             } catch (Exception ex) {
-                if (log.isLoggable(Level.SEVERE)) {
-                    log.severe("Error instantiating DLNA attribute of type '" + type + "' with value: " + attributeValue);
-                    log.log(Level.SEVERE, "Exception root cause: ", Exceptions.unwrap(ex));
+                if (log.isErrorEnabled()) {
+                    log.error("Error instantiating DLNA attribute of type '" + type + "' with value: " + attributeValue);
+                    log.error("Exception root cause: ", Exceptions.unwrap(ex));
                 }
             }
         }

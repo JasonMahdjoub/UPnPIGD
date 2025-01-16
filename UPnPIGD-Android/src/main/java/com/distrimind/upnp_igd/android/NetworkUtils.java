@@ -18,9 +18,10 @@ package com.distrimind.upnp_igd.android;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.model.ModelUtil;
 
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
 
 /**
  * Android network helpers.
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class NetworkUtils {
 
-    final private static Logger log = Logger.getLogger(NetworkUtils.class.getName());
+    final private static DMLogger log = Log.getLogger(NetworkUtils.class);
 
     static public NetworkInfo getConnectedNetworkInfo(Context context) {
 

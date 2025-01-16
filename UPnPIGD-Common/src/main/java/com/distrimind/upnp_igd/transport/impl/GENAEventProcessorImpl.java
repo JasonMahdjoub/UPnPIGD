@@ -41,8 +41,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 
 import java.io.StringReader;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation based on the <em>W3C DOM</em> XML processing API.
@@ -51,7 +51,7 @@ import java.util.logging.Logger;
  */
 public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler {
 
-    private static final Logger log = Logger.getLogger(GENAEventProcessorImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(GENAEventProcessorImpl.class);
 
     protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
     	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
@@ -59,8 +59,8 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
     @Override
 	public void writeBody(OutgoingEventRequestMessage requestMessage) throws UnsupportedDataException {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Writing body of: " + requestMessage);
+		if (log.isDebugEnabled()) {
+            log.debug("Writing body of: " + requestMessage);
 		}
 
 		try {
@@ -74,10 +74,10 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
             requestMessage.setBody(UpnpMessage.BodyType.STRING, toString(d));
 
-            if (log.isLoggable(Level.FINER)) {
-                log.finer("===================================== GENA BODY BEGIN ============================================");
-                log.finer(requestMessage.getBody().toString());
-                log.finer("====================================== GENA BODY END =============================================");
+            if (log.isTraceEnabled()) {
+				log.trace("===================================== GENA BODY BEGIN ============================================");
+                log.trace(requestMessage.getBody().toString());
+                log.trace("====================================== GENA BODY END =============================================");
             }
 
         } catch (Exception ex) {
@@ -88,13 +88,13 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     @Override
 	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Reading body of: " + requestMessage);
+		if (log.isDebugEnabled()) {
+            log.debug("Reading body of: " + requestMessage);
 		}
-		if (log.isLoggable(Level.FINER)) {
-            log.finer("===================================== GENA BODY BEGIN ============================================");
-            log.finer(requestMessage.getBody() != null ? requestMessage.getBody().toString() : "null");
-            log.finer("-===================================== GENA BODY END ============================================");
+		if (log.isTraceEnabled()) {
+            log.trace("===================================== GENA BODY BEGIN ============================================");
+            log.trace(requestMessage.getBody() != null ? requestMessage.getBody().toString() : "null");
+            log.trace("-===================================== GENA BODY END ============================================");
         }
 
         String body = getMessageBody(requestMessage);
@@ -174,8 +174,8 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
                     String stateVariableName = getUnprefixedNodeName(propertyChild);
                     for (StateVariable<RemoteService> stateVariable : stateVariables) {
                         if (stateVariable.getName().equals(stateVariableName)) {
-							if (log.isLoggable(Level.FINE)) {
-								log.fine("Reading state variable value: " + stateVariableName);
+							if (log.isDebugEnabled()) {
+								log.debug("Reading state variable value: " + stateVariableName);
 							}
 							String value = XMLUtil.getTextContent(propertyChild);
                             message.getStateVariableValues().add(
@@ -218,7 +218,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
     @Override
 	public void warning(SAXParseException e) throws SAXException {
-        if (log.isLoggable(Level.WARNING)) log.warning(e.toString());
+        if (log.isWarnEnabled()) log.warn(e.toString());
     }
 
     @Override

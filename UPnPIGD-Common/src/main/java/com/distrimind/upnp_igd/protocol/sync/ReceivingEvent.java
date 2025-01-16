@@ -28,8 +28,8 @@ import com.distrimind.upnp_igd.model.message.gena.OutgoingEventResponseMessage;
 import com.distrimind.upnp_igd.model.resource.ServiceEventCallbackResource;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Handles incoming GENA event messages.
@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  */
 public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, OutgoingEventResponseMessage> {
 
-    final private static Logger log = Logger.getLogger(ReceivingEvent.class.getName());
+    final private static DMLogger log = Log.getLogger(ReceivingEvent.class);
 
     public ReceivingEvent(UpnpService upnpService, StreamRequestMessage inputMessage) {
         super(upnpService, inputMessage);
@@ -55,7 +55,7 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
 	protected OutgoingEventResponseMessage executeSync() throws RouterException {
 
         if (!getInputMessage().isContentTypeTextUDA()) {
-			if (log.isLoggable(Level.WARNING)) log.warning("Received without or with invalid Content-Type: " + getInputMessage());
+			if (log.isWarnEnabled()) log.warn("Received without or with invalid Content-Type: " + getInputMessage());
             // We continue despite the invalid UPnP message because we can still hope to convert the content
             // return new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.UNSUPPORTED_MEDIA_TYPE));
         }
@@ -67,8 +67,8 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
                 );
 
         if (resource == null) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("No local resource found: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("No local resource found: " + getInputMessage());
 			}
 			return new OutgoingEventResponseMessage(new UpnpResponse(UpnpResponse.Status.NOT_FOUND));
         }
@@ -78,29 +78,29 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
 
         // Error conditions UDA 1.0 section 4.2.1
         if (requestMessage.getSubscrptionId() == null) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Subscription ID missing in event request: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Subscription ID missing in event request: " + getInputMessage());
 			}
 			return new OutgoingEventResponseMessage(new UpnpResponse(UpnpResponse.Status.PRECONDITION_FAILED));
         }
 
         if (!requestMessage.hasValidNotificationHeaders()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Missing NT and/or NTS headers in event request: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Missing NT and/or NTS headers in event request: " + getInputMessage());
 			}
 			return new OutgoingEventResponseMessage(new UpnpResponse(UpnpResponse.Status.BAD_REQUEST));
         }
 
         if (!requestMessage.hasValidNotificationHeaders()) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Invalid NT and/or NTS headers in event request: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Invalid NT and/or NTS headers in event request: " + getInputMessage());
 			}
 			return new OutgoingEventResponseMessage(new UpnpResponse(UpnpResponse.Status.PRECONDITION_FAILED));
         }
 
         if (requestMessage.getSequence() == null) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Sequence missing in event request: " + getInputMessage());
+			if (log.isDebugEnabled()) {
+				log.debug("Sequence missing in event request: " + getInputMessage());
 			}
 			return new OutgoingEventResponseMessage(new UpnpResponse(UpnpResponse.Status.PRECONDITION_FAILED));
         }
@@ -110,8 +110,8 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
             getUpnpService().getConfiguration().getGenaEventProcessor().readBody(requestMessage);
 
 		} catch (final UnsupportedDataException ex) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Can't read event message request body, " + ex);
+			if (log.isDebugEnabled()) {
+				log.debug("Can't read event message request body, ", ex);
 			}
 
 			// Pass the parsing failure on to any listeners, so they can take action if necessary
@@ -132,13 +132,13 @@ public class ReceivingEvent extends ReceivingSync<StreamRequestMessage, Outgoing
                 getUpnpService().getRegistry().getWaitRemoteSubscription(requestMessage.getSubscrptionId());
 
         if (subscription == null) {
-			if (log.isLoggable(Level.SEVERE)) log.severe("Invalid subscription ID, no active subscription: " + requestMessage);
+			if (log.isErrorEnabled()) log.error("Invalid subscription ID, no active subscription: " + requestMessage);
             return new OutgoingEventResponseMessage(new UpnpResponse(UpnpResponse.Status.PRECONDITION_FAILED));
         }
 
         getUpnpService().getConfiguration().getRegistryListenerExecutor().execute(
 				() -> {
-					log.fine("Calling active subscription with event state variable values");
+					log.debug("Calling active subscription with event state variable values");
 					subscription.receive(
 							requestMessage.getSequence(),
 							requestMessage.getStateVariableValues()

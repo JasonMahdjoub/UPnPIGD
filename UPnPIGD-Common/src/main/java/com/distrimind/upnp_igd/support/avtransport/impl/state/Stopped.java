@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.support.avtransport.impl.state;
 
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.support.avtransport.lastchange.AVTransportVariable;
 import com.distrimind.upnp_igd.support.model.AVTransport;
 import com.distrimind.upnp_igd.support.model.SeekMode;
@@ -24,21 +25,21 @@ import com.distrimind.upnp_igd.support.model.TransportState;
 
 import java.net.URI;
 import java.util.List;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
 
 /**
  * @author Christian Bauer
  */
 public abstract class Stopped<T extends AVTransport> extends AbstractState<T> {
 
-    final private static Logger log = Logger.getLogger(Stopped.class.getName());
+    final private static DMLogger log = Log.getLogger(Stopped.class);
 
     public Stopped(T transport) {
         super(transport);
     }
 
     public void onEntry() {
-        log.fine("Setting transport state to STOPPED");
+        log.debug("Setting transport state to STOPPED");
         getTransport().setTransportInfo(
                 new TransportInfo(
                         TransportState.STOPPED,

@@ -24,8 +24,8 @@ import com.distrimind.upnp_igd.protocol.ProtocolFactory;
 import com.distrimind.upnp_igd.protocol.ReceivingSync;
 import com.distrimind.upnp_igd.util.Exceptions;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * A runnable representation of a single HTTP request/response procedure.
@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  */
 public abstract class UpnpStream implements Runnable {
 
-    private static final Logger log = Logger.getLogger(UpnpStream.class.getName());
+    final private static DMLogger log = Log.getLogger(UpnpStream.class);
 
     protected final ProtocolFactory protocolFactory;
     protected ReceivingSync<?, ?> syncProtocol;
@@ -69,21 +69,21 @@ public abstract class UpnpStream implements Runnable {
      * @return The TCP (HTTP) stream response message, or <code>null</code> if a 404 should be sent to the client.
      */
     public StreamResponseMessage process(StreamRequestMessage requestMsg) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Processing stream request message: " + requestMsg);
+		if (log.isDebugEnabled()) {
+            log.debug("Processing stream request message: " + requestMsg);
 		}
 
 		try {
             // Try to get a protocol implementation that matches the request message
             syncProtocol = getProtocolFactory().createReceivingSync(requestMsg);
         } catch (ProtocolCreationException ex) {
-			if (log.isLoggable(Level.WARNING)) log.warning("Processing stream request failed - " + Exceptions.unwrap(ex).toString());
+			if (log.isWarnEnabled()) log.warn("Processing stream request failed - ", Exceptions.unwrap(ex));
             return new StreamResponseMessage(UpnpResponse.Status.NOT_IMPLEMENTED);
         }
 
         // Run it
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Running protocol for synchronous message processing: " + syncProtocol);
+		if (log.isDebugEnabled()) {
+            log.debug("Running protocol for synchronous message processing: " + syncProtocol);
 		}
 		syncProtocol.run();
 
@@ -92,11 +92,11 @@ public abstract class UpnpStream implements Runnable {
 
         if (responseMsg == null) {
             // That's ok, the caller is supposed to handle this properly (e.g. convert it to HTTP 404)
-            log.finer("Protocol did not return any response message");
+            log.trace("Protocol did not return any response message");
             return null;
         }
-		if (log.isLoggable(Level.FINER)) {
-			log.finer("Protocol returned response: " + responseMsg);
+		if (log.isTraceEnabled()) {
+			log.trace("Protocol returned response: " + responseMsg);
 		}
 		return responseMsg;
     }

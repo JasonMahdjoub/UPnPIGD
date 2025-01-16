@@ -30,8 +30,8 @@ import com.distrimind.upnp_igd.protocol.sync.SendingSubscribe;
 import com.distrimind.upnp_igd.util.Exceptions;
 
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Subscribe and receive events from a service through GENA.
@@ -74,7 +74,7 @@ import java.util.logging.Logger;
  */
 public abstract class SubscriptionCallback implements Runnable {
 
-    protected static Logger log = Logger.getLogger(SubscriptionCallback.class.getName());
+    final private static DMLogger log = Log.getLogger(SubscriptionCallback.class);
 
     protected final Service<?, ?, ?> service;
     protected final Integer requestedDurationSeconds;
@@ -128,7 +128,7 @@ public abstract class SubscriptionCallback implements Runnable {
     private <T> void establishLocalSubscription(LocalService<T> service) {
 
         if (getControlPoint().getRegistry().getLocalDevice(service.getDevice().getIdentity().getUdn(), false) == null) {
-            log.fine("Local device service is currently not registered, failing subscription immediately");
+            log.debug("Local device service is currently not registered, failing subscription immediately");
             failed(null, null, new IllegalStateException("Local device is not registered"));
             return;
         }
@@ -168,8 +168,8 @@ public abstract class SubscriptionCallback implements Runnable {
                         @Override
 						public void eventReceived() {
                             synchronized (SubscriptionCallback.this) {
-								if (log.isLoggable(Level.FINE)) {
-									log.fine("Local service state updated, notifying callback, sequence is: " + getCurrentSequence());
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Local service state updated, notifying callback, sequence is: " + getCurrentSequence());
 								}
 								SubscriptionCallback.this.eventReceived(this);
                                 incrementSequence();
@@ -177,26 +177,27 @@ public abstract class SubscriptionCallback implements Runnable {
                         }
                     };
 
-            log.fine("Local device service is currently registered, also registering subscription");
+            log.debug("Local device service is currently registered, also registering subscription");
             getControlPoint().getRegistry().addLocalSubscription(localSubscription);
 
-            log.fine("Notifying subscription callback of local subscription availablity");
+            log.debug("Notifying subscription callback of local subscription availablity");
             localSubscription.establish();
 
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Simulating first initial event for local subscription callback, sequence: " + localSubscription.getCurrentSequence());
+			if (log.isDebugEnabled()) {
+				log.debug("Simulating first initial event for local subscription callback, sequence: " + localSubscription.getCurrentSequence());
 			}
 			eventReceived(localSubscription);
             localSubscription.incrementSequence();
 
-            log.fine("Starting to monitor state changes of local service");
+            log.debug("Starting to monitor state changes of local service");
             localSubscription.registerOnService();
 
         } catch (Exception ex) {
-			if (log.isLoggable(Level.FINE)) {
-				log.fine("Local callback creation failed: " + ex);
+			if (log.isDebugEnabled()) {
+				log.debug("Local callback creation failed: ", ex);
 			}
-            if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
+
+            if (log.isDebugEnabled()) log.debug("Exception root cause: ", Exceptions.unwrap(ex));
             if (localSubscription != null)
                 getControlPoint().getRegistry().removeLocalSubscription(localSubscription);
             failed(localSubscription, null, ex);
@@ -273,16 +274,16 @@ public abstract class SubscriptionCallback implements Runnable {
     }
 
     private void endLocalSubscription(LocalGENASubscription<?> subscription) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Removing local subscription and ending it in callback: " + subscription);
+		if (log.isDebugEnabled()) {
+            log.debug("Removing local subscription and ending it in callback: " + subscription);
 		}
 		getControlPoint().getRegistry().removeLocalSubscription(subscription);
         subscription.end(null); // No reason, on controlpoint request
     }
 
     private void endRemoteSubscription(RemoteGENASubscription subscription) {
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Ending remote subscription: " + subscription);
+		if (log.isDebugEnabled()) {
+            log.debug("Ending remote subscription: " + subscription);
 		}
 		getControlPoint().getConfiguration().getSyncProtocolExecutorService().execute(
                 getControlPoint().getProtocolFactory().createSendingUnsubscribe(subscription)
@@ -378,11 +379,12 @@ public abstract class SubscriptionCallback implements Runnable {
      */
 	protected void invalidMessage(RemoteGENASubscription remoteGENASubscription,
                                   UnsupportedDataException ex) {
-        if (log.isLoggable(Level.INFO)) log.info("Invalid event message received, causing: " + ex);
-        if (log.isLoggable(Level.FINE)) {
-            log.fine("------------------------------------------------------------------------------");
-            log.fine(ex.getData() != null ? ex.getData().toString() : "null");
-            log.fine("------------------------------------------------------------------------------");
+
+        if (log.isInfoEnabled()) log.info("Invalid event message received, causing: ",  ex);
+        if (log.isDebugEnabled()) {
+            log.debug("------------------------------------------------------------------------------");
+            log.debug(ex.getData() != null ? ex.getData().toString() : "null");
+            log.debug("------------------------------------------------------------------------------");
         }
     }
 

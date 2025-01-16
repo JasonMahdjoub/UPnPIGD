@@ -15,8 +15,8 @@
 
 package com.distrimind.upnp_igd.support.model;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * @author Christian Bauer
@@ -31,7 +31,7 @@ public enum Protocol {
     XBMC_GET("xbmc-get"),
     OTHER("other");
 
-    private static final Logger LOG = Logger.getLogger(Protocol.class.getName());
+    final private static DMLogger log = Log.getLogger(Protocol.class);
 
     private final String protocolString;
 
@@ -50,7 +50,7 @@ public enum Protocol {
                 return protocol;
             }
         }
-        if (LOG.isLoggable(Level.INFO)) LOG.info("Unsupported OTHER protocol string: " + s);
+        if (log.isInfoEnabled()) log.info("Unsupported OTHER protocol string: " + s);
         return OTHER;
     }
 

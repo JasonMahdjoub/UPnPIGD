@@ -105,7 +105,8 @@ public class PortMappingTest {
 
     }
 
-    @Test
+    @SuppressWarnings({"CastCanBeRemovedNarrowingVariableType", "unchecked"})
+	@Test
     public void addDeleteManually() throws Exception {
 
         final boolean[] tests = new boolean[2];
@@ -186,7 +187,7 @@ public class PortMappingTest {
         for (boolean test : tests) {
             assert test;
         }
-        for (boolean test : ((LocalService<TestConnection>)service).getManager().getImplementation().tests) {
+		for (boolean test : ((LocalService<TestConnection>)service).getManager().getImplementation().tests) {
             assert test;
         }
 

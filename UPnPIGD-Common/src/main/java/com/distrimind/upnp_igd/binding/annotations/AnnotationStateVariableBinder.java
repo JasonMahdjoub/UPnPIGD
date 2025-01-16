@@ -30,15 +30,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * @author Christian Bauer
  */
 public class AnnotationStateVariableBinder {
 
-    private static final Logger log = Logger.getLogger(AnnotationStateVariableBinder.class.getName());
+    final private static DMLogger log = Log.getLogger(AnnotationStateVariableBinder.class);
 
     protected UpnpStateVariable annotation;
     protected String name;
@@ -70,8 +70,8 @@ public class AnnotationStateVariableBinder {
     }
 
     protected StateVariable<?> createStateVariable() throws LocalServiceBindingException {
-        if (log.isLoggable(Level.FINE))
-            log.fine("Creating state variable '" + getName() + "' with accessor: " + getAccessor());
+        if (log.isDebugEnabled())
+            log.debug("Creating state variable '" + getName() + "' with accessor: " + getAccessor());
 
         // Datatype
         Datatype<?> datatype = createDatatype();
@@ -92,8 +92,8 @@ public class AnnotationStateVariableBinder {
             } else if (getAccessor() != null && getAccessor().getReturnType().isEnum()) {
                 allowedValues = getAllowedValues(getAccessor().getReturnType());
             } else {
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Not restricting allowed values (of string typed state var): " + getName());
+                if (log.isTraceEnabled())
+                    log.trace("Not restricting allowed values (of string typed state var): " + getName());
             }
 
             if (allowedValues != null && defaultValue != null) {
@@ -127,8 +127,8 @@ public class AnnotationStateVariableBinder {
                     getAnnotation().allowedValueStep()
                 );
             } else {
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Not restricting allowed value range (of numeric typed state var): " + getName());
+                if (log.isTraceEnabled())
+                    log.trace("Not restricting allowed value range (of numeric typed state var): " + getName());
             }
 
             // Check if the default value is an allowed value
@@ -163,15 +163,15 @@ public class AnnotationStateVariableBinder {
         int eventMinimumDelta = 0;
         if (sendEvents) {
             if (getAnnotation().eventMaximumRateMilliseconds() > 0) {
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Moderating state variable events using maximum rate (milliseconds): " + getAnnotation().eventMaximumRateMilliseconds());
+                if (log.isTraceEnabled())
+                    log.trace("Moderating state variable events using maximum rate (milliseconds): " + getAnnotation().eventMaximumRateMilliseconds());
                 eventMaximumRateMillis = getAnnotation().eventMaximumRateMilliseconds();
             }
 
             if (getAnnotation().eventMinimumDelta() > 0 && Datatype.Builtin.isNumeric(datatype.getBuiltin())) {
                 // TODO: Doesn't consider floating point types!
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Moderating state variable events using minimum delta: " + getAnnotation().eventMinimumDelta());
+                if (log.isTraceEnabled())
+                    log.trace("Moderating state variable events using minimum delta: " + getAnnotation().eventMinimumDelta());
                 eventMinimumDelta = getAnnotation().eventMinimumDelta();
             }
         }
@@ -191,19 +191,19 @@ public class AnnotationStateVariableBinder {
 
         if (declaredDatatype.isEmpty() && getAccessor() != null) {
             Class<?> returnType = getAccessor().getReturnType();
-            if (log.isLoggable(Level.FINER))
-                log.finer("Using accessor return type as state variable type: " + returnType);
+            if (log.isTraceEnabled())
+                log.trace("Using accessor return type as state variable type: " + returnType);
 
             if (ModelUtil.isStringConvertibleType(getStringConvertibleTypes(), returnType)) {
                 // Enums and toString() convertible types are always state variables with type STRING
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Return type is string-convertible, using string datatype");
+                if (log.isTraceEnabled())
+                    log.trace("Return type is string-convertible, using string datatype");
                 return Datatype.Default.STRING.getBuiltinType().getDatatype();
             } else {
                 Datatype.Default defaultDatatype = Datatype.Default.getByJavaType(returnType);
                 if (defaultDatatype != null) {
-                    if (log.isLoggable(Level.FINER))
-                        log.finer("Return type has default UPnP datatype: " + defaultDatatype);
+                    if (log.isTraceEnabled())
+                        log.trace("Return type has default UPnP datatype: " + defaultDatatype);
                     return defaultDatatype.getBuiltinType().getDatatype();
                 }
             }
@@ -211,7 +211,7 @@ public class AnnotationStateVariableBinder {
 
         // We can also guess that if the allowed values are set then it's a string
         if (declaredDatatype.isEmpty() && (getAnnotation().allowedValues().length > 0 || getAnnotation().allowedValuesEnum() != void.class)) {
-            log.finer("State variable has restricted allowed values, hence using 'string' datatype");
+            log.trace("State variable has restricted allowed values, hence using 'string' datatype");
             declaredDatatype = "string";
         }
 
@@ -219,14 +219,14 @@ public class AnnotationStateVariableBinder {
         if (declaredDatatype.isEmpty()) {
             throw new LocalServiceBindingException("Could not detect datatype of state variable: " + getName());
         }
-        if (log.isLoggable(Level.FINER))
-            log.finer("Trying to find built-in UPnP datatype for detected name: " + declaredDatatype);
+        if (log.isTraceEnabled())
+            log.trace("Trying to find built-in UPnP datatype for detected name: " + declaredDatatype);
 
         // Now try to find the actual UPnP datatype by mapping the Default to Builtin
         Datatype.Builtin builtin = Datatype.Builtin.getByDescriptorName(declaredDatatype);
         if (builtin != null) {
-            if (log.isLoggable(Level.FINER))
-                log.finer("Found built-in UPnP datatype: " + builtin);
+            if (log.isTraceEnabled())
+                log.trace("Found built-in UPnP datatype: " + builtin);
             return builtin.getDatatype();
         } else {
             // TODO
@@ -241,8 +241,8 @@ public class AnnotationStateVariableBinder {
             // The declared default value needs to match the datatype
             try {
                 datatype.valueOf(getAnnotation().defaultValue());
-                if (log.isLoggable(Level.FINER))
-                    log.finer("Found state variable default value: " + getAnnotation().defaultValue());
+                if (log.isTraceEnabled())
+                    log.trace("Found state variable default value: " + getAnnotation().defaultValue());
                 return getAnnotation().defaultValue();
             } catch (Exception ex) {
                 throw new LocalServiceBindingException(
@@ -259,8 +259,8 @@ public class AnnotationStateVariableBinder {
         if (!enumType.isEnum()) {
             throw new LocalServiceBindingException("Allowed values type is not an Enum: " + enumType);
         }
-        if (log.isLoggable(Level.FINER))
-            log.finer("Restricting allowed values of state variable to Enum: " + getName());
+        if (log.isTraceEnabled())
+            log.trace("Restricting allowed values of state variable to Enum: " + getName());
         Collection<String> allowedValueStrings = new ArrayList<>(enumType.getEnumConstants().length);
         for (int i = 0; i < enumType.getEnumConstants().length; i++) {
             Object o = enumType.getEnumConstants()[i];
@@ -269,8 +269,8 @@ public class AnnotationStateVariableBinder {
                         "Allowed value string (that is, Enum constant name) is longer than 32 characters: " + o
                 );
             }
-            if (log.isLoggable(Level.FINER))
-                log.finer("Adding allowed value (converted to string): " + o);
+            if (log.isTraceEnabled())
+                log.trace("Adding allowed value (converted to string): " + o);
             allowedValueStrings.add( o.toString());
         }
 

@@ -23,8 +23,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Implements the timeout/callback processing and unifies exception handling.
@@ -33,13 +33,13 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractStreamClient<C extends StreamClientConfiguration, REQUEST> implements StreamClient<C> {
 
-    final private static Logger log = Logger.getLogger(AbstractStreamClient.class.getName());
+    final private static DMLogger log = Log.getLogger(AbstractStreamClient.class);
 
     @Override
     public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) throws InterruptedException {
 
-        if (log.isLoggable(Level.FINE))
-            log.fine("Preparing HTTP request: " + requestMessage);
+        if (log.isDebugEnabled())
+            log.debug("Preparing HTTP request: " + requestMessage);
 
         REQUEST request = createRequest(requestMessage);
         if (request == null)
@@ -56,8 +56,8 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
 
         // Wait on the current thread for completion
         try {
-            if (log.isLoggable(Level.FINE))
-                log.fine(
+            if (log.isDebugEnabled())
+                log.debug(
                     "Waiting " + getConfiguration().getTimeoutSeconds()
                     + " seconds for HTTP request to complete: " + requestMessage
                 );
@@ -66,25 +66,25 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
 
             // Log a warning if it took too long
             long elapsed = System.currentTimeMillis() - start;
-            if (log.isLoggable(Level.FINEST))
-                log.finest("Got HTTP response in " + elapsed + "ms: " + requestMessage);
+            if (log.isTraceEnabled())
+                log.trace("Got HTTP response in " + elapsed + "ms: " + requestMessage);
             if (getConfiguration().getLogWarningSeconds() > 0
                 && elapsed > getConfiguration().getLogWarningSeconds()* 1000L) {
-                if (log.isLoggable(Level.WARNING)) log.warning("HTTP request took a long time (" + elapsed + "ms): " + requestMessage);
+                if (log.isWarnEnabled()) log.warn("HTTP request took a long time (" + elapsed + "ms): " + requestMessage);
             }
 
             return response;
 
         } catch (InterruptedException ex) {
 
-            if (log.isLoggable(Level.FINE))
-                log.fine("Interruption, aborting request: " + requestMessage);
+            if (log.isDebugEnabled())
+                log.debug("Interruption, aborting request: " + requestMessage);
             abort(request);
             throw new InterruptedException("HTTP request interrupted and aborted");
 
         } catch (TimeoutException ex) {
 
-            if (log.isLoggable(Level.INFO)) log.info(
+            if (log.isInfoEnabled()) log.info(
                 "Timeout of " + getConfiguration().getTimeoutSeconds()
                 + " seconds while waiting for HTTP request to complete, aborting: " + requestMessage
                 );
@@ -94,7 +94,7 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
         } catch (ExecutionException ex) {
             Throwable cause = ex.getCause();
             if (!logExecutionException(cause)) {
-                if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "HTTP request failed: " + requestMessage, Exceptions.unwrap(cause));
+                if (log.isWarnEnabled()) log.warn("HTTP request failed: " + requestMessage, Exceptions.unwrap(cause));
             }
             return null;
         } finally {

@@ -20,15 +20,15 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * @author Christian Bauer
  */
 public class CallbackHeader extends UpnpHeader<List<URL>> {
 
-    final private static Logger log = Logger.getLogger(CallbackHeader.class.getName());
+    final private static DMLogger log = Log.getLogger(CallbackHeader.class);
 
     public CallbackHeader() {
         setValue(new ArrayList<>());
@@ -64,7 +64,7 @@ public class CallbackHeader extends UpnpHeader<List<URL>> {
                 String sp = oneSplit.trim();
 
                 if (!sp.startsWith("http://")) {
-                    if (log.isLoggable(Level.WARNING)) log.warning("Discarding non-http callback URL: " + sp);
+                    if (log.isWarnEnabled()) log.warn("Discarding non-http callback URL: " + sp);
                     continue;
                 }
 
@@ -82,7 +82,7 @@ public class CallbackHeader extends UpnpHeader<List<URL>> {
             	    */
                     url.toURI();
                 } catch (URISyntaxException ex) {
-                    if (log.isLoggable(Level.WARNING)) log.log(Level.WARNING, "Discarding callback URL, not a valid URI on this platform: " + url, ex);
+                    if (log.isWarnEnabled()) log.warn("Discarding callback URL, not a valid URI on this platform: " + url, ex);
                     continue;
                 }
 

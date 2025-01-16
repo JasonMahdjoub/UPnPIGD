@@ -15,131 +15,104 @@
 
 package com.distrimind.upnp_igd.support.shared;
 
-import com.distrimind.upnp_igd.support.shared.log.LogView;
-import jakarta.inject.Inject;
-import com.distrimind.upnp_igd.swing.Application;
-import com.distrimind.upnp_igd.swing.logging.LogMessage;
-import com.distrimind.upnp_igd.swing.logging.LoggingHandler;
-import com.distrimind.upnp_igd.util.OS;
-import com.distrimind.upnp_igd.util.logging.LoggingUtil;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.logging.LogManager;
+import com.distrimind.upnp_igd.UpnpService;
+import com.distrimind.upnp_igd.UpnpServiceImpl;
+import com.distrimind.upnp_igd.model.message.header.STAllHeader;
+import com.distrimind.upnp_igd.model.meta.LocalDevice;
+import com.distrimind.upnp_igd.model.meta.RemoteDevice;
+import com.distrimind.upnp_igd.registry.Registry;
+import com.distrimind.upnp_igd.registry.RegistryListener;
 
 /**
  * @author Christian Bauer
  */
-public abstract class Main implements ShutdownHandler, Thread.UncaughtExceptionHandler {
+public class Main {
 
-    @Inject
-    LogView.Presenter logPresenter;
+	@SuppressWarnings("PMD.SystemPrintln")
+	public static void main(String[] args) throws Exception {
 
-    final protected JFrame errorWindow = new JFrame();
+		// UPnP discovery is asynchronous, we need a callback
+		RegistryListener listener = new RegistryListener() {
 
-    // In addition to the JUL-configured handler, show log messages in the UI
-    final protected LoggingHandler loggingHandler =
-        new LoggingHandler() {
-            @Override
-            protected void log(LogMessage msg) {
-                logPresenter.pushMessage(msg);
-            }
-        };
-
-    protected boolean isRegularShutdown;
-
-    public void init() {
-
-        try {
-            // Platform specific setup
-            if (OS.checkForMac())
-                NewPlatformApple.setup(this, getAppName());
-
-            // Some UI stuff (of course, why would the OS L&F be the default -- too easy?!)
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-        } catch (Exception ignored) {
-            // Ignore...
-        }
-
-        // Exception handler
-        errorWindow.setPreferredSize(new Dimension(900, 400));
-        errorWindow.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                errorWindow.dispose();
-            }
-        });
-        Thread.setDefaultUncaughtExceptionHandler(this);
-
-        // Shutdown behavior
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			if (!isRegularShutdown) { // Don't run the hook if everything is already stopped
-				shutdown();
+			@Override
+			public void remoteDeviceDiscoveryStarted(Registry registry,
+													 RemoteDevice device) {
+				System.out.println(
+						"Discovery started: " + device.getDisplayString()
+				);
 			}
-		}));
 
-        // Wire logging UI into JUL, don't reset JUL root logger but
-        // add our handler if there is a JUL config file
-        if (System.getProperty("java.util.logging.config.file") == null) {
-            LoggingUtil.resetRootHandler(loggingHandler);
-        } else {
-            LogManager.getLogManager().getLogger("").addHandler(loggingHandler);
-        }
-    }
+			@Override
+			public void remoteDeviceDiscoveryFailed(Registry registry, RemoteDevice device, Exception ex) {
+				System.out.println(
+						"Discovery failed: " + device.getDisplayString() + " => " + ex
+				);
+			}
 
-    @Override
-    public void shutdown() {
-        isRegularShutdown = true;
-        SwingUtilities.invokeLater(errorWindow::dispose);
-    }
+			@Override
+			public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
+				System.out.println(
+						"Remote device available: " + device.getDisplayString()
+				);
+			}
 
-    @Override
-	@SuppressWarnings({"PMD.SystemPrintln", "PMD.DoNotTerminateVM"})
-    public void uncaughtException(Thread thread, final Throwable throwable) {
+			@Override
+			public void remoteDeviceUpdated(Registry registry, RemoteDevice device) {
+				System.out.println(
+						"Remote device updated: " + device.getDisplayString()
+				);
+			}
 
-        System.err.println("In thread '" + thread + "' uncaught exception: " + throwable);
-        throwable.printStackTrace(System.err);
+			@Override
+			public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
+				System.out.println(
+						"Remote device removed: " + device.getDisplayString()
+				);
+			}
 
-        SwingUtilities.invokeLater(() -> {
-			errorWindow.getContentPane().removeAll();
+			@Override
+			public void localDeviceAdded(Registry registry, LocalDevice<?> device) {
+				System.out.println(
+						"Local device added: " + device.getDisplayString()
+				);
+			}
 
-			JTextArea textArea = new JTextArea();
-			textArea.setEditable(false);
-			StringBuilder text = new StringBuilder();
+			@Override
+			public void localDeviceRemoved(Registry registry, LocalDevice<?> device) {
+				System.out.println(
+						"Local device removed: " + device.getDisplayString()
+				);
+			}
 
-			text.append("An exceptional error occurred!\nYou can try to continue or exit the application.\n\n");
-			text.append("-------------------------------------------------------------------------------------------------------------\n\n");
-			Writer stackTrace = new StringWriter();
-			throwable.printStackTrace(new PrintWriter(stackTrace));
-			text.append(stackTrace);
+			@Override
+			public void beforeShutdown(Registry registry) {
+				System.out.println(
+						"Before shutdown, the registry has devices: " + registry.getDevices().size()
+				);
+			}
 
-			textArea.setText(text.toString());
-			JScrollPane pane = new JScrollPane(textArea);
-			errorWindow.getContentPane().add(pane, BorderLayout.CENTER);
+			@Override
+			public void afterShutdown() {
+				System.out.println("Shutdown of registry complete!");
 
-			JButton exitButton = new JButton("Exit Application");
-			exitButton.addActionListener(e -> System.exit(1));
+			}
+		};
 
-			errorWindow.getContentPane().add(exitButton, BorderLayout.SOUTH);
+		// This will create necessary network resources for UPnP right away
+		System.out.println("Starting UPnPIGD...");
+		UpnpService upnpService = new UpnpServiceImpl(listener);
 
-			errorWindow.pack();
-			Application.center(errorWindow);
-			textArea.setCaretPosition(0);
+		// Send a search message to all devices and services, they should respond soon
+		System.out.println("Sending SEARCH message to all devices...");
+		upnpService.getControlPoint().search(new STAllHeader());
 
-			errorWindow.setVisible(true);
-		});
-    }
+		// Let's wait 10 seconds for them to respond
+		System.out.println("Waiting 10 seconds before shutting down...");
+		Thread.sleep(10000);
 
-    protected void removeLoggingHandler() {
-        LogManager.getLogManager().getLogger("").removeHandler(loggingHandler);
-    }
-
-    abstract protected String getAppName();
-
+		// Release all resources and advertise BYEBYE to other UPnP devices
+		System.out.println("Stopping UPnPIGD...");
+		upnpService.shutdown();
+	}
 }
+

@@ -31,8 +31,8 @@ import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation based on a UDP <code>MulticastSocket</code>.
@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  */
 public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceiverConfigurationImpl> {
 
-    private static final Logger log = Logger.getLogger(MulticastReceiverImpl.class.getName());
+    final private static DMLogger log = Log.getLogger(MulticastReceiverImpl.class);
 
     final protected MulticastReceiverConfigurationImpl configuration;
 
@@ -78,14 +78,14 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
 
         try {
 
-			if (log.isLoggable(Level.INFO)) log.info("Creating wildcard socket (for receiving multicast datagrams) on port: " + configuration.getPort());
+			if (log.isInfoEnabled()) log.info("Creating wildcard socket (for receiving multicast datagrams) on port: " + configuration.getPort());
             multicastAddress = new InetSocketAddress(configuration.getGroup(), configuration.getPort());
 
             socket = new MulticastSocket(configuration.getPort());
             socket.setReuseAddress(true);
             socket.setReceiveBufferSize(32768); // Keep a backlog of incoming datagrams if we are not fast enough
 
-			if (log.isLoggable(Level.INFO)) log.info("Joining multicast group: " + multicastAddress + " on network interface: " + multicastInterface.getDisplayName());
+			if (log.isInfoEnabled()) log.info("Joining multicast group: " + multicastAddress + " on network interface: " + multicastInterface.getDisplayName());
             socket.joinGroup(multicastAddress, multicastInterface);
 
         } catch (Exception ex) {
@@ -97,12 +97,12 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
 	synchronized public void stop() {
         if (socket != null && !socket.isClosed()) {
             try {
-                log.fine("Leaving multicast group");
+                log.debug("Leaving multicast group");
                 socket.leaveGroup(multicastAddress, multicastInterface);
                 // Well this doesn't work and I have no idea why I get "java.net.SocketException: Can't assign requested address"
             } catch (Exception ex) {
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Could not leave multicast group: " + ex);
+				if (log.isDebugEnabled()) {
+					log.debug("Could not leave multicast group: ", ex);
 				}
 			}
             // So... just close it and ignore the log messages
@@ -113,8 +113,8 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
     @Override
 	public void run() {
 
-		if (log.isLoggable(Level.FINE)) {
-			log.fine("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
+		if (log.isDebugEnabled()) {
+            log.debug("Entering blocking receiving loop, listening for UDP datagrams on: " + socket.getLocalAddress());
 		}
 		while (true) {
 
@@ -132,8 +132,8 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
                         );
                 if (receivedOnLocalAddress==null)
                     continue;
-				if (log.isLoggable(Level.FINE)) {
-					log.fine(
+				if (log.isDebugEnabled()) {
+					log.debug(
 							"UDP datagram received from: " + datagram.getAddress().getHostAddress()
 									+ ":" + datagram.getPort()
 									+ " on local interface: " + multicastInterface.getDisplayName()
@@ -147,17 +147,17 @@ public class MulticastReceiverImpl implements MulticastReceiver<MulticastReceive
                 router.received(idm);
 
             } catch (SocketException ex) {
-                log.fine("Socket closed");
+                log.debug("Socket closed");
                 break;
             } catch (UnsupportedDataException ex) {
-				if (log.isLoggable(Level.INFO)) log.info("Could not read datagram: " + ex.getMessage());
+				if (log.isInfoEnabled()) log.info("Could not read datagram: ", ex);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
         }
         try {
             if (!socket.isClosed()) {
-                log.fine("Closing multicast socket");
+                log.debug("Closing multicast socket");
                 socket.close();
             }
         } catch (Exception ex) {

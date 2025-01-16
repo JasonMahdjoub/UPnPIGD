@@ -16,8 +16,8 @@
 package com.distrimind.upnp_igd.transport.impl;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
 
 import com.distrimind.upnp_igd.model.action.ActionArgumentValue;
 import com.distrimind.upnp_igd.model.action.ActionException;
@@ -55,7 +55,7 @@ import org.w3c.dom.NodeList;
 @Alternative
 public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
 
-    protected static Logger log = Logger.getLogger(SOAPActionProcessor.class.getName());
+    final private static DMLogger log = Log.getLogger(SOAPActionProcessor.class);
 
     @Override
 	public <S extends Service<?, ?, ?>> void readBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
@@ -211,8 +211,8 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
                             "Could not find argument '" + arg.getName() + "' node");
                 }
 
-				if (log.isLoggable(Level.FINE)) {
-					log.fine("Reading action argument: " + arg.getName());
+				if (log.isDebugEnabled()) {
+					log.debug("Reading action argument: " + arg.getName());
 				}
 				values.add(createValue(arg, value));
             }
@@ -275,13 +275,13 @@ public class PullSOAPActionProcessorImpl extends SOAPActionProcessorImpl {
                 int numericCode = Integer.parseInt(errorCode.toString());
                 ErrorCode standardErrorCode = ErrorCode.getByCode(numericCode);
                 if (standardErrorCode != null) {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
+					if (log.isDebugEnabled()) {
+						log.debug("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
 					}
 					return new ActionException(standardErrorCode, errorDescription.toString(), false);
                 } else {
-					if (log.isLoggable(Level.FINE)) {
-						log.fine("Reading fault element: " + numericCode + " - " + errorDescription);
+					if (log.isDebugEnabled()) {
+						log.debug("Reading fault element: " + numericCode + " - " + errorDescription);
 					}
 					return new ActionException(numericCode, errorDescription.toString());
                 }
