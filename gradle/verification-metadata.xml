@@ -33,6 +33,7 @@
          <trusted-key id="C70B844F002F21F6D2B9C87522E44AC0622B91C3" group="com.beust" name="jcommander" version="1.82"/>
          <trusted-key id="C73B7FB12A0B8D0DFF2F0FBADA70365F88DD141C" group="jakarta.el" name="jakarta.el-api" version="5.0.0"/>
          <trusted-key id="C7BE5BCC9FEC15518CFDA882B0F3710FA64900E7" group="com.google.code.gson"/>
+         <trusted-key id="DF2438C0BA4E54BE44A708F82CDFE2681CA78FB0" group="^com[.]distrimind[.]flexilogxml($|([.].*))" regex="true"/>
          <trusted-key id="E0D98C5FD55A8AF232290E58DEE12B9896F97E34" group="org.pcollections" name="pcollections" version="4.0.2"/>
          <trusted-key id="EBB241A545CB17C87FACB2EBD0BF1D737C9A1C22" group="net.sourceforge.pmd"/>
          <trusted-key id="EE0CA873074092F806F59B65D364ABAA39A47320" group="com.google.errorprone"/>
@@ -97,7 +98,6 @@
          <artifact name="AndroidStub-4.3.0.0-sources.jar">
             <sha512 value="047275cc356cfeeb57ce2675513805ccba45a597b1c3ca6ae4e40e0ef5d33018afc9ab12835155569eda2195a530683d43f172e27771884f47becad20a028134"/>
          </artifact>
-
       </component>
    </components>
 </verification-metadata>

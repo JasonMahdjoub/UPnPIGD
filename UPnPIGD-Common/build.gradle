@@ -2,6 +2,7 @@ apply from: ("../common.gradle")
 group='com.distrimind.upnp_igd'
 
 dependencies {
+    implementation jlibs.dm.flexi.logxml.common
     implementation jlibs.jsoup
     compileOnly jlibs.jakarta.enterprise.cdi.api
 }
