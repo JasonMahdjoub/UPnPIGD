@@ -216,7 +216,12 @@ public class AnnotationActionBinder<T> {
                     log.trace("Action method is void, will use getter method named: " + getterName);
 
                 // Use the same class as the action method
-                Method getter = Reflections.getMethod(getMethod().getDeclaringClass(), getterName);
+				Method getter = null;
+				try {
+					getter = Reflections.getMethod(getMethod().getDeclaringClass(), getterName);
+				} catch (NoSuchMethodException ignored) {
+
+				}
 
 				validateType(stateVariable, getter.getReturnType());
 
@@ -234,7 +239,12 @@ public class AnnotationActionBinder<T> {
                 log.trace("Action method is not void, will use getter method on returned instance: " + getterName);
 
             // Use the returned class
-            Method getter = Reflections.getMethod(getMethod().getReturnType(), getterName);
+			Method getter = null;
+			try {
+				getter = Reflections.getMethod(getMethod().getReturnType(), getterName);
+			} catch (NoSuchMethodException ignored) {
+
+			}
 
 			validateType(stateVariable, getter.getReturnType());
 

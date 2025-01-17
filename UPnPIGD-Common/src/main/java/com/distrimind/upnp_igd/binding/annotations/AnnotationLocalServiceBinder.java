@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.binding.annotations;
 
+import com.distrimind.flexilogxml.ReflectionTools;
 import com.distrimind.upnp_igd.binding.LocalServiceBindingException;
 import com.distrimind.upnp_igd.binding.LocalServiceBinder;
 import com.distrimind.upnp_igd.model.ValidationError;
@@ -157,9 +158,14 @@ public class AnnotationLocalServiceBinder implements LocalServiceBinder {
                 String javaPropertyName = toJavaStateVariableName(v.name());
 
                 Method getter = Reflections.getGetterMethod(clazz, javaPropertyName);
-                Field field = Reflections.getField(clazz, javaPropertyName);
+				Field field = null;
+				try {
+					field = Reflections.getField(clazz, javaPropertyName);
+				} catch (NoSuchFieldException ignored) {
 
-                StateVariableAccessor accessor = null;
+				}
+
+				StateVariableAccessor accessor = null;
                 if (getter != null && field != null) {
                     accessor = variables.preferFields() ?
                             new FieldStateVariableAccessor(field)

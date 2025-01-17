@@ -16,6 +16,9 @@
 package com.distrimind.upnp_igd.util;
 
 
+import com.distrimind.flexilogxml.ReflectionTools;
+import com.distrimind.flexilogxml.UtilClassLoader;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -50,62 +53,25 @@ public class Reflections {
 				throw ite;
 			}
 		}
+
 	}
 
 	// ####################
 
 	public static Object get(Field field, Object target) throws Exception {
-		boolean accessible = field.canAccess(target);
-		try {
-			field.setAccessible(true);
-			return field.get(target);
-		}
-		catch (IllegalArgumentException iae) {
-			String message = "Could not get field value by reflection: " + toString(field) +
-					" on: " + target.getClass().getName();
-			throw new IllegalArgumentException(message, iae);
-		}
-		finally {
-			field.setAccessible(accessible);
-		}
+		return ReflectionTools.getValue(field, target);
 	}
 
 	// ####################
 
-	public static Method getMethod(Class<?> clazz, String name) {
-		if (clazz==null)
-			throw new NullPointerException();
-		for (Class<?> superClass = clazz; superClass != null && superClass != Object.class; superClass = superClass.getSuperclass()) {
-			try {
-				return superClass.getDeclaredMethod(name);
-			}
-			catch (NoSuchMethodException ignored) {
-			}
-		}
-		throw new IllegalArgumentException("No such method: " + clazz.getName() + '.' + name);
+	public static Method getMethod(Class<?> clazz, String name) throws NoSuchMethodException {
+		return ReflectionTools.getMethod(false, clazz, name);
 	}
 
 	// ####################
 
-	public static void set(Field field, Object target, Object value) throws Exception {
-		boolean accessible = field.canAccess(target);
-		try {
-			field.setAccessible(true);
-			field.set(target, value);
-		}
-		catch (IllegalArgumentException iae) {
-			// target may be null if field is static so use field.getDeclaringClass() instead
-			String message = "Could not set field value by reflection: " + toString(field) +
-					" on: " + field.getDeclaringClass().getName();
-			if (value == null) {
-				message += " with null value";
-			} else {
-				message += " with value: " + value.getClass();
-			}
-			throw new IllegalArgumentException(message, iae);
-		} finally {
-			field.setAccessible(accessible);
-		}
+	public static void set(Field field, Object target, Object value) throws IllegalAccessException {
+		ReflectionTools.setValue(field, target, value);
 	}
 
 	// ####################
@@ -158,15 +124,8 @@ public class Reflections {
 
 	// ####################
 
-	public static Field getField(Class<?> clazz, String name) {
-		for (Class<?> superClass = clazz; superClass != null && superClass != Object.class; superClass = superClass.getSuperclass()) {
-			try {
-				return superClass.getDeclaredField(name);
-			}
-			catch (NoSuchFieldException ignored) {
-			}
-		}
-		return null;
+	public static Field getField(Class<?> clazz, String name) throws NoSuchFieldException {
+		return ReflectionTools.getField(false, clazz, name);
 	}
 
 	// ####################
@@ -316,22 +275,11 @@ public class Reflections {
 	}
 
 	public static Class<?> classForName(String name) throws ClassNotFoundException {
-		try {
-			return Thread.currentThread().getContextClassLoader().loadClass(name);
-		}
-		catch (Exception e) {
-			return Class.forName(name);
-		}
+		return UtilClassLoader.getLoader().loadClass(name);
 	}
 
 	public static boolean isClassAvailable(String name) {
-		try {
-			classForName(name);
-		}
-		catch (ClassNotFoundException e) {
-			return false;
-		}
-		return true;
+		return UtilClassLoader.getLoader().isClassAvailable(name);
 	}
 
 	public static Class<?> getCollectionElementType(Type collectionType) {
@@ -367,17 +315,8 @@ public class Reflections {
 		return (Class<?>) typeArgument;
 	}
 
-	public static Method getSetterMethod(Class<?> clazz, String name) {
-		Method[] methods = clazz.getMethods();
-		for (Method method : methods) {
-			String methodName = method.getName();
-			if (methodName.startsWith("set") && method.getParameterTypes().length == 1) {
-				if (decapitalize(methodName.substring(3)).equals(name)) {
-					return method;
-				}
-			}
-		}
-		throw new IllegalArgumentException("no such setter method: " + clazz.getName() + '.' + name);
+	public static Method getSetterMethod(Class<?> clazz, String name) throws NoSuchMethodException {
+		return ReflectionTools.getSetterMethod(false, clazz, name);
 	}
 
 
