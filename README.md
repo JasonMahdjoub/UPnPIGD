@@ -22,8 +22,8 @@ Adapt into your build.gradle file, the next code :
 	    dependencies {
 		    ...
 		    implementation(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.2.0-BETA16')
-            //optional :
-            implementation(group:'org.slf4j', name: 'slf4j-jdk14', version: '2.0.16')
+		    //optional :
+		    implementation(group:'org.slf4j', name: 'slf4j-jdk14', version: '2.0.16')
 		    ...
 	    }
 	    ...
