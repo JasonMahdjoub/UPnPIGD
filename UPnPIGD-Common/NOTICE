@@ -1,5 +1,8 @@
 This project includes the following third-party libraries which are provided under different licenses:
 
+- The SLF4J libraries (https://www.slf4j.org/) are provided under the MIT License (https://www.slf4j.org/license.html).
+- The DistriMind XML library created by Jason Mahdjoub (https://git.distri-mind.fr/DM-FlexiLogXML) is provided under
+  the GNU Lesser General Public License version 3 only (LGPL-3.0-only, see https://git.distri-mind.fr/DM-FlexiLogXML/~files/main/COPYING)
 - The jsoup Java HTML Parser (https://jsoup.org/) is provided under the MIT License (https://jsoup.org/license).
 
 - The following libraries are optionals and not included by default with this library :
