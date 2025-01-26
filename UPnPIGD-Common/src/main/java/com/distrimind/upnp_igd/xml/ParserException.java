@@ -15,8 +15,7 @@
 package com.distrimind.upnp_igd.xml;
 
 
-
-import org.xml.sax.SAXParseException;
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
 
 /**
  * Unified exception thrown by the <code>DOMParser</code> and <code>SAXParser</code>.
@@ -41,8 +40,8 @@ public class ParserException extends Exception {
 		super(throwable);
 	}
 
-	public ParserException(SAXParseException ex) {
-		super("(Line/Column: " + ex.getLineNumber() + ":" + ex.getColumnNumber() + ") " + ex.getMessage());
+	public ParserException(XMLStreamException ex) {
+		super(ex.getLocalizedMessage());
 	}
 }
 

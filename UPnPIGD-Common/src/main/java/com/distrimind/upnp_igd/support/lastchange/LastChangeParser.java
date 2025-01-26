@@ -15,27 +15,21 @@
 
 package com.distrimind.upnp_igd.support.lastchange;
 
-import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElement;
-
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import com.distrimind.flexilogxml.log.DMLogger;
+
 import com.distrimind.upnp_igd.Log;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.support.shared.AbstractMap;
 import com.distrimind.upnp_igd.util.io.IO;
 import com.distrimind.upnp_igd.util.Exceptions;
-import com.distrimind.upnp_igd.xml.DOMParser;
 import com.distrimind.upnp_igd.xml.SAXParser;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.flexilogxml.xml.IXmlWriter;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -53,6 +47,7 @@ import org.xml.sax.SAXException;
  * </p>
  *
  * @author Christian Bauer
+ * @author Jason Mahdjoub, use XML Parser instead of Document
  */
 public abstract class LastChangeParser extends SAXParser {
 
@@ -188,46 +183,42 @@ public abstract class LastChangeParser extends SAXParser {
     }
 
     public String generate(Event event) throws Exception {
-        return XMLUtil.documentToFragmentString(buildDOM(event));
+        return buildXMLString(event);
     }
 
-    protected Document buildDOM(Event event) throws Exception {
-
-        DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
-        factory.setNamespaceAware(true);
-
-        Document d = factory.newDocumentBuilder().newDocument();
-        generateRoot(event, d);
-
-        return d;
+    protected String buildXMLString(Event event) throws Exception {
+        return XMLUtil.generateXMLToString(xmlStreamWriter -> {
+            generateRoot(event, xmlStreamWriter);
+        });
     }
 
-    protected void generateRoot(Event event, Document descriptor) {
-        Element eventElement = descriptor.createElementNS(getNamespace(), CONSTANTS.Event.name());
-        descriptor.appendChild(eventElement);
-        generateInstanceIDs(event, descriptor, eventElement);
+    protected void generateRoot(Event event, IXmlWriter xmlWriter) throws XMLStreamException {
+        xmlWriter.writeStartElement(getNamespace(), CONSTANTS.Event.name());
+        generateInstanceIDs(event, xmlWriter);
     }
 
-    protected void generateInstanceIDs(Event event, Document descriptor, Element rootElement) {
+    protected void generateInstanceIDs(Event event, IXmlWriter xmlWriter) throws XMLStreamException {
         for (InstanceID instanceID : event.getInstanceIDs()) {
             if (instanceID.getId() == null) continue;
-            Element instanceIDElement = appendNewElement(descriptor, rootElement, CONSTANTS.InstanceID.name());
-            instanceIDElement.setAttribute(CONSTANTS.val.name(), instanceID.getId().toString());
+            xmlWriter.writeStartElement(CONSTANTS.InstanceID.name());
+            xmlWriter.writeAttribute(CONSTANTS.val.name(), instanceID.getId().toString());
 
             for (EventedValue<?> eventedValue : instanceID.getValues()) {
-                generateEventedValue(eventedValue, descriptor, instanceIDElement);
+                generateEventedValue(eventedValue, xmlWriter);
             }
+            xmlWriter.writeEndElement();
         }
     }
 
-    protected void generateEventedValue(EventedValue<?> eventedValue, Document descriptor, Element parentElement) {
+    protected void generateEventedValue(EventedValue<?> eventedValue, IXmlWriter xmlWriter) throws XMLStreamException {
         String name = eventedValue.getName();
         List<Map.Entry<String, String>> attributes = eventedValue.getAttributes();
         if (attributes != null && !attributes.isEmpty()) {
-            Element evElement = appendNewElement(descriptor, parentElement, name);
+            xmlWriter.writeStartElement(name);
             for (Map.Entry<String, String> attr : attributes) {
-                evElement.setAttribute(attr.getKey(), DOMParser.escape(attr.getValue()));
+                xmlWriter.writeAttribute(attr.getKey(), XMLUtil.escape(attr.getValue()));
             }
+            xmlWriter.writeEndElement();
         }
     }
 

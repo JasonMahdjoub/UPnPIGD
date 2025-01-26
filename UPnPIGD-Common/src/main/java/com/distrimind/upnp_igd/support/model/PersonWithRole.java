@@ -15,10 +15,12 @@
 
 package com.distrimind.upnp_igd.support.model;
 
-import org.w3c.dom.Element;
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
+import com.distrimind.flexilogxml.xml.IXmlWriter;
 
 /**
  * @author Christian Bauer
+ * @author Jason Mahdjoub, use XML Parser instead of Document
  */
 public class PersonWithRole extends Person {
 
@@ -36,11 +38,10 @@ public class PersonWithRole extends Person {
     public String getRole() {
         return role;
     }
-
-    public void setOnElement(Element element) {
-        element.setTextContent(toString());
+    public void setOnElement(IXmlWriter xmlWriter) throws XMLStreamException {
+        xmlWriter.writeCharacters(toString());
         if(getRole() != null) {
-        	element.setAttribute("role", getRole());
+            xmlWriter.writeAttribute("role", getRole());
         }
     }
 }

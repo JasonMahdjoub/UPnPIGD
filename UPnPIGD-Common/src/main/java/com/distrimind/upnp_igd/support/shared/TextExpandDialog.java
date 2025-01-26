@@ -15,19 +15,21 @@
 
 package com.distrimind.upnp_igd.support.shared;
 
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.model.ModelUtil;
+import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.swing.Application;
-import com.distrimind.upnp_igd.xml.DOM;
-import com.distrimind.upnp_igd.xml.DOMParser;
-import org.w3c.dom.Document;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.flexilogxml.xml.IXmlReader;
+import com.distrimind.flexilogxml.xml.IXmlWriter;
 
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.Dimension;
 import java.awt.Frame;
-import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Christian Bauer
@@ -49,15 +51,20 @@ public class TextExpandDialog extends JDialog {
 
         String pretty;
         if (text.startsWith("<") && text.endsWith(">")) {
+
+
             try {
-                pretty = new DOMParser<>() {
-                    @Override
-                    protected DOM createDOM(Document document) {
-                        return null;
-                    }
-                }.print(text, 2, false);
+                IXmlReader reader=XMLUtil.getXMLReader(text);
+                try(ByteArrayOutputStream out=new ByteArrayOutputStream()) {
+                    IXmlWriter writer = XMLUtil.getXMLWriter(true, out);
+                    reader.transferTo(writer);
+                    writer.close();
+                    reader.close();
+                    out.flush();
+                    pretty=new String(out.toByteArray(), StandardCharsets.UTF_8);
+                }
             } catch (Exception ex) {
-                if (log.isErrorEnabled()) log.error("Error pretty printing XML: ", ex);
+                log.error(() -> "Error pretty printing XML: " + ex);
                 pretty = text;
             }
         } else if (text.startsWith("http-get")) {

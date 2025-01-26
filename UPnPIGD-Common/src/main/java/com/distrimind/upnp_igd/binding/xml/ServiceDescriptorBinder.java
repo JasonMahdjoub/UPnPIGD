@@ -15,10 +15,10 @@
 
 package com.distrimind.upnp_igd.binding.xml;
 
+import com.distrimind.flexilogxml.xml.IXmlReader;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.Service;
-import org.w3c.dom.Document;
 
 /**
  * Reads and generates service descriptor XML metadata.
@@ -30,10 +30,10 @@ public interface ServiceDescriptorBinder {
     <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, String descriptorXml)
             throws DescriptorBindingException, ValidationException;
 
-    <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, Document dom)
+    <D extends Device<?, D, S>, S extends Service<?, D, S>> S describe(S undescribedService, IXmlReader xmlReader)
             throws DescriptorBindingException, ValidationException;
 
     String generate(Service<?, ?, ?> service) throws DescriptorBindingException;
 
-    Document buildDOM(Service<?, ?, ?> service) throws DescriptorBindingException;
+    String buildXMLString(Service<?, ?, ?> service) throws DescriptorBindingException;
 }

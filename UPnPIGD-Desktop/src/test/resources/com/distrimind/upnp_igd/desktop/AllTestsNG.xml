@@ -64,5 +64,42 @@
       <class name="com.distrimind.upnp_igd.test.ssdp.SearchResponseTest"/>
     </classes>
   </test> <!-- testSSDP -->
+  <test thread-count="24" name="binary_light">
+    <classes>
+      <class name="example.binarylight.BinaryLightTest"/>
+    </classes>
+  </test> <!-- binary_light -->
+  <test thread-count="24" name="control_point">
+    <classes>
+      <class name="example.controlpoint.ActionCancellationTest"/>
+      <class name="example.controlpoint.ActionInvocationTest"/>
+      <class name="example.controlpoint.EventSubscriptionTest"/>
+      <class name="example.controlpoint.SearchExecuteTest"/>
+      <class name="example.controlpoint.SwitchPowerWithInterruption"/>
+    </classes>
+  </test> <!-- control_point -->
+  <test thread-count="24" name="igd">
+    <classes>
+      <class name="example.igd.ConnectionInfoTest"/>
+      <class name="example.igd.PortMappingTest"/>
+    </classes>
+  </test> <!-- igd -->
+  <test thread-count="24" name="local_service">
+    <classes>
+      <class name="example.localservice.AllowedValueRangeTest"/>
+      <class name="example.localservice.AllowedValueTest"/>
+      <class name="example.localservice.BasicBindingTest"/>
+      <class name="example.localservice.EnumTest"/>
+      <class name="example.localservice.EventProviderTest"/>
+      <class name="example.localservice.RemoteClientInfoTest"/>
+      <class name="example.localservice.StringConvertibleTest"/>
+    </classes>
+  </test> <!-- local_service -->
+  <test thread-count="24" name="registry">
+    <classes>
+      <class name="example.registry.RegistryBrowseTest"/>
+      <class name="example.registry.RegistryListenerTest"/>
+    </classes>
+  </test> <!-- registry -->
 </suite> <!-- Default Suite -->
 

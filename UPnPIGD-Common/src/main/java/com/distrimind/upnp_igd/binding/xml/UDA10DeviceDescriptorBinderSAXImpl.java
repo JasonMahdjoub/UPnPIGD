@@ -90,7 +90,7 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
         } catch (ValidationException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new DescriptorBindingException("Could not parse device descriptor: " + ex, ex);
+            throw DescriptorBindingException.getDescriptorBindingException("Could not parse device descriptor: " + ex, ex);
         }
     }
 

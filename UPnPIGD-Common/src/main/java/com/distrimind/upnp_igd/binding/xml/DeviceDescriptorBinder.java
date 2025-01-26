@@ -15,12 +15,12 @@
 
 package com.distrimind.upnp_igd.binding.xml;
 
+import com.distrimind.flexilogxml.xml.IXmlReader;
 import com.distrimind.upnp_igd.model.Namespace;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.Device;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
-import org.w3c.dom.Document;
 
 /**
  * Reads and generates device descriptor XML metadata.
@@ -32,11 +32,11 @@ public interface DeviceDescriptorBinder {
     <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml)
             throws DescriptorBindingException, ValidationException;
 
-    <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, Document dom)
+    <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, IXmlReader xmlReader)
             throws DescriptorBindingException, ValidationException;
 
     String generate(Device<?, ?, ?> device, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException;
 
-    Document buildDOM(Device<?, ?, ?> device, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException;
+    String buildXMLString(Device<?, ?, ?> device, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException;
 
 }

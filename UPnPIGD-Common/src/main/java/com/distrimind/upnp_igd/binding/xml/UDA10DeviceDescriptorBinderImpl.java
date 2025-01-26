@@ -15,26 +15,23 @@
 
 package com.distrimind.upnp_igd.binding.xml;
 
-import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElement;
 import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
 
-import java.io.StringReader;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
+
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
 import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.flexilogxml.xml.IXmlReader;
+import com.distrimind.flexilogxml.xml.IXmlWriter;
 import com.distrimind.upnp_igd.Log;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
 import com.distrimind.upnp_igd.binding.staging.MutableDevice;
 import com.distrimind.upnp_igd.binding.staging.MutableIcon;
 import com.distrimind.upnp_igd.binding.staging.MutableService;
 import com.distrimind.upnp_igd.binding.xml.Descriptor.Device.ELEMENT;
-import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.Namespace;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.XMLUtil;
@@ -56,21 +53,14 @@ import com.distrimind.upnp_igd.model.types.UDN;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.util.Exceptions;
 import com.distrimind.upnp_igd.util.MimeType;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * Implementation based on JAXP DOM.
  *
  * @author Christian Bauer
+ * @author Jason Mahdjoub, use XML Parser instead of Document
  */
-public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, ErrorHandler {
+public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, XMLUtil.ErrorHandler {
 
     final private static DMLogger log = Log.getLogger(UDA10DeviceDescriptorBinderImpl.class);
     private final NetworkAddressFactory networkAddressFactory;
@@ -103,13 +93,15 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
     @Override
     public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, String descriptorXml) throws DescriptorBindingException, ValidationException {
 
-        if (ModelUtil.checkDescriptionXMLNotValid(descriptorXml)) {
-            throw new DescriptorBindingException("Null or empty descriptor");
+        if (descriptorXml == null) {
+            throw new DescriptorBindingException("Null descriptor");
+        }
+        if (descriptorXml.isEmpty()) {
+            throw new DescriptorBindingException("Empty descriptor");
         }
 
         try {
-            if (log.isDebugEnabled())
-                log.debug("Populating device from XML descriptor: " + undescribedDevice);
+            log.debug(() -> "Populating device from XML descriptor: " + undescribedDevice);
             // We can not validate the XML document. There is no possible XML schema (maybe RELAX NG) that would properly
             // constrain the UDA 1.0 device descriptor documents: Any unknown element or attribute must be ignored, order of elements
             // is not guaranteed. Try to write a schema for that! No combination of <xsd:any namespace="##any"> and <xsd:choice>
@@ -118,36 +110,23 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
             // And by the way... try this with JAXB instead of manual DOM processing! And you thought it couldn't get worse....
 
-            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-            documentBuilder.setErrorHandler(this);
+            return XMLUtil.readXML(xmlReader -> describe(undescribedDevice, xmlReader), this, descriptorXml.trim());// TODO: UPNP VIOLATION: Virgin Media Superhub sends trailing spaces/newlines after last XML element, need to trim()
 
-            Document d = documentBuilder.parse(
-                    new InputSource(
-                            // TODO: UPNP VIOLATION: Virgin Media Superhub sends trailing spaces/newlines after last XML element, need to trim()
-                            new StringReader(descriptorXml.trim())
-                    )
-            );
-
-            return describe(undescribedDevice, d);
-
-        } catch (ValidationException ex) {
+        } catch (ValidationException | DescriptorBindingException ex) {
             throw ex;
-        } catch (Exception ex) {
-            throw new DescriptorBindingException("Could not parse device descriptor: " + ex, ex);
+        }
+        catch (Exception ex) {
+            throw DescriptorBindingException.getDescriptorBindingException("Could not parse device descriptor: " + ex, ex);
         }
     }
     @Override
-    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, Document dom) throws DescriptorBindingException, ValidationException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> D describe(D undescribedDevice, IXmlReader xmlReader) throws DescriptorBindingException, ValidationException {
         try {
-            if (log.isDebugEnabled())
-                log.debug("Populating device from DOM: " + undescribedDevice);
+            log.debug(() -> "Populating device from DOM: " + undescribedDevice);
 
             // Read the XML into a mutable descriptor graph
             MutableDevice<D, S> descriptor = new MutableDevice<>();
-            Element rootElement = dom.getDocumentElement();
-            hydrateRoot(descriptor, rootElement);
+            XMLUtil.readRootElement(xmlReader, reader -> hydrateRoot(descriptor, reader), this, Descriptor.Device.NAMESPACE_URI, ELEMENT.root.name(), log);
 
             // Build the immutable descriptor graph
             return buildInstance(undescribedDevice, descriptor);
@@ -155,7 +134,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         } catch (ValidationException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new DescriptorBindingException("Could not parse device DOM: " + ex, ex);
+            throw DescriptorBindingException.getDescriptorBindingException("Could not parse device DOM: " + ex, ex);
         }
     }
 
@@ -167,461 +146,485 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         return res;
     }
 
-    protected <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateRoot(MutableDevice<D, S> descriptor, Element rootElement) throws DescriptorBindingException {
+    protected <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateRoot(MutableDevice<D, S> descriptor, IXmlReader xmlReader) throws DescriptorBindingException, XMLStreamException {
 
-        if (rootElement.getNamespaceURI() == null || !Descriptor.Device.NAMESPACE_URI.equals(rootElement.getNamespaceURI())) {
-            if (log.isWarnEnabled())
-                log.debug("Wrong XML namespace declared on root element: " + rootElement.getNamespaceURI());
-            return;
+        class DN
+        {
+            String deviceNode = null;
         }
+        final DN dn=new DN();
 
-        if (!rootElement.getNodeName().equals(ELEMENT.root.name())) {
-            throw new DescriptorBindingException("Root element name is not <root>: " + rootElement.getNodeName());
-        }
-
-        NodeList rootChildren = rootElement.getChildNodes();
-
-        Node deviceNode = null;
-
-        for (int i = 0; i < rootChildren.getLength(); i++) {
-            Node rootChild = rootChildren.item(i);
-
-            if (rootChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            if (ELEMENT.specVersion.equals(rootChild)) {
-                hydrateSpecVersion(descriptor, rootChild);
-            } else if (ELEMENT.URLBase.equals(rootChild)) {
-                try {
-                    String urlString = XMLUtil.getTextContent(rootChild);
-                    if (!urlString.isEmpty()) {
-                        // We hope it's  RFC 2396 and RFC 2732 compliant
-                        descriptor.baseURL = new URL(urlString);
+        XMLUtil.readElements(xmlReader, reader -> {
+            ELEMENT e=ELEMENT.valueOrNullOf(reader.getLocalName());
+            if (e!=null) {
+                switch (e)
+                {
+                    case specVersion:
+                        hydrateSpecVersion(descriptor, reader);
+                        break;
+                    case URLBase:
+                        try {
+                            String urlString = XMLUtil.getTextContent(xmlReader, this);
+                            if (urlString != null && !urlString.isEmpty()) {
+                                // We hope it's  RFC 2396 and RFC 2732 compliant
+                                descriptor.baseURL = new URI(urlString).toURL();
+                            }
+                        } catch (Exception ex) {
+                            throw new DescriptorBindingException("Invalid URLBase: " + ex.getMessage());
+                        }
+                        break;
+                    case device:
+                    {
+                        // Just sanity check here...
+                        if (dn.deviceNode != null)
+                            throw new DescriptorBindingException("Found multiple <device> elements in <root>");
+                        dn.deviceNode = e.name();
+                        hydrateDevice(descriptor, xmlReader);
                     }
-                } catch (Exception ex) {
-                    throw new DescriptorBindingException("Invalid URLBase: " + ex.getMessage());
+                        break;
+                    default:
+                    {
+                        log.debug(() -> "Ignoring unknown element: " + e);
+                    }
+                        break;
                 }
-            } else if (ELEMENT.device.equals(rootChild)) {
-                // Just sanity check here...
-                if (deviceNode != null)
-                    throw new DescriptorBindingException("Found multiple <device> elements in <root>");
-                deviceNode = rootChild;
-            } else {
-                if (log.isTraceEnabled())
-                    log.trace("Ignoring unknown element: " + rootChild.getNodeName());
             }
-        }
+        }, this);
 
-        if (deviceNode == null) {
+
+        if (dn.deviceNode == null) {
             throw new DescriptorBindingException("No <device> element in <root>");
         }
-        hydrateDevice(descriptor, deviceNode);
+
     }
 
-    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateSpecVersion(MutableDevice<D,S> descriptor, Node specVersionNode) throws DescriptorBindingException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateSpecVersion(MutableDevice<D,S> descriptor, IXmlReader xmlReader) throws DescriptorBindingException, XMLStreamException {
 
-        NodeList specVersionChildren = specVersionNode.getChildNodes();
-        for (int i = 0; i < specVersionChildren.getLength(); i++) {
-            Node specVersionChild = specVersionChildren.item(i);
 
-            if (specVersionChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            if (ELEMENT.major.equals(specVersionChild)) {
-                String version = XMLUtil.getTextContent(specVersionChild).trim();
-                if (!"1".equals(version)) {
-                    if (log.isWarnEnabled())
-                        log.warn("Unsupported UDA major version, ignoring: " + version);
-                    version = "1";
+        XMLUtil.readElements(xmlReader, reader -> {
+            ELEMENT e=ELEMENT.valueOrNullOf(xmlReader.getLocalName());
+            if (e!=null) {
+                switch (e) {
+                    case major: {
+                        String version = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this).trim();
+                        if (!"1".equals(version)) {
+                            log.warn("Unsupported UDA major version, ignoring: " + version);
+                            version = "1";
+                        }
+                        descriptor.udaVersion.major = Integer.parseInt(version);
+                    }
+                    break;
+                    case minor: {
+                        String version = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this).trim();
+                        if (!"0".equals(version)) {
+                            log.warn(() -> "Unsupported UDA minor version, ignoring: " + version);
+                        }
+                        descriptor.udaVersion.minor = 0;
+                    }
+                    break;
+                    default:
+                        break;
                 }
-                descriptor.udaVersion.major = Integer.parseInt(version);
-            } else if (ELEMENT.minor.equals(specVersionChild)) {
-                String version = XMLUtil.getTextContent(specVersionChild).trim();
-                if (!"0".equals(version)) {
-                    if (log.isWarnEnabled())
-                        log.warn("Unsupported UDA minor version, ignoring: " + version);
-                }
-                descriptor.udaVersion.minor = 0;
             }
 
-        }
+        }, this);
+
 
     }
 
-    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateDevice(MutableDevice<D, S> descriptor, Node deviceNode) throws DescriptorBindingException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateDevice(MutableDevice<D, S> descriptor, IXmlReader xmlReader) throws DescriptorBindingException, XMLStreamException {
 
-        NodeList deviceNodeChildren = deviceNode.getChildNodes();
-        for (int i = 0; i < deviceNodeChildren.getLength(); i++) {
-            Node deviceNodeChild = deviceNodeChildren.item(i);
-
-            if (deviceNodeChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            if (ELEMENT.deviceType.equals(deviceNodeChild)) {
-                descriptor.deviceType = XMLUtil.getTextContent(deviceNodeChild);
-            } else if (ELEMENT.friendlyName.equals(deviceNodeChild)) {
-                descriptor.friendlyName = XMLUtil.getTextContent(deviceNodeChild);
-            } else if (ELEMENT.manufacturer.equals(deviceNodeChild)) {
-                descriptor.manufacturer = XMLUtil.getTextContent(deviceNodeChild);
-            } else if (ELEMENT.manufacturerURL.equals(deviceNodeChild)) {
-                descriptor.manufacturerURI = parseURI(XMLUtil.getTextContent(deviceNodeChild));
-            } else if (ELEMENT.modelDescription.equals(deviceNodeChild)) {
-                descriptor.modelDescription = XMLUtil.getTextContent(deviceNodeChild);
-            } else if (ELEMENT.modelName.equals(deviceNodeChild)) {
-                descriptor.modelName = XMLUtil.getTextContent(deviceNodeChild);
-            } else if (ELEMENT.modelNumber.equals(deviceNodeChild)) {
-                descriptor.modelNumber = XMLUtil.getTextContent(deviceNodeChild);
-            } else if (ELEMENT.modelURL.equals(deviceNodeChild)) {
-                descriptor.modelURI = parseURI(XMLUtil.getTextContent(deviceNodeChild));
-            } else if (ELEMENT.presentationURL.equals(deviceNodeChild)) {
-                descriptor.presentationURI = parseURI(XMLUtil.getTextContent(deviceNodeChild));
-            } else if (ELEMENT.UPC.equals(deviceNodeChild)) {
-                descriptor.upc = XMLUtil.getTextContent(deviceNodeChild);
-            } else if (ELEMENT.serialNumber.equals(deviceNodeChild)) {
-                descriptor.serialNumber = XMLUtil.getTextContent(deviceNodeChild);
-            } else if (ELEMENT.UDN.equals(deviceNodeChild)) {
-                descriptor.udn = UDN.valueOf(XMLUtil.getTextContent(deviceNodeChild));
-            } else if (ELEMENT.iconList.equals(deviceNodeChild)) {
-                hydrateIconList(descriptor, deviceNodeChild);
-            } else if (ELEMENT.serviceList.equals(deviceNodeChild)) {
-                hydrateServiceList(descriptor, deviceNodeChild);
-            } else if (ELEMENT.deviceList.equals(deviceNodeChild)) {
-                hydrateDeviceList(descriptor, deviceNodeChild);
-            } else if (ELEMENT.X_DLNADOC.equals(deviceNodeChild) &&
-                Descriptor.Device.DLNA_PREFIX.equals(deviceNodeChild.getPrefix())) {
-                String txt = XMLUtil.getTextContent(deviceNodeChild);
-                try {
-                    descriptor.dlnaDocs.add(DLNADoc.valueOf(txt));
-                } catch (InvalidValueException ex) {
-                    if (log.isInfoEnabled())
-                        log.info("Invalid X_DLNADOC value, ignoring value: " + txt);
+        XMLUtil.readElements(xmlReader, reader -> {
+            ELEMENT deviceNodeChild=ELEMENT.valueOrNullOf(reader.getLocalName());
+            if (deviceNodeChild!=null) {
+                switch (deviceNodeChild)
+                {
+                    case deviceType:
+                        descriptor.deviceType = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this);
+                        break;
+                    case friendlyName:
+                        descriptor.friendlyName = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this);
+                        break;
+                    case manufacturer:
+                        descriptor.manufacturer = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this);
+                        break;
+                    case manufacturerURL:
+                        descriptor.manufacturerURI = parseURI(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this));
+                        break;
+                    case modelDescription:
+                        descriptor.modelDescription = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this);
+                        break;
+                    case modelName:
+                        descriptor.modelName = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this);
+                        break;
+                    case modelNumber:
+                        descriptor.modelNumber = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this);
+                        break;
+                    case modelURL:
+                        descriptor.modelURI = parseURI(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this));
+                        break;
+                    case presentationURL:
+                        descriptor.presentationURI = parseURI(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this));
+                        break;
+                    case UPC:
+                        descriptor.upc = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this);
+                        break;
+                    case serialNumber:
+                        descriptor.serialNumber = XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this);
+                        break;
+                    case UDN:
+                        descriptor.udn = UDN.valueOf(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this));
+                        break;
+                    case iconList:
+                        hydrateIconList(descriptor, xmlReader);
+                        break;
+                    case serviceList:
+                        hydrateServiceList(descriptor, xmlReader);
+                        break;
+                    case deviceList:
+                        hydrateDeviceList(descriptor, xmlReader);
+                        break;
+                    case X_DLNADOC:
+                        if (Descriptor.Device.DLNA_PREFIX.equals(xmlReader.getPrefix())) {
+                            String txt = XMLUtil.getTextContent(xmlReader, this);
+                            try {
+                                descriptor.dlnaDocs.add(DLNADoc.valueOf(txt));
+                            } catch (InvalidValueException ex) {
+                                log.info(() -> "Invalid X_DLNADOC value, ignoring value: " + txt);
+                            }
+                        }
+                        break;
+                    case X_DLNACAP:
+                        if (Descriptor.Device.DLNA_PREFIX.equals(xmlReader.getPrefix())) {
+                            descriptor.dlnaCaps = DLNACaps.valueOf(XMLUtil.getTextContent(xmlReader, this));
+                        }
+                        break;
+                    default:
+                        break;
                 }
-            } else if (ELEMENT.X_DLNACAP.equals(deviceNodeChild) &&
-                Descriptor.Device.DLNA_PREFIX.equals(deviceNodeChild.getPrefix())) {
-                descriptor.dlnaCaps = DLNACaps.valueOf(XMLUtil.getTextContent(deviceNodeChild));
             }
-        }
+        }, this);
     }
 
-    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateIconList(MutableDevice<D, S> descriptor, Node iconListNode) throws DescriptorBindingException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateIconList(MutableDevice<D, S> descriptor, IXmlReader xmlReader) throws DescriptorBindingException, XMLStreamException {
 
-        NodeList iconListNodeChildren = iconListNode.getChildNodes();
-        for (int i = 0; i < iconListNodeChildren.getLength(); i++) {
-            Node iconListNodeChild = iconListNodeChildren.item(i);
 
-            if (iconListNodeChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
+        XMLUtil.readElements(xmlReader, reader ->  {
+            ELEMENT iconListNodeChild = ELEMENT.valueOrNullOf(reader.getLocalName());
+
 
             if (ELEMENT.icon.equals(iconListNodeChild)) {
 
                 MutableIcon icon = new MutableIcon();
 
-                NodeList iconChildren = iconListNodeChild.getChildNodes();
 
-                for (int x = 0; x < iconChildren.getLength(); x++) {
-                    Node iconChild = iconChildren.item(x);
+                XMLUtil.readElements(xmlReader, reader2 ->  {
+                    ELEMENT iconChild = ELEMENT.valueOrNullOf(reader2.getLocalName());
 
-                    if (iconChild.getNodeType() != Node.ELEMENT_NODE)
-                        continue;
-
-                    if (ELEMENT.width.equals(iconChild)) {
-                        icon.width = (Integer.parseInt(XMLUtil.getTextContent(iconChild)));
-                    } else if (ELEMENT.height.equals(iconChild)) {
-                        icon.height = (Integer.parseInt(XMLUtil.getTextContent(iconChild)));
-                    } else if (ELEMENT.depth.equals(iconChild)) {
-                        String depth = XMLUtil.getTextContent(iconChild);
-                        try {
-                            icon.depth = (Integer.parseInt(depth));
-                       	} catch(NumberFormatException ex) {
-                            if (log.isWarnEnabled())
-                       		    log.warn("Invalid icon depth '" + depth + "', using 16 as default: ", ex);
-                       		icon.depth = 16;
-                       	}
-                    } else if (ELEMENT.url.equals(iconChild)) {
-                        icon.uri = parseURI(XMLUtil.getTextContent(iconChild));
-                    } else if (ELEMENT.mimetype.equals(iconChild)) {
-                        try {
-                            icon.mimeType = XMLUtil.getTextContent(iconChild);
-                            MimeType.valueOf(icon.mimeType);
-                        } catch(IllegalArgumentException ex) {
-                            if (log.isWarnEnabled())
-                                log.warn("Ignoring invalid icon mime type: " + icon.mimeType);
-                            icon.mimeType = "";
+                    if (iconChild!=null) {
+                        switch (iconChild)
+                        {
+                            case width:
+                                icon.width = (Integer.parseInt(XMLUtil.getTextContent(reader2, UDA10DeviceDescriptorBinderImpl.this)));
+                                break;
+                            case height:
+                                icon.height = (Integer.parseInt(XMLUtil.getTextContent(reader2, UDA10DeviceDescriptorBinderImpl.this)));
+                                break;
+                            case depth:
+                            {
+                                String depth = XMLUtil.getTextContent(reader2, UDA10DeviceDescriptorBinderImpl.this);
+                                try {
+                                    icon.depth = (Integer.parseInt(depth));
+                                } catch (NumberFormatException ex) {
+                                    log.warn(() -> "Invalid icon depth '" + depth + "', using 16 as default: " + ex);
+                                    icon.depth = 16;
+                                }
+                            }
+                                break;
+                            case url:
+                                icon.uri = parseURI(XMLUtil.getTextContent(reader2, UDA10DeviceDescriptorBinderImpl.this));
+                                break;
+                            case mimetype:
+                                try {
+                                    icon.mimeType = XMLUtil.getTextContent(reader2, UDA10DeviceDescriptorBinderImpl.this);
+                                    MimeType.valueOf(icon.mimeType);
+                                } catch (IllegalArgumentException ex) {
+                                    log.warn(() -> "Ignoring invalid icon mime type: " + icon.mimeType);
+                                    icon.mimeType = "";
+                                }
+                                break;
+                            default:
+                                break;
                         }
                     }
 
-                }
+                }, this);
 
                 descriptor.icons.add(icon);
             }
-        }
+        }, this);
     }
 
-    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateServiceList(MutableDevice<D, S> descriptor, Node serviceListNode) {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateServiceList(MutableDevice<D, S> descriptor, IXmlReader xmlReader) throws XMLStreamException, DescriptorBindingException {
 
-        NodeList serviceListNodeChildren = serviceListNode.getChildNodes();
-        for (int i = 0; i < serviceListNodeChildren.getLength(); i++) {
-            Node serviceListNodeChild = serviceListNodeChildren.item(i);
 
-            if (serviceListNodeChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
+        XMLUtil.readElements(xmlReader, reader ->  {
+            ELEMENT serviceListNodeChild = ELEMENT.valueOrNullOf(reader.getLocalName());
 
             if (ELEMENT.service.equals(serviceListNodeChild)) {
 
-                NodeList serviceChildren = serviceListNodeChild.getChildNodes();
+
 
                 try {
                     MutableService<D, S> service = new MutableService<>();
 
-                    for (int x = 0; x < serviceChildren.getLength(); x++) {
-                        Node serviceChild = serviceChildren.item(x);
+                    XMLUtil.readElements(xmlReader, reader2 ->  {
+                        ELEMENT serviceChild = ELEMENT.valueOrNullOf(reader2.getLocalName());
 
-                        if (serviceChild.getNodeType() != Node.ELEMENT_NODE)
-                            continue;
-
-                        if (ELEMENT.serviceType.equals(serviceChild)) {
-                            service.serviceType = (ServiceType.valueOf(XMLUtil.getTextContent(serviceChild)));
-                        } else if (ELEMENT.serviceId.equals(serviceChild)) {
-                            service.serviceId = (ServiceId.valueOf(XMLUtil.getTextContent(serviceChild)));
-                        } else if (ELEMENT.SCPDURL.equals(serviceChild)) {
-                            service.descriptorURI = parseURI(XMLUtil.getTextContent(serviceChild));
-                        } else if (ELEMENT.controlURL.equals(serviceChild)) {
-                            service.controlURI = parseURI(XMLUtil.getTextContent(serviceChild));
-                        } else if (ELEMENT.eventSubURL.equals(serviceChild)) {
-                            service.eventSubscriptionURI = parseURI(XMLUtil.getTextContent(serviceChild));
+                        if (serviceChild!=null) {
+                            switch (serviceChild)
+                            {
+                                case serviceType:
+                                    service.serviceType = (ServiceType.valueOf(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this)));
+                                    break;
+                                case serviceId:
+                                    service.serviceId = (ServiceId.valueOf(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this)));
+                                    break;
+                                case SCPDURL:
+                                    service.descriptorURI = parseURI(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this));
+                                    break;
+                                case controlURL:
+                                    service.controlURI = parseURI(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this));
+                                    break;
+                                case eventSubURL:
+                                    service.eventSubscriptionURI = parseURI(XMLUtil.getTextContent(xmlReader, UDA10DeviceDescriptorBinderImpl.this));
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
-
-                    }
+                    }, this);
 
                     descriptor.services.add(service);
                 } catch (InvalidValueException ex) {
-                    if (log.isWarnEnabled())
-                        log.warn(
+                    log.warn(() ->
                             "UPnP specification violation, skipping invalid service declaration. " + ex.getMessage()
-                        );
+                    );
                 }
             }
-        }
+        }, this);
     }
 
-    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateDeviceList(MutableDevice<D, S> descriptor, Node deviceListNode) throws DescriptorBindingException {
+    public <D extends Device<?, D, S>, S extends Service<?, D, S>> void hydrateDeviceList(MutableDevice<D, S> descriptor, IXmlReader xmlReader) throws DescriptorBindingException, XMLStreamException {
 
-        NodeList deviceListNodeChildren = deviceListNode.getChildNodes();
-        for (int i = 0; i < deviceListNodeChildren.getLength(); i++) {
-            Node deviceListNodeChild = deviceListNodeChildren.item(i);
 
-            if (deviceListNodeChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
+        XMLUtil.readElements(xmlReader, reader ->  {
+            ELEMENT deviceListNodeChild = ELEMENT.valueOrNullOf(reader.getLocalName());
 
             if (ELEMENT.device.equals(deviceListNodeChild)) {
                 MutableDevice<D, S> embeddedDevice = new MutableDevice<>();
                 embeddedDevice.parentDevice = descriptor;
                 descriptor.embeddedDevices.add(embeddedDevice);
-                hydrateDevice(embeddedDevice, deviceListNodeChild);
+                hydrateDevice(embeddedDevice, xmlReader);
             }
-        }
+        }, this);
 
     }
 
     @Override
     public String generate(Device<?, ?, ?> deviceModel, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException {
         try {
-            if (log.isDebugEnabled())
-                log.debug("Generating XML descriptor from device model: " + deviceModel);
+            log.debug(() -> "Generating XML descriptor from device model: " + deviceModel);
 
-            return XMLUtil.documentToString(buildDOM(deviceModel, info, namespace));
+            return buildXMLString(deviceModel, info, namespace);
 
         } catch (Exception ex) {
-            throw new DescriptorBindingException("Could not build DOM: " + ex.getMessage(), ex);
+            throw DescriptorBindingException.getDescriptorBindingException("Could not build DOM: " + ex.getMessage(), ex);
         }
     }
     @Override
-    public Document buildDOM(Device<?, ?, ?> deviceModel, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException {
+    public String buildXMLString(Device<?, ?, ?> deviceModel, RemoteClientInfo info, Namespace namespace) throws DescriptorBindingException {
 
         try {
-            if (log.isDebugEnabled())
-                log.debug("Generating DOM from device model: " + deviceModel);
-
-            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
-            factory.setNamespaceAware(true);
-
-            Document d = factory.newDocumentBuilder().newDocument();
-            generateRoot(namespace, deviceModel, d, info);
-
-            return d;
+            log.debug(() -> "Generating DOM from device model: " + deviceModel);
+            return XMLUtil.generateXMLToString(xmlStreamWriter -> {
+                generateRoot(namespace, deviceModel, xmlStreamWriter, info);
+            });
 
         } catch (Exception ex) {
-            throw new DescriptorBindingException("Could not generate device descriptor: " + ex.getMessage(), ex);
+            throw DescriptorBindingException.getDescriptorBindingException("Could not generate device descriptor: " + ex.getMessage(), ex);
         }
     }
 
-    protected void generateRoot(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, RemoteClientInfo info) {
+    protected void generateRoot(Namespace namespace, Device<?, ?, ?> deviceModel, IXmlWriter xmlStreamWriter, RemoteClientInfo info) throws XMLStreamException {
+        xmlStreamWriter.writeStartElement(Descriptor.Device.NAMESPACE_URI, ELEMENT.root.toString());
 
-        Element rootElement = descriptor.createElementNS(Descriptor.Device.NAMESPACE_URI, ELEMENT.root.toString());
-        descriptor.appendChild(rootElement);
-
-        generateSpecVersion(namespace, deviceModel, descriptor, rootElement);
-
+        generateSpecVersion(namespace, deviceModel, xmlStreamWriter);
+        generateDevice(namespace, deviceModel, xmlStreamWriter, info);
+        xmlStreamWriter.writeEndElement();
         /* UDA 1.1 spec says: Don't use URLBase anymore
         if (deviceModel.getBaseURL() != null) {
             appendChildElementWithTextContent(descriptor, rootElement, "URLBase", deviceModel.getBaseURL());
         }
         */
 
-        generateDevice(namespace, deviceModel, descriptor, rootElement, info);
+
     }
 
-    protected void generateSpecVersion(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element rootElement) {
-        Element specVersionElement = appendNewElement(descriptor, rootElement, ELEMENT.specVersion);
-        appendNewElementIfNotNull(descriptor, specVersionElement, ELEMENT.major, deviceModel.getVersion().getMajor());
-        appendNewElementIfNotNull(descriptor, specVersionElement, ELEMENT.minor, deviceModel.getVersion().getMinor());
+    protected void generateSpecVersion(Namespace namespace, Device<?, ?, ?> deviceModel, IXmlWriter xmlStreamWriter) throws XMLStreamException {
+        //Element specVersionElement = appendNewElement(descriptor, rootElement, ELEMENT.specVersion);
+        xmlStreamWriter.writeStartElement(ELEMENT.specVersion.name());
+        appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.major, deviceModel.getVersion().getMajor());
+        appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.minor, deviceModel.getVersion().getMinor());
+        xmlStreamWriter.writeEndElement();
     }
 
-    protected void generateDevice(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element rootElement, RemoteClientInfo info) {
-
-        Element deviceElement = appendNewElement(descriptor, rootElement, ELEMENT.device);
-
-        appendNewElementIfNotNull(descriptor, deviceElement, ELEMENT.deviceType, deviceModel.getType());
+    protected void generateDevice(Namespace namespace, Device<?, ?, ?> deviceModel, IXmlWriter xmlStreamWriter, RemoteClientInfo info) throws XMLStreamException {
+        xmlStreamWriter.writeStartElement(ELEMENT.device.name());
+        appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.deviceType, deviceModel.getType());
 
         DeviceDetails deviceModelDetails = deviceModel.getDetails(info);
         appendNewElementIfNotNull(
-                descriptor, deviceElement, ELEMENT.friendlyName,
+                xmlStreamWriter, ELEMENT.friendlyName,
                 deviceModelDetails.getFriendlyName()
         );
+
         if (deviceModelDetails.getManufacturerDetails() != null) {
             appendNewElementIfNotNull(
-                    descriptor, deviceElement, ELEMENT.manufacturer,
+                    xmlStreamWriter, ELEMENT.manufacturer,
                     deviceModelDetails.getManufacturerDetails().getManufacturer()
             );
             appendNewElementIfNotNull(
-                    descriptor, deviceElement, ELEMENT.manufacturerURL,
+                    xmlStreamWriter, ELEMENT.manufacturerURL,
                     deviceModelDetails.getManufacturerDetails().getManufacturerURI()
             );
         }
         if (deviceModelDetails.getModelDetails() != null) {
             appendNewElementIfNotNull(
-                    descriptor, deviceElement, ELEMENT.modelDescription,
+                    xmlStreamWriter, ELEMENT.modelDescription,
                     deviceModelDetails.getModelDetails().getModelDescription()
             );
             appendNewElementIfNotNull(
-                    descriptor, deviceElement, ELEMENT.modelName,
+                    xmlStreamWriter, ELEMENT.modelName,
                     deviceModelDetails.getModelDetails().getModelName()
             );
             appendNewElementIfNotNull(
-                    descriptor, deviceElement, ELEMENT.modelNumber,
+                    xmlStreamWriter, ELEMENT.modelNumber,
                     deviceModelDetails.getModelDetails().getModelNumber()
             );
             appendNewElementIfNotNull(
-                    descriptor, deviceElement, ELEMENT.modelURL,
+                    xmlStreamWriter, ELEMENT.modelURL,
                     deviceModelDetails.getModelDetails().getModelURI()
             );
         }
         appendNewElementIfNotNull(
-                descriptor, deviceElement, ELEMENT.serialNumber,
+                xmlStreamWriter, ELEMENT.serialNumber,
                 deviceModelDetails.getSerialNumber()
         );
-        appendNewElementIfNotNull(descriptor, deviceElement, ELEMENT.UDN, deviceModel.getIdentity().getUdn());
+        appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.UDN, deviceModel.getIdentity().getUdn());
         appendNewElementIfNotNull(
-                descriptor, deviceElement, ELEMENT.presentationURL,
+                xmlStreamWriter, ELEMENT.presentationURL,
                 deviceModelDetails.getPresentationURI()
         );
         appendNewElementIfNotNull(
-                descriptor, deviceElement, ELEMENT.UPC,
+                xmlStreamWriter, ELEMENT.UPC,
                 deviceModelDetails.getUpc()
         );
 
         if (deviceModelDetails.getDlnaDocs() != null) {
             for (DLNADoc dlnaDoc : deviceModelDetails.getDlnaDocs()) {
                 appendNewElementIfNotNull(
-                        descriptor, deviceElement, Descriptor.Device.DLNA_PREFIX + ":" + ELEMENT.X_DLNADOC,
+                        xmlStreamWriter, Descriptor.Device.DLNA_PREFIX, ELEMENT.X_DLNADOC.name(),
                         dlnaDoc, Descriptor.Device.DLNA_NAMESPACE_URI
                 );
             }
         }
         appendNewElementIfNotNull(
-                descriptor, deviceElement, Descriptor.Device.DLNA_PREFIX + ":" + ELEMENT.X_DLNACAP,
+                xmlStreamWriter, Descriptor.Device.DLNA_PREFIX,  ELEMENT.X_DLNACAP.name(),
                 deviceModelDetails.getDlnaCaps(), Descriptor.Device.DLNA_NAMESPACE_URI
         );
-        
+
         appendNewElementIfNotNull(
-                descriptor, deviceElement, Descriptor.Device.SEC_PREFIX + ":" + ELEMENT.ProductCap,
-                deviceModelDetails.getSecProductCaps(), Descriptor.Device.SEC_NAMESPACE_URI
-        );
-        
-        appendNewElementIfNotNull(
-                descriptor, deviceElement, Descriptor.Device.SEC_PREFIX + ":" + ELEMENT.X_ProductCap,
+                xmlStreamWriter, Descriptor.Device.SEC_PREFIX, ELEMENT.ProductCap.name(),
                 deviceModelDetails.getSecProductCaps(), Descriptor.Device.SEC_NAMESPACE_URI
         );
 
-        generateIconList(namespace, deviceModel, descriptor, deviceElement);
-        generateServiceList(namespace, deviceModel, descriptor, deviceElement);
-        generateDeviceList(namespace, deviceModel, descriptor, deviceElement, info);
+        appendNewElementIfNotNull(
+                xmlStreamWriter, Descriptor.Device.SEC_PREFIX, ELEMENT.X_ProductCap.name(),
+                deviceModelDetails.getSecProductCaps(), Descriptor.Device.SEC_NAMESPACE_URI
+        );
+
+        generateIconList(namespace, deviceModel, xmlStreamWriter);
+        generateServiceList(namespace, deviceModel, xmlStreamWriter);
+        generateDeviceList(namespace, deviceModel, xmlStreamWriter, info);
+        xmlStreamWriter.writeEndElement();
     }
 
-    protected void generateIconList(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element deviceElement) {
+    protected void generateIconList(Namespace namespace, Device<?, ?, ?> deviceModel, IXmlWriter xmlStreamWriter) throws XMLStreamException {
         if (!deviceModel.hasIcons()) return;
-
-        Element iconListElement = appendNewElement(descriptor, deviceElement, ELEMENT.iconList);
+        xmlStreamWriter.writeStartElement(ELEMENT.iconList.name());
 
         for (Icon icon : deviceModel.getIcons()) {
-            Element iconElement = appendNewElement(descriptor, iconListElement, ELEMENT.icon);
+            xmlStreamWriter.writeStartElement(ELEMENT.icon.name());
 
-            appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.mimetype, icon.getMimeType());
-            appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.width, icon.getWidth());
-            appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.height, icon.getHeight());
-            appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.depth, icon.getDepth());
+            appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.mimetype, icon.getMimeType());
+            appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.width, icon.getWidth());
+            appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.height, icon.getHeight());
+            appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.depth, icon.getDepth());
             if (deviceModel instanceof RemoteDevice) {
-            	appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.url,  icon.getUri());
+                appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.url,  icon.getUri());
             } else if (deviceModel instanceof LocalDevice) {
-            	appendNewElementIfNotNull(descriptor, iconElement, ELEMENT.url,  namespace.getIconPath(icon));
+                appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.url,  namespace.getIconPath(icon));
             }
+            xmlStreamWriter.writeEndElement();
         }
+        xmlStreamWriter.writeEndElement();
     }
 
-    protected void generateServiceList(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element deviceElement) {
+    protected void generateServiceList(Namespace namespace, Device<?, ?, ?> deviceModel, IXmlWriter xmlStreamWriter) throws XMLStreamException {
         if (!deviceModel.hasServices()) return;
-
-        Element serviceListElement = appendNewElement(descriptor, deviceElement, ELEMENT.serviceList);
+        xmlStreamWriter.writeStartElement(ELEMENT.serviceList.name());
 
         for (Service<?, ?, ?> service : deviceModel.getServices()) {
-            Element serviceElement = appendNewElement(descriptor, serviceListElement, ELEMENT.service);
+            xmlStreamWriter.writeStartElement(ELEMENT.service.name());
 
-            appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.serviceType, service.getServiceType());
-            appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.serviceId, service.getServiceId());
+            appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.serviceType, service.getServiceType());
+            appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.serviceId, service.getServiceId());
             if (service instanceof RemoteService) {
                 RemoteService rs = (RemoteService) service;
-                appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.SCPDURL, rs.getDescriptorURI());
-                appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.controlURL, rs.getControlURI());
-                appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.eventSubURL, rs.getEventSubscriptionURI());
+                appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.SCPDURL, rs.getDescriptorURI());
+                appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.controlURL, rs.getControlURI());
+                appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.eventSubURL, rs.getEventSubscriptionURI());
             } else if (service instanceof LocalService) {
                 LocalService<?> ls = (LocalService<?>) service;
-                appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.SCPDURL, namespace.getDescriptorPath(ls));
-                appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.controlURL, namespace.getControlPath(ls));
-                appendNewElementIfNotNull(descriptor, serviceElement, ELEMENT.eventSubURL, namespace.getEventSubscriptionPath(ls));
+                appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.SCPDURL, namespace.getDescriptorPath(ls));
+                appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.controlURL, namespace.getControlPath(ls));
+                appendNewElementIfNotNull(xmlStreamWriter, ELEMENT.eventSubURL, namespace.getEventSubscriptionPath(ls));
             }
+            xmlStreamWriter.writeEndElement();
         }
+        xmlStreamWriter.writeEndElement();
     }
 
-    protected void generateDeviceList(Namespace namespace, Device<?, ?, ?> deviceModel, Document descriptor, Element deviceElement, RemoteClientInfo info) {
+    protected void generateDeviceList(Namespace namespace, Device<?, ?, ?> deviceModel, IXmlWriter xmlStreamWriter, RemoteClientInfo info) throws XMLStreamException {
         if (!deviceModel.hasEmbeddedDevices()) return;
-
-        Element deviceListElement = appendNewElement(descriptor, deviceElement, ELEMENT.deviceList);
+        xmlStreamWriter.writeStartElement(ELEMENT.deviceList.name());
 
         for (Device<?, ?, ?> device : deviceModel.getEmbeddedDevices()) {
-            generateDevice(namespace, device, descriptor, deviceListElement, info);
+            generateDevice(namespace, device, xmlStreamWriter, info);
         }
+        xmlStreamWriter.writeEndElement();
     }
     @Override
-    public void warning(SAXParseException e) throws SAXException {
-        if (log.isWarnEnabled())
-            log.warn(e.toString());
+    public void warning(XMLStreamException e) throws XMLStreamException {
+        log.warn(e::toString);
     }
     @Override
-    public void error(SAXParseException e) throws SAXException {
+    public void error(XMLStreamException e) throws XMLStreamException {
         throw e;
     }
     @Override
-    public void fatalError(SAXParseException e) throws SAXException {
+    public void fatalError(XMLStreamException e) throws XMLStreamException {
         throw e;
     }
 
@@ -630,7 +633,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         // TODO: UPNP VIOLATION: Netgear DG834 uses a non-URI: 'www.netgear.com'
         String uri;
         if (_uri.startsWith("www.")) {
-             uri = "http://" + _uri;
+            uri = "http://" + _uri;
         }
         else
             uri=_uri;
@@ -658,8 +661,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
         	        	 	at java.net.URI.<init>(URI.java:87)
         	        		at java.net.URI.create(URI.java:968)
             */
-            if (log.isDebugEnabled())
-                log.debug("Illegal URI, trying with ./ prefix: ", Exceptions.unwrap(ex));
+            log.debug(() -> "Illegal URI, trying with ./ prefix: " + Exceptions.unwrap(ex));
             // Ignore
         }
         try {
@@ -672,8 +674,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
             //
             return URI.create("./" + uri);
         } catch (IllegalArgumentException ex) {
-            if (log.isWarnEnabled())
-                log.warn("Illegal URI '" + uri + "', ignoring value: ", Exceptions.unwrap(ex));
+            log.warn("Illegal URI '" + uri + "', ignoring value: " + Exceptions.unwrap(ex));
             // Ignore
         }
         return null;

@@ -14,6 +14,8 @@
   */
  package com.distrimind.upnp_igd.http;
 
+ import com.distrimind.upnp_igd.model.Constants;
+
  import java.io.ByteArrayInputStream;
  import java.util.Collection;
  import java.util.HashMap;
@@ -51,6 +53,8 @@
 
 	 @SuppressWarnings("PMD.LooseCoupling")
 	 public Headers(ByteArrayInputStream inputStream) {
+		 if (inputStream.available()> Constants.MAX_HEADER_LENGTH_IN_BYTES)
+			 throw new IllegalArgumentException();
 		 StringBuilder sb = new StringBuilder(256);
 		 Headers headers = new Headers();
 		 String line = readLine(sb, inputStream);

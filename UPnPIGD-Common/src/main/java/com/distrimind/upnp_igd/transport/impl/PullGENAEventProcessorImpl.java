@@ -23,7 +23,6 @@ import com.distrimind.upnp_igd.model.message.gena.IncomingEventRequestMessage;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
-import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
 import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 import org.jsoup.Jsoup;

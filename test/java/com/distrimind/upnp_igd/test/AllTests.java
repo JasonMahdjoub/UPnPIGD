@@ -19,10 +19,7 @@ package com.distrimind.upnp_igd.test;
 
 import com.distrimind.flexilogxml.TestGroup;
 import com.distrimind.flexilogxml.Tests;
-import com.distrimind.upnp_igd.test.control.ActionInvokeIncomingTest;
-import com.distrimind.upnp_igd.test.control.ActionInvokeOutgoingTest;
-import com.distrimind.upnp_igd.test.control.ActionXMLProcessingTest;
-import com.distrimind.upnp_igd.test.control.InvalidActionXMLProcessingTest;
+import com.distrimind.upnp_igd.test.control.*;
 import com.distrimind.upnp_igd.test.gena.EventXMLProcessingTest;
 import com.distrimind.upnp_igd.test.gena.IncomingSubscriptionLifecycleTest;
 import com.distrimind.upnp_igd.test.gena.OutgoingSubscriptionFailureTest;
@@ -33,6 +30,13 @@ import com.distrimind.upnp_igd.test.model.profile.DeviceDetailsProviderTest;
 import com.distrimind.upnp_igd.test.protocol.ProtocolFactoryTest;
 import com.distrimind.upnp_igd.test.resources.*;
 import com.distrimind.upnp_igd.test.ssdp.*;
+import example.binarylight.BinaryLightTest;
+import example.controlpoint.*;
+import example.igd.ConnectionInfoTest;
+import example.igd.PortMappingTest;
+import example.localservice.*;
+import example.registry.RegistryBrowseTest;
+import example.registry.RegistryListenerTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +93,33 @@ public class AllTests {
 						RegistryExpirationTest.class,
 						SearchReceivedTest.class,
 						SearchResponseTest.class
+				)),
+				new TestGroup("binary_light", List.of(
+						BinaryLightTest.class
+				)),
+				new TestGroup("control_point", List.of(
+						ActionCancellationTest.class,
+						ActionInvocationTest.class,
+						EventSubscriptionTest.class,
+						SearchExecuteTest.class,
+						SwitchPowerWithInterruption.class
+				)),
+				new TestGroup("igd", List.of(
+						ConnectionInfoTest.class,
+						PortMappingTest.class
+				)),
+				new TestGroup("local_service", List.of(
+						AllowedValueRangeTest.class,
+						AllowedValueTest.class,
+						BasicBindingTest.class,
+						EnumTest.class,
+						EventProviderTest.class,
+						RemoteClientInfoTest.class,
+						StringConvertibleTest.class
+				)),
+				new TestGroup("registry", List.of(
+						RegistryBrowseTest.class,
+						RegistryListenerTest.class
 				))
 		);
 		if (additionalTestGroups!=null)

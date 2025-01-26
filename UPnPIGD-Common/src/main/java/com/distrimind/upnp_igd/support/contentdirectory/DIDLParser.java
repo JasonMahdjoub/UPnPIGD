@@ -15,7 +15,8 @@
 
 package com.distrimind.upnp_igd.support.contentdirectory;
 
-import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
+import com.distrimind.upnp_igd.model.XMLUtil;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.support.model.DIDLAttribute;
@@ -33,26 +34,17 @@ import com.distrimind.upnp_igd.support.model.item.Item;
 import com.distrimind.upnp_igd.util.io.IO;
 import com.distrimind.upnp_igd.util.Exceptions;
 import com.distrimind.upnp_igd.xml.SAXParser;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.flexilogxml.xml.IXmlWriter;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URI;
-import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
+
 
 import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElement;
 import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
@@ -65,7 +57,7 @@ import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
  * <p>
  * Override the {@link #createDescMetaHandler(com.distrimind.upnp_igd.support.model.DescMeta, Handler)}
  * method to read vendor extension content of {@code <desc>} elements. You then should also override the
- * {@link #populateDescMetadata(Element, com.distrimind.upnp_igd.support.model.DescMeta)} method for writing.
+ * {@link #populateDescMetadata(IXmlWriter, com.distrimind.upnp_igd.support.model.DescMeta)} method for writing.
  * </p>
  * <p>
  * Override the {@link #createItemHandler(com.distrimind.upnp_igd.support.model.item.Item, Handler)}
@@ -75,6 +67,7 @@ import static com.distrimind.upnp_igd.model.XMLUtil.appendNewElementIfNotNull;
  *
  * @author Christian Bauer
  * @author Mario Franco
+ * @author Jason Mahdjoub, use XML Parser instead of Document
  */
 public class DIDLParser extends SAXParser {
 
@@ -137,7 +130,7 @@ public class DIDLParser extends SAXParser {
         return new ResHandler(instance, parent);
     }
 
-    protected DescMetaHandler createDescMetaHandler(DescMeta<Document> instance, Handler<?> parent) {
+    protected DescMetaHandler createDescMetaHandler(DescMeta<XMLUtil.XMLCompleters> instance, Handler<?> parent) {
         return new DescMetaHandler(instance, parent);
     }
 
@@ -246,8 +239,8 @@ public class DIDLParser extends SAXParser {
         }
     }
 
-    protected DescMeta<Document> createDescMeta(Attributes attributes) {
-        DescMeta<Document> desc = new DescMeta<>();
+    protected DescMeta<XMLUtil.XMLCompleters> createDescMeta(Attributes attributes) {
+        DescMeta<XMLUtil.XMLCompleters> desc = new DescMeta<>();
 
         desc.setId(attributes.getValue("id"));
 
@@ -269,7 +262,6 @@ public class DIDLParser extends SAXParser {
      * <p>
      * Items inside a container will <em>not</em> be represented in the XML, the containers
      * will be rendered flat without children.
-   
      *
      * @param content The content model.
      * @return An XML representation.
@@ -286,7 +278,6 @@ public class DIDLParser extends SAXParser {
      * the container elements then have nested item elements. Although this
      * parser can read such a structure, it is unclear whether other DIDL
      * parsers should and actually do support this XML.
-   
      *
      * @param content     The content model.
      * @param nestedItems <code>true</code> if nested item elements should be rendered for containers.
@@ -294,224 +285,188 @@ public class DIDLParser extends SAXParser {
      *
      */
     public String generate(DIDLContent content, boolean nestedItems) throws Exception {
-        return documentToString(buildDOM(content, nestedItems), true);
+        return buildXMLString(content, nestedItems);
     }
 
-    // TODO: Yes, this only runs on Android 2.2
+    protected String buildXMLString(DIDLContent content, boolean nestedItems) throws Exception {
 
-    protected String documentToString(Document document, boolean omitProlog) throws Exception {
-        TransformerFactory transFactory = TransformerFactory.newInstance();
-
-        // Indentation not supported on Android 2.2
-        //transFactory.setAttribute("indent-number", 4);
-
-        Transformer transformer = transFactory.newTransformer();
-
-        if (omitProlog) {
-            // TODO: UPNP VIOLATION: Terratec Noxon Webradio fails when DIDL content has a prolog
-            // No XML prolog! This is allowed because it is UTF-8 encoded and required
-            // because broken devices will stumble on SOAP messages that contain (even
-            // encoded) XML prologs within a message body.
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        }
-
-        // Again, Android 2.2 fails hard if you try this.
-        //transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-        StringWriter out = new StringWriter();
-        transformer.transform(new DOMSource(document), new StreamResult(out));
-        return out.toString();
+        return XMLUtil.generateXMLToString(xmlStreamWriter -> {
+            generateRoot(content, xmlStreamWriter, nestedItems);
+        });
     }
 
-    protected Document buildDOM(DIDLContent content, boolean nestedItems) throws Exception {
-
-        DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
-        factory.setNamespaceAware(true);
-
-        Document d = factory.newDocumentBuilder().newDocument();
-
-        generateRoot(content, d, nestedItems);
-
-        return d;
-    }
-
-    protected void generateRoot(DIDLContent content, Document descriptor, boolean nestedItems) {
-        Element rootElement = descriptor.createElementNS(DIDLContent.NAMESPACE_URI, "DIDL-Lite");
-        descriptor.appendChild(rootElement);
+    protected void generateRoot(DIDLContent content, IXmlWriter xmlWriter, boolean nestedItems) throws XMLStreamException {
+        xmlWriter.writeStartElement(DIDLContent.NAMESPACE_URI, "DIDL-Lite");
 
         // rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:didl", DIDLContent.NAMESPACE_URI);
-        rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:upnp", DIDLObject.Property.UPNP.NAMESPACE.URI);
-        rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:dc", DIDLObject.Property.DC.NAMESPACE.URI);
-        rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:sec", DIDLObject.Property.SEC.NAMESPACE.URI);
+        xmlWriter.writeAttribute("http://www.w3.org/2000/xmlns/", "xmlns:upnp", DIDLObject.Property.UPNP.NAMESPACE.URI);
+        xmlWriter.writeAttribute("http://www.w3.org/2000/xmlns/", "xmlns:dc", DIDLObject.Property.DC.NAMESPACE.URI);
+        xmlWriter.writeAttribute("http://www.w3.org/2000/xmlns/", "xmlns:sec", DIDLObject.Property.SEC.NAMESPACE.URI);
 
         for (Container container : content.getContainers()) {
             if (container == null) continue;
-            generateContainer(container, descriptor, rootElement, nestedItems);
+            generateContainer(container, xmlWriter, nestedItems);
         }
 
         for (Item item : content.getItems()) {
             if (item == null) continue;
-            generateItem(item, descriptor, rootElement);
+            generateItem(item, xmlWriter);
         }
 
         for (DescMeta<?> descMeta : content.getDescMetadata()) {
             if (descMeta == null) continue;
-            generateDescMetadata(descMeta, descriptor, rootElement);
+            generateDescMetadata(descMeta, xmlWriter);
         }
+        xmlWriter.writeEndElement();
     }
 
-    protected void generateContainer(Container container, Document descriptor, Element parent, boolean nestedItems) {
+    protected void generateContainer(Container container, IXmlWriter xmlWriter, boolean nestedItems) throws XMLStreamException {
 
         if (container.getClazz() == null) {
             throw new RuntimeException("Missing 'upnp:class' element for container: " + container.getId());
         }
-
-        Element containerElement = appendNewElement(descriptor, parent, "container");
+        xmlWriter.writeStartElement("container");
 
         if (container.getId() == null)
             throw new NullPointerException("Missing id on container: " + container);
-        containerElement.setAttribute("id", container.getId());
+        xmlWriter.writeAttribute("id", container.getId());
 
         if (container.getParentID() == null)
             throw new NullPointerException("Missing parent id on container: " + container);
-        containerElement.setAttribute(PARENT_ID, container.getParentID());
+        xmlWriter.writeAttribute(PARENT_ID, container.getParentID());
 
         if (container.getChildCount() != null) {
-            containerElement.setAttribute("childCount", Integer.toString(container.getChildCount()));
+            xmlWriter.writeAttribute("childCount", Integer.toString(container.getChildCount()));
         }
 
-        containerElement.setAttribute(RESTRICTED, booleanToInt(container.isRestricted()));
-        containerElement.setAttribute("searchable", booleanToInt(container.isSearchable()));
+        xmlWriter.writeAttribute(RESTRICTED, booleanToInt(container.isRestricted()));
+        xmlWriter.writeAttribute("searchable", booleanToInt(container.isSearchable()));
 
         String title = container.getTitle();
         if (title == null) {
-            if (log.isWarnEnabled()) log.warn("Missing 'dc:title' element for container: " + container.getId());
+            log.warn(() -> "Missing 'dc:title' element for container: " + container.getId());
             title = UNKNOWN_TITLE;
         }
 
         appendNewElementIfNotNull(
-            descriptor,
-            containerElement,
-            "dc:title",
-            title,
-            DIDLObject.Property.DC.NAMESPACE.URI
+                xmlWriter,
+                "dc:title",
+                title,
+                DIDLObject.Property.DC.NAMESPACE.URI
         );
 
         appendNewElementIfNotNull(
-            descriptor,
-            containerElement,
-            "dc:creator",
-            container.getCreator(),
-            DIDLObject.Property.DC.NAMESPACE.URI
+                xmlWriter,
+                "dc:creator",
+                container.getCreator(),
+                DIDLObject.Property.DC.NAMESPACE.URI
         );
 
         appendNewElementIfNotNull(
-            descriptor,
-            containerElement,
-            "upnp:writeStatus",
-            container.getWriteStatus(),
-            DIDLObject.Property.UPNP.NAMESPACE.URI
+                xmlWriter,
+                "upnp:writeStatus",
+                container.getWriteStatus(),
+                DIDLObject.Property.UPNP.NAMESPACE.URI
         );
 
-        appendClass(descriptor, containerElement, container.getClazz(), "upnp:class", false);
+        appendClass(xmlWriter, container.getClazz(), "upnp:class", false);
 
         for (DIDLObject.Class searchClass : container.getSearchClasses()) {
-            appendClass(descriptor, containerElement, searchClass, "upnp:searchClass", true);
+            appendClass(xmlWriter, searchClass, "upnp:searchClass", true);
         }
 
         for (DIDLObject.Class createClass : container.getCreateClasses()) {
-            appendClass(descriptor, containerElement, createClass, "upnp:createClass", true);
+            appendClass(xmlWriter, createClass, "upnp:createClass", true);
         }
 
-        appendProperties(descriptor, containerElement, container, "upnp", DIDLObject.Property.UPNP.NAMESPACE.class, DIDLObject.Property.UPNP.NAMESPACE.URI);
-        appendProperties(descriptor, containerElement, container, "dc", DIDLObject.Property.DC.NAMESPACE.class, DIDLObject.Property.DC.NAMESPACE.URI);
+        appendProperties(xmlWriter, container, "upnp", DIDLObject.Property.UPNP.NAMESPACE.class, DIDLObject.Property.UPNP.NAMESPACE.URI);
+        appendProperties(xmlWriter, container, "dc", DIDLObject.Property.DC.NAMESPACE.class, DIDLObject.Property.DC.NAMESPACE.URI);
 
         if (nestedItems) {
             for (Item item : container.getItems()) {
                 if (item == null) continue;
-                generateItem(item, descriptor, containerElement);
+                generateItem(item, xmlWriter);
             }
         }
 
         for (Res resource : container.getResources()) {
             if (resource == null) continue;
-            generateResource(resource, descriptor, containerElement);
+            generateResource(resource, xmlWriter);
         }
 
         for (DescMeta<?> descMeta : container.getDescMetadata()) {
             if (descMeta == null) continue;
-            generateDescMetadata(descMeta, descriptor, containerElement);
+            generateDescMetadata(descMeta, xmlWriter);
         }
+        xmlWriter.writeEndElement();
     }
 
-    protected void generateItem(Item item, Document descriptor, Element parent) {
+    protected void generateItem(Item item, IXmlWriter xmlWriter) throws XMLStreamException {
 
         if (item.getClazz() == null) {
             throw new RuntimeException("Missing 'upnp:class' element for item: " + item.getId());
         }
+        xmlWriter.writeStartElement(ITEM);
 
-        Element itemElement = appendNewElement(descriptor, parent, ITEM);
 
         if (item.getId() == null)
             throw new NullPointerException("Missing id on item: " + item);
-        itemElement.setAttribute("id", item.getId());
+        xmlWriter.writeAttribute("id", item.getId());
 
         if (item.getParentID() == null)
             throw new NullPointerException("Missing parent id on item: " + item);
-        itemElement.setAttribute(PARENT_ID, item.getParentID());
+        xmlWriter.writeAttribute(PARENT_ID, item.getParentID());
 
         if (item.getRefID() != null)
-            itemElement.setAttribute("refID", item.getRefID());
-        itemElement.setAttribute(RESTRICTED, booleanToInt(item.isRestricted()));
+            xmlWriter.writeAttribute("refID", item.getRefID());
+        xmlWriter.writeAttribute(RESTRICTED, booleanToInt(item.isRestricted()));
 
         String title = item.getTitle();
         if (title == null) {
-            if (log.isWarnEnabled()) log.warn("Missing 'dc:title' element for item: " + item.getId());
+            log.warn(() -> "Missing 'dc:title' element for item: " + item.getId());
             title = UNKNOWN_TITLE;
         }
 
         appendNewElementIfNotNull(
-            descriptor,
-            itemElement,
-            "dc:title",
-            title,
-            DIDLObject.Property.DC.NAMESPACE.URI
+                xmlWriter,
+                "dc:title",
+                title,
+                DIDLObject.Property.DC.NAMESPACE.URI
         );
 
         appendNewElementIfNotNull(
-            descriptor,
-            itemElement,
-            "dc:creator",
-            item.getCreator(),
-            DIDLObject.Property.DC.NAMESPACE.URI
+                xmlWriter,
+                "dc:creator",
+                item.getCreator(),
+                DIDLObject.Property.DC.NAMESPACE.URI
         );
 
         appendNewElementIfNotNull(
-            descriptor,
-            itemElement,
-            "upnp:writeStatus",
-            item.getWriteStatus(),
-            DIDLObject.Property.UPNP.NAMESPACE.URI
+                xmlWriter,
+                "upnp:writeStatus",
+                item.getWriteStatus(),
+                DIDLObject.Property.UPNP.NAMESPACE.URI
         );
 
-        appendClass(descriptor, itemElement, item.getClazz(), "upnp:class", false);
+        appendClass(xmlWriter, item.getClazz(), "upnp:class", false);
 
-        appendProperties(descriptor, itemElement, item, "upnp", DIDLObject.Property.UPNP.NAMESPACE.class, DIDLObject.Property.UPNP.NAMESPACE.URI);
-        appendProperties(descriptor, itemElement, item, "dc", DIDLObject.Property.DC.NAMESPACE.class, DIDLObject.Property.DC.NAMESPACE.URI);
-        appendProperties(descriptor, itemElement, item, "sec", DIDLObject.Property.SEC.NAMESPACE.class, DIDLObject.Property.SEC.NAMESPACE.URI);
+        appendProperties(xmlWriter, item, "upnp", DIDLObject.Property.UPNP.NAMESPACE.class, DIDLObject.Property.UPNP.NAMESPACE.URI);
+        appendProperties(xmlWriter, item, "dc", DIDLObject.Property.DC.NAMESPACE.class, DIDLObject.Property.DC.NAMESPACE.URI);
+        appendProperties(xmlWriter, item, "sec", DIDLObject.Property.SEC.NAMESPACE.class, DIDLObject.Property.SEC.NAMESPACE.URI);
 
         for (Res resource : item.getResources()) {
             if (resource == null) continue;
-            generateResource(resource, descriptor, itemElement);
+            generateResource(resource, xmlWriter);
         }
 
         for (DescMeta<?> descMeta : item.getDescMetadata()) {
             if (descMeta == null) continue;
-            generateDescMetadata(descMeta, descriptor, itemElement);
+            generateDescMetadata(descMeta, xmlWriter);
         }
+        xmlWriter.writeEndElement();
     }
 
-    protected void generateResource(Res resource, Document descriptor, Element parent) {
+    protected void generateResource(Res resource, IXmlWriter xmlWriter) throws XMLStreamException {
 
         if (resource.getValue() == null) {
             throw new RuntimeException("Missing resource URI value" + resource);
@@ -520,31 +475,31 @@ public class DIDLParser extends SAXParser {
             throw new RuntimeException("Missing resource protocol info: " + resource);
         }
 
-        Element resourceElement = appendNewElement(descriptor, parent, RES, resource.getValue());
-        resourceElement.setAttribute("protocolInfo", resource.getProtocolInfo().toString());
+        appendNewElement(xmlWriter, RES, resource.getValue());
+        xmlWriter.writeAttribute("protocolInfo", resource.getProtocolInfo().toString());
         if (resource.getImportUri() != null)
-            resourceElement.setAttribute("importUri", resource.getImportUri().toString());
+            xmlWriter.writeAttribute("importUri", resource.getImportUri().toString());
         if (resource.getSize() != null)
-            resourceElement.setAttribute("size", resource.getSize().toString());
+            xmlWriter.writeAttribute("size", resource.getSize().toString());
         if (resource.getDuration() != null)
-            resourceElement.setAttribute("duration", resource.getDuration());
+            xmlWriter.writeAttribute("duration", resource.getDuration());
         if (resource.getBitrate() != null)
-            resourceElement.setAttribute("bitrate", resource.getBitrate().toString());
+            xmlWriter.writeAttribute("bitrate", resource.getBitrate().toString());
         if (resource.getSampleFrequency() != null)
-            resourceElement.setAttribute("sampleFrequency", resource.getSampleFrequency().toString());
+            xmlWriter.writeAttribute("sampleFrequency", resource.getSampleFrequency().toString());
         if (resource.getBitsPerSample() != null)
-            resourceElement.setAttribute("bitsPerSample", resource.getBitsPerSample().toString());
+            xmlWriter.writeAttribute("bitsPerSample", resource.getBitsPerSample().toString());
         if (resource.getNrAudioChannels() != null)
-            resourceElement.setAttribute("nrAudioChannels", resource.getNrAudioChannels().toString());
+            xmlWriter.writeAttribute("nrAudioChannels", resource.getNrAudioChannels().toString());
         if (resource.getColorDepth() != null)
-            resourceElement.setAttribute("colorDepth", resource.getColorDepth().toString());
+            xmlWriter.writeAttribute("colorDepth", resource.getColorDepth().toString());
         if (resource.getProtection() != null)
-            resourceElement.setAttribute("protection", resource.getProtection());
+            xmlWriter.writeAttribute("protection", resource.getProtection());
         if (resource.getResolution() != null)
-            resourceElement.setAttribute("resolution", resource.getResolution());
+            xmlWriter.writeAttribute("resolution", resource.getResolution());
     }
 
-    protected void generateDescMetadata(DescMeta<?> descMeta, Document descriptor, Element parent) {
+    protected void generateDescMetadata(DescMeta<?> descMeta, IXmlWriter xmlWriter) throws XMLStreamException {
 
         if (descMeta.getId() == null) {
             throw new RuntimeException("Missing id of description metadata: " + descMeta);
@@ -552,13 +507,14 @@ public class DIDLParser extends SAXParser {
         if (descMeta.getNameSpace() == null) {
             throw new RuntimeException("Missing namespace of description metadata: " + descMeta);
         }
+        xmlWriter.writeStartElement(DESC);
 
-        Element descElement = appendNewElement(descriptor, parent, DESC);
-        descElement.setAttribute("id", descMeta.getId());
-        descElement.setAttribute("nameSpace", descMeta.getNameSpace().toString());
+        xmlWriter.writeAttribute("id", descMeta.getId());
+        xmlWriter.writeAttribute("nameSpace", descMeta.getNameSpace().toString());
         if (descMeta.getType() != null)
-            descElement.setAttribute("type", descMeta.getType());
-        populateDescMetadata(descElement, descMeta);
+            xmlWriter.writeAttribute("type", descMeta.getType());
+        populateDescMetadata(xmlWriter, descMeta);
+        xmlWriter.writeEndElement();
     }
 
     /**
@@ -567,52 +523,43 @@ public class DIDLParser extends SAXParser {
      * This method will ignore the content and log a warning if it's of the wrong type. If you override
      * {@link #createDescMetaHandler(com.distrimind.upnp_igd.support.model.DescMeta, Handler)},
      * you most likely also want to override this method.
-   
+
      *
-     * @param descElement The DIDL content {@code <desc>} element wrapping the final metadata.
+     * @param xmlWriter the xml writer
      * @param descMeta    The metadata with a <code>org.w3c.Document</code> payload.
      */
-    protected void populateDescMetadata(Element descElement, DescMeta<?> descMeta) {
-        if (descMeta.getMetadata() instanceof Document) {
-            Document doc = (Document) descMeta.getMetadata();
+    protected void populateDescMetadata(IXmlWriter xmlWriter, DescMeta<?> descMeta) throws XMLStreamException {
 
-            NodeList nl = doc.getDocumentElement().getChildNodes();
-            for (int i = 0; i < nl.getLength(); i++) {
-                Node n = nl.item(i);
-                if (n.getNodeType() != Node.ELEMENT_NODE)
-                    continue;
-
-                Node clone = descElement.getOwnerDocument().importNode(n, true);
-                descElement.appendChild(clone);
-            }
+        if (descMeta.getMetadata() instanceof XMLUtil.XMLCompleters) {
+            XMLUtil.XMLCompleters c = (XMLUtil.XMLCompleters) descMeta.getMetadata();
+            c.write(xmlWriter);
 
         } else {
-            if (log.isWarnEnabled()) log.warn("Unknown desc metadata content, please override populateDescMetadata(): " + descMeta.getMetadata());
+            log.warn(() -> "Unknown desc metadata content, please override populateDescMetadata(): " + descMeta.getMetadata());
         }
     }
 
-    protected void appendProperties(Document descriptor, Element parent, DIDLObject object, String prefix,
+    protected void appendProperties(IXmlWriter xmlWriter, DIDLObject object, String prefix,
                                     Class<? extends DIDLObject.Property.NAMESPACE> namespace,
-                                    String namespaceURI) {
+                                    String namespaceURI) throws XMLStreamException {
         for (DIDLObject.Property<Object> property : object.getPropertiesByNamespace(namespace)) {
-            Element el = descriptor.createElementNS(namespaceURI, prefix + ":" + property.getDescriptorName());
-            parent.appendChild(el);
-            property.setOnElement(el);
+            xmlWriter.writeStartElement(prefix, property.getDescriptorName(), namespaceURI);
+            property.setOnElement(xmlWriter);
+            xmlWriter.writeEndElement();
         }
     }
 
-    protected void appendClass(Document descriptor, Element parent, DIDLObject.Class clazz, String element, boolean appendDerivation) {
-        Element classElement = appendNewElementIfNotNull(
-            descriptor,
-            parent,
-            element,
-            clazz.getValue(),
-            DIDLObject.Property.UPNP.NAMESPACE.URI
+    protected void appendClass(IXmlWriter xmlWriter, DIDLObject.Class clazz, String element, boolean appendDerivation) throws XMLStreamException {
+        appendNewElementIfNotNull(
+                xmlWriter,
+                element,
+                clazz.getValue(),
+                DIDLObject.Property.UPNP.NAMESPACE.URI
         );
         if (clazz.getFriendlyName() != null && !clazz.getFriendlyName().isEmpty())
-            classElement.setAttribute(NAME, clazz.getFriendlyName());
+            xmlWriter.writeAttribute(NAME, clazz.getFriendlyName());
         if (appendDerivation)
-            classElement.setAttribute("includeDerived", Boolean.toString(clazz.isIncludeDerived()));
+            xmlWriter.writeAttribute("includeDerived", Boolean.toString(clazz.isIncludeDerived()));
     }
 
     protected String booleanToInt(boolean b) {
@@ -645,191 +592,252 @@ public class DIDLParser extends SAXParser {
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             super.endElement(uri, localName, qName);
+            if (localName==null)
+                return;
+            if (uri==null)
+                return;
+            switch (uri)
+            {
+                case DIDLObject.Property.DC.NAMESPACE.URI:
+                    switch (localName) {
+                        case "title":
+                            getInstance().setTitle(getCharacters());
+                            break;
+                        case "creator":
+                            getInstance().setCreator(getCharacters());
+                            break;
+                        case "description":
+                            getInstance().addProperty(new DIDLObject.Property.DC.DESCRIPTION(getCharacters()));
+                            break;
+                        case "publisher":
+                            getInstance().addProperty(new DIDLObject.Property.DC.PUBLISHER(new Person(getCharacters())));
+                            break;
+                        case "contributor":
+                            getInstance().addProperty(new DIDLObject.Property.DC.CONTRIBUTOR(new Person(getCharacters())));
+                            break;
+                        case "date":
+                            getInstance().addProperty(new DIDLObject.Property.DC.DATE(getCharacters()));
+                            break;
+                        case "language":
+                            getInstance().addProperty(new DIDLObject.Property.DC.LANGUAGE(getCharacters()));
+                            break;
+                        case "rights":
+                            getInstance().addProperty(new DIDLObject.Property.DC.RIGHTS(getCharacters()));
+                            break;
+                        case "relation":
+                            getInstance().addProperty(new DIDLObject.Property.DC.RELATION(URI.create(getCharacters())));
+                            break;
+                        default:
+                            break;
 
-            if (DIDLObject.Property.DC.NAMESPACE.URI.equals(uri)) {
-
-                if ("title".equals(localName)) {
-                    getInstance().setTitle(getCharacters());
-                } else if ("creator".equals(localName)) {
-                    getInstance().setCreator(getCharacters());
-                } else if ("description".equals(localName)) {
-                    getInstance().addProperty(new DIDLObject.Property.DC.DESCRIPTION(getCharacters()));
-                } else if ("publisher".equals(localName)) {
-                    getInstance().addProperty(new DIDLObject.Property.DC.PUBLISHER(new Person(getCharacters())));
-                } else if ("contributor".equals(localName)) {
-                    getInstance().addProperty(new DIDLObject.Property.DC.CONTRIBUTOR(new Person(getCharacters())));
-                } else if ("date".equals(localName)) {
-                    getInstance().addProperty(new DIDLObject.Property.DC.DATE(getCharacters()));
-                } else if ("language".equals(localName)) {
-                    getInstance().addProperty(new DIDLObject.Property.DC.LANGUAGE(getCharacters()));
-                } else if ("rights".equals(localName)) {
-                    getInstance().addProperty(new DIDLObject.Property.DC.RIGHTS(getCharacters()));
-                } else if ("relation".equals(localName)) {
-                    getInstance().addProperty(new DIDLObject.Property.DC.RELATION(URI.create(getCharacters())));
-                }
-
-            } else if (DIDLObject.Property.UPNP.NAMESPACE.URI.equals(uri)) {
-
-                if ("writeStatus".equals(localName)) {
-                    try {
-                        getInstance().setWriteStatus(
-                            WriteStatus.valueOf(getCharacters())
-                        );
-                    } catch (Exception ex) {
-                        if (log.isInfoEnabled()) log.info("Ignoring invalid writeStatus value: " + getCharacters());
                     }
-                } else if ("class".equals(localName)) {
-                    getInstance().setClazz(
-                        new DIDLObject.Class(
-                            getCharacters(),
-                            getAttributes().getValue(NAME)
-                        )
-                    );
-                } else if ("artist".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.ARTIST(
-                            new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
-                        )
-                    );
-                } else if ("actor".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.ACTOR(
-                            new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
-                        )
-                    );
-                } else if ("author".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.AUTHOR(
-                            new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
-                        )
-                    );
-                } else if ("producer".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.PRODUCER(new Person(getCharacters()))
-                    );
-                } else if ("director".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.DIRECTOR(new Person(getCharacters()))
-                    );
-                } else if ("longDescription".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.LONG_DESCRIPTION(getCharacters())
-                    );
-                } else if ("storageUsed".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.STORAGE_USED(Long.valueOf(getCharacters()))
-                    );
-                } else if ("storageTotal".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.STORAGE_TOTAL(Long.valueOf(getCharacters()))
-                    );
-                } else if ("storageFree".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.STORAGE_FREE(Long.valueOf(getCharacters()))
-                    );
-                } else if ("storageMaxPartition".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.STORAGE_MAX_PARTITION(Long.valueOf(getCharacters()))
-                    );
-                } else if ("storageMedium".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.STORAGE_MEDIUM(StorageMedium.valueOrVendorSpecificOf(getCharacters()))
-                    );
-                } else if ("genre".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.GENRE(getCharacters())
-                    );
-                } else if ("album".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.ALBUM(getCharacters())
-                    );
-                } else if ("playlist".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.PLAYLIST(getCharacters())
-                    );
-                } else if ("region".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.REGION(getCharacters())
-                    );
-                } else if ("rating".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.RATING(getCharacters())
-                    );
-                } else if ("toc".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.TOC(getCharacters())
-                    );
-                } else if ("albumArtURI".equals(localName)) {
-                    DIDLObject.Property<URI> albumArtURI = new DIDLObject.Property.UPNP.ALBUM_ART_URI(URI.create(getCharacters()));
+                    break;
+                case DIDLObject.Property.UPNP.NAMESPACE.URI:
+                    switch (localName)
+                    {
+                        case "writeStatus":
+                            try {
+                                getInstance().setWriteStatus(
+                                        WriteStatus.valueOf(getCharacters())
+                                );
+                            } catch (Exception ex) {
+                                if (log.isInfoEnabled()) log.info("Ignoring invalid writeStatus value: " + getCharacters());
+                            }
+                            break;
+                        case "class":
+                            getInstance().setClazz(
+                                    new DIDLObject.Class(
+                                            getCharacters(),
+                                            getAttributes().getValue(NAME)
+                                    )
+                            );
+                            break;
+                        case "artist":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.ARTIST(
+                                            new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
+                                    )
+                            );
+                            break;
+                        case "actor":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.ACTOR(
+                                            new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
+                                    )
+                            );
+                            break;
+                        case "author":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.AUTHOR(
+                                            new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
+                                    )
+                            );
+                            break;
+                        case "producer":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.PRODUCER(new Person(getCharacters()))
+                            );
+                            break;
+                        case "director":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.DIRECTOR(new Person(getCharacters()))
+                            );
+                            break;
+                        case "longDescription":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.LONG_DESCRIPTION(getCharacters())
+                            );
+                            break;
+                        case "storageUsed":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.STORAGE_USED(Long.valueOf(getCharacters()))
+                            );
+                            break;
+                        case "storageTotal":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.STORAGE_TOTAL(Long.valueOf(getCharacters()))
+                            );
+                            break;
+                        case "storageFree":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.STORAGE_FREE(Long.valueOf(getCharacters()))
+                            );
+                            break;
+                        case "storageMaxPartition":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.STORAGE_MAX_PARTITION(Long.valueOf(getCharacters()))
+                            );
+                            break;
+                        case "storageMedium":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.STORAGE_MEDIUM(StorageMedium.valueOrVendorSpecificOf(getCharacters()))
+                            );
+                            break;
+                        case "genre":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.GENRE(getCharacters())
+                            );
+                            break;
+                        case "album":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.ALBUM(getCharacters())
+                            );
+                            break;
+                        case "playlist":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.PLAYLIST(getCharacters())
+                            );
+                            break;
+                        case "region":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.REGION(getCharacters())
+                            );
+                            break;
+                        case "rating":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.RATING(getCharacters())
+                            );
+                            break;
+                        case "toc":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.TOC(getCharacters())
+                            );
+                            break;
+                        case "albumArtURI":
+                        {
+                            DIDLObject.Property<URI> albumArtURI = new DIDLObject.Property.UPNP.ALBUM_ART_URI(URI.create(getCharacters()));
 
-                    Attributes albumArtURIAttributes = getAttributes();
-                    for (int i = 0; i < albumArtURIAttributes.getLength(); i++) {
-                        if ("profileID".equals(albumArtURIAttributes.getLocalName(i))) {
-                            albumArtURI.addAttribute(
-                                new DIDLObject.Property.DLNA.PROFILE_ID(
-                                    new DIDLAttribute(
-                                        DIDLObject.Property.DLNA.NAMESPACE.URI,
-                                        "dlna",
-                                        albumArtURIAttributes.getValue(i))
-                                ));
+                            Attributes albumArtURIAttributes = getAttributes();
+                            for (int i = 0; i < albumArtURIAttributes.getLength(); i++) {
+                                if ("profileID".equals(albumArtURIAttributes.getLocalName(i))) {
+                                    albumArtURI.addAttribute(
+                                            new DIDLObject.Property.DLNA.PROFILE_ID(
+                                                    new DIDLAttribute(
+                                                            DIDLObject.Property.DLNA.NAMESPACE.URI,
+                                                            "dlna",
+                                                            albumArtURIAttributes.getValue(i))
+                                            ));
+                                }
+                            }
+
+                            getInstance().addProperty(albumArtURI);
                         }
-                    }
+                        break;
+                        case "artistDiscographyURI":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.ARTIST_DISCO_URI(URI.create(getCharacters()))
+                            );
+                            break;
+                        case "lyricsURI":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.LYRICS_URI(URI.create(getCharacters()))
+                            );
+                            break;
+                        case "icon":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.ICON(URI.create(getCharacters()))
+                            );
+                            break;
+                        case "radioCallSign":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.RADIO_CALL_SIGN(getCharacters())
+                            );
+                            break;
+                        case "radioStationID":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.RADIO_STATION_ID(getCharacters())
+                            );
+                            break;
+                        case "radioBand":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.RADIO_BAND(getCharacters())
+                            );
+                            break;
+                        case "channelNr":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.CHANNEL_NR(Integer.valueOf(getCharacters()))
+                            );
+                            break;
+                        case "channelName":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.CHANNEL_NAME(getCharacters())
+                            );
+                            break;
+                        case "scheduledStartTime":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.SCHEDULED_START_TIME(getCharacters())
+                            );
+                            break;
+                        case "scheduledEndTime":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.SCHEDULED_END_TIME(getCharacters())
+                            );
+                            break;
+                        case "DVDRegionCode":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.DVD_REGION_CODE(Integer.valueOf(getCharacters()))
+                            );
+                            break;
+                        case "originalTrackNumber":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.ORIGINAL_TRACK_NUMBER(Integer.valueOf(getCharacters()))
+                            );
+                            break;
+                        case "userAnnotation":
+                            getInstance().addProperty(
+                                    new DIDLObject.Property.UPNP.USER_ANNOTATION(getCharacters())
+                            );
+                            break;
+                        default:
+                            break;
 
-                    getInstance().addProperty(albumArtURI);
-                } else if ("artistDiscographyURI".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.ARTIST_DISCO_URI(URI.create(getCharacters()))
-                    );
-                } else if ("lyricsURI".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.LYRICS_URI(URI.create(getCharacters()))
-                    );
-                } else if ("icon".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.ICON(URI.create(getCharacters()))
-                    );
-                } else if ("radioCallSign".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.RADIO_CALL_SIGN(getCharacters())
-                    );
-                } else if ("radioStationID".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.RADIO_STATION_ID(getCharacters())
-                    );
-                } else if ("radioBand".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.RADIO_BAND(getCharacters())
-                    );
-                } else if ("channelNr".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.CHANNEL_NR(Integer.valueOf(getCharacters()))
-                    );
-                } else if ("channelName".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.CHANNEL_NAME(getCharacters())
-                    );
-                } else if ("scheduledStartTime".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.SCHEDULED_START_TIME(getCharacters())
-                    );
-                } else if ("scheduledEndTime".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.SCHEDULED_END_TIME(getCharacters())
-                    );
-                } else if ("DVDRegionCode".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.DVD_REGION_CODE(Integer.valueOf(getCharacters()))
-                    );
-                } else if ("originalTrackNumber".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.ORIGINAL_TRACK_NUMBER(Integer.valueOf(getCharacters()))
-                    );
-                } else if ("userAnnotation".equals(localName)) {
-                    getInstance().addProperty(
-                        new DIDLObject.Property.UPNP.USER_ANNOTATION(getCharacters())
-                    );
-                }
+
+                    }
+                    break;
+                default:
+                    break;
             }
+
         }
     }
 
@@ -862,7 +870,7 @@ public class DIDLParser extends SAXParser {
 					break;
 				case DESC:
 
-					DescMeta<Document> desc = createDescMeta(attributes);
+					DescMeta<XMLUtil.XMLCompleters> desc = createDescMeta(attributes);
 					getInstance().addDescMetadata(desc);
 					createDescMetaHandler(desc, this);
 
@@ -905,7 +913,7 @@ public class DIDLParser extends SAXParser {
 					break;
 				case DESC:
 
-					DescMeta<Document> desc = createDescMeta(attributes);
+					DescMeta<XMLUtil.XMLCompleters> desc = createDescMeta(attributes);
 					getInstance().addDescMetadata(desc);
 					createDescMetaHandler(desc, this);
 
@@ -932,25 +940,31 @@ public class DIDLParser extends SAXParser {
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             super.endElement(uri, localName, qName);
-
+            if (localName==null)
+                return;
             if (DIDLObject.Property.UPNP.NAMESPACE.URI.equals(uri)) {
-
-                if ("searchClass".equals(localName)) {
-                    getInstance().getSearchClasses().add(
-                        new DIDLObject.Class(
-                            getCharacters(),
-                            getAttributes().getValue(NAME),
-                            "true".equals(getAttributes().getValue("includeDerived"))
-                        )
-                    );
-                } else if ("createClass".equals(localName)) {
-                    getInstance().getCreateClasses().add(
-                        new DIDLObject.Class(
-                            getCharacters(),
-                            getAttributes().getValue(NAME),
-                            "true".equals(getAttributes().getValue("includeDerived"))
-                        )
-                    );
+                switch (localName)
+                {
+                    case "searchClass":
+                        getInstance().getSearchClasses().add(
+                                new DIDLObject.Class(
+                                        getCharacters(),
+                                        getAttributes().getValue(NAME),
+                                        "true".equals(getAttributes().getValue("includeDerived"))
+                                )
+                        );
+                        break;
+                    case "createClass":
+                        getInstance().getCreateClasses().add(
+                                new DIDLObject.Class(
+                                        getCharacters(),
+                                        getAttributes().getValue(NAME),
+                                        "true".equals(getAttributes().getValue("includeDerived"))
+                                )
+                        );
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -980,21 +994,28 @@ public class DIDLParser extends SAXParser {
             super.startElement(uri, localName, qName, attributes);
 
             if (!DIDLContent.NAMESPACE_URI.equals(uri)) return;
-
-            if (RES.equals(localName)) {
-
-                Res res = createResource(attributes);
-                if (res != null) {
-                    getInstance().addResource(res);
-                    createResHandler(res, this);
+            if (localName==null)
+                return;
+            switch (localName)
+            {
+                case RES:
+                {
+                    Res res = createResource(attributes);
+                    if (res != null) {
+                        getInstance().addResource(res);
+                        createResHandler(res, this);
+                    }
                 }
-
-            } else if (DESC.equals(localName)) {
-
-                DescMeta<Document> desc = createDescMeta(attributes);
-                getInstance().addDescMetadata(desc);
-                createDescMetaHandler(desc, this);
-
+                    break;
+                case DESC:
+                {
+                    DescMeta<XMLUtil.XMLCompleters> desc = createDescMeta(attributes);
+                    getInstance().addDescMetadata(desc);
+                    createDescMetaHandler(desc, this);
+                }
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -1035,53 +1056,54 @@ public class DIDLParser extends SAXParser {
      * <p>
      * The root element of this document is a wrapper in the namespace
      * {@link com.distrimind.upnp_igd.support.model.DIDLContent#DESC_WRAPPER_NAMESPACE_URI}.
-   
      */
-    public static class DescMetaHandler extends Handler<DescMeta<Document>> {
+    public static class DescMetaHandler extends Handler<DescMeta<XMLUtil.XMLCompleters>> {
 
-        protected Element current;
 
-        public DescMetaHandler(DescMeta<Document> instance, Handler<?> parent) {
+        public DescMetaHandler(DescMeta<XMLUtil.XMLCompleters> instance, Handler<?> parent) {
             super(instance, parent);
-            instance.setMetadata(instance.createMetadataDocument());
-            current = getInstance().getMetadata().getDocumentElement();
+            instance.setMetadata(instance.createXMLCompleters());
         }
 
         @Override
-        public DescMeta<Document> getInstance() {
+        public DescMeta<XMLUtil.XMLCompleters> getInstance() {
             return super.getInstance();
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
+            getInstance().getMetadata().add(xmlWriter -> {
+                xmlWriter.writeStartElement(uri, qName);
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    xmlWriter.writeAttribute(
+                            attributes.getURI(i),
+                            attributes.getQName(i),
+                            attributes.getValue(i)
+                    );
+                }
 
-            Element newEl = getInstance().getMetadata().createElementNS(uri, qName);
-            for (int i = 0; i < attributes.getLength(); i++) {
-                newEl.setAttributeNS(
-                    attributes.getURI(i),
-                    attributes.getQName(i),
-                    attributes.getValue(i)
-                );
-            }
-            current.appendChild(newEl);
-            current = newEl;
+            });
+
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             super.endElement(uri, localName, qName);
-            if (isLastElement(uri, localName, qName)) return;
+            getInstance().getMetadata().add(xmlWriter -> {
+                if (!isLastElement(uri, localName, qName)) {
 
-            // Ignore whitespace
-            if (!getCharacters().isEmpty() && !getCharacters().matches("[\\t\\n\\x0B\\f\\r\\s]+"))
-                current.appendChild(getInstance().getMetadata().createTextNode(getCharacters()));
+                    // Ignore whitespace
+                    if (!getCharacters().isEmpty() && !getCharacters().matches("[\\t\\n\\x0B\\f\\r\\s]+")) {
+                        xmlWriter.writeCharacters(getCharacters());
+                    }
+                    // Reset this so we can continue parsing child nodes with this handler
+                    chars = new StringBuilder();
 
-            current = (Element) current.getParentNode();
-
-            // Reset this so we can continue parsing child nodes with this handler
-            chars = new StringBuilder();
-            attributes = null;
+                    attributes = null;
+                }
+                xmlWriter.writeEndElement();
+            });
         }
 
         @Override

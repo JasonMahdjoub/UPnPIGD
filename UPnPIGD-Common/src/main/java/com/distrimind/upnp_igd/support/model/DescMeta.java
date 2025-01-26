@@ -15,11 +15,8 @@
 
 package com.distrimind.upnp_igd.support.model;
 
-import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import com.distrimind.upnp_igd.model.XMLUtil;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URI;
 
 
@@ -92,16 +89,8 @@ public class DescMeta<M> {
         this.metadata = metadata;
     }
 
-    public Document createMetadataDocument() {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
-            factory.setNamespaceAware(true);
-            Document d = factory.newDocumentBuilder().newDocument();
-            Element rootElement = d.createElementNS(DIDLContent.DESC_WRAPPER_NAMESPACE_URI, "desc-wrapper");
-            d.appendChild(rootElement);
-            return d;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+    public XMLUtil.XMLCompleters createXMLCompleters() {
+        return new XMLUtil.XMLCompleters();
     }
+
 }

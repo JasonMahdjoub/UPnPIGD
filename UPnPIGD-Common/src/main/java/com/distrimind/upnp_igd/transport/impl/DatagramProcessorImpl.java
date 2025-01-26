@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
+import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.message.*;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
@@ -40,7 +41,10 @@ public class DatagramProcessorImpl implements DatagramProcessor {
 
     @Override
 	public IncomingDatagramMessage<?> read(InetAddress receivedOnAddress, DatagramPacket datagram) throws UnsupportedDataException {
-
+        if (datagram.getLength()> Constants.MAX_HEADER_LENGTH_IN_BYTES)
+        {
+            throw new UnsupportedDataException("Datagram length is higher than "+Constants.MAX_HEADER_LENGTH_IN_BYTES+" bytes");
+        }
         try {
 
             if (log.isTraceEnabled()) {

@@ -285,6 +285,10 @@ public class Constants {
     // State variable prefixes
     public static String ARG_TYPE_PREFIX = "A_ARG_TYPE_";
     public static final int MAX_DESCRIPTOR_LENGTH=65536;
+    public static final int MAX_BODY_LENGTH=MAX_DESCRIPTOR_LENGTH*2;
+    //Defaults to maximum datagram size of 640 bytes (512 per UDA 1.0, 128 byte header).
+    public static final int MAX_HEADER_LENGTH_IN_BYTES=640;
+    public static final int MAX_INPUT_STREAM_SIZE_IN_BYTES=MAX_BODY_LENGTH+MAX_HEADER_LENGTH_IN_BYTES;
     static
     {
         updateDeducedId();

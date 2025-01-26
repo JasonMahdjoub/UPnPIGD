@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.binding.xml;
 
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
 import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.ValidationException;
 import com.distrimind.upnp_igd.model.meta.Device;
@@ -23,11 +24,11 @@ import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.util.Exceptions;
 import com.distrimind.upnp_igd.xml.ParserException;
 import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
-import org.xml.sax.SAXParseException;
 
 import java.util.Locale;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -169,7 +170,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
         }
         return null;
     }
-    private static final Pattern patternPrefix = Pattern.compile("The prefix \"(.*)\" for element");
+    private static final Pattern patternPrefix = Pattern.compile("www.w3.org/TR/1999/REC-xml-names-19990114#ElementPrefixUnbound\\?(.+)&.+:.+");
     private static final Pattern patternUndefinedPrefix = Pattern.compile("undefined prefix: ([^ ]*)");
     private static final Pattern patternRoot = Pattern.compile("<root([^>]*)");
     private static final Pattern patternRootEndRoot = Pattern.compile("<root[^>]*>(.*)</root>", Pattern.DOTALL);
@@ -178,21 +179,25 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
         // Android: org.xmlpull.v1.XmlPullParserException: undefined prefix: dlna (position:START_TAG <{null}dlna:X_DLNADOC>@19:17 in java.io.StringReader@406dff48)
 
         // We can only handle certain exceptions, depending on their type and message
-        if (ModelUtil.checkDescriptionXMLNotValid(descriptorXml))
+        if (ModelUtil.checkDescriptionXMLNotValid(descriptorXml)) {
             return null;
+        }
         Throwable cause = ex.getCause();
-        if (!((cause instanceof SAXParseException) || (cause instanceof ParserException)))
+        if (!((cause instanceof XMLStreamException) || (cause instanceof ParserException))) {
+
             return null;
+        }
         String message = cause.getMessage();
         if (message == null)
             return null;
 
-
         Matcher matcher = patternPrefix.matcher(message);
+
         if (!matcher.find() || matcher.groupCount() != 1) {
             matcher = patternUndefinedPrefix.matcher(message);
-            if (!matcher.find() || matcher.groupCount() != 1)
+            if (!matcher.find() || matcher.groupCount() != 1) {
                 return null;
+            }
         }
 
         String missingNS = matcher.group(1);
@@ -221,8 +226,8 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
         String rootBody = matcher.group(1);
 
         // Add missing namespace, it only matters that it is defined, not that it is correct
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-            + "<root "
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+            + "\t<root "
             + String.format(Locale.ROOT, "xmlns:%s=\"urn:schemas-dlna-org:device-1-0\"", missingNS) + rootAttributes + ">"
             + rootBody
             + endRootTag;

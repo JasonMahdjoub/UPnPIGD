@@ -273,5 +273,13 @@ public class ModelUtil {
             return true;
         return getTrimLength(descriptorXml)<=0;
 	}
+    public static boolean checkBodyValid(byte[] body)
+    {
+        if (body==null)
+            return false;
+        if (body.length==0)
+            return false;
+        return body.length <= Constants.MAX_BODY_LENGTH;
+    }
 
 }

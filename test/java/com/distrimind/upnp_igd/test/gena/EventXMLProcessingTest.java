@@ -45,7 +45,7 @@ import static org.testng.Assert.assertTrue;
 public class EventXMLProcessingTest {
 
     public static final String EVENT_MSG =
-        "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
             "<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">" +
             "<e:property>" +
             "<Status>0</Status>" +

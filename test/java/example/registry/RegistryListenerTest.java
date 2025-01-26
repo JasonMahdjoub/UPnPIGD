@@ -14,6 +14,7 @@
  */
 package example.registry;
 
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.mock.MockRouter;
 import com.distrimind.upnp_igd.mock.MockUpnpService;
@@ -29,7 +30,6 @@ import com.distrimind.upnp_igd.registry.DefaultRegistryListener;
 import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.test.data.SampleData;
 import org.testng.annotations.Test;
-import org.xml.sax.SAXParseException;
 
 import java.util.List;
 
@@ -216,7 +216,7 @@ public class RegistryListenerTest {
 
         @Override
         public void remoteDeviceDiscoveryFailed(Registry registry, RemoteDevice device, Exception ex) {
-            if(ex.getCause() instanceof SAXParseException)
+            if(ex.getCause() instanceof XMLStreamException)
                 valid = true;
         }
     }

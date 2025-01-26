@@ -27,8 +27,16 @@ public class DescriptorBindingException extends Exception {
         super(s);
     }
 
-    public DescriptorBindingException(String s, Throwable throwable) {
+    private DescriptorBindingException(String s, Throwable throwable) {
         super(s, throwable);
+    }
+    public static DescriptorBindingException getDescriptorBindingException(String message, Exception e) {
+        if (e instanceof DescriptorBindingException)
+            return (DescriptorBindingException)e;
+        else
+        {
+            return new DescriptorBindingException(message, e);
+        }
     }
 }
 

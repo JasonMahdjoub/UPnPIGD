@@ -44,23 +44,17 @@ import java.util.Locale;
 
          switch (column) {
              case 0:
-                 if (message.getLevel().equals(org.slf4j.event.Level.ERROR) ||
-                         message.getLevel().equals(org.slf4j.event.Level.WARN)) {
-
-                     return new JLabel(getWarnErrorIcon());
-
-                 } else if (message.getLevel().equals(org.slf4j.event.Level.DEBUG)) {
-
-                     return new JLabel(getDebugIcon());
-
-                 } else if (message.getLevel().equals(Level.TRACE)) {
-
-                     return new JLabel(getTraceIcon());
-
-
-                 } else {
-
-                     return new JLabel(getInfoIcon());
+                 switch (message.getLevel())
+                 {
+                     case ERROR:
+                     case WARN:
+                         return new JLabel(getWarnErrorIcon());
+                     case DEBUG:
+                         return new JLabel(getDebugIcon());
+                     case TRACE:
+                         return new JLabel(getTraceIcon());
+                     default:
+                         return new JLabel(getInfoIcon());
 
                  }
 

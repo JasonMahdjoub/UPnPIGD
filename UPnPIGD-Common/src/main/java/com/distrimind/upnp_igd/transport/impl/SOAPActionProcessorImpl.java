@@ -15,7 +15,12 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
-import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.flexilogxml.xml.IXmlReader;
+import com.distrimind.flexilogxml.xml.IXmlWriter;
+import com.distrimind.upnp_igd.binding.xml.DescriptorBindingException;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.action.ActionArgumentValue;
@@ -30,43 +35,24 @@ import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
 
 /**
  * Default implementation based on the <em>W3C DOM</em> XML processing API.
  *
  * @author Christian Bauer
+ * @author Jason Mahdjoub, use XML Parser instead of Document
  */
-public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandler {
+public class SOAPActionProcessorImpl implements SOAPActionProcessor, XMLUtil.ErrorHandler {
 
-    final private static DMLogger log = Log.getLogger(SOAPActionProcessorImpl.class);
+    private static final DMLogger log = Log.getLogger(SOAPActionProcessor.class.getName());
     public static final String FOR = " for: ";
     public static final String SOAP_BODY_BEGIN = "===================================== SOAP BODY BEGIN ============================================";
     public static final String SOAP_BODY_END = "-===================================== SOAP BODY END ============================================";
     public static final String CAN_T_TRANSFORM_MESSAGE_PAYLOAD = "Can't transform message payload: ";
-
-    protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
-    	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
-    }
 
     @Override
     public <S extends Service<?, ?, ?>> void writeBody(ActionRequestMessage requestMessage, ActionInvocation<S> actionInvocation) throws UnsupportedDataException {
@@ -75,14 +61,17 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             log.debug("Writing body of " + requestMessage + FOR + actionInvocation);
 		}
 
-		try {
+        try {
+            String d= XMLUtil.generateXMLToString(xmlStreamWriter -> {
+                writeStartBodyElement(xmlStreamWriter);
 
-            DocumentBuilderFactory factory = createDocumentBuilderFactory();
-            factory.setNamespaceAware(true);
-            Document d = factory.newDocumentBuilder().newDocument();
-            Element body = writeBodyElement(d);
+                writeBodyRequest(xmlStreamWriter, requestMessage, actionInvocation);
 
-            writeBodyRequest(d, body, requestMessage, actionInvocation);
+                xmlStreamWriter.writeEndElement();
+
+                writeEndBodyElement(xmlStreamWriter);
+            });
+            requestMessage.setBody(d);
 
             if (log.isTraceEnabled()) {
 				log.trace(SOAP_BODY_BEGIN);
@@ -102,18 +91,21 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             log.debug("Writing body of " + responseMessage + FOR + actionInvocation);
 		}
 
-		try {
+        try {
+            String d= XMLUtil.generateXMLToString(xmlStreamWriter -> {
+                writeStartBodyElement(xmlStreamWriter);
 
-            DocumentBuilderFactory factory = createDocumentBuilderFactory();
-            factory.setNamespaceAware(true);
-            Document d = factory.newDocumentBuilder().newDocument();
-            Element body = writeBodyElement(d);
+                if (actionInvocation.getFailure() != null) {
+                    writeBodyFailure(xmlStreamWriter, responseMessage, actionInvocation);
+                } else {
+                    writeBodyResponse(xmlStreamWriter, responseMessage, actionInvocation);
+                }
 
-            if (actionInvocation.getFailure() != null) {
-                writeBodyFailure(d, body, responseMessage, actionInvocation);
-            } else {
-                writeBodyResponse(d, body, responseMessage, actionInvocation);
-            }
+                writeEndBodyElement(xmlStreamWriter);
+            });
+            responseMessage.setBody(d);
+
+
 
             if (log.isTraceEnabled()) {
 				log.trace(SOAP_BODY_BEGIN);
@@ -140,17 +132,13 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
         String body = getMessageBody(requestMessage);
         try {
-
-            DocumentBuilderFactory factory = createDocumentBuilderFactory();
-            factory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-            documentBuilder.setErrorHandler(this);
-
-            Document d = documentBuilder.parse(new InputSource(new StringReader(body)));
-
-            Element bodyElement = readBodyElement(d);
-
-            readBodyRequest(bodyElement, requestMessage, actionInvocation);
+            XMLUtil.readXML(xmlReader -> {
+                readXML(xmlReader, xmlReader2 -> {
+                    readBodyRequest(xmlReader, requestMessage, actionInvocation);
+                    return null;
+                });
+                return null;
+            }, this, body);
 
         } catch (Exception ex) {
             throw new UnsupportedDataException(CAN_T_TRANSFORM_MESSAGE_PAYLOAD + ex, ex, body);
@@ -171,231 +159,231 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
         String body = getMessageBody(responseMsg);
         try {
+            try {
+                class C{
+                    ActionException failure=null;
+                }
+                C c=new C();
+                XMLUtil.readXML(xmlReader -> {
+                    readXML(xmlReader, xmlReader2 -> {
+                        c.failure = readBodyFailure(xmlReader2);
+                        return null;
+                    });
+                    return null;
+                }, this, body);
+                if (c.failure==null)
+                {
+                    XMLUtil.readXML(xmlReader -> {
+                        readXML(xmlReader, xmlReader2 -> {
+                            readBodyResponse(xmlReader2, actionInvocation);
+                            return null;
+                        });
+                        return null;
+                    }, this, body);
+                }
+                else
+                    actionInvocation.setFailure(c.failure);
 
-            DocumentBuilderFactory factory = createDocumentBuilderFactory();
-            factory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-            documentBuilder.setErrorHandler(this);
 
-            Document d = documentBuilder.parse(new InputSource(new StringReader(body)));
-
-            Element bodyElement = readBodyElement(d);
-
-            ActionException failure = readBodyFailure(bodyElement);
-
-            if (failure == null) {
-                readBodyResponse(bodyElement, actionInvocation);
-            } else {
-                actionInvocation.setFailure(failure);
+            } catch (Exception ex) {
+                throw new UnsupportedDataException(CAN_T_TRANSFORM_MESSAGE_PAYLOAD + ex, ex, body);
             }
+
+
 
         } catch (Exception ex) {
-    		throw new UnsupportedDataException(CAN_T_TRANSFORM_MESSAGE_PAYLOAD + ex, ex, body);
+            throw new UnsupportedDataException(CAN_T_TRANSFORM_MESSAGE_PAYLOAD + ex, ex, body);
         }
     }
 
     /* ##################################################################################################### */
 
-    protected <S extends Service<?, ?, ?>> void writeBodyFailure(Document d,
-                                    Element bodyElement,
-                                    ActionResponseMessage message,
-                                    ActionInvocation<S> actionInvocation) throws Exception {
-
-        writeFaultElement(d, bodyElement, actionInvocation);
-        message.setBody(toString(d));
-    }
-
-    protected <S extends Service<?, ?, ?>> void writeBodyRequest(Document d,
-                                    Element bodyElement,
-                                    ActionRequestMessage message,
-                                    ActionInvocation<S> actionInvocation) throws Exception {
-
-        Element actionRequestElement = writeActionRequestElement(d, bodyElement, message, actionInvocation);
-        writeActionInputArguments(d, actionRequestElement, actionInvocation);
-        message.setBody(toString(d));
-
-    }
-
-    protected <S extends Service<?, ?, ?>> void writeBodyResponse(Document d,
-                                     Element bodyElement,
-                                     ActionResponseMessage message,
-                                     ActionInvocation<S> actionInvocation) throws Exception {
-
-        Element actionResponseElement = writeActionResponseElement(d, bodyElement, message, actionInvocation);
-        writeActionOutputArguments(d, actionResponseElement, actionInvocation);
-        message.setBody(toString(d));
-    }
-
-    protected ActionException readBodyFailure(Element bodyElement) {
-        return readFaultElement(bodyElement);
-    }
-
-    protected <S extends Service<?, ?, ?>> void readBodyRequest(Element bodyElement,
-                                                                ActionRequestMessage message,
-                                                                ActionInvocation<S> actionInvocation) throws Exception {
-
-        Element actionRequestElement = readActionRequestElement(bodyElement, message, actionInvocation);
-        readActionInputArguments(actionRequestElement, actionInvocation);
-    }
-
-    protected <S extends Service<?, ?, ?>> void readBodyResponse(Element bodyElement,
+    protected <S extends Service<?, ?, ?>> void writeBodyFailure(IXmlWriter xmlWriter,
+                                                                 ActionResponseMessage message,
                                                                  ActionInvocation<S> actionInvocation) throws Exception {
 
-        Element actionResponse = readActionResponseElement(bodyElement, actionInvocation);
-        readActionOutputArguments(actionResponse, actionInvocation);
+        writeFaultElement(xmlWriter, actionInvocation);
+    }
+
+    protected <S extends Service<?, ?, ?>> void writeBodyRequest(IXmlWriter xmlWriter,
+                                                                 ActionRequestMessage message,
+                                                                 ActionInvocation<S> actionInvocation) throws Exception {
+
+        writeActionRequestElement(xmlWriter, message, actionInvocation);
+        writeActionInputArguments(xmlWriter, actionInvocation);
+
+    }
+
+    protected <S extends Service<?, ?, ?>> void writeBodyResponse(IXmlWriter xmlWriter,
+                                                                  ActionResponseMessage message,
+                                                                  ActionInvocation<S> actionInvocation) throws Exception {
+
+        writeActionResponseElement(xmlWriter, message, actionInvocation);
+        writeActionOutputArguments(xmlWriter, actionInvocation);
+    }
+
+    protected ActionException readBodyFailure(IXmlReader xmlReader) throws XMLStreamException, DescriptorBindingException {
+        return readFaultElement(xmlReader);
+    }
+
+    protected <S extends Service<?, ?, ?>> void readBodyRequest(IXmlReader xmlReader,
+                                                                ActionRequestMessage message,
+                                                                ActionInvocation<S> actionInvocation) throws XMLStreamException, DescriptorBindingException, ActionException {
+
+        readActionRequestElement(xmlReader, message, actionInvocation);
+
+    }
+
+    protected <S extends Service<?, ?, ?>> void readBodyResponse(IXmlReader xmlReader,
+                                                                 ActionInvocation<S> actionInvocation) throws XMLStreamException, ActionException, DescriptorBindingException {
+
+        readActionResponseElement(xmlReader, actionInvocation);
+
     }
 
     /* ##################################################################################################### */
 
-    protected Element writeBodyElement(Document d) {
+    protected void writeStartBodyElement(IXmlWriter xmlWriter) throws XMLStreamException {
 
-        Element envelopeElement = d.createElementNS(Constants.SOAP_NS_ENVELOPE, "s:Envelope");
-        Attr encodingStyleAttr = d.createAttributeNS(Constants.SOAP_NS_ENVELOPE, "s:encodingStyle");
-        encodingStyleAttr.setValue(Constants.SOAP_URI_ENCODING_STYLE);
-        envelopeElement.setAttributeNode(encodingStyleAttr);
-        d.appendChild(envelopeElement);
+        xmlWriter.writeStartElement("s", "Envelope", Constants.SOAP_NS_ENVELOPE);
+        xmlWriter.writeAttribute("s", Constants.SOAP_NS_ENVELOPE, "encodingStyle", Constants.SOAP_URI_ENCODING_STYLE);
 
-        Element bodyElement = d.createElementNS(Constants.SOAP_NS_ENVELOPE, "s:Body");
-        envelopeElement.appendChild(bodyElement);
-
-        return bodyElement;
+        xmlWriter.writeStartElement("s", "Body", Constants.SOAP_NS_ENVELOPE);
+    }
+    protected void writeEndBodyElement(IXmlWriter xmlWriter) throws XMLStreamException {
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
     }
 
-    protected Element readBodyElement(Document d) {
-
-        Element envelopeElement = d.getDocumentElement();
-        
-        if (envelopeElement == null || !XmlPullParserUtils.tagsEquals(envelopeElement.getTagName(), "Envelope")) {
-            throw new RuntimeException("Response root element was not 'Envelope'");
-        }
-
-        NodeList envelopeElementChildren = envelopeElement.getChildNodes();
-        for (int i = 0; i < envelopeElementChildren.getLength(); i++) {
-            Node envelopeChild = envelopeElementChildren.item(i);
-
-            if (envelopeChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            if (XmlPullParserUtils.tagsEquals(envelopeChild.getNodeName(), "Body")) {
-                return (Element) envelopeChild;
+    protected <S extends Service<?, ?, ?>> void readXML(IXmlReader xmlReader, XMLUtil.XMLReadFunction<Void> nextRead) throws XMLStreamException, DescriptorBindingException {
+        XMLUtil.readRootElement(xmlReader, reader -> {
+            class B
+            {
+                boolean b=true;
             }
-        }
+            B b=new B();
+            XMLUtil.readElements(reader, reader2 -> {
+                String envelopeChild = reader2.getLocalName();
 
-        throw new RuntimeException("Response envelope did not contain 'Body' child element");
+
+                if ("Body".equals(envelopeChild)) {
+                    nextRead.accept(reader2);
+                    b.b=false;
+                }
+
+
+            }, SOAPActionProcessorImpl.this);
+            if (b.b)
+                throw new XMLStreamException("Response envelope did not contain 'Body' child element");
+
+        }, this, null, "Envelope", log);
+
     }
 
     /* ##################################################################################################### */
 
-    protected <S extends Service<?, ?, ?>> Element writeActionRequestElement(Document d,
-                                                Element bodyElement,
-                                                ActionRequestMessage message,
-                                                ActionInvocation<S> actionInvocation) {
+    protected <S extends Service<?, ?, ?>> void writeActionRequestElement(IXmlWriter xmlWriter,
+                                                                          ActionRequestMessage message,
+                                                                          ActionInvocation<S> actionInvocation) throws XMLStreamException {
 
 		if (log.isDebugEnabled()) {
             log.debug("Writing action request element: " + actionInvocation.getAction().getName());
 		}
 
-		Element actionRequestElement = d.createElementNS(
-                message.getActionNamespace(),
-                "u:" + actionInvocation.getAction().getName()
+        xmlWriter.writeStartElement("s",
+                actionInvocation.getAction().getName(), message.getActionNamespace()
         );
-        bodyElement.appendChild(actionRequestElement);
 
-        return actionRequestElement;
     }
 
-    protected <S extends Service<?, ?, ?>> Element readActionRequestElement(Element bodyElement,
-                                               ActionRequestMessage message,
-                                               ActionInvocation<S> actionInvocation) {
-        NodeList bodyChildren = bodyElement.getChildNodes();
+    protected <S extends Service<?, ?, ?>> void readActionRequestElement(IXmlReader xmlReader,
+                                                                         ActionRequestMessage message,
+                                                                         ActionInvocation<S> actionInvocation) throws XMLStreamException, DescriptorBindingException {
 
 		if (log.isDebugEnabled()) {
             log.debug("Looking for action request element matching namespace:" + message.getActionNamespace());
 		}
-
-		for (int i = 0; i < bodyChildren.getLength(); i++) {
-            Node bodyChild = bodyChildren.item(i);
-
-            if (bodyChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            String unprefixedName = getUnprefixedNodeName(bodyChild);
+        class B
+        {
+            boolean b=true;
+        }
+        B b=new B();
+        XMLUtil.readElements(xmlReader, reader -> {
+            String unprefixedName = getUnprefixedNodeName(reader);
             if (unprefixedName.equals(actionInvocation.getAction().getName())) {
-                if (bodyChild.getNamespaceURI() == null
-                    || !bodyChild.getNamespaceURI().equals(message.getActionNamespace()))
+                if (xmlReader.getNamespaceURI() == null
+                        || !xmlReader.getNamespaceURI().equals(message.getActionNamespace()))
                     throw new UnsupportedDataException(
-                        "Illegal or missing namespace on action request element: " + bodyChild
+                            "Illegal or missing namespace on action request element: " + unprefixedName
                     );
 				if (log.isDebugEnabled()) {
 					log.debug("Reading action request element: " + unprefixedName);
 				}
-				return (Element) bodyChild;
+                b.b=false;
+                readActionInputArguments(xmlReader, actionInvocation);
             }
-        }
-        throw new UnsupportedDataException(
-            "Could not read action request element matching namespace: " + message.getActionNamespace()
-        );
+        }, this);
+        if (b.b)
+            throw new UnsupportedDataException(
+                    "Could not read action request element matching namespace: " + message.getActionNamespace()
+            );
     }
 
     /* ##################################################################################################### */
 
-    protected <S extends Service<?, ?, ?>> Element writeActionResponseElement(Document d,
-                                                 Element bodyElement,
-                                                 ActionResponseMessage message,
-                                                 ActionInvocation<S> actionInvocation) {
+    protected <S extends Service<?, ?, ?>> void writeActionResponseElement(IXmlWriter xmlWriter,
+                                                                           ActionResponseMessage message,
+                                                                           ActionInvocation<S> actionInvocation) throws XMLStreamException {
 
 		if (log.isDebugEnabled()) {
             log.debug("Writing action response element: " + actionInvocation.getAction().getName());
 		}
-		Element actionResponseElement = d.createElementNS(
-                message.getActionNamespace(),
-                "u:" + actionInvocation.getAction().getName() + "Response"
+        xmlWriter.writeStartElement("s",
+                actionInvocation.getAction().getName() + "Response", message.getActionNamespace()
         );
-        bodyElement.appendChild(actionResponseElement);
 
-        return actionResponseElement;
+
+
     }
 
-    protected <S extends Service<?, ?, ?>> Element readActionResponseElement(Element bodyElement, ActionInvocation<S> actionInvocation) {
-        NodeList bodyChildren = bodyElement.getChildNodes();
-
-        for (int i = 0; i < bodyChildren.getLength(); i++) {
-            Node bodyChild = bodyChildren.item(i);
-
-            if (bodyChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            if (getUnprefixedNodeName(bodyChild).equals(actionInvocation.getAction().getName() + "Response")) {
-				if (log.isDebugEnabled()) {
-					log.debug("Reading action response element: " + getUnprefixedNodeName(bodyChild));
-				}
-				return (Element) bodyChild;
-            }
+    protected <S extends Service<?, ?, ?>> void readActionResponseElement(IXmlReader xmlReader, ActionInvocation<S> actionInvocation) throws XMLStreamException, DescriptorBindingException {
+        class B
+        {
+            boolean b=true;
         }
-        log.debug("Could not read action response element");
-        return null;
+        B b=new B();
+        XMLUtil.readElements(xmlReader, reader -> {
+            String bodyChild = getUnprefixedNodeName(xmlReader);
+
+            if (bodyChild.equals(actionInvocation.getAction().getName() + "Response")) {
+                log.debug(() -> "Reading action response element: " + bodyChild);
+                b.b=false;
+                readActionOutputArguments(xmlReader, actionInvocation);
+            }
+        }, this);
+        if (b.b)
+            log.debug("Could not read action response element");
     }
 
     /* ##################################################################################################### */
 
-    protected <S extends Service<?, ?, ?>> void writeActionInputArguments(Document d,
-                                             Element actionRequestElement,
-                                             ActionInvocation<S> actionInvocation) {
+    protected <S extends Service<?, ?, ?>> void writeActionInputArguments(IXmlWriter xmlWriter,
+                                                                          ActionInvocation<S> actionInvocation) throws XMLStreamException {
 
         for (ActionArgument<S> argument : actionInvocation.getAction().getInputArguments()) {
 			if (log.isDebugEnabled()) {
 				log.debug("Writing action input argument: " + argument.getName());
 			}
 			String value = actionInvocation.getInput(argument) != null ? actionInvocation.getInput(argument).toString() : "";
-            XMLUtil.appendNewElement(d, actionRequestElement, argument.getName(), value);
+            XMLUtil.appendNewElement(xmlWriter, argument.getName(), value);
         }
     }
 
-    public <S extends Service<?, ?, ?>> void readActionInputArguments(Element actionRequestElement,
-                                         ActionInvocation<S> actionInvocation) throws ActionException {
+    public <S extends Service<?, ?, ?>> void readActionInputArguments(IXmlReader xmlReader,
+                                                                      ActionInvocation<S> actionInvocation) throws ActionException, XMLStreamException, DescriptorBindingException {
         actionInvocation.setInput(
                 readArgumentValues(
-                        actionRequestElement.getChildNodes(),
+                        xmlReader,
                         actionInvocation.getAction().getInputArguments()
                 )
         );
@@ -403,25 +391,24 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     /* ##################################################################################################### */
 
-    protected <S extends Service<?, ?, ?>> void writeActionOutputArguments(Document d,
-                                              Element actionResponseElement,
-                                              ActionInvocation<S> actionInvocation) {
+    protected <S extends Service<?, ?, ?>> void writeActionOutputArguments(IXmlWriter xmlWriter,
+                                                                           ActionInvocation<S> actionInvocation) throws XMLStreamException {
 
         for (ActionArgument<S> argument : actionInvocation.getAction().getOutputArguments()) {
 			if (log.isDebugEnabled()) {
 				log.debug("Writing action output argument: " + argument.getName());
 			}
 			String value = actionInvocation.getOutput(argument) != null ? actionInvocation.getOutput(argument).toString() : "";
-            XMLUtil.appendNewElement(d, actionResponseElement, argument.getName(), value);
+            XMLUtil.appendNewElement(xmlWriter, argument.getName(), value);
         }
     }
 
-    protected <S extends Service<?, ?, ?>> void readActionOutputArguments(Element actionResponseElement,
-                                             ActionInvocation<S> actionInvocation) throws ActionException {
+    protected <S extends Service<?, ?, ?>> void readActionOutputArguments(IXmlReader xmlReader,
+                                                                          ActionInvocation<S> actionInvocation) throws ActionException, XMLStreamException, DescriptorBindingException {
 
         actionInvocation.setOutput(
                 readArgumentValues(
-                        actionResponseElement.getChildNodes(),
+                        xmlReader,
                         actionInvocation.getAction().getOutputArguments()
                 )
         );
@@ -429,20 +416,19 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
 
     /* ##################################################################################################### */
 
-    protected <S extends Service<?, ?, ?>> void writeFaultElement(Document d, Element bodyElement, ActionInvocation<S> actionInvocation) {
+    protected <S extends Service<?, ?, ?>> void writeFaultElement(IXmlWriter xmlWriter, ActionInvocation<S> actionInvocation) throws XMLStreamException {
 
-        Element faultElement = d.createElementNS(Constants.SOAP_NS_ENVELOPE, "s:Fault");
-        bodyElement.appendChild(faultElement);
+        xmlWriter.writeStartElement("s", "Fault", Constants.SOAP_NS_ENVELOPE);
+
 
         // This stuff is really completely arbitrary nonsense... let's hope they fired the guy who decided this
-        XMLUtil.appendNewElement(d, faultElement, "faultcode", "s:Client");
-        XMLUtil.appendNewElement(d, faultElement, "faultstring", "UPnPError");
+        XMLUtil.appendNewElement(xmlWriter, "faultcode", "s:Client");
+        XMLUtil.appendNewElement(xmlWriter, "faultstring", "UPnPError");
 
-        Element detailElement = d.createElement("detail");
-        faultElement.appendChild(detailElement);
+        xmlWriter.writeStartElement("detail");
 
-        Element upnpErrorElement = d.createElementNS(Constants.NS_UPNP_CONTROL_10, "UPnPError");
-        detailElement.appendChild(upnpErrorElement);
+        xmlWriter.writeStartElement(Constants.NS_UPNP_CONTROL_10, "UPnPError");
+
 
         int errorCode = actionInvocation.getFailure().getErrorCode();
         String errorDescription = actionInvocation.getFailure().getMessage();
@@ -451,87 +437,73 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
             log.debug("Writing fault element: " + errorCode + " - " + errorDescription);
 		}
 
-		XMLUtil.appendNewElement(d, upnpErrorElement, "errorCode", Integer.toString(errorCode));
-        XMLUtil.appendNewElement(d, upnpErrorElement, "errorDescription", errorDescription);
+		XMLUtil.appendNewElement(xmlWriter, "errorCode", Integer.toString(errorCode));
+        XMLUtil.appendNewElement(xmlWriter, "errorDescription", errorDescription);
 
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
     }
 
-    protected ActionException readFaultElement(Element bodyElement) {
-
-        boolean receivedFaultElement = false;
-        String errorCode = null;
-        String errorDescription = null;
-
-        NodeList bodyChildren = bodyElement.getChildNodes();
-
-        for (int i = 0; i < bodyChildren.getLength(); i++) {
-            Node bodyChild = bodyChildren.item(i);
-
-            if (bodyChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            if ("Fault".equals(getUnprefixedNodeName(bodyChild))) {
-
-                receivedFaultElement = true;
-
-                NodeList faultChildren = bodyChild.getChildNodes();
-
-                for (int j = 0; j < faultChildren.getLength(); j++) {
-                    Node faultChild = faultChildren.item(j);
-
-                    if (faultChild.getNodeType() != Node.ELEMENT_NODE)
-                        continue;
-
-                    if ("detail".equals(getUnprefixedNodeName(faultChild))) {
-
-                        NodeList detailChildren = faultChild.getChildNodes();
-                        for (int x = 0; x < detailChildren.getLength(); x++) {
-                            Node detailChild = detailChildren.item(x);
-
-                            if (detailChild.getNodeType() != Node.ELEMENT_NODE)
-                                continue;
-
-                            if ("UPnPError".equals(getUnprefixedNodeName(detailChild))) {
-
-                                NodeList errorChildren = detailChild.getChildNodes();
-                                for (int y = 0; y < errorChildren.getLength(); y++) {
-                                    Node errorChild = errorChildren.item(y);
-
-                                    if (errorChild.getNodeType() != Node.ELEMENT_NODE)
-                                        continue;
-
-                                    if ("errorCode".equals(getUnprefixedNodeName(errorChild)))
-                                        errorCode = XMLUtil.getTextContent(errorChild);
-
-                                    if ("errorDescription".equals(getUnprefixedNodeName(errorChild)))
-                                        errorDescription = XMLUtil.getTextContent(errorChild);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    protected ActionException readFaultElement(IXmlReader xmlReader) throws XMLStreamException, DescriptorBindingException {
+        class C {
+            boolean receivedFaultElement = false;
+            String errorCode = null;
+            String errorDescription = null;
         }
+        C c=new C();
 
-        if (errorCode != null) {
+
+        XMLUtil.readElements(xmlReader, reader -> {
+            String bodyChild = getUnprefixedNodeName(reader);
+
+
+            if ("Fault".equals(bodyChild)) {
+
+                c.receivedFaultElement = true;
+
+                XMLUtil.readElements(xmlReader, reader2 -> {
+                    String faultChild = getUnprefixedNodeName(reader2);
+
+                    if ("detail".equals(faultChild)) {
+
+                        XMLUtil.readElements(xmlReader, reader3 -> {
+                            String detailChild = getUnprefixedNodeName(reader3);
+
+                            if ("UPnPError".equals(detailChild)) {
+
+                                XMLUtil.readElements(xmlReader, reader4 -> {
+                                    String errorChild = getUnprefixedNodeName(reader4);
+
+                                    if ("errorCode".equals(errorChild))
+                                        c.errorCode = XMLUtil.getTextContent(xmlReader, SOAPActionProcessorImpl.this);
+
+                                    if ("errorDescription".equals(errorChild))
+                                        c.errorDescription = XMLUtil.getTextContent(xmlReader, SOAPActionProcessorImpl.this);
+                                }, this);
+                            }
+                        }, this);
+                    }
+                }, this);
+            }
+        }, this);
+
+        if (c.errorCode != null) {
             try {
-                int numericCode = Integer.parseInt(errorCode);
+                int numericCode = Integer.parseInt(c.errorCode);
                 ErrorCode standardErrorCode = ErrorCode.getByCode(numericCode);
+                String ed=c.errorDescription;
                 if (standardErrorCode != null) {
-					if (log.isDebugEnabled()) {
-						log.debug("Reading fault element: " + standardErrorCode.getCode() + " - " + errorDescription);
-					}
-					return new ActionException(standardErrorCode, errorDescription, false);
+                    log.debug(() -> "Reading fault element: " + standardErrorCode.getCode() + " - " + ed);
+                    return new ActionException(standardErrorCode, c.errorDescription, false);
                 } else {
-					if (log.isDebugEnabled()) {
-						log.debug("Reading fault element: " + numericCode + " - " + errorDescription);
-					}
-					return new ActionException(numericCode, errorDescription);
+                    log.debug(() -> "Reading fault element: " + numericCode + " - " + ed);
+                    return new ActionException(numericCode, c.errorDescription);
                 }
             } catch (NumberFormatException ex) {
                 throw new RuntimeException("Error code was not a number");
             }
-        } else if (receivedFaultElement) {
+        } else if (c.receivedFaultElement) {
             throw new RuntimeException("Received fault element but no error code");
         }
         return null;
@@ -543,25 +515,13 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
     protected String getMessageBody(ActionMessage message) throws UnsupportedDataException {
         if (!message.isBodyNonEmptyString())
             throw new UnsupportedDataException(
-                "Can't transform null or non-string/zero-length body of: " + message
+                    "Can't transform null or non-string/zero-length body of: " + message
             );
         return message.getBodyString().trim();
     }
 
-    protected String toString(Document d) throws Exception {
-        // Just to be safe, no newline at the end
-        String output = XMLUtil.documentToString(d);
-        while (output.endsWith("\n") || output.endsWith("\r")) {
-            output = output.substring(0, output.length() - 1);
-        }
-
-        return output;
-    }
-
-    protected String getUnprefixedNodeName(Node node) {
-        return node.getPrefix() != null
-                ? node.getNodeName().substring(node.getPrefix().length() + 1)
-                : node.getNodeName();
+    protected static String getUnprefixedNodeName(IXmlReader xmlReader) {
+        return xmlReader.getLocalName();
     }
 
     /**
@@ -570,24 +530,22 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
      * in the XML can be in any order, as long as they are all there everything
      * is OK.
      */
-    protected <S extends Service<?, ?, ?>> List<ActionArgumentValue<S>> readArgumentValues(NodeList nodeList, List<ActionArgument<S>> args)
-            throws ActionException {
+    protected <S extends Service<?, ?, ?>> List<ActionArgumentValue<S>> readArgumentValues(IXmlReader xmlReader, List<ActionArgument<S>> args)
+            throws ActionException, XMLStreamException, DescriptorBindingException {
 
-        List<Node> nodes = getMatchingNodes(nodeList, args);
+        List<N> nodes = getMatchingNodes(xmlReader, args);
 
         List<ActionArgumentValue<S>> values = new ArrayList<>(args.size());
 
         for (ActionArgument<S> arg : args) {
-            Node node = findActionArgumentNode(nodes, arg);
+            N node = findActionArgumentNode(nodes, arg);
             if(node == null) {
                 throw new ActionException(
                         ErrorCode.ARGUMENT_VALUE_INVALID,
                         "Could not find argument '" + arg.getName() + "' node");
             }
-			if (log.isDebugEnabled()) {
-				log.debug("Reading action argument: " + arg.getName());
-			}
-			String value = XMLUtil.getTextContent(node);
+            log.debug(() -> "Reading action argument: " + arg.getName());
+            String value = node.value;
             values.add(createValue(arg, value));
         }
         return values;
@@ -597,7 +555,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
         List<String> names = new ArrayList<>();
         for (ActionArgument<?> argument : args) {
             names.add(argument.getName());
-			names.addAll(argument.getAliases());
+            names.addAll(argument.getAliases());
         }
         return names;
     }
@@ -605,20 +563,27 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
      * Finds all element nodes in the list that match any argument name or argument
      * alias, throws {@link ActionException} if not all arguments were found.
      */
-    protected <S extends Service<?, ?, ?>> List<Node> getMatchingNodes(NodeList nodeList, List<ActionArgument<S>> args) throws ActionException {
+    protected static class N
+    {
+        String localName;
+        String value;
+
+        public N(IXmlReader xmlReader) throws XMLStreamException {
+            this.localName = getUnprefixedNodeName(xmlReader);
+            this.value = xmlReader.getElementText();
+        }
+    }
+    protected <S extends Service<?, ?, ?>> List<N> getMatchingNodes(IXmlReader xmlReader, List<ActionArgument<S>> args) throws ActionException, XMLStreamException, DescriptorBindingException {
         //TODO check if must be a case-insensitive search!
         List<String> names = getNames(args);
 
-        List<Node> matches = new ArrayList<>();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node child = nodeList.item(i);
+        List<N> matches = new ArrayList<>();
+        XMLUtil.readElements(xmlReader, reader -> {
+            N node=new N(xmlReader);
 
-            if (child.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            if (names.contains(getUnprefixedNodeName(child)))
-                matches.add(child);
-        }
+            if (names.stream().anyMatch(s -> s.equals(node.localName)))
+                matches.add(node);
+        }, this);
 
         if (matches.size() < args.size()) {
             throw new ActionException(
@@ -650,25 +615,25 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, ErrorHandle
      * Returns the node with the same unprefixed name as the action argument
      * name/alias or <code>null</code>.
      */
-    protected <S extends Service<?, ?, ?>> Node findActionArgumentNode(List<Node> nodes, ActionArgument<S> arg) {
-    	for(Node node : nodes) {
-    		if(arg.isNameOrAlias(getUnprefixedNodeName(node))) return node;
-    	}
-    	return null;
+    protected <S extends Service<?, ?, ?>> N findActionArgumentNode(List<N> nodes, ActionArgument<S> arg) {
+        for(N node : nodes) {
+            if(arg.isNameOrAlias(node.localName)) return node;
+        }
+        return null;
     }
 
     @Override
-	public void warning(SAXParseException e) throws SAXException {
-        if (log.isWarnEnabled()) log.warn(e.toString());
+    public void warning(XMLStreamException e) throws XMLStreamException {
+        log.warn(e::toString);
     }
 
     @Override
-	public void error(SAXParseException e) throws SAXException {
+    public void error(XMLStreamException e) throws XMLStreamException {
         throw e;
     }
 
     @Override
-	public void fatalError(SAXParseException e) throws SAXException {
+    public void fatalError(XMLStreamException e) throws XMLStreamException {
         throw e;
     }
 }

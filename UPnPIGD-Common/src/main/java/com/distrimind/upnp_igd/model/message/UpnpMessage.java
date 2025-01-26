@@ -15,6 +15,8 @@
 
 package com.distrimind.upnp_igd.model.message;
 
+import com.distrimind.upnp_igd.model.Constants;
+import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.message.header.ContentTypeHeader;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
 
@@ -67,8 +69,7 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
 
     protected UpnpMessage(O operation, BodyType bodyType, Object body) {
         this.operation = operation;
-        this.bodyType = bodyType;
-        this.body = body;
+        setBody(bodyType, body);
     }
 
     public int getUdaMajorVersion() {
@@ -105,11 +106,23 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
     }
 
     public void setBody(BodyType bodyType, Object body) {
+        if (body instanceof byte[]) {
+            if (((byte[]) body).length> Constants.MAX_BODY_LENGTH)
+                throw new IllegalArgumentException();
+        }
+        else if (body instanceof String)
+        {
+            if (((String) body).length()>Constants.MAX_DESCRIPTOR_LENGTH)
+                throw new IllegalArgumentException();
+        }
+
         this.bodyType = bodyType;
         this.body = body;
     }
 
     public void setBodyCharacters(byte[] characterData) throws UnsupportedEncodingException {
+        if (characterData.length>Constants.MAX_DESCRIPTOR_LENGTH)
+            throw new IllegalArgumentException();
         setBody(
                 UpnpMessage.BodyType.STRING,
                 new String(
@@ -132,6 +145,8 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
     public void setBodyType(BodyType bodyType) {
         this.bodyType = bodyType;
     }
+
+
 
     public String getBodyString() {
         try {
@@ -205,10 +220,11 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
         return getHeaders().getFirstHeader(UpnpHeader.Type.HOST) != null;
     }
 
+
     public boolean isBodyNonEmptyString() {
         return hasBody()
             && getBodyType().equals(UpnpMessage.BodyType.STRING)
-            && !getBodyString().isEmpty();
+            && !ModelUtil.checkDescriptionXMLNotValid(getBodyString());
     }
 
     @Override

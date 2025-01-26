@@ -29,7 +29,7 @@ test {
     // enable TestNG support (default is JUnit)
     useTestNG
             {
-                suites '../test/AllTests.tng.xml'
+                suites 'src/test/resources/com/distrimind/upnp_igd/desktop/AllTestsNG.xml'
             }
 
     // set heap size for the test JVM(s)

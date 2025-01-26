@@ -16,12 +16,9 @@
 package com.distrimind.upnp_igd.test.model;
 
 import com.distrimind.upnp_igd.model.ModelUtil;
-import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.test.local.LocalActionInvocationNullTest;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,7 +28,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
 
@@ -59,16 +55,16 @@ public class UtilTest {
 
     @Test
     public void validUDAName() {
-		assertFalse(ModelUtil.isValidUDAName("in-valid"));
+        assertFalse(ModelUtil.isValidUDAName("in-valid"));
 
-		assertTrue(ModelUtil.isValidUDAName("a_valid"));
-		assertTrue(ModelUtil.isValidUDAName("A_valid"));
-		assertTrue(ModelUtil.isValidUDAName("1_valid"));
-		assertTrue(ModelUtil.isValidUDAName("_valid"));
+        assertTrue(ModelUtil.isValidUDAName("a_valid"));
+        assertTrue(ModelUtil.isValidUDAName("A_valid"));
+        assertTrue(ModelUtil.isValidUDAName("1_valid"));
+        assertTrue(ModelUtil.isValidUDAName("_valid"));
 
-		assertTrue(ModelUtil.isValidUDAName("Some_Valid.Name"));
-		assertFalse(ModelUtil.isValidUDAName("XML_invalid"));
-		assertFalse(ModelUtil.isValidUDAName("xml_invalid"));
+        assertTrue(ModelUtil.isValidUDAName("Some_Valid.Name"));
+        assertFalse(ModelUtil.isValidUDAName("XML_invalid"));
+        assertFalse(ModelUtil.isValidUDAName("xml_invalid"));
     }
 
     @Test
@@ -98,7 +94,7 @@ public class UtilTest {
     }
 
 
-    @Test
+    /*@Test
     public void printDOM1() throws Exception {
         Document dom = documentBuilder.newDocument();
         dom.setXmlStandalone(true); // ROTFL

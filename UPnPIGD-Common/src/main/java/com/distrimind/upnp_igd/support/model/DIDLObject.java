@@ -15,7 +15,8 @@
 
 package com.distrimind.upnp_igd.support.model;
 
-import org.w3c.dom.Element;
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
+import com.distrimind.flexilogxml.xml.IXmlWriter;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Locale;
 /**
  * @author Christian Bauer
  * @author Mario Franco
+ * @author Jason Mahdjoub, use XML Parser instead of Document
  */
 @SuppressWarnings("PMD.ConstantsInInterface")
 public abstract class DIDLObject {
@@ -77,10 +79,11 @@ public abstract class DIDLObject {
             return descriptorName;
         }
 
-        public void setOnElement(Element element) {
-            element.setTextContent(toString());
+        public void setOnElement(IXmlWriter xmlWriter) throws XMLStreamException {
+            xmlWriter.writeCharacters(toString());
+
             for (Property<DIDLAttribute> attr : attributes) {
-                element.setAttributeNS(
+                xmlWriter.writeAttribute(
                         attr.getValue().getNamespaceURI(),
                         attr.getValue().getPrefix() + ':' + attr.getDescriptorName(),
                         attr.getValue().getValue());
@@ -132,9 +135,9 @@ public abstract class DIDLObject {
             }
 
             @Override
-            public void setOnElement(Element element) {
+            public void setOnElement(IXmlWriter xmlWriter) throws XMLStreamException {
                 if (getValue() != null)
-                    getValue().setOnElement(element);
+                    getValue().setOnElement(xmlWriter);
             }
         }
 
@@ -207,18 +210,18 @@ public abstract class DIDLObject {
                 }
             }
         }
-        
+
         static public abstract class SEC {
 
             public interface NAMESPACE extends Property.NAMESPACE {
                 String URI = "http://www.sec.co.kr/";
             }
-            
+
             static public class CAPTIONINFOEX extends Property<URI> implements NAMESPACE {
                 public CAPTIONINFOEX() {
                     this(null);
                 }
-                
+
                 public CAPTIONINFOEX(URI value) {
                     super(value, "CaptionInfoEx");
                 }
@@ -227,12 +230,12 @@ public abstract class DIDLObject {
                     super(value, "CaptionInfoEx", attributes);
                 }
             }
-            
+
             static public class CAPTIONINFO extends Property<URI> implements NAMESPACE {
                 public CAPTIONINFO() {
                     this(null);
                 }
-                
+
                 public CAPTIONINFO(URI value) {
                     super(value, "CaptionInfo");
                 }
@@ -241,7 +244,7 @@ public abstract class DIDLObject {
                     super(value, "CaptionInfo", attributes);
                 }
             }
-            
+
             static public class TYPE extends Property<DIDLAttribute> implements NAMESPACE {
                 public TYPE() {
                     this(null);
@@ -251,8 +254,8 @@ public abstract class DIDLObject {
                     super(value, "type");
                 }
             }
-            
-            
+
+
         }
 
         static public abstract class UPNP {

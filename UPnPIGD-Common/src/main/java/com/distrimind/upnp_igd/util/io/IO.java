@@ -17,6 +17,8 @@ package com.distrimind.upnp_igd.util.io;
 
 
 
+import com.distrimind.upnp_igd.model.Constants;
+
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -942,10 +944,16 @@ public class IO {
 		long count = 0;
 		int n;
 		while (-1 != (n = input.read(buffer))) {
+
 			output.write(buffer, 0, n);
 			count += n;
+			checkStreamLength(count);
 		}
 		return count;
+	}
+	public static void checkStreamLength(long length) throws IOException {
+		if (length> Constants.MAX_INPUT_STREAM_SIZE_IN_BYTES)
+			throw new IOException("Reach maximum input stream length : "+Constants.MAX_INPUT_STREAM_SIZE_IN_BYTES+" bytes");
 	}
 
 	/**
@@ -1048,8 +1056,13 @@ public class IO {
 		while (-1 != (n = input.read(buffer))) {
 			output.write(buffer, 0, n);
 			count += n;
+			checkReaderLength(count);
 		}
 		return count;
+	}
+	public static void checkReaderLength(long length) throws IOException {
+		if (length> Constants.MAX_DESCRIPTOR_LENGTH)
+			throw new IOException("Reach maximum reader length : "+Constants.MAX_DESCRIPTOR_LENGTH+" bytes");
 	}
 
 	/**
@@ -1142,7 +1155,7 @@ public class IO {
 		if (!(input2 instanceof BufferedInputStream)) {
 			input2 = new BufferedInputStream(input2);
 		}
-
+		long count=0;
 		int ch = input1.read();
 		while (-1 != ch) {
 			int ch2 = input2.read();
@@ -1150,6 +1163,7 @@ public class IO {
 				return false;
 			}
 			ch = input1.read();
+			checkStreamLength(++count);
 		}
 
 		int ch2 = input2.read();
@@ -1181,6 +1195,7 @@ public class IO {
 			input2 = new BufferedReader(input2);
 		}
 
+		long count=0;
 		int ch = input1.read();
 		while (-1 != ch) {
 			int ch2 = input2.read();
@@ -1188,6 +1203,7 @@ public class IO {
 				return false;
 			}
 			ch = input1.read();
+			checkReaderLength(++count);
 		}
 
 		int ch2 = input2.read();

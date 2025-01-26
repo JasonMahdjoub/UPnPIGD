@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
+import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.transport.spi.MulticastReceiverConfiguration;
 
 import java.net.InetAddress;
@@ -41,7 +42,7 @@ public class MulticastReceiverConfigurationImpl implements MulticastReceiverConf
      * Defaults to maximum datagram size of 640 bytes (512 per UDA 1.0, 128 byte header).
      */
     public MulticastReceiverConfigurationImpl(InetAddress group, int port) {
-        this(group, port, 640);
+        this(group, port, Constants.MAX_HEADER_LENGTH_IN_BYTES);
     }
 
     public MulticastReceiverConfigurationImpl(String group, int port, int maxDatagramBytes) throws UnknownHostException {
@@ -52,7 +53,7 @@ public class MulticastReceiverConfigurationImpl implements MulticastReceiverConf
      * Defaults to maximum datagram size of 640 bytes (512 per UDA 1.0, 128 byte header).
      */
     public MulticastReceiverConfigurationImpl(String group, int port) throws UnknownHostException {
-        this(InetAddress.getByName(group), port, 640);
+        this(InetAddress.getByName(group), port, Constants.MAX_HEADER_LENGTH_IN_BYTES);
     }
 
     @Override

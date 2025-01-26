@@ -15,7 +15,9 @@
 
 package com.distrimind.upnp_igd.transport.impl;
 
-import com.distrimind.upnp_igd.DocumentBuilderFactoryWithNonDTD;
+import com.distrimind.upnp_igd.Log;
+import com.distrimind.upnp_igd.binding.xml.Descriptor;
+import com.distrimind.upnp_igd.binding.xml.DescriptorBindingException;
 import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.message.UpnpMessage;
@@ -26,36 +28,23 @@ import com.distrimind.upnp_igd.model.meta.StateVariable;
 import com.distrimind.upnp_igd.model.state.StateVariableValue;
 import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-
-import java.io.StringReader;
-import java.util.Collection;
+import com.distrimind.flexilogxml.exceptions.XMLStreamException;
 import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
+import com.distrimind.flexilogxml.xml.IXmlReader;
+import com.distrimind.flexilogxml.xml.IXmlWriter;
+
+import java.util.Collection;
 
 /**
  * Default implementation based on the <em>W3C DOM</em> XML processing API.
  *
  * @author Christian Bauer
+ * @author Jason Mahdjoub, use XML Parser instead of Document
  */
-public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler {
+public class GENAEventProcessorImpl implements GENAEventProcessor, XMLUtil.ErrorHandler {
 
     final private static DMLogger log = Log.getLogger(GENAEventProcessorImpl.class);
 
-    protected DocumentBuilderFactory createDocumentBuilderFactory() throws FactoryConfigurationError {
-    	return DocumentBuilderFactoryWithNonDTD.newDocumentBuilderFactoryWithNonDTDInstance();
-    }
 
     @Override
 	public void writeBody(OutgoingEventRequestMessage requestMessage) throws UnsupportedDataException {
@@ -65,14 +54,15 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
 		try {
 
-            DocumentBuilderFactory factory = createDocumentBuilderFactory();
-            factory.setNamespaceAware(true);
-            Document d = factory.newDocumentBuilder().newDocument();
-            Element propertysetElement = writePropertysetElement(d);
 
-            writeProperties(d, propertysetElement, requestMessage);
 
-            requestMessage.setBody(UpnpMessage.BodyType.STRING, toString(d));
+            String d= XMLUtil.generateXMLToString(xmlStreamWriter -> {
+                xmlStreamWriter.writeStartElement("e", "propertyset", Constants.NS_UPNP_EVENT_10);
+                writeProperties(xmlStreamWriter, requestMessage);
+                xmlStreamWriter.writeEndElement();
+            });
+
+            requestMessage.setBody(UpnpMessage.BodyType.STRING, d);
 
             if (log.isTraceEnabled()) {
 				log.trace("===================================== GENA BODY BEGIN ============================================");
@@ -86,7 +76,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
     }
 
     @Override
-	public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
+    public void readBody(IncomingEventRequestMessage requestMessage) throws UnsupportedDataException {
 
 		if (log.isDebugEnabled()) {
             log.debug("Reading body of: " + requestMessage);
@@ -100,18 +90,14 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
         String body = getMessageBody(requestMessage);
         try {
 
-            DocumentBuilderFactory factory = createDocumentBuilderFactory();
-            factory.setNamespaceAware(true);
-            DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-            documentBuilder.setErrorHandler(this);
+            XMLUtil.readXML(xmlReader -> {
+                XMLUtil.readRootElement(xmlReader, xmlReader2 -> {
+                    readProperties(xmlReader2, requestMessage);
+                }, this, Constants.NS_UPNP_EVENT_10, "propertyset", log);
 
-            Document d = documentBuilder.parse(
-                new InputSource(new StringReader(body))
-            );
+                return null;
+            }, this, body);
 
-            Element propertysetElement = readPropertysetElement(d);
-
-            readProperties(propertysetElement, requestMessage);
 
         } catch (Exception ex) {
             throw new UnsupportedDataException("Can't transform message payload: " + ex.getMessage(), ex, body);
@@ -120,64 +106,48 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
 
     /* ##################################################################################################### */
 
-    protected Element writePropertysetElement(Document d) {
-        Element propertysetElement = d.createElementNS(Constants.NS_UPNP_EVENT_10, "e:propertyset");
-        d.appendChild(propertysetElement);
-        return propertysetElement;
-    }
 
-    protected Element readPropertysetElement(Document d) {
+    protected void readPropertysetElement(IXmlReader xmlReader) {
 
-        Element propertysetElement = d.getDocumentElement();
-        if (propertysetElement == null || !"propertyset".equals(getUnprefixedNodeName(propertysetElement))) {
+        if (xmlReader.hasName() || !"propertyset".equals(getUnprefixedNodeName(xmlReader))) {
             throw new RuntimeException("Root element was not 'propertyset'");
         }
-        return propertysetElement;
     }
 
     /* ##################################################################################################### */
 
-    protected void writeProperties(Document d, Element propertysetElement, OutgoingEventRequestMessage message) {
+    protected void writeProperties(IXmlWriter xmlWriter, OutgoingEventRequestMessage message) throws XMLStreamException {
         for (StateVariableValue<?> stateVariableValue : message.getStateVariableValues()) {
-            Element propertyElement = d.createElementNS(Constants.NS_UPNP_EVENT_10, "e:property");
-            propertysetElement.appendChild(propertyElement);
+
+            xmlWriter.writeStartElement( "e:property");
             XMLUtil.appendNewElement(
-                    d,
-                    propertyElement,
+                    xmlWriter,
                     stateVariableValue.getStateVariable().getName(),
                     stateVariableValue.toString()
             );
+            xmlWriter.writeEndElement();
         }
     }
 
-    protected void readProperties(Element propertysetElement, IncomingEventRequestMessage message) {
-        NodeList propertysetElementChildren = propertysetElement.getChildNodes();
+    protected void readProperties(IXmlReader xmlReader, IncomingEventRequestMessage message) throws XMLStreamException, DescriptorBindingException {
+
 
         Collection<StateVariable<RemoteService>> stateVariables = message.getService().getStateVariables();
 
-        for (int i = 0; i < propertysetElementChildren.getLength(); i++) {
-            Node propertysetChild = propertysetElementChildren.item(i);
+        XMLUtil.readElements(xmlReader, reader -> {
+            String propertysetChild = getUnprefixedNodeName(reader);
 
-            if (propertysetChild.getNodeType() != Node.ELEMENT_NODE)
-                continue;
 
-            if ("property".equals(getUnprefixedNodeName(propertysetChild))) {
+            if ("property".equals(propertysetChild)) {
 
-                NodeList propertyChildren = propertysetChild.getChildNodes();
 
-                for (int j = 0; j < propertyChildren.getLength(); j++) {
-                    Node propertyChild = propertyChildren.item(j);
+                XMLUtil.readElements(xmlReader, reader2 -> {
+                    String stateVariableName = getUnprefixedNodeName(reader2);
 
-                    if (propertyChild.getNodeType() != Node.ELEMENT_NODE)
-                        continue;
-
-                    String stateVariableName = getUnprefixedNodeName(propertyChild);
                     for (StateVariable<RemoteService> stateVariable : stateVariables) {
                         if (stateVariable.getName().equals(stateVariableName)) {
-							if (log.isDebugEnabled()) {
-								log.debug("Reading state variable value: " + stateVariableName);
-							}
-							String value = XMLUtil.getTextContent(propertyChild);
+                            log.debug(() -> "Reading state variable value: " + stateVariableName);
+                            String value = XMLUtil.getTextContent(xmlReader, GENAEventProcessorImpl.this);
                             message.getStateVariableValues().add(
                                     new StateVariableValue<>(stateVariable, value)
                             );
@@ -185,9 +155,9 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
                         }
                     }
 
-                }
+                }, this);
             }
-        }
+        }, this);
     }
 
     /* ##################################################################################################### */
@@ -200,34 +170,23 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, ErrorHandler 
         return message.getBodyString().trim();
     }
 
-    protected String toString(Document d) throws Exception {
-        // Just to be safe, no newline at the end
-        String output = XMLUtil.documentToString(d);
-        while (output.endsWith("\n") || output.endsWith("\r")) {
-            output = output.substring(0, output.length() - 1);
-        }
 
-        return output;
-    }
-
-    protected String getUnprefixedNodeName(Node node) {
-        return node.getPrefix() != null
-                ? node.getNodeName().substring(node.getPrefix().length() + 1)
-                : node.getNodeName();
+    protected String getUnprefixedNodeName(IXmlReader xmlReader) {
+        return xmlReader.getLocalName();
     }
 
     @Override
-	public void warning(SAXParseException e) throws SAXException {
-        if (log.isWarnEnabled()) log.warn(e.toString());
+	public void warning(XMLStreamException e) throws XMLStreamException {
+        log.warn(e::toString);
     }
 
     @Override
-	public void error(SAXParseException e) throws SAXException {
+	public void error(XMLStreamException e) throws XMLStreamException {
         throw e;
     }
 
     @Override
-	public void fatalError(SAXParseException e) throws SAXException {
+	public void fatalError(XMLStreamException e) throws XMLStreamException {
         throw e;
     }
 }
