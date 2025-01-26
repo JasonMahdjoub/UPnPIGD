@@ -43,26 +43,31 @@ import java.util.Locale;
          LogMessage message = (LogMessage) value;
 
          switch (column) {
-             case 0:
-                 switch (message.getLevel())
-                 {
+             case 0: {
+                 JLabel res;
+                 switch (message.getLevel()) {
                      case ERROR:
                      case WARN:
-                         return new JLabel(getWarnErrorIcon());
+                         res=new JLabel(getWarnErrorIcon());
+                         break;
                      case DEBUG:
-                         return new JLabel(getDebugIcon());
+                         res=new JLabel(getDebugIcon());
+                         break;
                      case TRACE:
-                         return new JLabel(getTraceIcon());
+                         res=new JLabel(getTraceIcon());
+                         break;
                      default:
-                         return new JLabel(getInfoIcon());
-
+                         res=new JLabel(getInfoIcon());
+                         break;
                  }
-
-             case 1:
+                 return res;
+             }
+             case 1: {
                  Date date = new Date(message.getCreatedOn());
                  return super.getTableCellRendererComponent(
                          table, dateFormat.format(date), isSelected, hasFocus, row, column
                  );
+             }
              case 2:
                  return super.getTableCellRendererComponent(
                          table, message.getThread(), isSelected, hasFocus, row, column

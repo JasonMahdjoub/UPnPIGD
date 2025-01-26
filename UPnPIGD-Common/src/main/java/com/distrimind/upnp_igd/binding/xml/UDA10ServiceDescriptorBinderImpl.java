@@ -65,7 +65,6 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
                 log.debug("Populating service from XML descriptor: " + undescribedService);
             }
 
-            System.err.println(descriptorXml);
             return XMLUtil.readXML(xmlReader -> describe(undescribedService, xmlReader), this, descriptorXml.trim());
 
         } catch (ValidationException ex) {
@@ -197,8 +196,6 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
                         break;
                     case argumentList:
                         XMLUtil.readElements(reader, reader2 -> {
-                            ELEMENT argumentChild = ELEMENT.valueOrNullOf(reader2.getLocalName());
-
                             MutableActionArgument<S> actionArgument = new MutableActionArgument<>();
                             hydrateActionArgument(actionArgument, reader2);
                             action.arguments.add(actionArgument);

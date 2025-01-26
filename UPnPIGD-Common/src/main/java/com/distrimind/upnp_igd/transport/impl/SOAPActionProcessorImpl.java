@@ -259,7 +259,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, XMLUtil.Err
         XMLUtil.readRootElement(xmlReader, reader -> {
             class B
             {
-                boolean b=true;
+                boolean body_found =true;
             }
             B b=new B();
             XMLUtil.readElements(reader, reader2 -> {
@@ -268,12 +268,12 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, XMLUtil.Err
 
                 if ("Body".equals(envelopeChild)) {
                     nextRead.accept(reader2);
-                    b.b=false;
+                    b.body_found =false;
                 }
 
 
             }, SOAPActionProcessorImpl.this);
-            if (b.b)
+            if (b.body_found)
                 throw new XMLStreamException("Response envelope did not contain 'Body' child element");
 
         }, this, null, "Envelope", log);
@@ -305,7 +305,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, XMLUtil.Err
 		}
         class B
         {
-            boolean b=true;
+            boolean found =true;
         }
         B b=new B();
         XMLUtil.readElements(xmlReader, reader -> {
@@ -319,11 +319,11 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, XMLUtil.Err
 				if (log.isDebugEnabled()) {
 					log.debug("Reading action request element: " + unprefixedName);
 				}
-                b.b=false;
+                b.found =false;
                 readActionInputArguments(xmlReader, actionInvocation);
             }
         }, this);
-        if (b.b)
+        if (b.found)
             throw new UnsupportedDataException(
                     "Could not read action request element matching namespace: " + message.getActionNamespace()
             );
@@ -349,7 +349,7 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, XMLUtil.Err
     protected <S extends Service<?, ?, ?>> void readActionResponseElement(IXmlReader xmlReader, ActionInvocation<S> actionInvocation) throws XMLStreamException, DescriptorBindingException {
         class B
         {
-            boolean b=true;
+            boolean found =true;
         }
         B b=new B();
         XMLUtil.readElements(xmlReader, reader -> {
@@ -357,11 +357,11 @@ public class SOAPActionProcessorImpl implements SOAPActionProcessor, XMLUtil.Err
 
             if (bodyChild.equals(actionInvocation.getAction().getName() + "Response")) {
                 log.debug(() -> "Reading action response element: " + bodyChild);
-                b.b=false;
+                b.found =false;
                 readActionOutputArguments(xmlReader, actionInvocation);
             }
         }, this);
-        if (b.b)
+        if (b.found)
             log.debug("Could not read action response element");
     }
 
