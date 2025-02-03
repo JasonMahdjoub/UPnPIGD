@@ -14,6 +14,7 @@
  */
 package com.distrimind.upnp_igd.transport.spi;
 
+import com.distrimind.flexilogxml.FlexiLogXML;
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.util.Exceptions;
@@ -25,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
+
+import org.slf4j.event.Level;
 
 /**
  * Implements the timeout/callback processing and unifies exception handling.
@@ -92,6 +95,7 @@ public abstract class AbstractStreamClient<C extends StreamClientConfiguration, 
             return null;
 
         } catch (ExecutionException ex) {
+            FlexiLogXML.log(Level.ERROR, ex);
             Throwable cause = ex.getCause();
             if (!logExecutionException(cause)) {
                 if (log.isWarnEnabled()) log.warn("HTTP request failed: " + requestMessage, Exceptions.unwrap(cause));

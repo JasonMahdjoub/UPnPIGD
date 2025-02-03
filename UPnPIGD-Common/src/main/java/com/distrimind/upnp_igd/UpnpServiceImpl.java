@@ -29,7 +29,8 @@ import com.distrimind.upnp_igd.util.Exceptions;
 
 import jakarta.enterprise.inject.Alternative;
 import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
+
+import java.io.IOException;
 
 /**
  * Default implementation of {@link UpnpService}, starts immediately on construction.
@@ -57,11 +58,11 @@ public class UpnpServiceImpl implements UpnpService {
     protected final Registry registry;
     protected final Router router;
 
-    public UpnpServiceImpl() {
+    public UpnpServiceImpl() throws IOException {
         this(new DefaultUpnpServiceConfiguration());
     }
 
-    public UpnpServiceImpl(RegistryListener... registryListeners) {
+    public UpnpServiceImpl(RegistryListener... registryListeners) throws IOException {
         this(new DefaultUpnpServiceConfiguration(), registryListeners);
     }
 

@@ -69,7 +69,8 @@ public class BinaryLightServer implements Runnable {
         Icon icon =
                 new Icon(
                         "image/png", 48, 48, 8,
-                        getClass().getResource("icon.png")
+                        "icon.png",
+                        getClass()
                 );
 
         LocalService<SwitchPower> switchPowerService =

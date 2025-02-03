@@ -42,6 +42,7 @@ import com.distrimind.upnp_igd.transport.spi.*;
 import com.distrimind.upnp_igd.util.Exceptions;
 import jakarta.enterprise.inject.Alternative;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Executor;
@@ -53,7 +54,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
 
 /**
  * Default configuration data of a typical UPnP stack.
@@ -100,16 +100,13 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     final private int multicastPort;
     private NetworkAddressFactory networkAddressFactory;
 
-    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration()
-    {
+    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration() throws IOException {
         return getDefaultUpnpServiceConfiguration(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
     }
-    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort)
-    {
+    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) throws IOException {
         return getDefaultUpnpServiceConfiguration(streamListenPort, multicastPort, true);
     }
-    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(boolean checkRuntime)
-    {
+    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(boolean checkRuntime) throws IOException {
         return getDefaultUpnpServiceConfiguration(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT, checkRuntime);
     }
     private static final Constructor<? extends UpnpServiceConfiguration> androidConstructor;
@@ -127,8 +124,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         else
             androidConstructor=null;
     }
-    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime)
-    {
+    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime) throws IOException {
         if (ModelUtil.ANDROID_RUNTIME) {
 			try {
 				return androidConstructor.newInstance(streamListenPort, multicastPort);
@@ -143,19 +139,19 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     /**
      * Defaults to port '0', ephemeral.
      */
-    protected DefaultUpnpServiceConfiguration() {
+    protected DefaultUpnpServiceConfiguration() throws IOException {
         this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
     }
 
-    protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) {
+    protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) throws IOException {
         this(streamListenPort, multicastPort, true);
     }
 
-    protected DefaultUpnpServiceConfiguration(boolean checkRuntime) {
+    protected DefaultUpnpServiceConfiguration(boolean checkRuntime) throws IOException {
         this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT, checkRuntime);
     }
 
-    protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime) {
+    protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime) throws IOException {
         if (checkRuntime && ModelUtil.ANDROID_RUNTIME) {
             throw new Error("Unsupported runtime environment, use com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration");
         }
@@ -371,7 +367,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         return defaultExecutorService;
     }
 
-    protected ExecutorService createDefaultExecutorService() {
+    protected ExecutorService createDefaultExecutorService() throws IOException {
         return new UpnpIGDExecutor();
     }
 

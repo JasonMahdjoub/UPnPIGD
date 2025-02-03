@@ -37,6 +37,7 @@ import java.net.URL;
 import java.util.HashMap;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
+import com.distrimind.upnp_igd.model.ModelUtil;
 
 /**
  * @author Christian Bauer
@@ -73,8 +74,10 @@ public class SAXParser {
 			// Configure factory to prevent XXE attacks
 			factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
 			factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-			factory.setXIncludeAware(false);
+			if (!ModelUtil.ANDROID_RUNTIME) {
+				factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+				factory.setXIncludeAware(false);
+			}
 
 			factory.setNamespaceAware(true);
 

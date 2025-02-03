@@ -17,6 +17,10 @@ package com.distrimind.upnp_igd.util;
 
 
 
+import com.distrimind.flexilogxml.FlexiLogXML;
+
+import org.slf4j.event.Level;
+
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
@@ -176,6 +180,7 @@ public class URIUtil {
 	}
 
 	public static URI toURI(URL url) {
+
 		if (url == null) return null;
 		try {
 			return url.toURI();

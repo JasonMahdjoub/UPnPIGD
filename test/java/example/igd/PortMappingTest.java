@@ -34,6 +34,8 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 
+import java.io.IOException;
+
 /**
  * Mapping a NAT port
  * <p>
@@ -231,7 +233,7 @@ public class PortMappingTest {
     }
 
     static class UpnpServiceImpl extends MockUpnpService {
-        UpnpServiceImpl(RegistryListener... registryListeners) {
+        UpnpServiceImpl(RegistryListener... registryListeners) throws IOException {
             super();
             for (RegistryListener registryListener : registryListeners) {
                 getRegistry().addListener(registryListener);

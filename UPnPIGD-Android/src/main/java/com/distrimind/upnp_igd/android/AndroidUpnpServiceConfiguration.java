@@ -19,9 +19,10 @@ import android.os.Build;
 import com.distrimind.upnp_igd.DefaultUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerConfigurationImpl;
 import com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerImpl;
-import com.distrimind.upnp_igd.android.transport.impl.jetty.JettyServletContainer;
-import com.distrimind.upnp_igd.android.transport.impl.jetty.StreamClientConfigurationImpl;
-import com.distrimind.upnp_igd.android.transport.impl.jetty.JettyStreamClientImpl;
+import com.distrimind.upnp_igd.android.transport.impl.undertow.StreamClientConfigurationImpl;
+import com.distrimind.upnp_igd.android.transport.impl.undertow.UndertowServletContainer;
+import com.distrimind.upnp_igd.android.transport.impl.undertow.UndertowStreamClientImpl;
+import com.distrimind.upnp_igd.android.transport.impl.undertow.Worker;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.RecoveringUDA10DeviceDescriptorBinderImpl;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
@@ -34,13 +35,22 @@ import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.transport.impl.RecoveringGENAEventProcessorImpl;
 import com.distrimind.upnp_igd.transport.impl.RecoveringSOAPActionProcessorImpl;
 import com.distrimind.upnp_igd.transport.spi.*;
+
+import org.xnio.OptionMap;
+import org.xnio.Options;
+import org.xnio.Xnio;
+import org.xnio.XnioWorker;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+
 import jakarta.enterprise.inject.Alternative;
 
 /**
  * Configuration settings for deployment on Android.
  * <p>
- * This configuration utilizes the Jetty transport implementation
- * found in {@link com.distrimind.upnp_igd.android.transport.impl.jetty} for TCP/HTTP networking, as
+ * This configuration utilizes the Untertow transport implementation
+ * found in {@link com.distrimind.upnp_igd.android.transport.impl.undertow} for TCP/HTTP networking, as
  * client and server. The servlet context path for UPnP is set to <code>/upnp</code>.
  * </p>
  * <p>
@@ -62,11 +72,11 @@ import jakarta.enterprise.inject.Alternative;
 @Alternative
 public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfiguration {
 
-    public AndroidUpnpServiceConfiguration() {
+    public AndroidUpnpServiceConfiguration() throws IOException {
         this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
     }
 
-    public AndroidUpnpServiceConfiguration(int streamListenPort, int multicastPort) {
+    public AndroidUpnpServiceConfiguration(int streamListenPort, int multicastPort) throws IOException {
         super(streamListenPort, multicastPort, false);
 
         // This should be the default on Android 2.1, but it's not set by default
@@ -80,14 +90,25 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 
     @Override
     protected Namespace createNamespace() {
-        // For the Jetty server, this is the servlet context path
+        // For the Untertow server, this is the servlet context path
         return new Namespace("/upnp");
     }
-
+    @Override
+    protected XnioWorker createDefaultExecutorService() throws IOException {
+        return Worker.createDefaultWorker();
+    }
+    @Override
+    protected XnioWorker getDefaultExecutorService() {
+        return (XnioWorker)super.getDefaultExecutorService();
+    }
+    @Override
+    public XnioWorker getSyncProtocolExecutorService() {
+        return getDefaultExecutorService();
+    }
     @Override
     public StreamClient<?> createStreamClient() {
-        // Use Jetty
-        return new JettyStreamClientImpl(
+        // Use Untertow
+        return new UndertowStreamClientImpl(
             new StreamClientConfigurationImpl(
                 getSyncProtocolExecutorService()
             ) {
@@ -107,10 +128,10 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 
     @Override
     public StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory) {
-        // Use Jetty, start/stop a new shared instance of JettyServletContainer
+        // Use Untertow, start/stop a new shared instance of UntertowServletContainer
         return new AsyncServletStreamServerImpl(
             new AsyncServletStreamServerConfigurationImpl(
-                JettyServletContainer.INSTANCE,
+                    UndertowServletContainer.INSTANCE,
                 networkAddressFactory.getStreamListenPort()
             )
         );

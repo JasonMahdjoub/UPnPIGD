@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite thread-count="24" name="Default Suite">
+  <test thread-count="24" name="testTransport">
+    <classes>
+      <class name="com.distrimind.upnp_igd.android.test.transport.UndertowServerUndertowClientTest"/>
+    </classes>
+  </test> <!-- testTransport -->
+</suite> <!-- Default Suite -->
+

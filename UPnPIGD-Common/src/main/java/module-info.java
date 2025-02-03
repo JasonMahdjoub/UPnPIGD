@@ -78,7 +78,6 @@ module UPnPIGD_Common {
 	exports com.distrimind.upnp_igd.transport.spi;
 	exports com.distrimind.upnp_igd.util;
 	exports com.distrimind.upnp_igd.util.io;
-	exports com.distrimind.upnp_igd.util.logging;
 	exports com.distrimind.upnp_igd.xml;
 }
 

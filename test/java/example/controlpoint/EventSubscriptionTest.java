@@ -37,6 +37,7 @@ import com.distrimind.upnp_igd.model.types.Datatype;
 import com.distrimind.upnp_igd.util.Reflections;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -196,7 +197,7 @@ public class EventSubscriptionTest {
         assertEquals(upnpService.getRouter().getSentStreamRequestMessages().size(), 0);
     }
 
-    protected MockUpnpService createMockUpnpService() {
+    protected MockUpnpService createMockUpnpService() throws IOException {
         return new MockUpnpService() {
             @Override
             protected MockRouter createRouter() {

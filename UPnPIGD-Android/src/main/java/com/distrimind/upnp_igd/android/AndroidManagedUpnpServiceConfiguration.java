@@ -15,9 +15,9 @@
 
 package com.distrimind.upnp_igd.android;
 
-import com.distrimind.upnp_igd.DefaultUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
+import com.distrimind.upnp_igd.android.transport.impl.undertow.Worker;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.UDA10DeviceDescriptorBinderImpl;
@@ -35,6 +35,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import com.distrimind.flexilogxml.log.DMLogger;
@@ -69,7 +70,7 @@ public class AndroidManagedUpnpServiceConfiguration implements UpnpServiceConfig
     private int multicastPort;
 
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
 
         if (ModelUtil.ANDROID_RUNTIME) {
             throw new Error("Unsupported runtime environment, use com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration");
@@ -279,7 +280,7 @@ public class AndroidManagedUpnpServiceConfiguration implements UpnpServiceConfig
         return defaultExecutorService;
     }
 
-    protected ExecutorService createDefaultExecutorService() {
-        return new DefaultUpnpServiceConfiguration.UpnpIGDExecutor();
+    protected ExecutorService createDefaultExecutorService() throws IOException {
+        return Worker.createDefaultWorker();
     }
 }

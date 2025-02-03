@@ -15,6 +15,9 @@
 
 package com.distrimind.upnp_igd.model;
 
+import com.distrimind.upnp_igd.util.Reflections;
+
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.*;
@@ -79,9 +82,6 @@ public class ModelUtil {
      *         matches {@link Constants#getPatternUDAName()}.
      */
     public static boolean isValidUDAName(String name) {
-        if (ANDROID_RUNTIME) {
-            return name != null && !name.isEmpty();
-        }
         return name != null && !name.isEmpty() && !name.toLowerCase(Locale.ROOT).startsWith("xml") && Constants.getPatternUDAName().matcher(name).matches();
     }
 
@@ -281,5 +281,28 @@ public class ModelUtil {
             return false;
         return body.length <= Constants.MAX_BODY_LENGTH;
     }
+    private final static Method getApplicationContextMethod;
+    static {
 
+        Method m;
+        try {
+            Class<?> c=Reflections.classForName("com.distrimind.flexilogxml.android.ContextProvider");
+            m=Reflections.getMethod(c, "getApplicationContext");
+        } catch (ClassNotFoundException | NoSuchMethodException | NoClassDefFoundError e) {
+            m=null;
+        }
+        getApplicationContextMethod=m;
+    }
+    public static Object getAndroidContext()
+    {
+        if (getApplicationContextMethod==null)
+            return null;
+        else {
+            try {
+                return Reflections.invoke(getApplicationContextMethod, null);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

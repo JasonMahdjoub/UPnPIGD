@@ -171,7 +171,7 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
         return null;
     }
     private static final Pattern patternPrefix = Pattern.compile("www.w3.org/TR/1999/REC-xml-names-19990114#ElementPrefixUnbound\\?(.+)&.+:.+");
-    private static final Pattern patternUndefinedPrefix = Pattern.compile("undefined prefix: ([^ ]*)");
+    private static final Pattern patternUndefinedPrefix = Pattern.compile("undefined prefix: ([^ ]+)");
     private static final Pattern patternRoot = Pattern.compile("<root([^>]*)");
     private static final Pattern patternRootEndRoot = Pattern.compile("<root[^>]*>(.*)</root>", Pattern.DOTALL);
     protected String fixMissingNamespaces(String descriptorXml, DescriptorBindingException ex) {
@@ -183,8 +183,13 @@ public class RecoveringUDA10DeviceDescriptorBinderImpl extends UDA10DeviceDescri
             return null;
         }
         Throwable cause = ex.getCause();
-        if (!((cause instanceof XMLStreamException) || (cause instanceof ParserException))) {
-
+        if (cause instanceof XMLStreamException)
+        {
+            Throwable t=cause.getCause();
+            if ("org.xmlpull.v1.XmlPullParserException".equals(t.getClass().getName()))
+                cause=t;
+        }
+        else if (!(cause instanceof ParserException)) {
             return null;
         }
         String message = cause.getMessage();

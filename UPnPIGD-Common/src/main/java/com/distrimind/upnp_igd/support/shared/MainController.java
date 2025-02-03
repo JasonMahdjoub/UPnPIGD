@@ -19,7 +19,6 @@ import com.distrimind.flexilogxml.log.Handler;
 import com.distrimind.flexilogxml.log.LogManager;
 import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.UpnpService;
-import com.distrimind.upnp_igd.util.logging.LoggingUtil;
 import com.distrimind.upnp_igd.swing.AbstractController;
 import com.distrimind.upnp_igd.swing.Application;
 import com.distrimind.upnp_igd.swing.logging.LogCategory;
@@ -89,7 +88,7 @@ public abstract class MainController extends AbstractController<JFrame> {
         // Don't reset JUL root logger but add if there is a JUL config file
         Handler handler = logRecord -> logController.pushMessage(new LogMessage(logRecord));
         if (System.getProperty("java.util.logging.config.file") == null) {
-            LoggingUtil.resetRootHandler(handler);
+            LogManager.resetHandlers(handler);
         } else {
             LogManager.addHandler(handler);
         }

@@ -17,7 +17,7 @@ dependencies {
 
     testImplementation jlibs.jsoup
     testImplementation jlibs.testng
-    testImplementation jlibs.slf4Jdk14
+    testImplementation jlibs.logback.classic
 
 }
 
@@ -25,7 +25,7 @@ jar.archiveBaseName = "UPnPIGD-Desktop"
 
 
 test {
-    systemProperty 'java.util.logging.config.file', file('src/test/resources/logging.properties').absolutePath
+    systemProperty 'logback.configurationFile', file('src/test/resources/logback.xml').absolutePath
     // enable TestNG support (default is JUnit)
     useTestNG
             {

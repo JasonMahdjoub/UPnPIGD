@@ -6,7 +6,7 @@ plugins {
 
 
 android {
-    namespace 'com.distrimind.upnp_igd'
+    namespace 'com.distrimind.upnp_igd.android'
     compileSdk 35
 
     defaultConfig {
@@ -36,6 +36,7 @@ android {
     packagingOptions {
         exclude 'META-INF/LICENSE.md'
         exclude 'META-INF/NOTICE.md'
+        exclude 'META-INF/INDEX.LIST'
     }
 }
 
@@ -49,9 +50,12 @@ dependencies {
 
     implementation project(':UPnPIGD-Android')
 
-    androidTestImplementation jlibs.jetty.server
+    /*androidTestImplementation jlibs.jetty.server
     androidTestImplementation jlibs.jetty.servlet
-    androidTestImplementation jlibs.jetty.client
+    androidTestImplementation jlibs.jetty.client*/
+
+    androidTestImplementation jlibs.undertow.core
+    androidTestImplementation jlibs.undertow.servlet
 
     androidTestImplementation jlibs.jakarta.enterprise.cdi.api
 

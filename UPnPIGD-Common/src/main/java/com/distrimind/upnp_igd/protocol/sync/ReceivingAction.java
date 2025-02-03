@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.protocol.sync;
 
+import com.distrimind.flexilogxml.FlexiLogXML;
 import com.distrimind.upnp_igd.model.action.ActionExecutor;
 import com.distrimind.upnp_igd.model.meta.Action;
 import com.distrimind.upnp_igd.model.meta.LocalService;
@@ -38,6 +39,8 @@ import com.distrimind.upnp_igd.util.Exceptions;
 
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
+
+import org.slf4j.event.Level;
 
 /**
  * Handles reception of control messages, invoking actions on local services.
@@ -67,7 +70,8 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
         // 'If the CONTENT-TYPE header specifies an unsupported value (other than "text/xml") the
         // device must return an HTTP status code "415 Unsupported Media Type".'
         if (contentTypeHeader != null && !contentTypeHeader.isUDACompliantXML()) {
-			if (log.isWarnEnabled()) log.warn("Received invalid Content-Type '" + contentTypeHeader + "': " + getInputMessage());
+			if (log.isWarnEnabled())
+                log.warn("Received invalid Content-Type '" + contentTypeHeader + "': " + getInputMessage());
             return new StreamResponseMessage(new UpnpResponse(UpnpResponse.Status.UNSUPPORTED_MEDIA_TYPE));
         }
 
@@ -168,6 +172,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 			return responseMessage;
 
         } catch (UnsupportedDataException ex) {
+            FlexiLogXML.log(Level.WARN, ex);
 			if (log.isWarnEnabled()) {
 				log.warn("Failure writing body of response message, sending '500 Internal Server Error' without body");
 				log.warn("Exception root cause: ", Exceptions.unwrap(ex));

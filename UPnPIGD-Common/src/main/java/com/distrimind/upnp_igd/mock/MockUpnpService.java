@@ -31,6 +31,8 @@ import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
 
+import java.io.IOException;
+
 import jakarta.enterprise.inject.Alternative;
 
 /**
@@ -55,7 +57,7 @@ public class MockUpnpService implements UpnpService {
     /**
      * Single-thread of execution for the whole UPnP stack, no ALIVE messages or registry maintenance.
      */
-    public MockUpnpService() {
+    public MockUpnpService() throws IOException {
         this(false, new MockUpnpServiceConfiguration(false, false));
     }
 
@@ -69,11 +71,11 @@ public class MockUpnpService implements UpnpService {
     /**
      * Single-thread of execution for the whole UPnP stack, except one background registry maintenance thread.
      */
-    public MockUpnpService(final boolean sendsAlive, final boolean maintainsRegistry) {
+    public MockUpnpService(final boolean sendsAlive, final boolean maintainsRegistry) throws IOException {
         this(sendsAlive, new MockUpnpServiceConfiguration(maintainsRegistry, false));
     }
 
-    public MockUpnpService(final boolean sendsAlive, final boolean maintainsRegistry, final boolean multiThreaded) {
+    public MockUpnpService(final boolean sendsAlive, final boolean maintainsRegistry, final boolean multiThreaded) throws IOException {
         this(sendsAlive, new MockUpnpServiceConfiguration(maintainsRegistry, multiThreaded));
     }
 

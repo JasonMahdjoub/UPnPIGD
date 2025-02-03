@@ -60,9 +60,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidTestsProject"
 include ':app'
-include 'UPnPIGD-Core'
+include 'UPnPIGD-Common'
 include 'UPnPIGD-Android'
-project(':UPnPIGD-Core').projectDir = file('../UPnPIGD-Core')
+project(':UPnPIGD-Common').projectDir = file('../UPnPIGD-Common')
 project(':UPnPIGD-Android').projectDir = file('../UPnPIGD-Android')
 
 

@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.model;
 
+import com.distrimind.flexilogxml.FlexiLogXML;
 import com.distrimind.flexilogxml.exceptions.XMLStreamException;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.flexilogxml.xml.*;
@@ -22,6 +23,8 @@ import com.distrimind.flexilogxml.xml.Location;
 import com.distrimind.upnp_igd.binding.xml.DescriptorBindingException;
 import com.distrimind.upnp_igd.model.action.ActionException;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
+
+import org.slf4j.event.Level;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -129,8 +132,9 @@ public class XMLUtil {
             }
         }
         else {
-            if (namespace==null)
+            if (namespace==null) {
                 xmlStreamWriter.writeStartElement(element);
+            }
             else {
                 if (prefix==null || prefix.isEmpty())
                     xmlStreamWriter.writeStartElement(namespace, element);
@@ -171,7 +175,7 @@ public class XMLUtil {
     public static IXmlWriter getXMLWriter(boolean enableIndent, OutputStream out) throws XMLStreamException {
 
         IXmlWriter xmlWriter= XmlParserFactory.getXmlOutputFactory().getXMLWriter(enableIndent, out, StandardCharsets.UTF_8);
-        xmlWriter.writeDTD("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+        xmlWriter.writeStartDocument(StandardCharsets.UTF_8, "1.0", true);
         return xmlWriter;
     }
     public static String generateXMLToString(XMLWriteConsumer c) throws XMLStreamException {
@@ -183,7 +187,7 @@ public class XMLUtil {
             xmlStreamWriter.writeEndDocument();
             xmlStreamWriter.close();
             out.flush();
-            return out.toString(StandardCharsets.UTF_8);
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw XMLStreamException.getXmlStreamException(e);
         }

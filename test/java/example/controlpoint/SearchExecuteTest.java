@@ -36,6 +36,7 @@ import com.distrimind.upnp_igd.model.types.UDN;
 import com.distrimind.upnp_igd.protocol.async.SendingSearch;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static org.testng.Assert.*;
@@ -179,13 +180,13 @@ public class SearchExecuteTest {
 
 
     @Test
-    public void searchDefaults() {
+    public void searchDefaults() throws IOException {
         SendingSearch search = new SendingSearch(new MockUpnpService());
         assertEquals(search.getSearchTarget().getString(), new STAllHeader().getString());
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
-    public void searchInvalidST() {
+    public void searchInvalidST() throws IOException {
         new SendingSearch(new MockUpnpService(), new MXHeader());
     }
 

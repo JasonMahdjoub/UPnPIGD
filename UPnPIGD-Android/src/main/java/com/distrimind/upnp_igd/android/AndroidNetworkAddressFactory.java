@@ -19,6 +19,7 @@ import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -65,7 +66,7 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
 					field0.setAccessible(true);
 					target = field0.get(address);
 					field0 = target.getClass().getDeclaredField("hostName");
-				} catch (NoSuchFieldException e) {
+				} catch (NoSuchFieldException | InaccessibleObjectException e) {
 					// Let's try the non-OpenJDK variant
 					field0 = InetAddress.class.getDeclaredField("hostName");
 					target = address;
@@ -78,7 +79,11 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
 					return false;
 				}
 
-			} catch (Exception ex) {
+			}
+			catch (NoSuchFieldException | InaccessibleObjectException ignored) {
+
+			}
+			catch (Exception ex) {
 				if (log.isErrorEnabled())
 					log.error(
 							"Failed injecting hostName to work around Android InetAddress DNS bug: " + address,

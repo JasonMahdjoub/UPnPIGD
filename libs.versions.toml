@@ -7,8 +7,9 @@ testngVersion='7.10.2'
 slf4jVersion='2.0.16'
 junitVersion = "4.13.2"
 androidStubVersion = "4.3.0.0"
-dmFlexiLogXML='1.2.2-STABLE'
-
+dmFlexiLogXML='1.2.9-STABLE'
+undertow='2.3.18.Final'
+logback='1.5.16'
 
 [libraries]
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoupVersion" }
@@ -23,4 +24,6 @@ androidStub = { group = "stub.android", name = "AndroidStub", version.ref = "and
 dm-flexi-logxml-common = { group = "com.distrimind.flexilogxml", name = "DM-FlexiLogXML-Common", version.ref = "dmFlexiLogXML" }
 dm-flexi-logxml-desktop = { group = "com.distrimind.flexilogxml.desktop", name = "DM-FlexiLogXML-Desktop", version.ref = "dmFlexiLogXML" }
 dm-flexi-logxml-android = { group = "com.distrimind.flexilogxml.android", name = "DM-FlexiLogXML-Android", version.ref = "dmFlexiLogXML" }
-slf4Jdk14 = { group = "org.slf4j", name = "slf4j-jdk14", version.ref = "slf4jVersion" }
+logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+undertow-core = { group = "io.undertow", name = "undertow-core", version.ref = "undertow" }
+undertow-servlet = { group = "io.undertow", name = "undertow-servlet", version.ref = "undertow" }

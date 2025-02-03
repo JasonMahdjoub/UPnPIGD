@@ -14,7 +14,6 @@
  */
  package com.distrimind.upnp_igd.swing.logging;
 
-import org.slf4j.event.Level;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;

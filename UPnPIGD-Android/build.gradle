@@ -1,19 +1,51 @@
 apply from: ("../common.gradle")
 group='com.distrimind.upnp_igd.android'
-
+/*sourceSets {
+    test {
+        java {
+            srcDirs += ['../test/java']
+        }
+        resources {
+            srcDirs += ['../test/resources']
+        }
+    }
+}*/
 dependencies {
 
     api project(':UPnPIGD-Common')
-    implementation jlibs.dm.flexi.logxml.android
+    api jlibs.dm.flexi.logxml.android
     compileOnly jlibs.androidStub
 
-    compileOnly jlibs.jetty.server
+    /*compileOnly jlibs.jetty.server
     compileOnly jlibs.jetty.servlet
-    compileOnly jlibs.jetty.client
+    compileOnly jlibs.jetty.client*/
+
+    compileOnly jlibs.undertow.core
+    compileOnly jlibs.undertow.servlet
 
     compileOnly jlibs.jakarta.enterprise.cdi.api
+
+    testImplementation jlibs.jsoup
+    testImplementation jlibs.testng
+    testImplementation jlibs.logback.classic
+    testImplementation jlibs.undertow.servlet
+    //testImplementation jlibs.dm.flexi.logxml.desktop
 
 }
 
 jar.archiveBaseName = "UPnPIGD-Android"
 
+/*test {
+    systemProperty 'logback.configurationFile', file('src/test/resources/logback.xml').absolutePath
+    // enable TestNG support (default is JUnit)
+    useTestNG
+            {
+                suites 'src/test/resources/com/distrimind/upnp_igd/android/AllTestsNG.xml'
+            }
+
+    // set heap size for the test JVM(s)
+    minHeapSize = "1m"
+    maxHeapSize = "6g"
+    /*testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+//}*/

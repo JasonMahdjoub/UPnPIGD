@@ -27,6 +27,7 @@ import com.distrimind.upnp_igd.model.types.ServiceType;
 import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.*;
 import java.util.Collection;
@@ -289,7 +290,7 @@ public class SampleData {
         }
     */
 
-    public static void debugMsg(OutgoingDatagramMessage<?> msg) {
+    public static void debugMsg(OutgoingDatagramMessage<?> msg) throws IOException {
         DatagramProcessor proc = DefaultUpnpServiceConfiguration.getDefaultUpnpServiceConfiguration().getDatagramProcessor();
         proc.write(msg);
     }

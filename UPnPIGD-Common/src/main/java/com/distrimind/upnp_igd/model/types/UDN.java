@@ -13,7 +13,9 @@
 
 package com.distrimind.upnp_igd.model.types;
 
+import com.distrimind.flexilogxml.ReflectionTools;
 import com.distrimind.upnp_igd.model.ModelUtil;
+import com.distrimind.upnp_igd.util.Reflections;
 
 
 import java.nio.charset.StandardCharsets;
@@ -130,8 +132,9 @@ public class UDN {
      * @return A global unique identifier, stable for the current system and salt.
      */
     public static UDN uniqueSystemIdentifier(String salt) {
-        return uniqueSystemIdentifier(salt, null);
+        return uniqueSystemIdentifier(salt, ModelUtil.getAndroidContext());
     }
+
     /**
      * Generates a global unique identifier that is the same every time this method is invoked on the same machine with
      * the same argument.

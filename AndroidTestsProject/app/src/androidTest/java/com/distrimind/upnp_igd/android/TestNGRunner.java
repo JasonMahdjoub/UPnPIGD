@@ -35,7 +35,6 @@ package com.distrimind.upnp_igd.android;
 
 
 
-import com.distrimind.xmllib.Tests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +46,11 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class TestNGRunner {
 	@Parameterized.Parameters(name = "{index}: {0}")
-	public static Collection<Tests[]> data() {
-		return AllTests.getTests().getDataForJunitTests(AllTests.DEFAULT_THREAD_COUNT);
+	public static Collection<com.distrimind.flexilogxml.Tests[]> data() {
+		return AllTests.getTests().getDataForJunitTests(4);
 	}
-	private final Tests tests;
-	public TestNGRunner(Tests tests)
+	private final com.distrimind.flexilogxml.Tests tests;
+	public TestNGRunner(com.distrimind.flexilogxml.Tests tests)
 	{
 		if (tests==null)
 			throw new NullPointerException();

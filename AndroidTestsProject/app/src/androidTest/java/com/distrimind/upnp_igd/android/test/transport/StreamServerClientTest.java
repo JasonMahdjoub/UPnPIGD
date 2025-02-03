@@ -1,24 +1,43 @@
 /*
- * Copyright (C) 2013 4th Line GmbH, Switzerland
+ *     This library is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU Lesser General Public
+ *     License as published by the Free Software Foundation; either
+ *     version 2.1 of the License.
  *
- * The contents of this file are subject to the terms of either the GNU
- * Lesser General Public License Version 2 or later ("LGPL") or the
- * Common Development and Distribution License Version 1 or later
- * ("CDDL") (collectively, the "License"). You may not use this file
- * except in compliance with the License. See LICENSE.txt for more
- * information.
+ *     This library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *     Lesser General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *     You should have received a copy of the GNU Lesser General Public
+ *     License along with this library; if not, write to the Free Software
+ *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+/*
+ *     This library is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU Lesser General Public
+ *     License as published by the Free Software Foundation; either
+ *     version 2.1 of the License.
+ *
+ *     This library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *     Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public
+ *     License along with this library; if not, write to the Free Software
+ *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 package com.distrimind.upnp_igd.android.test.transport;
 
+import com.distrimind.flexilogxml.FlexiLogXML;
+import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
+import com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.mock.MockProtocolFactory;
 import com.distrimind.upnp_igd.mock.MockRouter;
-import com.distrimind.upnp_igd.mock.MockUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.model.message.UpnpRequest;
@@ -28,11 +47,15 @@ import com.distrimind.upnp_igd.protocol.ReceivingSync;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
 import com.distrimind.upnp_igd.transport.spi.UpnpStream;
+
+import org.slf4j.event.Level;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import com.distrimind.flexilogxml.log.DMLogger;
@@ -46,7 +69,7 @@ abstract public class StreamServerClientTest {
     public static final String TEST_HOST = "localhost";
     public static final int TEST_PORT = 8081;
 
-    public UpnpServiceConfiguration configuration = new MockUpnpServiceConfiguration(false, true);
+    public AndroidUpnpServiceConfiguration configuration = new AndroidUpnpServiceConfiguration();
 
     public MockProtocolFactory protocolFactory = new MockProtocolFactory() {
 
@@ -85,22 +108,39 @@ abstract public class StreamServerClientTest {
     public StreamClient<?> client;
     public TestProtocol lastExecutedServerProtocol;
 
+    protected StreamServerClientTest() throws IOException {
+    }
+
 
     @BeforeClass
-    public void start() throws Exception {
-        server = createStreamServer(TEST_PORT);
-        server.init(InetAddress.getByName(TEST_HOST), router, configuration.createNetworkAddressFactory());
-        configuration.getStreamServerExecutorService().execute(server);
+    public void start() {
+        try {
+            server = createStreamServer(TEST_PORT);
+            server.init(InetAddress.getByName(TEST_HOST), router, configuration.createNetworkAddressFactory());
+            configuration.getStreamServerExecutorService().execute(server);
+            Thread.sleep(2000);
+            client = createStreamClient(configuration);
 
-        client = createStreamClient(configuration);
-        Thread.sleep(1000);
+        }
+        catch (Throwable e)
+        {
+            FlexiLogXML.log(Level.ERROR, e);
+            Assert.fail();
+        }
     }
 
     @AfterClass
-    public void stop() throws Exception {
-        server.stop();
-        client.stop();
-        Thread.sleep(1000);
+    public void stop() {
+        try {
+            server.stop();
+            client.stop();
+            Thread.sleep(1000);
+        }
+        catch (Throwable e)
+        {
+            FlexiLogXML.log(Level.ERROR, e);
+            Assert.fail();
+        }
     }
 
     @BeforeMethod
@@ -136,25 +176,25 @@ abstract public class StreamServerClientTest {
         final boolean[] tests = new boolean[1];
 
         final Thread requestThread = new Thread(() -> {
-			try {
-				client.sendRequest(createRequestMessage(DelayedResponse.PATH));
-			} catch (InterruptedException ex) {
-				// We expect this thread to be interrupted
-				tests[0] = true;
-			}
-		});
+            try {
+                client.sendRequest(createRequestMessage(DelayedResponse.PATH));
+            } catch (InterruptedException ex) {
+                // We expect this thread to be interrupted
+                tests[0] = true;
+            }
+        });
 
         requestThread.start();
 
         // Cancel the request after 250ms
         new Thread(() -> {
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException ignored) {
-				// Ignore
-			}
-			requestThread.interrupt();
-		}).start();
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException ignored) {
+                // Ignore
+            }
+            requestThread.interrupt();
+        }).start();
 
         Thread.sleep(3000);
         for (boolean test : tests) {
@@ -198,25 +238,25 @@ abstract public class StreamServerClientTest {
         final boolean[] tests = new boolean[1];
 
         final Thread requestThread = new Thread(() -> {
-			try {
-				client.sendRequest(createRequestMessage(CheckAliveResponse.PATH));
-			} catch (InterruptedException ex) {
-				// We expect this thread to be interrupted
-				tests[0] = true;
-			}
-		});
+            try {
+                client.sendRequest(createRequestMessage(CheckAliveResponse.PATH));
+            } catch (InterruptedException ex) {
+                // We expect this thread to be interrupted
+                tests[0] = true;
+            }
+        });
 
         requestThread.start();
 
         // Cancel the request after 1 second
         new Thread(() -> {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException ignored) {
-				// Ignore
-			}
-			requestThread.interrupt();
-		}).start();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+                // Ignore
+            }
+            requestThread.interrupt();
+        }).start();
 
         Thread.sleep(3000);
         for (boolean test : tests) {
@@ -227,8 +267,8 @@ abstract public class StreamServerClientTest {
 
     protected StreamRequestMessage createRequestMessage(String path) {
         return new StreamRequestMessage(
-            UpnpRequest.Method.GET,
-            URI.create("http://" + TEST_HOST + ":" + TEST_PORT + path)
+                UpnpRequest.Method.GET,
+                URI.create("http://" + TEST_HOST + ":" + TEST_PORT + path)
         );
     }
 

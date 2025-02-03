@@ -29,24 +29,23 @@ import com.distrimind.flexilogxml.FlexiLogXML;
 import com.distrimind.flexilogxml.log.DMLogger;
 import org.slf4j.event.Level;
 
-
-import java.time.format.DateTimeFormatter;
-
 public class Log {
+
 	public static DMLogger getLogger(Class<?> clazz)
 	{
-		return getLogger(clazz.getName());
+		return FlexiLogXML.getLoggerInstance(clazz);
 	}
 	public static DMLogger getLogger(Class<?> clazz, Level level)
 	{
-		return getLogger(clazz.getName(), level);
+		return FlexiLogXML.getLoggerInstance(clazz, level);
 	}
 	public static DMLogger getLogger(String name)
 	{
-		return getLogger(name, Level.INFO);
+		return FlexiLogXML.getLoggerInstance(name);
 	}
 	public static DMLogger getLogger(String name, Level level)
 	{
-		return FlexiLogXML.getLoggerInstance("["+name+"]", 10, DateTimeFormatter.ofPattern("HH:mm:ss.SSSS"), level);
+
+		return FlexiLogXML.getLoggerInstance(name, level);
 	}
 }

@@ -85,6 +85,12 @@ public class Icon implements Validatable {
     public Icon(String mimeType, int width, int height, int depth, File file) throws IOException {
         this(mimeType, width, height, depth, file.getName(), IO.readBytes(file));
     }
+    /**
+     * Use this constructor if your local resource icon data, loaded from resource class
+     */
+    public Icon(String mimeType, int width, int height, int depth, String resourceName, Class<?> resourceClass) throws IOException {
+        this(mimeType, width, height, depth, resourceName, IO.readBytes(resourceClass.getResourceAsStream(resourceName)));
+    }
 
     /**
      * Use this constructor if your local icon data is an <code>InputStream</code>.

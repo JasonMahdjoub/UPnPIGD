@@ -32,6 +32,7 @@ import com.distrimind.upnp_igd.test.data.SampleDeviceRoot;
 import com.distrimind.upnp_igd.test.data.SampleDeviceRootLocal;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 
@@ -154,7 +155,7 @@ public class RegistryBrowseTest {
     */
 
     @Test
-    public void cleanupRemoteDevice() {
+    public void cleanupRemoteDevice() throws IOException {
         MockUpnpService upnpService = new MockUpnpService();
         RemoteDevice rd = SampleData.createRemoteDevice();
 

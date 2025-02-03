@@ -20,6 +20,8 @@ import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.DefaultUpnpServiceConfiguration;
 
 import jakarta.enterprise.inject.Alternative;
+
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -42,18 +44,18 @@ public class MockUpnpServiceConfiguration extends DefaultUpnpServiceConfiguratio
     /**
      * Does not maintain registry, single threaded execution.
      */
-    public MockUpnpServiceConfiguration() {
+    public MockUpnpServiceConfiguration() throws IOException {
         this(false, false);
     }
 
     /**
      * Single threaded execution.
      */
-    public MockUpnpServiceConfiguration(boolean maintainsRegistry) {
+    public MockUpnpServiceConfiguration(boolean maintainsRegistry) throws IOException {
         this(maintainsRegistry, false);
     }
 
-    public MockUpnpServiceConfiguration(boolean maintainsRegistry, boolean multiThreaded) {
+    public MockUpnpServiceConfiguration(boolean maintainsRegistry, boolean multiThreaded) throws IOException {
         super(false);
         this.maintainsRegistry = maintainsRegistry;
         this.multiThreaded = multiThreaded;
