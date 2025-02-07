@@ -1,9 +1,8 @@
 [versions]
 beanShellVersion='2.0b6'
 jsoupVersion='1.18.3'
-jakartaCdiAPIVersion='4.0.1'
+jakartaCdiAPIVersion='4.1.0'
 testngVersion='7.10.2'
-slf4jVersion='2.0.16'
 junitVersion = "4.13.2"
 androidStubVersion = "4.3.0.0"
 dmFlexiLogXML='1.2.9-STABLE'

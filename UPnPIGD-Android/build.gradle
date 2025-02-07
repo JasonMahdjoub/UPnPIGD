@@ -1,15 +1,6 @@
 apply from: ("../common.gradle")
 group='com.distrimind.upnp_igd.android'
-/*sourceSets {
-    test {
-        java {
-            srcDirs += ['../test/java']
-        }
-        resources {
-            srcDirs += ['../test/resources']
-        }
-    }
-}*/
+
 dependencies {
 
     api project(':UPnPIGD-Common')
@@ -19,7 +10,6 @@ dependencies {
     compileOnly jlibs.undertow.core
     compileOnly jlibs.undertow.servlet
 
-    compileOnly jlibs.jakarta.enterprise.cdi.api
 
     testImplementation jlibs.jsoup
     testImplementation jlibs.testng
@@ -42,7 +32,5 @@ test {
     // set heap size for the test JVM(s)
     minHeapSize = "1m"
     maxHeapSize = "6g"
-    /*testLogging {
-        events "passed", "skipped", "failed", "standardOut", "standardError"
-    }*/
+
 }

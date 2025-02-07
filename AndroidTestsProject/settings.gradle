@@ -44,12 +44,12 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         maven {
-            url "${artifactoryUrl}/DistriMind-Public"
+            url = "${artifactoryUrl}/DistriMind-Public"
             if (artifactoryUser!="")
             {
                 credentials {
-                    username "${artifactoryUser}"
-                    password "${artifactoryPwd}"
+                    username = "${artifactoryUser}"
+                    password = "${artifactoryPwd}"
                 }
             }
         }

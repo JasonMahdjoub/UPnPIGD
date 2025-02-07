@@ -6,10 +6,7 @@ This project includes the following third-party libraries which are provided und
 - The jsoup Java HTML Parser (https://jsoup.org/) is provided under the MIT License (https://jsoup.org/license).
 
 - The following libraries are optionals and not included by default with this library :
-  - The Eclipse Jetty Project (https://jetty.org/) is provided under both
-    the EPL-2.0 license (https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt)
-    or the Apache2 license (https://www.apache.org/licenses/LICENSE-2.0)
-  - The SLF4J API Module (https://www.slf4j.org/) is provided under the MIT Licence (https://jsoup.org/license)
+  - The Undertow Project (https://undertow.io/) is provided the Apache2 license (https://www.apache.org/licenses/LICENSE-2.0)
   - The Jakarta enterprise CDI API library (https://www.cdi-spec.org/) is provided under
     the Apache2 license (https://www.apache.org/licenses/LICENSE-2.0)
   - The Jakarta enterprise lang-model is provided under the Apache2 license (https://www.apache.org/licenses/LICENSE-2.0)

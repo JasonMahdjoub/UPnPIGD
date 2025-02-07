@@ -6,24 +6,24 @@ This project includes the following third-party libraries which are provided und
 - The jsoup Java HTML Parser (https://jsoup.org/) is provided under the MIT License (https://jsoup.org/license).
 
 - The following libraries are optionals and not included by default with this library :
-    - The Jakarta enterprise CDI API library (https://www.cdi-spec.org/) is provided under
+  - The Jakarta enterprise CDI API library (https://www.cdi-spec.org/) is provided under
     the Apache2 license (https://www.apache.org/licenses/LICENSE-2.0)
-    - The Jakarta enterprise lang-model is provided under the Apache2 license (https://www.apache.org/licenses/LICENSE-2.0)
-    - The Jakarta Annotations library (https://projects.eclipse.org/projects/ee4j.ca) is provided under
+  - The Jakarta enterprise lang-model is provided under the Apache2 license (https://www.apache.org/licenses/LICENSE-2.0)
+  - The Jakarta Annotations library (https://projects.eclipse.org/projects/ee4j.ca) is provided under
     both the EPL-2.0 license (https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt)
     and the GNU General Public License, version 2 (https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt)
     with the GNU Classpath Exception (https://www.gnu.org/software/classpath/license.html)
-    - The Jakarta Expression Language library (https://projects.eclipse.org/projects/ee4j.el) is provided under
-    both the EPL-2.0 license (https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt)
-    and the GNU General Public License, version 2 (https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt)
-    with the GNU Classpath Exception (https://www.gnu.org/software/classpath/license.html)
-    You may not use these libraries except in compliance with their corresponding license(s).
-    - The Jakarta Interceptors library (https://github.com/jakartaee/interceptors) is provided under
+  - The Jakarta Expression Language library (https://projects.eclipse.org/projects/ee4j.el) is provided under
     both the EPL-2.0 license (https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt)
     and the GNU General Public License, version 2 (https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt)
     with the GNU Classpath Exception (https://www.gnu.org/software/classpath/license.html)
     You may not use these libraries except in compliance with their corresponding license(s).
-    - The Jakarta Dependency Injection library (https://github.com/jakartaee/inject) is provided under
+  - The Jakarta Interceptors library (https://github.com/jakartaee/interceptors) is provided under
+    both the EPL-2.0 license (https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt)
+    and the GNU General Public License, version 2 (https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt)
+    with the GNU Classpath Exception (https://www.gnu.org/software/classpath/license.html)
+    You may not use these libraries except in compliance with their corresponding license(s).
+  - The Jakarta Dependency Injection library (https://github.com/jakartaee/inject) is provided under
     the Apache2 license (https://www.apache.org/licenses/LICENSE-2.0)
 
 You may not use these libraries except in compliance with their corresponding license(s).

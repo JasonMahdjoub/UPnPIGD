@@ -138,10 +138,7 @@ abstract public class StreamServerClientTest {
     @BeforeClass
     public void start() {
         try {
-            /*if (configurationServer.getPlatformType()==Platform.ANDROID)
-                testPort=0;
-            else*/
-                testPort=8081;
+            testPort=8081;
 
             server = configurationServer.createStreamServer(testPort);
 
