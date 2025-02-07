@@ -53,7 +53,7 @@ public class DatagramParsingTest {
 
         DatagramPacket packet = getDatagramPacket();
 
-        DatagramProcessor processor = DefaultUpnpServiceConfiguration.getDefaultUpnpServiceConfiguration().getDatagramProcessor();
+        DatagramProcessor processor = new DefaultUpnpServiceConfiguration().getDatagramProcessor();
 
         @SuppressWarnings("unchecked") UpnpMessage<UpnpRequest> msg = (UpnpMessage<UpnpRequest>)processor.read(InetAddress.getByName("127.0.0.1"), packet);
         assertEquals(msg.getOperation().getMethod(), UpnpRequest.Method.NOTIFY);
@@ -115,7 +115,7 @@ public class DatagramParsingTest {
 
         msg.getHeaders().add(UpnpHeader.Type.EXT, new EXTHeader()); // Again, the empty header value
 
-        DatagramProcessor processor = DefaultUpnpServiceConfiguration.getDefaultUpnpServiceConfiguration().getDatagramProcessor();
+        DatagramProcessor processor = new DefaultUpnpServiceConfiguration().getDatagramProcessor();
 
         DatagramPacket packet = processor.write(msg);
 

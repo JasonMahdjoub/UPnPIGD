@@ -18,326 +18,306 @@ package com.distrimind.upnp_igd.android.transport.impl.undertow;
 
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
-import com.distrimind.upnp_igd.model.Constants;
+import com.distrimind.upnp_igd.http.IHeaders;
 import com.distrimind.upnp_igd.model.message.*;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
-import com.distrimind.upnp_igd.transport.spi.AbstractStreamClient;
 import com.distrimind.upnp_igd.transport.spi.InitializationException;
+import com.distrimind.upnp_igd.transport.spi.StreamClient;
+import com.distrimind.upnp_igd.util.Exceptions;
+import com.distrimind.upnp_igd.util.io.IO;
 import io.undertow.client.*;
-import io.undertow.util.*;
+import io.undertow.connector.ByteBufferPool;
+import io.undertow.server.DefaultByteBufferPool;
+import io.undertow.util.Headers;
+import io.undertow.util.Methods;
 import org.xnio.*;
 import org.xnio.channels.StreamSinkChannel;
 import org.xnio.channels.StreamSourceChannel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStream;
+import java.net.*;
 import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.Map;
+import java.nio.channels.Channels;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-public class UndertowStreamClientImpl extends AbstractStreamClient<StreamClientConfigurationImpl, ClientExchange> {
+
+/**
+ * @author Jason Mahdjoub
+ * @since 1.2.0
+ */
+public class UndertowStreamClientImpl implements StreamClient<UndertowStreamClientConfigurationImpl> {
 
 	final private static DMLogger log = Log.getLogger(UndertowStreamClientImpl.class);
 	public static final String COULD_NOT_CREATE_REQUEST = "Could not create request: ";
 
-	final protected StreamClientConfigurationImpl configuration;
-	final protected UndertowClient client;
-	private final XnioWorker worker;
-
-	public UndertowStreamClientImpl(StreamClientConfigurationImpl configuration) throws InitializationException {
+	final protected UndertowStreamClientConfigurationImpl configuration;
+	private final UndertowClient client;
+	private final OptionMap options;
+	public UndertowStreamClientImpl(UndertowStreamClientConfigurationImpl configuration) throws InitializationException {
 		this.configuration = configuration;
+
+		if (log.isDebugEnabled()) {
+			log.debug("Using persistent HTTP stream client connections: " + configuration.isUsePersistentConnections());
+		}
+
 		log.info("Starting Undertow HttpClient...");
 		this.client = UndertowClient.getInstance();
+		int timeout=configuration.getTimeoutSeconds();
 
-		try {
-			Xnio xnio = Xnio.getInstance("nio");
-			worker = xnio.createWorker(OptionMap.builder()
-					.set(Options.WORKER_IO_THREADS, 1)
-					.set(Options.CONNECTION_HIGH_WATER, 1000000)
-					.set(Options.CONNECTION_LOW_WATER, 1000000)
-					.set(Options.WORKER_TASK_CORE_THREADS, 0)
-					.set(Options.WORKER_TASK_MAX_THREADS, Runtime.getRuntime().availableProcessors())
-					.set(Options.TCP_NODELAY, true)
-					.set(Options.KEEP_ALIVE, true)
-					.getMap());
-		} catch (Exception ex) {
-			log.error(ex);
-			throw new InitializationException("Could not initialize Undertow client: " + ex, ex);
-		}
+		options = OptionMap.builder()
+				.set(Options.READ_TIMEOUT, timeout*1000)
+				.set(Options.WRITE_TIMEOUT, timeout*1000)
+				.set(Options.SSL_CLIENT_SESSION_TIMEOUT, timeout)
+				.set(Options.SSL_SERVER_SESSION_TIMEOUT, timeout)
+				.getMap();
 	}
 
 	@Override
-	public StreamClientConfigurationImpl getConfiguration() {
+	public UndertowStreamClientConfigurationImpl getConfiguration() {
 		return configuration;
 	}
 
 	@Override
-	protected ClientExchange createRequest(StreamRequestMessage requestMessage) {
-		try {
-			URI uri = requestMessage.getOperation().getURI();
+	public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) throws InterruptedException {
 
-			final ClientConnection connection = client.connect(uri, worker, null, OptionMap.EMPTY).get();
+		final UpnpRequest requestOperation = requestMessage.getOperation();
+		if (log.isDebugEnabled()) {
+			log.debug("Preparing HTTP request message with method '" + requestOperation.getHttpMethodName() + "': " + requestMessage);
+		}
 
-			ClientRequest request = new ClientRequest()
-					.setPath(uri.getPath())
-					.setMethod(Objects.requireNonNull(Methods.fromString(requestMessage.getOperation().getHttpMethodName())));
 
-			// Set headers
-			IUpnpHeaders headers = requestMessage.getHeaders();
-			if (!headers.containsKey(UpnpHeader.Type.USER_AGENT)) {
-				request.getRequestHeaders().put(Headers.USER_AGENT, getConfiguration().getUserAgentValue(
-						requestMessage.getUdaMajorVersion(),
-						requestMessage.getUdaMinorVersion()));
-			}
+		IoFuture<ClientConnection> connectionFuture=null;
+		CompletableFuture<StreamResponseMessage> responseFuture=null;
+		try (ByteBufferPool bufferPool = new DefaultByteBufferPool(true, 4096)){
 
-			for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-				for (String v : entry.getValue()) {
-					request.getRequestHeaders().add(new HttpString(entry.getKey()), v);
+			int timeout=configuration.getTimeoutSeconds();
+
+			connectionFuture= client.connect(requestOperation.getURI(), configuration.getRequestExecutorService(), bufferPool, options);
+
+			if (connectionFuture.await(timeout, TimeUnit.SECONDS)==IoFuture.Status.DONE) {
+				try(ClientConnection connection=connectionFuture.get()) {
+					connectionFuture = null;
+
+					ClientRequest request = new ClientRequest()
+							.setPath(requestOperation.getURI().getPath())
+							.setMethod(Objects.requireNonNull(Methods.fromString(requestOperation.getHttpMethodName())));
+
+
+					applyRequestProperties(request, requestMessage, requestOperation);
+					responseFuture = new CompletableFuture<>();
+					applyRequestBodyAndGetResponse(connection, request, requestMessage, responseFuture);
+					StreamResponseMessage r = responseFuture.get();
+					responseFuture = null;
+					return r;
 				}
 			}
-
-			// Set body
-			if (requestMessage.hasBody()) {
-				if (requestMessage.getBodyType() == UpnpMessage.BodyType.STRING) {
-					String charset = requestMessage.getContentTypeCharset() != null
-							? requestMessage.getContentTypeCharset()
-							: "UTF-8";
-					byte[] bytes = requestMessage.getBodyString().getBytes(charset);
-					request.getRequestHeaders().put(Headers.CONTENT_LENGTH, String.valueOf(bytes.length));
-					connection.sendRequest(request, new ClientCallback<>() {
-						@Override
-						public void completed(ClientExchange result) {
-							//result.setRequestContentLength(bytes.length);
-							try {
-								result.getRequestChannel().write(ByteBuffer.wrap(bytes));
-							} catch (IOException e) {
-								throw new RuntimeException(e);
-							}
-						}
-
-						@Override
-						public void failed(IOException e) {
-							log.error("Failed to send request", e);
-						}
-					});
-				} else {
-					byte[] bytes = requestMessage.getBodyBytes();
-					request.getRequestHeaders().put(Headers.CONTENT_LENGTH, String.valueOf(bytes.length));
-					connection.sendRequest(request, new ClientCallback<ClientExchange>() {
-						@Override
-						public void completed(ClientExchange result) {
-							//result.setRequestContentLength(bytes.length);
-							try {
-								result.getRequestChannel().write(ByteBuffer.wrap(bytes));
-							} catch (IOException e) {
-								throw new RuntimeException(e);
-							}
-						}
-
-						@Override
-						public void failed(IOException e) {
-							log.error("Failed to send request", e);
-						}
-					});
-				}
+			else {
+				if (log.isWarnEnabled())
+					log.warn("HTTP request failed: " + requestMessage);
+				return null;
 			}
 
-			final ClientExchangeWaiter res=new ClientExchangeWaiter();
-			connection.sendRequest(request, new ClientCallback<>() {
-				@Override
-				public void completed(ClientExchange clientExchange) {
-					synchronized (res) {
-						res.clientExchange = clientExchange;
-						res.notify();
-					}
-				}
-
-				@Override
-				public void failed(IOException e) {
-					log.error(() -> COULD_NOT_CREATE_REQUEST + e.getMessage(), e);
-					throw new RuntimeException(COULD_NOT_CREATE_REQUEST + e.getMessage(), e);
-				}
-			});
-			return res;
-
-		} catch (Exception ex) {
-			log.error(() -> COULD_NOT_CREATE_REQUEST + ex.getMessage(), ex);
-			throw new RuntimeException(COULD_NOT_CREATE_REQUEST + ex.getMessage(), ex);
 		}
-	}
+		catch (InterruptedException ex) {
+			if (log.isDebugEnabled())
+				log.debug("Interruption, aborting request: " + requestMessage);
 
-	static class ClientExchangeWaiter implements ClientExchange
-	{
-		private ClientExchange clientExchange=null;
-		void waitForResponse() throws InterruptedException {
-			synchronized (this)
-			{
-				while (clientExchange==null)
-				{
-					wait();
-				}
+			throw new InterruptedException("HTTP request interrupted and aborted");
+
+		}
+		catch (ProtocolException ex) {
+			if (log.isWarnEnabled()) log.warn("HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
+			return null;
+		}
+		catch (IOException ex) {
+
+			if (log.isDebugEnabled())
+				log.debug("Exception occurred, trying to read the error stream: ", Exceptions.unwrap(ex));
+			return null;
+		}
+		catch (Exception ex) {
+			if (log.isWarnEnabled()) log.warn("HTTP request failed: " + requestMessage, Exceptions.unwrap(ex));
+			return null;
+
+		} finally {
+
+			if (connectionFuture != null) {
+				connectionFuture.cancel();
+			}
+			if (responseFuture!=null) {
+
+				responseFuture.cancel(true);
+
 			}
 		}
-
-		@Override
-		public void setResponseListener(ClientCallback<ClientExchange> clientCallback) {
-			clientExchange.setResponseListener(clientCallback);
-		}
-
-		@Override
-		public void setContinueHandler(ContinueNotification continueNotification) {
-			clientExchange.setContinueHandler(continueNotification);
-		}
-
-		@Override
-		public void setPushHandler(PushCallback pushCallback) {
-			clientExchange.setPushHandler(pushCallback);
-		}
-
-		@Override
-		public StreamSinkChannel getRequestChannel() {
-			return clientExchange.getRequestChannel();
-		}
-
-		@Override
-		public StreamSourceChannel getResponseChannel() {
-			return clientExchange.getResponseChannel();
-		}
-
-		@Override
-		public ClientRequest getRequest() {
-			return clientExchange.getRequest();
-		}
-
-		@Override
-		public ClientResponse getResponse() {
-			return clientExchange.getResponse();
-		}
-
-		@Override
-		public ClientResponse getContinueResponse() {
-			return clientExchange.getContinueResponse();
-		}
-
-		@Override
-		public ClientConnection getConnection() {
-			return clientExchange.getConnection();
-		}
-
-		@Override
-		public <T> T getAttachment(AttachmentKey<T> attachmentKey) {
-			return clientExchange.getAttachment(attachmentKey);
-		}
-
-		@Override
-		public <T> List<T> getAttachmentList(AttachmentKey<? extends List<T>> attachmentKey) {
-			return clientExchange.getAttachmentList(attachmentKey);
-		}
-
-		@Override
-		public <T> T putAttachment(AttachmentKey<T> attachmentKey, T t) {
-			return clientExchange.putAttachment(attachmentKey, t);
-		}
-
-		@Override
-		public <T> T removeAttachment(AttachmentKey<T> attachmentKey) {
-			return clientExchange.removeAttachment(attachmentKey);
-		}
-
-		@Override
-		public <T> void addToAttachmentList(AttachmentKey<AttachmentList<T>> attachmentKey, T t) {
-			clientExchange.addToAttachmentList(attachmentKey, t);
-		}
-	}
-	private static byte[] channelToBytes(StreamSourceChannel channel) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		ByteBuffer buffer = ByteBuffer.allocate(8192); // 8KB buffer
-
-		try (channel) {
-			while (true) {
-				buffer.clear();
-				int read = channel.read(buffer);
-
-				if (read == -1) { // End of stream
-					break;
-				}
-
-				if (read > 0) {
-					buffer.flip();
-					output.write(buffer.array(), 0, buffer.remaining());
-					if (output.size() > Constants.MAX_INPUT_STREAM_SIZE_IN_BYTES)
-						throw new IOException("The stream send more than " + Constants.MAX_INPUT_STREAM_SIZE_IN_BYTES + " bytes");
-				}
-			}
-
-			return output.toByteArray();
-
-		}
-	}
-
-	@Override
-	protected Callable<StreamResponseMessage> createCallable(
-			final StreamRequestMessage requestMessage,
-			final ClientExchange exchange) {
-
-		return () -> {
-			try {
-				((ClientExchangeWaiter) exchange).waitForResponse();
-
-				ClientResponse response = exchange.getResponse();
-				HeaderMap responseHeaders = response.getResponseHeaders();
-
-				// Create response message
-				UpnpResponse responseOperation = new UpnpResponse(
-						response.getResponseCode(),
-						response.getStatus()
-				);
-
-				StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
-
-				// Set headers
-				IUpnpHeaders headers = new UpnpHeaders();
-				for (HeaderValues header : responseHeaders) {
-					headers.add(header.getHeaderName().toString(), header.getFirst());
-				}
-				responseMessage.setHeaders(headers);
-
-				// Set body
-				if (responseMessage.isContentTypeMissingOrText()) {
-					responseMessage.setBodyCharacters(channelToBytes(exchange.getResponseChannel()));
-				} else {
-					responseMessage.setBody(UpnpMessage.BodyType.BYTES, channelToBytes(exchange.getResponseChannel()));
-				}
-
-				return responseMessage;
-
-			} catch (Exception ex) {
-				throw new RuntimeException("Error processing response: " + ex.getMessage(), ex);
-			}
-		};
-	}
-
-	@Override
-	protected void abort(ClientExchange exchange) {
-		try {
-			exchange.getConnection().close();
-		} catch (IOException ignored) {
-		}
-	}
-
-	@Override
-	protected boolean logExecutionException(Throwable t) {
-		return false;
 	}
 
 	@Override
 	public void stop() {
-
-		if (worker != null) {
-			worker.shutdown();
-		}
+		// NOOP
 	}
+
+	protected void applyRequestProperties(ClientRequest request, StreamRequestMessage requestMessage, UpnpRequest requestOperation) {
+
+		// HttpURLConnection always adds a "Host" header
+
+		// HttpURLConnection always adds an "Accept" header (not needed but shouldn't hurt)
+
+		// Add the default user agent if not already set on the message
+		IUpnpHeaders headers = requestMessage.getHeaders();
+		if (!headers.containsKey(UpnpHeader.Type.USER_AGENT)) {
+			request.getRequestHeaders().put(Headers.USER_AGENT, getConfiguration().getUserAgentValue(
+					requestMessage.getUdaMajorVersion(),
+					requestMessage.getUdaMinorVersion()));
+		}
+
+
+
+
+		// Other headers
+		applyHeaders(request, requestMessage.getHeaders(), requestOperation);
+	}
+
+	protected void applyHeaders(ClientRequest request, IHeaders headers, UpnpRequest requestOperation) {
+		if (log.isDebugEnabled()) {
+			log.debug("Writing headers on HttpURLConnection: " + headers.size());
+		}
+		UndertowHttpExchangeUpnpStream.putAll(request.getRequestHeaders(), headers, log.isDebugEnabled()?log:null);
+		request.getRequestHeaders().put(Headers.HOST, requestOperation.getURI().getHost());
+	}
+
+	protected void applyRequestBodyAndGetResponse(ClientConnection connection, ClientRequest request, StreamRequestMessage requestMessage, CompletableFuture<StreamResponseMessage> responseFuture) throws IOException {
+		if (log.isDebugEnabled()) {
+			log.debug("Sending HTTP request: " + requestMessage);
+		}
+		byte[] bytes;
+		String contentLength;
+		if (requestMessage.hasBody()) {
+			if (requestMessage.getBodyType() == UpnpMessage.BodyType.STRING) {
+				String charset = requestMessage.getContentTypeCharset() != null
+						? requestMessage.getContentTypeCharset()
+						: StandardCharsets.UTF_8.toString();
+				bytes = requestMessage.getBodyString().getBytes(charset);
+
+			} else {
+				bytes = requestMessage.getBodyBytes();
+			}
+			contentLength=String.valueOf(bytes.length);
+
+		}
+		else {
+			bytes=null;
+			contentLength="0";
+		}
+
+		request.getRequestHeaders().put(Headers.CONTENT_LENGTH, contentLength);
+
+		connection.sendRequest(request, new ClientCallback<>() {
+			@Override
+			public void completed(ClientExchange exchange) {
+				try (StreamSinkChannel requestChannel=exchange.getRequestChannel()){
+
+					if (bytes!=null)
+						requestChannel.write(ByteBuffer.wrap(bytes));
+					requestChannel.shutdownWrites();
+					if (!requestChannel.flush()) {
+						requestChannel.getWriteSetter().set(ChannelListeners.flushingChannelListener(null, null));
+						requestChannel.resumeWrites();
+					}
+
+					exchange.setResponseListener(new ClientCallback<>() {
+						@Override
+						public void completed(ClientExchange result) {
+							try {
+
+								responseFuture.complete(createResponse(result, request));
+							} catch (Exception e) {
+								log.error("Failed to read response", e);
+								responseFuture.complete(null);
+							}
+						}
+
+						@Override
+						public void failed(IOException e) {
+							log.error("Failed to get response", e);
+							responseFuture.complete(null);
+						}
+					});
+				} catch (IOException e) {
+					log.error("Failed to write body", e);
+					responseFuture.complete(null);
+				}
+			}
+
+			@Override
+			public void failed(IOException e) {
+				log.error("Failed to send request", e);
+				responseFuture.complete(null);
+			}
+		});
+
+
+	}
+
+	protected StreamResponseMessage createResponse(ClientExchange result, ClientRequest request) throws Exception {
+
+		final ClientResponse response=result.getResponse();
+		final int responseCode=response.getResponseCode();
+
+		if (responseCode == -1) {
+			if (log.isWarnEnabled()) {
+				log.warn("Received an invalid HTTP response: " + request.getPath());
+				log.warn("Is your UPnPIGD-based server sending connection heartbeats with " +
+						"RemoteClientInfo#isRequestCancelled? This client can't handle " +
+						"heartbeats, read the manual.");
+			}
+			return null;
+		}
+
+		// Status
+		UpnpResponse responseOperation = new UpnpResponse(responseCode, response.getStatus());
+
+		if (log.isDebugEnabled()) {
+			log.debug("Received response: " + responseOperation);
+		}
+
+		// Message
+		StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
+
+		// Headers
+		responseMessage.setHeaders(new UpnpHeaders(UndertowHttpExchangeUpnpStream.getRequestHeaders(response.getResponseHeaders())));
+
+		// Body
+		byte[] bodyBytes = null;
+		StreamSourceChannel responseChannel = result.getResponseChannel();
+		if (responseChannel!=null) {
+			try (InputStream is = Channels.newInputStream(responseChannel)) {
+				bodyBytes = IO.readBytes(is);
+			}
+		}
+
+		if (bodyBytes != null && bodyBytes.length > 0 && responseMessage.isContentTypeMissingOrText()) {
+
+			log.debug("Response contains textual entity body, converting then setting string on message");
+			responseMessage.setBodyCharacters(bodyBytes);
+
+		} else if (bodyBytes != null && bodyBytes.length > 0) {
+
+			log.debug("Response contains binary entity body, setting bytes on message");
+			responseMessage.setBody(UpnpMessage.BodyType.BYTES, bodyBytes);
+
+		} else {
+			log.debug("Response did not contain entity body");
+		}
+
+		if (log.isDebugEnabled()) {
+			log.debug("Response message complete: " + responseMessage);
+		}
+		return responseMessage;
+	}
+
 }

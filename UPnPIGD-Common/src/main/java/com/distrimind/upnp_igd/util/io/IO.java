@@ -20,7 +20,11 @@ package com.distrimind.upnp_igd.util.io;
 import com.distrimind.upnp_igd.model.Constants;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,7 +142,10 @@ public class IO {
 	}
 
 	public static void writeUTF8(OutputStream outputStream, String data) throws IOException {
-		write(data, outputStream, "UTF-8");
+		write(data, outputStream, StandardCharsets.UTF_8);
+	}
+	public static void writeUTF8(WritableByteChannel writableByteChannel, String data) throws IOException {
+		write(data, writableByteChannel, StandardCharsets.UTF_8);
 	}
 
 	public static void writeUTF8(File file, String contents) throws IOException {
@@ -799,6 +806,25 @@ public class IO {
 			output.write(data.getBytes());
 		}
 	}
+	/**
+	 * Writes chars from a <code>String</code> to bytes on an
+	 * <code>OutputStream</code> using the default character encoding of the
+	 * platform.
+
+	 * This method uses {@link String#getBytes()}.
+	 *
+	 * @param data   the <code>String</code> to write, null ignored
+	 * @param output the <code>WritableByteChannel</code> to write to
+	 * @throws NullPointerException if output is null
+	 * @throws java.io.IOException          if an I/O error occurs
+	 * @since Commons IO 1.1
+	 */
+	public static void write(String data, WritableByteChannel output)
+			throws IOException {
+		if (data != null) {
+			output.write(ByteBuffer.wrap(data.getBytes()));
+		}
+	}
 
 	/**
 	 * Writes chars from a <code>String</code> to bytes on an
@@ -816,13 +842,40 @@ public class IO {
 	 * @throws java.io.IOException          if an I/O error occurs
 	 * @since Commons IO 1.1
 	 */
-	public static void write(String data, OutputStream output, String encoding)
+	public static void write(String data, OutputStream output, Charset encoding)
 			throws IOException {
 		if (data != null) {
 			if (encoding == null) {
 				write(data, output);
 			} else {
 				output.write(data.getBytes(encoding));
+			}
+		}
+	}
+
+	/**
+	 * Writes chars from a <code>String</code> to bytes on an
+	 * <code>OutputStream</code> using the specified character encoding.
+
+	 * Character encoding names can be found at
+	 * <a href="http://www.iana.org/assignments/character-sets">IANA</a>.
+
+	 * This method uses {@link String#getBytes(String)}.
+	 *
+	 * @param data     the <code>String</code> to write, null ignored
+	 * @param output   the <code>OutputStream</code> to write to
+	 * @param encoding the encoding to use, null means platform default
+	 * @throws NullPointerException if output is null
+	 * @throws java.io.IOException          if an I/O error occurs
+	 * @since Commons IO 1.1
+	 */
+	public static void write(String data, WritableByteChannel output, Charset encoding)
+			throws IOException {
+		if (data != null) {
+			if (encoding == null) {
+				write(data, output);
+			} else {
+				output.write(ByteBuffer.wrap(data.getBytes(encoding)));
 			}
 		}
 	}

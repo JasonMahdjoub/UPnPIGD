@@ -35,6 +35,8 @@ import com.distrimind.upnp_igd.protocol.ProtocolFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;

@@ -18,26 +18,15 @@ package com.distrimind.upnp_igd;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
-import com.distrimind.upnp_igd.binding.xml.UDA10DeviceDescriptorBinderImpl;
-import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderImpl;
 import com.distrimind.upnp_igd.model.Constants;
-import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.Namespace;
 import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.types.ServiceType;
-import com.distrimind.upnp_igd.transport.impl.DatagramIOConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.DatagramIOImpl;
-import com.distrimind.upnp_igd.transport.impl.GENAEventProcessorImpl;
-import com.distrimind.upnp_igd.transport.impl.MulticastReceiverConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.MulticastReceiverImpl;
+import com.distrimind.upnp_igd.platform.Platform;
+import com.distrimind.upnp_igd.platform.PlatformUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
-import com.distrimind.upnp_igd.transport.impl.SOAPActionProcessorImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamClientConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamClientImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamServerConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamServerImpl;
 import com.distrimind.upnp_igd.transport.spi.DatagramIO;
 import com.distrimind.upnp_igd.transport.spi.DatagramProcessor;
 import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
@@ -47,6 +36,7 @@ import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
 
+import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
@@ -63,8 +53,9 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     // TODO: All of these fields should be injected so users can provide values through CDI
 
     private int streamListenPort;
-
+    private final PlatformUpnpServiceConfiguration platformUpnpServiceConfiguration;
     private ExecutorService defaultExecutorService;
+    private ExecutorService defaultAndroidExecutorService;
 
     protected DatagramProcessor datagramProcessor;
 
@@ -77,16 +68,21 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     private Namespace namespace;
     private NetworkAddressFactory networkAddressFactory=null;
     private int multicastPort;
+    public ManagedUpnpServiceConfiguration() {
+        this(Platform.getDefault());
+    }
+    public ManagedUpnpServiceConfiguration(Platform platform) {
+        if (platform==null)
+            throw new NullPointerException();
+        this.platformUpnpServiceConfiguration = platform.getInstance();
+    }
 
-    public void init() {
-
-        if (ModelUtil.ANDROID_RUNTIME) {
-            throw new Error("Unsupported runtime environment, use com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration");
-        }
+    public void init() throws IOException {
 
         this.streamListenPort = NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT;
 
         defaultExecutorService = createDefaultExecutorService();
+        defaultAndroidExecutorService=platformUpnpServiceConfiguration.getPlatformType()==Platform.ANDROID?Platform.ANDROID.getInstance().createDefaultAndroidExecutorService():defaultExecutorService;
 
         soapActionProcessor = createSOAPActionProcessor();
         genaEventProcessor = createGENAEventProcessor();
@@ -117,12 +113,8 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     }
 
     @Override
-    public StreamClient<?> createStreamClient() {
-        return new StreamClientImpl(
-            new StreamClientConfigurationImpl(
-                getSyncProtocolExecutorService()
-            )
-        );
+    public StreamClient<?> createStreamClient(int timeoutSeconds) {
+        return platformUpnpServiceConfiguration.createStreamClient(getDefaultAndroidExecutorService(), timeoutSeconds);
     }
     protected NetworkAddressFactory getNetworkAddressFactory() {
         if (networkAddressFactory==null)
@@ -131,26 +123,22 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     }
     @Override
     public MulticastReceiver<?> createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
-        return new MulticastReceiverImpl(
-                new MulticastReceiverConfigurationImpl(
-                        networkAddressFactory.getMulticastGroup(),
-                        networkAddressFactory.getMulticastPort()
-                )
-        );
+        return platformUpnpServiceConfiguration.createMulticastReceiver(networkAddressFactory);
     }
 
     @Override
     public DatagramIO<?> createDatagramIO(NetworkAddressFactory networkAddressFactory) {
-        return new DatagramIOImpl(new DatagramIOConfigurationImpl());
+        return platformUpnpServiceConfiguration.createDatagramIO(networkAddressFactory);
     }
 
     @Override
     public StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory) {
-        return new StreamServerImpl(
-                new StreamServerConfigurationImpl(
-                        networkAddressFactory.getStreamListenPort()
-                )
-        );
+        return platformUpnpServiceConfiguration.createStreamServer(networkAddressFactory);
+    }
+
+    @Override
+    public StreamServer<?> createStreamServer(int streamServerPort) {
+        return platformUpnpServiceConfiguration.createStreamServer(streamServerPort);
     }
 
     @Override
@@ -188,19 +176,19 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
      */
     @Override
 	public boolean isReceivedSubscriptionTimeoutIgnored() {
-		return false;
+		return platformUpnpServiceConfiguration.isReceivedSubscriptionTimeoutIgnored();
 	}
 
     @Override
     @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity) {
-        return null;
+        return platformUpnpServiceConfiguration.getDescriptorRetrievalHeaders(identity);
     }
 
     @Override
     @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public UpnpHeaders getEventSubscriptionHeaders(RemoteService service) {
-        return null;
+        return platformUpnpServiceConfiguration.getEventSubscriptionHeaders(service);
     }
 
     /**
@@ -208,7 +196,7 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
      */
     @Override
     public int getRegistryMaintenanceIntervalMillis() {
-        return 1000;
+        return platformUpnpServiceConfiguration.getRegistryMaintenanceIntervalMillis();
     }
 
     /**
@@ -216,12 +204,12 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
      */
     @Override
     public int getAliveIntervalMillis() {
-    	return 0;
+    	return platformUpnpServiceConfiguration.getAliveIntervalMillis();
     }
 
     @Override
     public Integer getRemoteDeviceMaxAgeSeconds() {
-        return null;
+        return platformUpnpServiceConfiguration.getRemoteDeviceMaxAgeSeconds();
     }
 
     @Override
@@ -260,35 +248,43 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
         getDefaultExecutorService().shutdownNow();
     }
 
+    @Override
+    public Platform getPlatformType() {
+        return platformUpnpServiceConfiguration.getPlatformType();
+    }
+
     protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multicastPort) {
-        return new NetworkAddressFactoryImpl(streamListenPort, multicastPort);
+        return platformUpnpServiceConfiguration.createNetworkAddressFactory(streamListenPort, multicastPort);
     }
 
     protected SOAPActionProcessor createSOAPActionProcessor() {
-        return new SOAPActionProcessorImpl();
+        return platformUpnpServiceConfiguration.createSOAPActionProcessor();
     }
 
     protected GENAEventProcessor createGENAEventProcessor() {
-        return new GENAEventProcessorImpl();
+        return platformUpnpServiceConfiguration.createGENAEventProcessor();
     }
 
     protected DeviceDescriptorBinder createDeviceDescriptorBinderUDA10() {
-        return new UDA10DeviceDescriptorBinderImpl(getNetworkAddressFactory());
+        return platformUpnpServiceConfiguration.createDeviceDescriptorBinderUDA10(getNetworkAddressFactory());
     }
 
     protected ServiceDescriptorBinder createServiceDescriptorBinderUDA10() {
-        return new UDA10ServiceDescriptorBinderImpl(getNetworkAddressFactory());
+        return platformUpnpServiceConfiguration.createServiceDescriptorBinderUDA10(getNetworkAddressFactory());
     }
 
     protected Namespace createNamespace() {
-        return new Namespace();
+        return platformUpnpServiceConfiguration.createNamespace();
     }
 
     protected ExecutorService getDefaultExecutorService() {
         return defaultExecutorService;
     }
 
-    protected ExecutorService createDefaultExecutorService() {
-        return new DefaultUpnpServiceConfiguration.UpnpIGDExecutor();
+    protected ExecutorService createDefaultExecutorService() throws IOException {
+        return platformUpnpServiceConfiguration.createDefaultExecutorService();
+    }
+    protected ExecutorService getDefaultAndroidExecutorService() {
+        return defaultAndroidExecutorService;
     }
 }

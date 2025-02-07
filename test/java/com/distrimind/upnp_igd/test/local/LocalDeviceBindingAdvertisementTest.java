@@ -60,7 +60,7 @@ public class LocalDeviceBindingAdvertisementTest {
 
         upnpService.getRegistry().addDevice(binaryLight);
 
-        Thread.sleep(2000);
+        Thread.sleep(upnpService.getConfiguration().getRegistryMaintenanceIntervalMillis()*2L);
 
         assertEquals(upnpService.getRouter().getOutgoingDatagramMessages().size(), 12);
         for (UpnpMessage<?> msg : upnpService.getRouter().getOutgoingDatagramMessages()) {
@@ -103,7 +103,7 @@ public class LocalDeviceBindingAdvertisementTest {
         upnpService.getRegistry().addDevice(ld);
         assertEquals(upnpService.getRegistry().getLocalDevices().size(), 1);
 
-        Thread.sleep(2000);
+        Thread.sleep(upnpService.getConfiguration().getRegistryMaintenanceIntervalMillis()*2L);
 
         assertEquals(upnpService.getRegistry().getLocalDevices().size(), 1);
 
@@ -129,12 +129,17 @@ public class LocalDeviceBindingAdvertisementTest {
     public void waitForAliveFlood() throws Exception {
 
         MockUpnpService upnpService = new MockUpnpService(true,
-            new MockUpnpServiceConfiguration(true) {
-                @Override
-                public int getAliveIntervalMillis() {
-                    return 2000;
-                }
-            });
+                new MockUpnpServiceConfiguration(true) {
+                    @Override
+                    public int getAliveIntervalMillis() {
+                        return 2000;
+                    }
+
+                    @Override
+                    public int getRegistryMaintenanceIntervalMillis() {
+                        return getDesktopPlatformUpnpServiceConfiguration().getRegistryMaintenanceIntervalMillis();
+                    }
+                });
 
         LocalDevice<?> ld =
             SampleData.createLocalDevice(
@@ -171,7 +176,7 @@ public class LocalDeviceBindingAdvertisementTest {
 
         upnpService.getRegistry().addDevice(ld, new DiscoveryOptions(true, true));
 
-        Thread.sleep(2000);
+        Thread.sleep(upnpService.getConfiguration().getRegistryMaintenanceIntervalMillis()*2L);
 
         assertTrue(upnpService.getRouter().getOutgoingDatagramMessages().size() >= 60);
         // 30 BYEBYE
@@ -198,7 +203,7 @@ public class LocalDeviceBindingAdvertisementTest {
 
         upnpService.getRegistry().addDevice(binaryLight, new DiscoveryOptions(false)); // Not advertised
 
-        Thread.sleep(2000);
+        Thread.sleep(upnpService.getConfiguration().getRegistryMaintenanceIntervalMillis()*2L);
 
         assertEquals(upnpService.getRouter().getOutgoingDatagramMessages().size(), 0);
 

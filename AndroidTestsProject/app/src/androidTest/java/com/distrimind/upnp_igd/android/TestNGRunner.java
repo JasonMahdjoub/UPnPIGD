@@ -47,7 +47,7 @@ import java.util.Collection;
 public class TestNGRunner {
 	@Parameterized.Parameters(name = "{index}: {0}")
 	public static Collection<com.distrimind.flexilogxml.Tests[]> data() {
-		return AllTests.getTests().getDataForJunitTests(4);
+		return AllTestsForAndroidEmulator.getTests().getDataForJunitTests(4);
 	}
 	private final com.distrimind.flexilogxml.Tests tests;
 	public TestNGRunner(com.distrimind.flexilogxml.Tests tests)

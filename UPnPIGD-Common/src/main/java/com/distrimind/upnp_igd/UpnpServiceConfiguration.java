@@ -19,6 +19,7 @@ import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.model.UserConstants;
 import com.distrimind.upnp_igd.model.profile.ClientInfo;
+import com.distrimind.upnp_igd.platform.Platform;
 import com.distrimind.upnp_igd.registry.Registry;
 import com.distrimind.upnp_igd.transport.Router;
 import com.distrimind.upnp_igd.model.Namespace;
@@ -77,7 +78,12 @@ public interface UpnpServiceConfiguration {
     /**
      * @return A new instance of the {@link StreamClient} interface.
      */
-	StreamClient<?> createStreamClient();
+	StreamClient<?> createStreamClient(int timeoutSeconds);
+
+	default StreamClient<?> createStreamClient()
+	{
+		return createStreamClient(-1);
+	}
 
     /**
      * @param networkAddressFactory The configured {@link NetworkAddressFactory}.
@@ -96,6 +102,12 @@ public interface UpnpServiceConfiguration {
      * @return A new instance of the {@link StreamServer} interface.
      */
 	StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory);
+
+	/**
+	 * @param streamServerPort The configured stream server port
+	 * @return A new instance of the {@link StreamServer} interface.
+	 */
+	StreamServer<?> createStreamServer(int streamServerPort);
 
     /**
      * @return The executor which runs the listening background threads for multicast datagrams.
@@ -259,4 +271,5 @@ public interface UpnpServiceConfiguration {
      */
 	void shutdown();
 
+	Platform getPlatformType();
 }

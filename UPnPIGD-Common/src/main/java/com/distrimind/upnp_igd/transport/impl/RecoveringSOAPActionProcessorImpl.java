@@ -22,7 +22,6 @@ import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.message.control.ActionRequestMessage;
 import com.distrimind.upnp_igd.model.message.control.ActionResponseMessage;
 import com.distrimind.upnp_igd.model.meta.Service;
-import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
 import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 

@@ -33,27 +33,27 @@
 package com.distrimind.upnp_igd.android;
 
 import com.distrimind.flexilogxml.FlexiLogXML;
+import com.distrimind.flexilogxml.TestGroup;
 import com.distrimind.flexilogxml.Tests;
+import com.distrimind.upnp_igd.android.transport.UndertowServerUndertowClientTest;
+
 import org.slf4j.event.Level;
 
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-public class AllTests extends com.distrimind.upnp_igd.test.AllTests {
-    /*static
+public class AllTestsForAndroidEmulator extends com.distrimind.upnp_igd.test.AllTests {
+    static
     {
         com.distrimind.upnp_igd.test.AllTests.additionalTestGroups= List.of(
                 new TestGroup("testTransport", List.of(
-                        //JDKServerJDKClientTest.class,
-                        //JDKServerJettyClientTest.class,
-                        //JettyServerJDKClientTest.class,
-                        //JettyServerJettyClientTest.class,
                         UndertowServerUndertowClientTest.class
 
                 ))
         );
-    }*/
+    }
     public static Tests getTests()
     {
         return com.distrimind.upnp_igd.test.AllTests.getTests();

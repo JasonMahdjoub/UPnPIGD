@@ -12,9 +12,36 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
+package com.distrimind.upnp_igd.android.transport;
 
-module UPnPIGD_Desktop {
-	requires UPnPIGD_Common;
-	requires FlexiLogXML_Common;
+import com.distrimind.upnp_igd.platform.Platform;
+
+import java.io.IOException;
+
+/**
+ * @author Christian Bauer
+ */
+public class JDKServerJDKClientTest extends StreamServerClientTest {
+
+	protected JDKServerJDKClientTest() throws IOException {
+		super(Platform.DESKTOP, Platform.DESKTOP);
+	}
+
+	// DISABLED, NOT SUPPORTED
+
+	@Override
+	public void cancelled()  {
+	}
+
+	@Override
+	public void checkAlive(){
+	}
+
+	@Override
+	public void checkAliveExpired() {
+	}
+
+	@Override
+	public void checkAliveCancelled() {
+	}
 }
-

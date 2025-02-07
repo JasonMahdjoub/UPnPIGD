@@ -11,10 +11,8 @@
         </encoder>
     </appender>
     <logger name="org.xnio" level="OFF"/>
-    <logger name="io.undertow" level="OFF"/>
     <logger name="org.jboss.threads" level="OFF"/>
-    <logger name="com.distrimind.upnp_igd.android.transport.impl.undertow.UndertowServletContainer" level="DEBUG"/>
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
 

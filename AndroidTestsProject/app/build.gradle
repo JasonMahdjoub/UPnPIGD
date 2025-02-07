@@ -32,6 +32,8 @@ android {
     sourceSets {
         androidTest.java.srcDirs += '../../test/java'
         androidTest.resources.srcDirs += '../../test/resources'
+        androidTest.java.srcDirs += '../../UPnPIGD-Android/src/test/java'
+        androidTest.resources.srcDirs += '../../UPnPIGD-Android/src/test/resources'
     }
     packagingOptions {
         exclude 'META-INF/LICENSE.md'
@@ -49,10 +51,6 @@ dependencies {
     androidTestImplementation libs.testng
 
     implementation project(':UPnPIGD-Android')
-
-    /*androidTestImplementation jlibs.jetty.server
-    androidTestImplementation jlibs.jetty.servlet
-    androidTestImplementation jlibs.jetty.client*/
 
     androidTestImplementation jlibs.undertow.core
     androidTestImplementation jlibs.undertow.servlet

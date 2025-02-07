@@ -30,12 +30,27 @@
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.distrimind.upnp_igd.android.test.transport;
+/*
+ *     This library is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU Lesser General Public
+ *     License as published by the Free Software Foundation; either
+ *     version 2.1 of the License.
+ *
+ *     This library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *     Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public
+ *     License along with this library; if not, write to the Free Software
+ *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package com.distrimind.upnp_igd.android.transport;
 
 import com.distrimind.flexilogxml.FlexiLogXML;
 import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
-import com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.mock.MockProtocolFactory;
 import com.distrimind.upnp_igd.mock.MockRouter;
 import com.distrimind.upnp_igd.mock.MockUpnpServiceConfiguration;
@@ -43,6 +58,7 @@ import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
 import com.distrimind.upnp_igd.model.message.UpnpRequest;
 import com.distrimind.upnp_igd.model.message.UpnpResponse;
+import com.distrimind.upnp_igd.platform.Platform;
 import com.distrimind.upnp_igd.protocol.ProtocolCreationException;
 import com.distrimind.upnp_igd.protocol.ReceivingSync;
 import com.distrimind.upnp_igd.transport.spi.StreamClient;
@@ -63,64 +79,77 @@ import com.distrimind.flexilogxml.log.DMLogger;
 
 import static org.testng.Assert.*;
 
+
 abstract public class StreamServerClientTest {
 
     final private static DMLogger log = Log.getLogger(StreamServerClientTest.class);
 
-    public static final String TEST_HOST = "localhost";
-    public static final int TEST_PORT = 8081;
+    public static final String TEST_HOST = "127.0.0.1";
+    public int testPort = 0;
 
-    public AndroidUpnpServiceConfiguration configuration = new AndroidUpnpServiceConfiguration();
+    public UpnpServiceConfiguration configurationServer;
+    public UpnpServiceConfiguration configurationClient;
 
-    public MockProtocolFactory protocolFactory = new MockProtocolFactory() {
+    public MockProtocolFactory protocolFactory;
 
-        @Override
-        public TestProtocol createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException {
-            String path = requestMessage.getUri().getPath();
-            if (path.endsWith(OKEmptyResponse.PATH)) {
-                lastExecutedServerProtocol = new OKEmptyResponse(requestMessage);
-            } else if (path.endsWith(OKBodyResponse.PATH)) {
-                lastExecutedServerProtocol = new OKBodyResponse(requestMessage);
-            } else if (path.endsWith(NoResponse.PATH)) {
-                lastExecutedServerProtocol = new NoResponse(requestMessage);
-            } else if (path.endsWith(DelayedResponse.PATH)) {
-                lastExecutedServerProtocol = new DelayedResponse(requestMessage);
-            } else if (path.endsWith(TooLongResponse.PATH)) {
-                lastExecutedServerProtocol = new TooLongResponse(requestMessage);
-            } else if (path.endsWith(CheckAliveResponse.PATH)) {
-                lastExecutedServerProtocol = new CheckAliveResponse(requestMessage);
-            } else if (path.endsWith(CheckAliveLongResponse.PATH)) {
-                lastExecutedServerProtocol = new CheckAliveLongResponse(requestMessage);
-            } else {
-                throw new ProtocolCreationException("Invalid test path: " + path);
-            }
-            return lastExecutedServerProtocol;
-        }
-    };
-
-    public MockRouter router = new MockRouter(configuration, protocolFactory) {
-        @Override
-        public void received(UpnpStream stream) {
-            stream.run();
-        }
-    };
+    public MockRouter router;
 
     public StreamServer<?> server;
     public StreamClient<?> client;
     public TestProtocol lastExecutedServerProtocol;
 
-    protected StreamServerClientTest() throws IOException {
+    protected StreamServerClientTest(Platform platformServer, Platform platformClient) throws IOException {
+        this.configurationServer=new MockUpnpServiceConfiguration(platformServer);
+        this.configurationClient=new MockUpnpServiceConfiguration(platformClient);
+        protocolFactory= new MockProtocolFactory() {
+
+            @Override
+            public TestProtocol createReceivingSync(StreamRequestMessage requestMessage) throws ProtocolCreationException {
+                String path = requestMessage.getUri().getPath();
+                if (path.endsWith(OKEmptyResponse.PATH)) {
+                    lastExecutedServerProtocol = new OKEmptyResponse(requestMessage);
+                } else if (path.endsWith(OKBodyResponse.PATH)) {
+                    lastExecutedServerProtocol = new OKBodyResponse(requestMessage);
+                } else if (path.endsWith(NoResponse.PATH)) {
+                    lastExecutedServerProtocol = new NoResponse(requestMessage);
+                } else if (path.endsWith(DelayedResponse.PATH)) {
+                    lastExecutedServerProtocol = new DelayedResponse(requestMessage);
+                } else if (path.endsWith(TooLongResponse.PATH)) {
+                    lastExecutedServerProtocol = new TooLongResponse(requestMessage);
+                } else if (path.endsWith(CheckAliveResponse.PATH)) {
+                    lastExecutedServerProtocol = new CheckAliveResponse(requestMessage);
+                } else if (path.endsWith(CheckAliveLongResponse.PATH)) {
+                    lastExecutedServerProtocol = new CheckAliveLongResponse(requestMessage);
+                } else {
+                    throw new ProtocolCreationException("Invalid test path: " + path);
+                }
+                return lastExecutedServerProtocol;
+            }
+        };
+        router=new MockRouter(configurationServer, protocolFactory) {
+            @Override
+            public void received(UpnpStream stream) {
+                stream.run();
+            }
+        };
     }
 
 
     @BeforeClass
     public void start() {
         try {
-            server = createStreamServer(TEST_PORT);
-            server.init(InetAddress.getByName(TEST_HOST), router, configuration.createNetworkAddressFactory());
-            configuration.getStreamServerExecutorService().execute(server);
+            /*if (configurationServer.getPlatformType()==Platform.ANDROID)
+                testPort=0;
+            else*/
+                testPort=8081;
+
+            server = configurationServer.createStreamServer(testPort);
+
+            server.init(InetAddress.getByName(TEST_HOST), router, configurationServer.createNetworkAddressFactory());
+            configurationServer.getStreamServerExecutorService().execute(server);
             Thread.sleep(2000);
-            client = createStreamClient(configuration);
+            testPort =server.getPort();
+            client = configurationClient.createStreamClient(3);
 
         }
         catch (Throwable e)
@@ -141,6 +170,10 @@ abstract public class StreamServerClientTest {
         {
             FlexiLogXML.log(Level.ERROR, e);
             Assert.fail();
+        }
+        finally {
+            server=null;
+            client=null;
         }
     }
 
@@ -269,13 +302,9 @@ abstract public class StreamServerClientTest {
     protected StreamRequestMessage createRequestMessage(String path) {
         return new StreamRequestMessage(
             UpnpRequest.Method.GET,
-            URI.create("http://" + TEST_HOST + ":" + TEST_PORT + path)
+            URI.create("http://" + TEST_HOST + ":" + testPort + path)
         );
     }
-
-    abstract public StreamServer<?> createStreamServer(int port);
-
-    abstract public StreamClient<?> createStreamClient(UpnpServiceConfiguration configuration);
 
     public abstract static class TestProtocol extends ReceivingSync<StreamRequestMessage, StreamResponseMessage> {
         volatile public boolean isComplete;

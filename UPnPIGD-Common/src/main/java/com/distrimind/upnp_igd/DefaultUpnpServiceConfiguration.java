@@ -17,8 +17,6 @@ package com.distrimind.upnp_igd;
 
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
-import com.distrimind.upnp_igd.binding.xml.UDA10DeviceDescriptorBinderImpl;
-import com.distrimind.upnp_igd.binding.xml.UDA10ServiceDescriptorBinderImpl;
 import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.Namespace;
@@ -26,33 +24,17 @@ import com.distrimind.upnp_igd.model.message.UpnpHeaders;
 import com.distrimind.upnp_igd.model.meta.RemoteDeviceIdentity;
 import com.distrimind.upnp_igd.model.meta.RemoteService;
 import com.distrimind.upnp_igd.model.types.ServiceType;
-import com.distrimind.upnp_igd.transport.impl.DatagramIOConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.DatagramIOImpl;
+import com.distrimind.upnp_igd.platform.Platform;
+import com.distrimind.upnp_igd.platform.PlatformUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.transport.impl.DatagramProcessorImpl;
-import com.distrimind.upnp_igd.transport.impl.GENAEventProcessorImpl;
-import com.distrimind.upnp_igd.transport.impl.MulticastReceiverConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.MulticastReceiverImpl;
 import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
-import com.distrimind.upnp_igd.transport.impl.SOAPActionProcessorImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamClientConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamClientImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamServerConfigurationImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamServerImpl;
 import com.distrimind.upnp_igd.transport.spi.*;
-import com.distrimind.upnp_igd.util.Exceptions;
 import jakarta.enterprise.inject.Alternative;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+
 import com.distrimind.flexilogxml.log.DMLogger;
 
 /**
@@ -64,10 +46,6 @@ import com.distrimind.flexilogxml.log.DMLogger;
  * <p>
  * This configuration utilizes the DOM default descriptor binders found in
  * {@link com.distrimind.upnp_igd.binding.xml}.
- * </p>
- * <p>
- * The thread <code>Executor</code> is an <code>Executors.newCachedThreadPool()</code> with
- * a custom {@link UpnpIGDThreadFactory} (it only sets a thread name).
  * </p>
  * <p>
  * Note that this pool is effectively unlimited, so the number of threads will
@@ -87,8 +65,9 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
     final private int streamListenPort;
 
-    final private ExecutorService defaultExecutorService;
-
+    protected final PlatformUpnpServiceConfiguration platformUpnpServiceConfiguration;
+    private final ExecutorService defaultExecutorService;
+    private final ExecutorService defaultAndroidExecutorService;
     final private DatagramProcessor datagramProcessor;
     final private SOAPActionProcessor soapActionProcessor;
     final private GENAEventProcessor genaEventProcessor;
@@ -99,67 +78,51 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     final private Namespace namespace;
     final private int multicastPort;
     private NetworkAddressFactory networkAddressFactory;
-
-    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration() throws IOException {
-        return getDefaultUpnpServiceConfiguration(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
-    }
-    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) throws IOException {
-        return getDefaultUpnpServiceConfiguration(streamListenPort, multicastPort, true);
-    }
-    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(boolean checkRuntime) throws IOException {
-        return getDefaultUpnpServiceConfiguration(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT, checkRuntime);
-    }
-    private static final Constructor<? extends UpnpServiceConfiguration> androidConstructor;
-    static
-    {
-        if (ModelUtil.ANDROID_RUNTIME)
-        {
-			try {
-				@SuppressWarnings("unchecked") Class<? extends UpnpServiceConfiguration> c=(Class<? extends UpnpServiceConfiguration>)Class.forName("com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration");
-                androidConstructor=c.getConstructor(int.class, int.class);
-			} catch (ClassNotFoundException | NoSuchMethodException e) {
-                throw new RuntimeException("The class com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration was not found. Please import UPnPIGD-Android library.", e);
-			}
-		}
-        else
-            androidConstructor=null;
-    }
-    public static UpnpServiceConfiguration getDefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime) throws IOException {
-        if (ModelUtil.ANDROID_RUNTIME) {
-			try {
-				return androidConstructor.newInstance(streamListenPort, multicastPort);
-			} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-				throw new RuntimeException(e);
-			}
-		}
-        else
-            return new DefaultUpnpServiceConfiguration(streamListenPort, multicastPort, checkRuntime);
-    }
-
     /**
      * Defaults to port '0', ephemeral.
      */
-    protected DefaultUpnpServiceConfiguration() throws IOException {
-        this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
+    public DefaultUpnpServiceConfiguration() throws IOException {
+        this(Platform.getDefault(), NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
     }
 
-    protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) throws IOException {
-        this(streamListenPort, multicastPort, true);
+    public DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort) throws IOException {
+        this(Platform.getDefault(), streamListenPort, multicastPort, true);
     }
 
-    protected DefaultUpnpServiceConfiguration(boolean checkRuntime) throws IOException {
-        this(NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT, checkRuntime);
+    public DefaultUpnpServiceConfiguration(boolean checkRuntime) throws IOException {
+        this(Platform.getDefault(), NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT, checkRuntime);
     }
 
-    protected DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime) throws IOException {
-        if (checkRuntime && ModelUtil.ANDROID_RUNTIME) {
+    public DefaultUpnpServiceConfiguration(int streamListenPort, int multicastPort, boolean checkRuntime) throws IOException {
+        this(Platform.getDefault(), streamListenPort, multicastPort, checkRuntime);
+    }
+    /**
+     * Defaults to port '0', ephemeral.
+     */
+    public DefaultUpnpServiceConfiguration(Platform platform) throws IOException {
+        this(platform, NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT);
+    }
+
+    public DefaultUpnpServiceConfiguration(Platform platform, int streamListenPort, int multicastPort) throws IOException {
+        this(platform, streamListenPort, multicastPort, true);
+    }
+
+    public DefaultUpnpServiceConfiguration(Platform platform, boolean checkRuntime) throws IOException {
+        this(platform, NetworkAddressFactoryImpl.DEFAULT_TCP_HTTP_LISTEN_PORT, Constants.UPNP_MULTICAST_PORT, checkRuntime);
+    }
+
+    public DefaultUpnpServiceConfiguration(Platform platform, int streamListenPort, int multicastPort, boolean checkRuntime) throws IOException {
+        if (platform==null)
+            throw new NullPointerException();
+        if (checkRuntime && ((ModelUtil.ANDROID_RUNTIME && platform!=Platform.ANDROID) || (!ModelUtil.ANDROID_RUNTIME && platform==Platform.ANDROID))) {
             throw new Error("Unsupported runtime environment, use com.distrimind.upnp_igd.android.AndroidUpnpServiceConfiguration");
         }
 
         this.streamListenPort = streamListenPort;
         this.multicastPort=multicastPort;
-        defaultExecutorService = createDefaultExecutorService();
-
+        platformUpnpServiceConfiguration = platform.getInstance();
+        defaultExecutorService=createDefaultExecutorService();
+        defaultAndroidExecutorService=platform==Platform.ANDROID?platform.getInstance().createDefaultAndroidExecutorService():defaultExecutorService;
         datagramProcessor = createDatagramProcessor();
         soapActionProcessor = createSOAPActionProcessor();
         genaEventProcessor = createGENAEventProcessor();
@@ -191,36 +154,27 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     }
 
     @Override
-    public StreamClient<?> createStreamClient() {
-        return new StreamClientImpl(
-            new StreamClientConfigurationImpl(
-                getSyncProtocolExecutorService()
-            )
-        );
+    public StreamClient<?> createStreamClient(int timeoutSeconds) {
+        return platformUpnpServiceConfiguration.createStreamClient(getDefaultAndroidExecutorService(), timeoutSeconds);
     }
 
     @Override
     public MulticastReceiver<?> createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
-        return new MulticastReceiverImpl(
-                new MulticastReceiverConfigurationImpl(
-                        networkAddressFactory.getMulticastGroup(),
-                        networkAddressFactory.getMulticastPort()
-                )
-        );
+        return platformUpnpServiceConfiguration.createMulticastReceiver(networkAddressFactory);
     }
 
     @Override
     public DatagramIO<?> createDatagramIO(NetworkAddressFactory networkAddressFactory) {
-        return new DatagramIOImpl(new DatagramIOConfigurationImpl());
+        return platformUpnpServiceConfiguration.createDatagramIO(networkAddressFactory);
     }
 
     @Override
     public StreamServer<?> createStreamServer(NetworkAddressFactory networkAddressFactory) {
-        return new StreamServerImpl(
-                new StreamServerConfigurationImpl(
-                        networkAddressFactory.getStreamListenPort()
-                )
-        );
+        return platformUpnpServiceConfiguration.createStreamServer(networkAddressFactory);
+    }
+    @Override
+    public StreamServer<?> createStreamServer(int streamServerPort) {
+        return platformUpnpServiceConfiguration.createStreamServer(streamServerPort);
     }
 
     @Override
@@ -258,19 +212,19 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
      */
     @Override
 	public boolean isReceivedSubscriptionTimeoutIgnored() {
-		return false;
+		return platformUpnpServiceConfiguration.isReceivedSubscriptionTimeoutIgnored();
 	}
 
     @Override
     @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public UpnpHeaders getDescriptorRetrievalHeaders(RemoteDeviceIdentity identity) {
-        return null;
+        return platformUpnpServiceConfiguration.getDescriptorRetrievalHeaders(identity);
     }
 
     @Override
     @SuppressWarnings("PMD.ReturnEmptyCollectionRatherThanNull")
     public UpnpHeaders getEventSubscriptionHeaders(RemoteService service) {
-        return null;
+        return platformUpnpServiceConfiguration.getEventSubscriptionHeaders(service);
     }
 
     /**
@@ -278,7 +232,7 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
      */
     @Override
     public int getRegistryMaintenanceIntervalMillis() {
-        return 1000;
+        return platformUpnpServiceConfiguration.getRegistryMaintenanceIntervalMillis();
     }
 
     /**
@@ -286,12 +240,12 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
      */
     @Override
     public int getAliveIntervalMillis() {
-    	return 0;
+    	return platformUpnpServiceConfiguration.getAliveIntervalMillis();
     }
 
     @Override
     public Integer getRemoteDeviceMaxAgeSeconds() {
-        return null;
+        return platformUpnpServiceConfiguration.getRemoteDeviceMaxAgeSeconds();
     }
 
     @Override
@@ -329,14 +283,15 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
         log.debug("Shutting down default executor service");
         getDefaultExecutorService().shutdownNow();
     }
-    protected NetworkAddressFactory getNetworkAddressFactory() {
+
+    public NetworkAddressFactory getNetworkAddressFactory() {
         if (networkAddressFactory==null)
             networkAddressFactory=createNetworkAddressFactory();
         return networkAddressFactory;
     }
 
     protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multicastPort) {
-        return new NetworkAddressFactoryImpl(streamListenPort, multicastPort);
+        return platformUpnpServiceConfiguration.createNetworkAddressFactory(streamListenPort, multicastPort);
     }
 
     protected DatagramProcessor createDatagramProcessor() {
@@ -344,110 +299,39 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     }
 
     protected SOAPActionProcessor createSOAPActionProcessor() {
-        return new SOAPActionProcessorImpl();
+        return platformUpnpServiceConfiguration.createSOAPActionProcessor();
     }
 
     protected GENAEventProcessor createGENAEventProcessor() {
-        return new GENAEventProcessorImpl();
+        return platformUpnpServiceConfiguration.createGENAEventProcessor();
     }
 
     protected DeviceDescriptorBinder createDeviceDescriptorBinderUDA10() {
-        return new UDA10DeviceDescriptorBinderImpl(getNetworkAddressFactory());
+        return platformUpnpServiceConfiguration.createDeviceDescriptorBinderUDA10(getNetworkAddressFactory());
     }
 
     protected ServiceDescriptorBinder createServiceDescriptorBinderUDA10() {
-        return new UDA10ServiceDescriptorBinderImpl(getNetworkAddressFactory());
+        return platformUpnpServiceConfiguration.createServiceDescriptorBinderUDA10(getNetworkAddressFactory());
     }
 
     protected Namespace createNamespace() {
-        return new Namespace();
+        return platformUpnpServiceConfiguration.createNamespace();
     }
 
     protected ExecutorService getDefaultExecutorService() {
         return defaultExecutorService;
     }
 
+    protected ExecutorService getDefaultAndroidExecutorService() {
+        return defaultAndroidExecutorService;
+    }
+
     protected ExecutorService createDefaultExecutorService() throws IOException {
-        return new UpnpIGDExecutor();
+        return platformUpnpServiceConfiguration.createDefaultExecutorService();
     }
-
-    public static class UpnpIGDExecutor extends ThreadPoolExecutor {
-
-        public UpnpIGDExecutor() {
-            this(new UpnpIGDThreadFactory(),
-                 new ThreadPoolExecutor.DiscardPolicy() {
-                     // The pool is unbounded but rejections will happen during shutdown
-                     @Override
-                     public void rejectedExecution(Runnable runnable, ThreadPoolExecutor threadPoolExecutor) {
-                         // Log and discard
-                         if (log.isInfoEnabled())
-                            log.info("Thread pool rejected execution of " + runnable.getClass());
-                         super.rejectedExecution(runnable, threadPoolExecutor);
-                     }
-                 }
-            );
-        }
-
-        public UpnpIGDExecutor(ThreadFactory threadFactory, RejectedExecutionHandler rejectedHandler) {
-            // This is the same as Executors.newCachedThreadPool
-            super(0,
-                  Integer.MAX_VALUE,
-                  60L,
-                  TimeUnit.SECONDS,
-					new SynchronousQueue<>(),
-                  threadFactory,
-                  rejectedHandler
-            );
-        }
-
-        @Override
-        protected void afterExecute(Runnable runnable, Throwable throwable) {
-            super.afterExecute(runnable, throwable);
-            if (throwable != null) {
-                Throwable cause = Exceptions.unwrap(throwable);
-                if (cause instanceof InterruptedException) {
-                    // Ignore this, might happen when we shutdownNow() the executor. We can't
-                    // log at this point as the logging system might be stopped already (e.g.
-                    // if it's a CDI component).
-                    return;
-                }
-                if (log.isWarnEnabled()) {
-                    // Log only
-                    log.warn("Thread terminated " + runnable + " abruptly with exception: " + throwable);
-                    log.warn("Root cause: ", cause);
-                }
-            }
-        }
+    @Override
+    public Platform getPlatformType()
+    {
+        return platformUpnpServiceConfiguration.getPlatformType();
     }
-
-    // Executors.DefaultThreadFactory is package visibility (...no touching, you unworthy JDK user!)
-    public static class UpnpIGDThreadFactory implements ThreadFactory {
-
-        protected final ThreadGroup group;
-        protected final AtomicInteger threadNumber = new AtomicInteger(1);
-        protected final String namePrefix = "upnp_igd-";
-
-        public UpnpIGDThreadFactory() {
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-        }
-
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(
-                    group, r,
-                    namePrefix + threadNumber.getAndIncrement(),
-                    0
-            );
-            if (t.isDaemon())
-                t.setDaemon(false);
-            if (t.getPriority() != Thread.NORM_PRIORITY)
-                t.setPriority(Thread.NORM_PRIORITY);
-
-            return t;
-        }
-    }
-
-
-
 }

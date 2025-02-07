@@ -34,7 +34,14 @@ public class RegistryExpirationTest {
     @Test
     public void addAndExpire() throws Exception {
 
-        MockUpnpService upnpService = new MockUpnpService(false, true);
+        MockUpnpService upnpService = new MockUpnpService(false, new MockUpnpServiceConfiguration(true) {
+
+            @Override
+            public int getRegistryMaintenanceIntervalMillis() {
+                return getDesktopPlatformUpnpServiceConfiguration().getRegistryMaintenanceIntervalMillis();
+            }
+        }
+        );
 
         RemoteDevice rd = SampleData.createRemoteDevice(
                 SampleData.createRemoteDeviceIdentity(1)
@@ -138,7 +145,12 @@ public class RegistryExpirationTest {
     @Test
     public void addResourceAndMaintain() throws Exception {
 
-        MockUpnpService upnpService = new MockUpnpService(false, true);
+        MockUpnpService upnpService = new MockUpnpService(false, new MockUpnpServiceConfiguration(true, false){
+            @Override
+            public int getRegistryMaintenanceIntervalMillis() {
+                return getDesktopPlatformUpnpServiceConfiguration().getRegistryMaintenanceIntervalMillis();
+            }
+        });
 
         final TestRunnable testRunnable = new TestRunnable();
 

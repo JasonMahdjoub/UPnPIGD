@@ -291,7 +291,7 @@ public class SampleData {
     */
 
     public static void debugMsg(OutgoingDatagramMessage<?> msg) throws IOException {
-        DatagramProcessor proc = DefaultUpnpServiceConfiguration.getDefaultUpnpServiceConfiguration().getDatagramProcessor();
+        DatagramProcessor proc = new DefaultUpnpServiceConfiguration().getDatagramProcessor();
         proc.write(msg);
     }
 

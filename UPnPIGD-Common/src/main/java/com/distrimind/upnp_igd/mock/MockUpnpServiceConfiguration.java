@@ -15,22 +15,19 @@
 
 package com.distrimind.upnp_igd.mock;
 
-import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
+import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
+import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
+import com.distrimind.upnp_igd.platform.Platform;
+import com.distrimind.upnp_igd.platform.PlatformUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
 import com.distrimind.upnp_igd.DefaultUpnpServiceConfiguration;
+import com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor;
 
 import jakarta.enterprise.inject.Alternative;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Christian Bauer
@@ -40,23 +37,40 @@ public class MockUpnpServiceConfiguration extends DefaultUpnpServiceConfiguratio
 
     final protected boolean maintainsRegistry;
     final protected boolean multiThreaded;
-
+    private final static PlatformUpnpServiceConfiguration desktopPlatformUpnpServiceConfiguration=Platform.DESKTOP.getInstance();
     /**
      * Does not maintain registry, single threaded execution.
      */
     public MockUpnpServiceConfiguration() throws IOException {
-        this(false, false);
+        this(Platform.getDefault(), false, false);
     }
 
     /**
      * Single threaded execution.
      */
     public MockUpnpServiceConfiguration(boolean maintainsRegistry) throws IOException {
-        this(maintainsRegistry, false);
+        this(Platform.getDefault(), maintainsRegistry, false);
     }
 
     public MockUpnpServiceConfiguration(boolean maintainsRegistry, boolean multiThreaded) throws IOException {
-        super(false);
+        this(Platform.getDefault(), maintainsRegistry, multiThreaded);
+    }
+    /**
+     * Does not maintain registry, single threaded execution.
+     */
+    public MockUpnpServiceConfiguration(Platform platform) throws IOException {
+        this(platform, false, false);
+    }
+
+    /**
+     * Single threaded execution.
+     */
+    public MockUpnpServiceConfiguration(Platform platform, boolean maintainsRegistry) throws IOException {
+        this(platform, maintainsRegistry, false);
+    }
+
+    public MockUpnpServiceConfiguration(Platform platform, boolean maintainsRegistry, boolean multiThreaded) throws IOException {
+        super(platform, false);
         this.maintainsRegistry = maintainsRegistry;
         this.multiThreaded = multiThreaded;
     }
@@ -71,19 +85,7 @@ public class MockUpnpServiceConfiguration extends DefaultUpnpServiceConfiguratio
 
     @Override
     protected NetworkAddressFactory createNetworkAddressFactory(int streamListenPort, int multiCastPort) {
-        // We are only interested in 127.0.0.1
-        return new NetworkAddressFactoryImpl(streamListenPort, multiCastPort) {
-            @Override
-            protected boolean isUsableNetworkInterface(NetworkInterface iface) throws Exception {
-                return (iface.isLoopback());
-            }
-
-            @Override
-            protected boolean isUsableAddress(NetworkInterface networkInterface, InetAddress address) {
-                return (address.isLoopbackAddress() && address instanceof Inet4Address);
-            }
-
-        };
+        return platformUpnpServiceConfiguration.createMockNetworkAddressFactory(streamListenPort, multiCastPort);
     }
 
     @Override
@@ -95,46 +97,31 @@ public class MockUpnpServiceConfiguration extends DefaultUpnpServiceConfiguratio
     }
 
     @Override
-    protected ExecutorService getDefaultExecutorService() {
+    protected ExecutorService getDefaultExecutorService()  {
         if (isMultiThreaded()) {
             return super.getDefaultExecutorService();
         }
-        return new AbstractExecutorService() {
-
-            boolean terminated;
-
-            @Override
-			public void shutdown() {
-                terminated = true;
-            }
-
-            @Override
-			public List<Runnable> shutdownNow() {
-                shutdown();
-                return Collections.emptyList();
-            }
-
-            @Override
-			public boolean isShutdown() {
-                return terminated;
-            }
-
-            @Override
-			public boolean isTerminated() {
-                return terminated;
-            }
-
-            @Override
-			public boolean awaitTermination(long l, TimeUnit timeUnit) throws InterruptedException {
-                shutdown();
-                return terminated;
-            }
-
-            @Override
-			public void execute(Runnable runnable) {
-                runnable.run();
-            }
-        };
+        else
+            return platformUpnpServiceConfiguration.createMockDefaultExecutorService();
     }
 
+    @Override
+    protected SOAPActionProcessor createSOAPActionProcessor() {
+        return desktopPlatformUpnpServiceConfiguration.createSOAPActionProcessor();
+    }
+
+    @Override
+    protected DeviceDescriptorBinder createDeviceDescriptorBinderUDA10() {
+        return desktopPlatformUpnpServiceConfiguration.createDeviceDescriptorBinderUDA10(getNetworkAddressFactory());
+    }
+
+    @Override
+    protected ServiceDescriptorBinder createServiceDescriptorBinderUDA10() {
+        return desktopPlatformUpnpServiceConfiguration.createServiceDescriptorBinderUDA10(getNetworkAddressFactory());
+    }
+
+    protected PlatformUpnpServiceConfiguration getDesktopPlatformUpnpServiceConfiguration()
+    {
+        return desktopPlatformUpnpServiceConfiguration;
+    }
 }

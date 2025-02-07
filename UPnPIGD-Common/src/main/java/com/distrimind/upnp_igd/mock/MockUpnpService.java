@@ -64,7 +64,7 @@ public class MockUpnpService implements UpnpService {
     /**
      * No ALIVE messages.
      */
-    public MockUpnpService(MockUpnpServiceConfiguration configuration) {
+    public MockUpnpService(MockUpnpServiceConfiguration configuration) throws IOException {
         this(false, configuration);
     }
 
@@ -79,7 +79,7 @@ public class MockUpnpService implements UpnpService {
         this(sendsAlive, new MockUpnpServiceConfiguration(maintainsRegistry, multiThreaded));
     }
 
-    public MockUpnpService(final boolean sendsAlive, final MockUpnpServiceConfiguration configuration) {
+    public MockUpnpService(final boolean sendsAlive, final MockUpnpServiceConfiguration configuration) throws IOException {
 
         this.configuration = configuration;
 

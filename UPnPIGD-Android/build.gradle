@@ -16,10 +16,6 @@ dependencies {
     api jlibs.dm.flexi.logxml.android
     compileOnly jlibs.androidStub
 
-    /*compileOnly jlibs.jetty.server
-    compileOnly jlibs.jetty.servlet
-    compileOnly jlibs.jetty.client*/
-
     compileOnly jlibs.undertow.core
     compileOnly jlibs.undertow.servlet
 
@@ -29,13 +25,13 @@ dependencies {
     testImplementation jlibs.testng
     testImplementation jlibs.logback.classic
     testImplementation jlibs.undertow.servlet
-    //testImplementation jlibs.dm.flexi.logxml.desktop
+    testImplementation jlibs.dm.flexi.logxml.desktop
 
 }
 
 jar.archiveBaseName = "UPnPIGD-Android"
 
-/*test {
+test {
     systemProperty 'logback.configurationFile', file('src/test/resources/logback.xml').absolutePath
     // enable TestNG support (default is JUnit)
     useTestNG
@@ -48,4 +44,5 @@ jar.archiveBaseName = "UPnPIGD-Android"
     maxHeapSize = "6g"
     /*testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
-//}*/
+    }*/
+}
