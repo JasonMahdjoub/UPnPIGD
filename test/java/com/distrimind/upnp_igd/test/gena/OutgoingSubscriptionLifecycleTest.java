@@ -244,8 +244,7 @@ public class OutgoingSubscriptionLifecycleTest {
         };
 
         // send subscription request is a separate thread
-        Thread subscribeThread = new Thread(() -> upnpService.getControlPoint().execute(callback));
-        subscribeThread.start();
+        Thread subscribeThread = upnpService.getConfiguration().startThread(() -> upnpService.getControlPoint().execute(callback));
 
         // generate notification in a separate thread
         // use a dummy GENASubscription for that to have a valid subscriptionId
@@ -274,18 +273,17 @@ public class OutgoingSubscriptionLifecycleTest {
     private Thread getThread(RemoteService service, MockUpnpService upnpService, List<Boolean> testAssertions) {
         final GENASubscription<?> subscription = getGenaSubscription(service);
 
-        Thread notifyThread = new Thread(() -> {
-			// Simulate received event before the subscription response
-			try {
-				upnpService.getProtocolFactory().createReceivingSync(
-						createEventRequestMessage(upnpService, service, subscription)
-				).run();
-			} catch (ProtocolCreationException e) {
-				testAssertions.add(false);
-			}
+        Thread notifyThread = upnpService.getConfiguration().startThread(() -> {
+            // Simulate received event before the subscription response
+            try {
+                upnpService.getProtocolFactory().createReceivingSync(
+                        createEventRequestMessage(upnpService, service, subscription)
+                ).run();
+            } catch (ProtocolCreationException e) {
+                testAssertions.add(false);
+            }
 
-		});
-        notifyThread.start();
+        });
         return notifyThread;
     }
 

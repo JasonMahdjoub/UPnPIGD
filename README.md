@@ -21,7 +21,7 @@ Adapt into your build.gradle file, the next code :
 	    ...
 	    dependencies {
 		    ...
-		    implementation(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.2.0-BETA16')
+		    implementation(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.3.0-STABLE')
 		    //optional :
 		    implementation(group:'org.slf4j', name: 'slf4j-jdk14', version: '2.0.16')
 		    ...
@@ -29,13 +29,13 @@ Adapt into your build.gradle file, the next code :
 	    ...
     ```
 
- - When using UPnPIGD into android environment, please add this dependency (minimum Java version is 11) :
+ - When using UPnPIGD into android environment, please add this dependency (Android API version is 26) :
 
     ```
 	    ...
 	    dependencies {
 		    ...
-		    implementation(group:'com.distrimind.upnp_igd.android', name: 'UPnPIGD-Android', version: '1.2.0-BETA16')
+		    implementation(group:'com.distrimind.upnp_igd.android', name: 'UPnPIGD-Android', version: '1.3.0-STABLE')
 		    ...
 	    }
 	    ...
@@ -67,7 +67,7 @@ Adapt into your pom.xml file, the next code :
                 <dependency>
                     <groupId>com.distrimind.upnp_igd.desktop</groupId>
                     <artifactId>UPnPIGD-Desktop</artifactId>
-                    <version>1.2.0-BETA16</version>
+                    <version>1.3.0-STABLE</version>
                 </dependency>
                 <-- optional -->
                 <dependency>
@@ -82,13 +82,13 @@ Adapt into your pom.xml file, the next code :
         ...
     ```
    
- - When using UPnPIGD into android environment, please add this dependency (minimum Java version is 11) :
+ - When using UPnPIGD into android environment, please add this dependency (minimum Android API version is 26) :
     ```
         ...
         <dependency>
             <groupId>com.distrimind.upnp_igd.android</groupId>
             <artifactId>UPnPIGD-Android</artifactId>
-            <version>1.2.0-BETA16</version>
+            <version>1.3.0-STABLE</version>
         </dependency>
         ...
     ```

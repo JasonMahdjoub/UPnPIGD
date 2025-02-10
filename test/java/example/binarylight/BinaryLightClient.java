@@ -1,5 +1,6 @@
 package example.binarylight;
 
+import com.distrimind.flexilogxml.concurrent.ThreadType;
 import com.distrimind.upnp_igd.controlpoint.ActionCallback;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.message.UpnpResponse;
@@ -20,7 +21,7 @@ public class BinaryLightClient implements Runnable {
 
     public static void main(String[] args) throws Exception {
         // Start a user thread that runs the UPnP stack
-        Thread clientThread = new Thread(new BinaryLightClient());
+        Thread clientThread = ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.startThread(new BinaryLightClient());
         clientThread.setDaemon(false);
         clientThread.start();
 

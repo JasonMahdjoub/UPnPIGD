@@ -1,5 +1,6 @@
 package example.binarylight;
 
+import com.distrimind.flexilogxml.concurrent.ThreadType;
 import com.distrimind.upnp_igd.binding.LocalServiceBindingException;
 import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
 import com.distrimind.upnp_igd.model.DefaultServiceManager;
@@ -18,7 +19,7 @@ public class BinaryLightServer implements Runnable {
 
     public static void main(String[] args) throws Exception {
         // Start a user thread that runs the UPnP stack
-        Thread serverThread = new Thread(new BinaryLightServer());
+        Thread serverThread = ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.startThread(new BinaryLightServer());
         serverThread.setDaemon(false);
         serverThread.start();
     }
@@ -29,7 +30,7 @@ public class BinaryLightServer implements Runnable {
 
             final UpnpService upnpService = new UpnpServiceImpl();
 
-            Runtime.getRuntime().addShutdownHook(new Thread(upnpService::shutdown));
+            Runtime.getRuntime().addShutdownHook(ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.newThreadFactoryInstance().newThread(upnpService::shutdown));
 
             // Add the bound local device to the registry
             upnpService.getRegistry().addDevice(

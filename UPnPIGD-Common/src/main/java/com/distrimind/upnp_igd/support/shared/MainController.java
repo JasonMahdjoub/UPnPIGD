@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.support.shared;
 
+import com.distrimind.flexilogxml.concurrent.ThreadType;
 import com.distrimind.flexilogxml.log.Handler;
 import com.distrimind.flexilogxml.log.LogManager;
 import com.distrimind.upnp_igd.Log;
@@ -34,6 +35,8 @@ import javax.swing.UIManager;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.util.List;
+import java.util.concurrent.ThreadFactory;
+
 import com.distrimind.flexilogxml.log.DMLogger;
 import org.slf4j.event.Level;
 
@@ -60,9 +63,9 @@ public abstract class MainController extends AbstractController<JFrame> {
 
         // Exception handler
         System.setProperty("sun.awt.exception.handler", AWTExceptionHandler.class.getName());
-
+        ThreadFactory threadFactory= ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.newThreadFactoryInstance();
         // Shutdown behavior
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        Runtime.getRuntime().addShutdownHook(threadFactory.newThread(() -> {
             if (getUpnpService() != null)
                 getUpnpService().shutdown();
         }));
@@ -114,7 +117,6 @@ public abstract class MainController extends AbstractController<JFrame> {
     public void dispose() {
         super.dispose();
         ShutdownWindow.INSTANCE.setVisible(true);
-        //new Thread(() -> System.exit(0)).start();
     }
 
     public static class ShutdownWindow extends JWindow {

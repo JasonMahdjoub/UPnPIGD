@@ -64,32 +64,25 @@
 
 package com.distrimind.upnp_igd.platform;
 
+
+
+import com.distrimind.flexilogxml.concurrent.ThreadType;
+
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class UpnpIGDThreadFactory implements ThreadFactory {
 
-	protected final ThreadGroup group;
-	protected final AtomicInteger threadNumber = new AtomicInteger(1);
-	protected final String namePrefix = "upnp_igd-";
+	protected final ThreadFactory threadFactory;
 
 	public UpnpIGDThreadFactory() {
+		String namePrefix = "upnp_igd-";
 		SecurityManager s = System.getSecurityManager();
-		group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+		ThreadGroup group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+		this.threadFactory= ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.newThreadFactoryInstance(group, "upnp_igd-", 0, Thread.NORM_PRIORITY, false);
 	}
 
 	@Override
 	public Thread newThread(Runnable r) {
-		Thread t = new Thread(
-				group, r,
-				namePrefix + threadNumber.getAndIncrement(),
-				0
-		);
-		if (t.isDaemon())
-			t.setDaemon(false);
-		if (t.getPriority() != Thread.NORM_PRIORITY)
-			t.setPriority(Thread.NORM_PRIORITY);
-
-		return t;
+		return threadFactory.newThread(r);
 	}
 }

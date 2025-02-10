@@ -152,7 +152,7 @@ public class UpnpServiceImpl implements UpnpService {
 		};
         if (separateThread) {
             // This is not a daemon thread, it has to complete!
-            new Thread(shutdown).start();
+            configuration.startThread(shutdown);
         } else {
             shutdown.run();
         }

@@ -176,7 +176,7 @@ public class ActionInvokeIncomingTest {
         // TODO: Use a latch instead of waiting
         int i = 0;
         while (i < 10) {
-            new Thread(new ConcurrentGetTest(upnpService, service)).start();
+            upnpService.getConfiguration().startThread(new ConcurrentGetTest(upnpService, service));
             i++;
         }
 

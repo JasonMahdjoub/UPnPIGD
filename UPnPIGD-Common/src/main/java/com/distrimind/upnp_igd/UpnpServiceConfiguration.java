@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd;
 
+import com.distrimind.flexilogxml.concurrent.ThreadType;
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
 import com.distrimind.upnp_igd.model.UserConstants;
@@ -272,4 +273,12 @@ public interface UpnpServiceConfiguration {
 	void shutdown();
 
 	Platform getPlatformType();
+	default Thread startThread(Runnable runnable)
+	{
+		return ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.startThread(runnable);
+	}
+	default Thread startThread(Runnable runnable, String name)
+	{
+		return ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.startThread(runnable, name);
+	}
 }
