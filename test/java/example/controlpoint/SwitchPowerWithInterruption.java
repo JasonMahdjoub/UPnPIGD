@@ -114,7 +114,7 @@ import com.distrimind.upnp_igd.model.profile.RemoteClientInfo;
  * <tbody>
  * <tr>
  * <td class="nowrap">
- * <code>com.distrimind.upnp_igd.transport.impl.StreamServerImpl (default)</code>
+ * <code>com.distrimind.upnp_igd.desktop.transport.impl.StreamServerImpl (default)</code>
  * </td>
  * <td>NO</td>
  * </tr>

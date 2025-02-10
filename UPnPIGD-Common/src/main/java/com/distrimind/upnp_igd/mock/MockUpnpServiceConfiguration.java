@@ -17,6 +17,7 @@ package com.distrimind.upnp_igd.mock;
 
 import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
 import com.distrimind.upnp_igd.binding.xml.ServiceDescriptorBinder;
+import com.distrimind.upnp_igd.platform.DefaultPlatformUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.platform.Platform;
 import com.distrimind.upnp_igd.platform.PlatformUpnpServiceConfiguration;
 import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
@@ -37,7 +38,7 @@ public class MockUpnpServiceConfiguration extends DefaultUpnpServiceConfiguratio
 
     final protected boolean maintainsRegistry;
     final protected boolean multiThreaded;
-    private final static PlatformUpnpServiceConfiguration desktopPlatformUpnpServiceConfiguration=Platform.DESKTOP.getInstance();
+    private final static DefaultPlatformUpnpServiceConfiguration desktopPlatformUpnpServiceConfiguration=new DefaultPlatformUpnpServiceConfiguration();
     /**
      * Does not maintain registry, single threaded execution.
      */
@@ -91,7 +92,7 @@ public class MockUpnpServiceConfiguration extends DefaultUpnpServiceConfiguratio
     @Override
     public Executor getRegistryMaintainerExecutor() {
         if (isMaintainsRegistry()) {
-            return runnable -> startThread(runnable);
+            return this::startThread;
         }
         return getDefaultExecutorService();
     }

@@ -1,6 +1,7 @@
 apply from: ("../common.gradle")
 group='com.distrimind.upnp_igd.android'
 
+
 dependencies {
 
     api project(':UPnPIGD-Common')
@@ -16,7 +17,13 @@ dependencies {
     testImplementation jlibs.logback.classic
     testImplementation jlibs.undertow.servlet
     testImplementation jlibs.dm.flexi.logxml.desktop
-
+    try {
+        testImplementation project(':UPnPIGD-Desktop')
+    }
+    catch(Exception ignored)
+    {
+        println("Dependency UPnPIGD-Desktop not found. Its a normal behaviour under Android")
+    }
 }
 
 jar.archiveBaseName = "UPnPIGD-Android"

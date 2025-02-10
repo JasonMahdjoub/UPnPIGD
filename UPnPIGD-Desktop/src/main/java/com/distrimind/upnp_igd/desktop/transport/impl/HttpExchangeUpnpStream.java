@@ -1,19 +1,20 @@
 /*
- * Copyright (C) 2013 4th Line GmbH, Switzerland
+ *     This library is free software; you can redistribute it and/or
+ *     modify it under the terms of the GNU Lesser General Public
+ *     License as published by the Free Software Foundation; either
+ *     version 2.1 of the License.
  *
- * The contents of this file are subject to the terms of either the GNU
- * Lesser General Public License Version 2 or later ("LGPL") or the
- * Common Development and Distribution License Version 1 or later
- * ("CDDL") (collectively, the "License"). You may not use this file
- * except in compliance with the License. See LICENSE.txt for more
- * information.
+ *     This library is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *     Lesser General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *     You should have received a copy of the GNU Lesser General Public
+ *     License along with this library; if not, write to the Free Software
+ *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.distrimind.upnp_igd.transport.impl;
+package com.distrimind.upnp_igd.desktop.transport.impl;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.distrimind.upnp_igd.model.message.Connection;

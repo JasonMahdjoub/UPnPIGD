@@ -38,6 +38,10 @@ import org.xnio.XnioWorker;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
+/**
+ * @author Jason Mahdjoub
+ * @since 1.2.0
+ */
 public class AndroidPlatformUpnpServiceConfiguration extends PlatformUpnpServiceConfiguration {
 	@Override
 	public ExecutorService createDefaultAndroidExecutorService() throws IOException

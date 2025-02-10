@@ -180,7 +180,7 @@ public abstract class PlatformUpnpServiceConfiguration {
 		androidPlaformConstructor=constructor;
 		constructor=null;
 		try {
-			@SuppressWarnings("unchecked") Class<? extends PlatformUpnpServiceConfiguration> c=(Class<? extends PlatformUpnpServiceConfiguration>)Class.forName("com.distrimind.upnp_igd.platform.DesktopPlatformUpnpServiceConfiguration");
+			@SuppressWarnings("unchecked") Class<? extends PlatformUpnpServiceConfiguration> c=(Class<? extends PlatformUpnpServiceConfiguration>)Class.forName("com.distrimind.upnp_igd.desktop.platform.DesktopPlatformUpnpServiceConfiguration");
 			constructor=c.getConstructor();
 		} catch (ClassNotFoundException | NoSuchMethodException ignored) {
 		}
@@ -199,7 +199,7 @@ public abstract class PlatformUpnpServiceConfiguration {
 				break;
 			case DESKTOP:
 				if (desktopPlaformConstructor==null)
-					throw new RuntimeException("com.distrimind.upnp_igd.platform.DesktopPlatformUpnpServiceConfiguration was not found. Please import UPnPIGD-Desktop library.");
+					throw new RuntimeException("com.distrimind.upnp_igd.desktop.platform.DesktopPlatformUpnpServiceConfiguration was not found. Please import UPnPIGD-Desktop library.");
 				constructor=desktopPlaformConstructor;
 				break;
 			default:

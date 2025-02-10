@@ -16,5 +16,9 @@
 module UPnPIGD_Desktop {
 	requires UPnPIGD_Common;
 	requires FlexiLogXML_Desktop;
+	requires FlexiLogXML_Common;
+	requires static jdk.httpserver;
+	exports com.distrimind.upnp_igd.desktop.platform;
+	exports com.distrimind.upnp_igd.desktop.transport.impl;
 }
 
