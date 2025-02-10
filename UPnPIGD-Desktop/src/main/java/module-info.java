@@ -15,6 +15,6 @@
 
 module UPnPIGD_Desktop {
 	requires UPnPIGD_Common;
-	requires FlexiLogXML_Common;
+	requires FlexiLogXML_Desktop;
 }
 

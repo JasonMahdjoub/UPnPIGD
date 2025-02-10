@@ -16,7 +16,7 @@
 module UPnPIGD_Common {
 
 
-	requires jdk.httpserver;
+	requires static jdk.httpserver;
 	requires org.jsoup;
 	requires static jakarta.cdi;
 	requires static java.desktop;
