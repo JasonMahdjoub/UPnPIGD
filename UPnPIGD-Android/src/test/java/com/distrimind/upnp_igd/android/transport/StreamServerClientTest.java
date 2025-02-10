@@ -49,6 +49,7 @@
 package com.distrimind.upnp_igd.android.transport;
 
 import com.distrimind.flexilogxml.FlexiLogXML;
+import com.distrimind.flexilogxml.log.Level;
 import com.distrimind.upnp_igd.Log;
 import com.distrimind.upnp_igd.UpnpServiceConfiguration;
 import com.distrimind.upnp_igd.mock.MockProtocolFactory;
@@ -65,7 +66,6 @@ import com.distrimind.upnp_igd.transport.spi.StreamClient;
 import com.distrimind.upnp_igd.transport.spi.StreamServer;
 import com.distrimind.upnp_igd.transport.spi.UpnpStream;
 
-import org.slf4j.event.Level;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

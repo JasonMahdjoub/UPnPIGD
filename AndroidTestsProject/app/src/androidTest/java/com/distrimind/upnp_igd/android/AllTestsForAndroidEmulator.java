@@ -37,7 +37,7 @@ import com.distrimind.flexilogxml.TestGroup;
 import com.distrimind.flexilogxml.Tests;
 import com.distrimind.upnp_igd.android.transport.UndertowServerUndertowClientTest;
 
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 
 import java.io.File;

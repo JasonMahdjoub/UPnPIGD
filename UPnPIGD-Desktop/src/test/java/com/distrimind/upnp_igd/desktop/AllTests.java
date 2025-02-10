@@ -19,7 +19,7 @@ package com.distrimind.upnp_igd.desktop;
 
 import com.distrimind.flexilogxml.FlexiLogXML;
 import com.distrimind.flexilogxml.Tests;
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 import java.io.File;
 import java.io.IOException;

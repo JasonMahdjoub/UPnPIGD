@@ -24,7 +24,7 @@ import com.distrimind.upnp_igd.binding.xml.DescriptorBindingException;
 import com.distrimind.upnp_igd.model.action.ActionException;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
 
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

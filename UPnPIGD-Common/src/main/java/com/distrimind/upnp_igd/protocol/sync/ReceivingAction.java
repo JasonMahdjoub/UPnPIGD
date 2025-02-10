@@ -40,7 +40,7 @@ import com.distrimind.upnp_igd.util.Exceptions;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
 
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 /**
  * Handles reception of control messages, invoking actions on local services.

@@ -27,7 +27,7 @@ package com.distrimind.upnp_igd;
 
 import com.distrimind.flexilogxml.FlexiLogXML;
 import com.distrimind.flexilogxml.log.DMLogger;
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 public class Log {
 

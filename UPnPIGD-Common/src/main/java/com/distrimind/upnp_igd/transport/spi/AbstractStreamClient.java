@@ -27,7 +27,7 @@ import java.util.concurrent.TimeoutException;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
 
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 /**
  * Implements the timeout/callback processing and unifies exception handling.

@@ -43,20 +43,22 @@ android {
 }
 
 dependencies {
-    androidTestImplementation jlibs.jsoup
+    implementation project(':UPnPIGD-Android')
+    implementation jlibs.dm.flexi.logxml.android
+
 
     testImplementation jlibs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
     androidTestImplementation libs.testng
 
-    implementation project(':UPnPIGD-Android')
+
 
     androidTestImplementation jlibs.undertow.core
     androidTestImplementation jlibs.undertow.servlet
 
-    androidTestImplementation jlibs.bsh
     androidTestImplementation libs.testng
     androidTestImplementation jlibs.jsoup
+
 
 }

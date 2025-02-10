@@ -5,7 +5,7 @@ group='com.distrimind.upnp_igd.android'
 dependencies {
 
     api project(':UPnPIGD-Common')
-    api jlibs.dm.flexi.logxml.android
+    implementation jlibs.dm.flexi.logxml.android
     compileOnly jlibs.androidStub
 
     compileOnly jlibs.undertow.core

@@ -40,7 +40,7 @@ import com.distrimind.upnp_igd.android.transport.JDKServerJDKClientTest;
 import com.distrimind.upnp_igd.android.transport.JDKServerUndertowClientTest;
 import com.distrimind.upnp_igd.android.transport.UndertowServerJDKClientTest;
 import com.distrimind.upnp_igd.android.transport.UndertowServerUndertowClientTest;
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 import java.io.File;
 import java.io.IOException;

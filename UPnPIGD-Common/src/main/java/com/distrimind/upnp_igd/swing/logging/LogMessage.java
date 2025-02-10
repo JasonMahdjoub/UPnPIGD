@@ -15,7 +15,7 @@
  package com.distrimind.upnp_igd.swing.logging;
 
 import com.distrimind.flexilogxml.log.LogRecord;
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 import java.util.Date;
 import java.util.Locale;

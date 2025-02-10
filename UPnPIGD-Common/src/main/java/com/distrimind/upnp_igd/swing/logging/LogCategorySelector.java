@@ -28,7 +28,7 @@ import java.awt.event.ItemEvent;
 import java.util.List;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
  /**
  * @author Christian Bauer

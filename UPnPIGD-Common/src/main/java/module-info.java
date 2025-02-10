@@ -20,7 +20,6 @@ module UPnPIGD_Common {
 	requires static java.desktop;
 
 	requires FlexiLogXML_Common;
-	requires org.slf4j;
 
 
 	exports com.distrimind.upnp_igd;

@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
 import com.distrimind.flexilogxml.log.DMLogger;
-import org.slf4j.event.Level;
+import com.distrimind.flexilogxml.log.Level;
 
 /**
  * @author Christian Bauer
