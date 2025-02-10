@@ -41,18 +41,18 @@ Adapt into your build.gradle file, the next code :
 	    ...
     ```
 
-   - Libraries are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
-      ```
-          ...
-          repositories {
-              ...
-              maven {
-                      url "https://artifactory.distri-mind.fr/ui/native/gradle-release/"
-              }
-              ...
-          }
-          ...
-      ```
+ - Libraries are available on Maven Central. You can check signatures of dependencies with this [public GPG key](key-2023-10-09.pub). You can also use the next repository : 
+    ```
+        ...
+        repositories {
+            ...
+            maven {
+                    url "https://artifactory.distri-mind.fr/ui/native/gradle-release/"
+            }
+            ...
+        }
+        ...
+    ```
 
 To know what is the last uploaded version, please refer to versions available here : [this repository](https://artifactory.distri-mind.fr/ui/native/DistriMind-Public/com/distrimind/upnp_igd/UPnPIGD-Core/)
 ### With Maven :
