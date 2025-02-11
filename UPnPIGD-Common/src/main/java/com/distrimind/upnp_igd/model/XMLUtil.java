@@ -215,7 +215,7 @@ public class XMLUtil {
                         String nodeName = reader.getLocalName();
                         boolean nodeOk=nodeName.equals(localName);
                         rootFound|=nodeOk;
-                        if (nodeOk && ((nameSpaceURI!=null && reader.getNamespaceURI() != null && (namespaceFound=nameSpaceURI).equals(reader.getNamespaceURI()))) || nameSpaceURI==null) {
+                        if (nodeOk && ((nameSpaceURI!=null && reader.getNamespaceURI() != null && nameSpaceURI.equals(namespaceFound=reader.getNamespaceURI()))) || nameSpaceURI==null) {
                             c.accept(reader);
                             while (reader.getCurrentLevel() > level && reader.hasNext()) {
                                 if (reader.next() == XMLType.END_DOCUMENT)
