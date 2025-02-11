@@ -75,9 +75,7 @@ public class UpnpIGDThreadFactory implements ThreadFactory {
 	protected final ThreadFactory threadFactory;
 
 	public UpnpIGDThreadFactory() {
-		SecurityManager s = System.getSecurityManager();
-		ThreadGroup group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-		this.threadFactory= ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.newThreadFactoryInstance(group, "upnp_igd-", 0, Thread.NORM_PRIORITY, false);
+		this.threadFactory= ThreadType.VIRTUAL_THREAD_IF_AVAILABLE.newThreadFactoryInstance(Thread.currentThread().getThreadGroup(), "upnp_igd-", 0, Thread.NORM_PRIORITY, false);
 	}
 
 	@Override
