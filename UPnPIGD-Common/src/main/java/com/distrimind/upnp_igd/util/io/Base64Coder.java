@@ -2,7 +2,6 @@ package com.distrimind.upnp_igd.util.io;
 
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.upnp_igd.Log;
-import com.distrimind.upnp_igd.model.action.AbstractActionExecutor;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
