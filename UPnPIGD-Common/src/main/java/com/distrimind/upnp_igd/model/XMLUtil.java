@@ -15,7 +15,6 @@
 
 package com.distrimind.upnp_igd.model;
 
-import com.distrimind.flexilogxml.FlexiLogXML;
 import com.distrimind.flexilogxml.exceptions.XMLStreamException;
 import com.distrimind.flexilogxml.log.DMLogger;
 import com.distrimind.flexilogxml.xml.*;
@@ -23,8 +22,6 @@ import com.distrimind.flexilogxml.xml.Location;
 import com.distrimind.upnp_igd.binding.xml.DescriptorBindingException;
 import com.distrimind.upnp_igd.model.action.ActionException;
 import com.distrimind.upnp_igd.model.types.InvalidValueException;
-
-import com.distrimind.flexilogxml.log.Level;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -207,6 +204,7 @@ public class XMLUtil {
 
     public static void readRootElement(IXmlReader reader, XMLReadConsumer c, ErrorHandler errorHandler, String nameSpaceURI, String localName, DMLogger log) throws XMLStreamException, DescriptorBindingException {
         boolean rootFound=false;
+        String namespaceFound=null;
         try {
             final int level = reader.getCurrentLevel();
 
@@ -217,7 +215,7 @@ public class XMLUtil {
                         String nodeName = reader.getLocalName();
                         boolean nodeOk=nodeName.equals(localName);
                         rootFound|=nodeOk;
-                        if (nodeOk && ((nameSpaceURI!=null && reader.getNamespaceURI() != null && nameSpaceURI.equals(reader.getNamespaceURI()))) || nameSpaceURI==null) {
+                        if (nodeOk && ((nameSpaceURI!=null && reader.getNamespaceURI() != null && (namespaceFound=nameSpaceURI).equals(reader.getNamespaceURI()))) || nameSpaceURI==null) {
                             c.accept(reader);
                             while (reader.getCurrentLevel() > level && reader.hasNext()) {
                                 if (reader.next() == XMLType.END_DOCUMENT)
@@ -241,10 +239,11 @@ public class XMLUtil {
             errorHandler.error(e2);
             throw e2;
         }
+        String m=namespaceFound==null?"":" Found instead : "+namespaceFound;
         if (!rootFound)
-            throw new DescriptorBindingException("Root element " + localName + " with name space " + nameSpaceURI + " was not found !");
+            throw new DescriptorBindingException("Root element " + localName + " with name space " + nameSpaceURI + " was not found !"+m);
         else
-            log.warn(() -> "Wrong XML namespace declared on root element: " + nameSpaceURI);
+            log.warn(() -> "Wrong XML namespace declared on root element: " + nameSpaceURI+"."+m);
     }
     public static void readElements(IXmlReader reader, XMLReadConsumer c, ErrorHandler errorHandler) throws DescriptorBindingException, XMLStreamException {
         final int level=reader.getCurrentLevel();
