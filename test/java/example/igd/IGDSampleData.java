@@ -34,6 +34,7 @@ import com.distrimind.upnp_igd.model.types.UDADeviceType;
 import com.distrimind.upnp_igd.model.types.UDN;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerTwoBytes;
+import com.distrimind.upnp_igd.support.igd.PortMappingListener;
 import com.distrimind.upnp_igd.support.model.Connection;
 import com.distrimind.upnp_igd.support.model.PortMapping;
 
@@ -74,7 +75,7 @@ public class IGDSampleData {
     public static <T> LocalDevice<T> createIGDevice(Collection<LocalService<T>> services, List<LocalDevice<T>> embedded) throws Exception {
         return new LocalDevice<>(
                 new DeviceIdentity(new UDN("1111")),
-                new UDADeviceType("InternetGatewayDevice", 1),
+                new UDADeviceType(PortMappingListener.INTERNET_GATEWAY_DEVICE, 2),
                 new DeviceDetails("Example Router"),
                 services,
                 embedded
@@ -94,7 +95,7 @@ public class IGDSampleData {
     public static <T> LocalDevice<T> createWANConnectionDevice(Collection<LocalService<T>> services, List<LocalDevice<T>> embedded) throws Exception {
         return new LocalDevice<>(
                 new DeviceIdentity(new UDN("3333")),
-                new UDADeviceType("WANConnectionDevice", 1),
+                new UDADeviceType(PortMappingListener.WAN_CONNECTION_DEVICE, 1),
                 new DeviceDetails("Example WAN Connection Device"),
                 services,
                 embedded
@@ -102,8 +103,8 @@ public class IGDSampleData {
     }
 
     @UpnpService(
-            serviceId = @UpnpServiceId("WANIPConnection"),
-            serviceType = @UpnpServiceType("WANIPConnection")
+            serviceId = @UpnpServiceId(PortMappingListener.WANIP_CONNECTION),
+            serviceType = @UpnpServiceType(PortMappingListener.WANIP_CONNECTION)
     )
     @UpnpStateVariables({
             @UpnpStateVariable(name = REMOTE_HOST, datatype = STRING, sendEvents = false),

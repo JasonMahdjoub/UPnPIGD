@@ -23,6 +23,7 @@ import com.distrimind.upnp_igd.model.meta.LocalDevice;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.UDAServiceId;
+import com.distrimind.upnp_igd.support.igd.PortMappingListener;
 import com.distrimind.upnp_igd.support.igd.callback.GetExternalIP;
 import com.distrimind.upnp_igd.support.model.Connection;
 import com.distrimind.upnp_igd.support.igd.callback.GetStatusInfo;
@@ -55,7 +56,7 @@ public class ConnectionInfoTest {
         LocalDevice<TestConnection> device = IGDSampleData.createIGDevice(TestConnection.class);
         upnpService.getRegistry().addDevice(device);
 
-        Service<DeviceIdentity, LocalDevice<TestConnection>, ?> service = device.findService(new UDAServiceId("WANIPConnection"));         // DOC: DOC1
+        Service<DeviceIdentity, LocalDevice<TestConnection>, ?> service = device.findService(new UDAServiceId(PortMappingListener.WANIP_CONNECTION));         // DOC: DOC1
 
         upnpService.getControlPoint().execute(
             new GetStatusInfo(service) {
@@ -97,7 +98,7 @@ public class ConnectionInfoTest {
         LocalDevice<TestConnection> device = IGDSampleData.createIGDevice(TestConnection.class);
         upnpService.getRegistry().addDevice(device);
 
-        Service<DeviceIdentity, LocalDevice<TestConnection>, ?> service = device.findService(new UDAServiceId("WANIPConnection"));         // DOC: DOC1
+        Service<DeviceIdentity, LocalDevice<TestConnection>, ?> service = device.findService(new UDAServiceId(PortMappingListener.WANIP_CONNECTION));         // DOC: DOC1
 
         upnpService.getControlPoint().execute(
             new GetExternalIP(service) {

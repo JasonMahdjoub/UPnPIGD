@@ -21,7 +21,7 @@ Adapt into your build.gradle file, the next code :
 	    ...
 	    dependencies {
 		    ...
-		    implementation(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.3.1-STABLE')
+		    implementation(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.4.0-STABLE')
 		    //optional :
 		    implementation(group:'org.slf4j', name: 'slf4j-jdk14', version: '2.0.16')
 		    ...
@@ -35,7 +35,7 @@ Adapt into your build.gradle file, the next code :
 	    ...
 	    dependencies {
 		    ...
-		    implementation(group:'com.distrimind.upnp_igd.android', name: 'UPnPIGD-Android', version: '1.3.1-STABLE')
+		    implementation(group:'com.distrimind.upnp_igd.android', name: 'UPnPIGD-Android', version: '1.4.0-STABLE')
 		    ...
 	    }
 	    ...
@@ -88,7 +88,7 @@ Adapt into your pom.xml file, the next code :
         <dependency>
             <groupId>com.distrimind.upnp_igd.android</groupId>
             <artifactId>UPnPIGD-Android</artifactId>
-            <version>1.3.1-STABLE</version>
+            <version>1.4.0-STABLE</version>
         </dependency>
         ...
     ```

@@ -68,11 +68,42 @@ public class PortMappingListener extends DefaultRegistryListener {
 
     final private static DMLogger log = Log.getLogger(PortMappingListener.class);
 
-    public static final DeviceType IGD_DEVICE_TYPE = new UDADeviceType("InternetGatewayDevice", 1);
-    public static final DeviceType CONNECTION_DEVICE_TYPE = new UDADeviceType("WANConnectionDevice", 1);
+	public static final String INTERNET_GATEWAY_DEVICE = "InternetGatewayDevice";
+	public static final String WAN_CONNECTION_DEVICE = "WANConnectionDevice";
+	public static final String WANIP_CONNECTION = "WANIPConnection";
+	public static final String WANPPP_CONNECTION = "WANPPPConnection";
 
-    public static final ServiceType IP_SERVICE_TYPE = new UDAServiceType("WANIPConnection", 1);
-    public static final ServiceType PPP_SERVICE_TYPE = new UDAServiceType("WANPPPConnection", 1);
+	public static class Types
+	{
+		private final DeviceType igdDeviceType;
+		private final DeviceType connectionDeviceType;
+		private final ServiceType ipServiceType;
+		private final ServiceType pppServiceType;
+		private Types(int version)
+		{
+			this.igdDeviceType=new UDADeviceType(INTERNET_GATEWAY_DEVICE, version);
+			this.connectionDeviceType=new UDADeviceType(WAN_CONNECTION_DEVICE, version);
+			this.ipServiceType=new UDAServiceType(WANIP_CONNECTION, version);
+			this.pppServiceType=new UDAServiceType(WANPPP_CONNECTION, version);
+		}
+
+		public DeviceType getIgdDeviceType() {
+			return igdDeviceType;
+		}
+
+		public DeviceType getConnectionDeviceType() {
+			return connectionDeviceType;
+		}
+
+		public ServiceType getIpServiceType() {
+			return ipServiceType;
+		}
+
+		public ServiceType getPppServiceType() {
+			return pppServiceType;
+		}
+	}
+	public static final List<Types> igdTypes=List.of(new Types(2), new Types(1));
 
     protected List<PortMapping> portMappings;
 
@@ -168,33 +199,34 @@ public class PortMappingListener extends DefaultRegistryListener {
     }
 
     protected Service<?, ?, ?> discoverConnectionService(Device<?, ?, ?> device) {
-        if (!device.getType().equals(IGD_DEVICE_TYPE)) {
-            return null;
-        }
-
-        Collection<? extends Device<?, ?, ?>> connectionDevices = device.findDevices(CONNECTION_DEVICE_TYPE);
-        if (connectionDevices.isEmpty()) {
-			if (log.isDebugEnabled()) {
-				log.debug("IGD doesn't support '" + CONNECTION_DEVICE_TYPE + "': " + device);
-			}
+		if (igdTypes.stream().noneMatch(t -> t.igdDeviceType.equals(device.getType())))
 			return null;
-        }
 
-        Device<?, ?, ?> connectionDevice = connectionDevices.iterator().next();
-		if (log.isDebugEnabled()) {
-            log.debug("Using first discovered WAN connection device: " + connectionDevice);
-		}
+		for (Types t : igdTypes) {
+			Collection<? extends Device<?, ?, ?>> connectionDevices = device.findDevices(t.getConnectionDeviceType());
+			if (!connectionDevices.isEmpty()) {
+				Device<?, ?, ?> connectionDevice = connectionDevices.iterator().next();
+				if (log.isDebugEnabled()) {
+					log.debug("Using first discovered WAN connection device: " + connectionDevice);
+				}
+				Service<?, ?, ?> ipConnectionService = connectionDevice.findService(t.getIpServiceType());
+				Service<?, ?, ?> pppConnectionService = connectionDevice.findService(t.getPppServiceType());
 
-		Service<?, ?, ?> ipConnectionService = connectionDevice.findService(IP_SERVICE_TYPE);
-        Service<?, ?, ?> pppConnectionService = connectionDevice.findService(PPP_SERVICE_TYPE);
+				if (ipConnectionService == null && pppConnectionService == null) {
+					if (log.isDebugEnabled()) {
+						log.debug("IGD doesn't support IP or PPP WAN connection service: " + device);
+					}
+					continue;
+				}
 
-        if (ipConnectionService == null && pppConnectionService == null) {
-			if (log.isDebugEnabled()) {
-				log.debug("IGD doesn't support IP or PPP WAN connection service: " + device);
+				return ipConnectionService != null ? ipConnectionService : pppConnectionService;
+
 			}
 		}
-
-        return ipConnectionService != null ? ipConnectionService : pppConnectionService;
+		if (log.isDebugEnabled()) {
+			log.debug("IGD doesn't support any '" + WAN_CONNECTION_DEVICE + "': " + device);
+		}
+		return null;
     }
 
     protected void handleFailureMessage(String s) {

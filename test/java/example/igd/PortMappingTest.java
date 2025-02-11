@@ -100,7 +100,7 @@ public class PortMappingTest {
 
         upnpService.shutdown();
 
-        LocalService<TestConnection> service = device.findService(new UDAServiceId("WANIPConnection"));
+        LocalService<TestConnection> service = device.findService(new UDAServiceId(PortMappingListener.WANIP_CONNECTION));
         for (boolean test : service.getManager().getImplementation().tests) {
             assert test;
         }
@@ -126,7 +126,7 @@ public class PortMappingTest {
         LocalDevice<TestConnection> device = IGDSampleData.createIGDevice(TestConnection.class);
         upnpService.getRegistry().addDevice(device);
 
-        Service<DeviceIdentity, LocalDevice<TestConnection>, ?> service = device.findService(new UDAServiceId("WANIPConnection"));         // DOC: PM1
+        Service<DeviceIdentity, LocalDevice<TestConnection>, ?> service = device.findService(new UDAServiceId(PortMappingListener.WANIP_CONNECTION));         // DOC: PM1
 
         upnpService.getControlPoint().execute(
             new PortMappingAdd(service, desiredMapping) {
