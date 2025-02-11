@@ -262,6 +262,15 @@ public class ModelUtil {
         }
         return end-start;
     }
+    public static boolean isTrimLengthEmpty(String s)
+    {
+        int end = s.length();
+        int start = 0;
+        while ((start < end) && (s.charAt(start) <= ' ')) {
+            start++;
+        }
+        return end-start==0;
+    }
 
     public static boolean checkDescriptionXMLNotValid(String descriptorXml)
     {

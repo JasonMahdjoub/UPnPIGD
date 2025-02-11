@@ -3,8 +3,10 @@ package com.distrimind.upnp_igd.support.igd.callback;
 import com.distrimind.upnp_igd.controlpoint.ActionCallback;
 import com.distrimind.upnp_igd.controlpoint.ControlPoint;
 import com.distrimind.upnp_igd.model.action.ActionArgumentValue;
+import com.distrimind.upnp_igd.model.action.ActionException;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
 import com.distrimind.upnp_igd.model.meta.Service;
+import com.distrimind.upnp_igd.model.types.ErrorCode;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerTwoBytes;
 import com.distrimind.upnp_igd.support.model.PortMapping;
 
@@ -24,9 +26,20 @@ public abstract class PortMappingEntryGet extends ActionCallback {
 
     @Override
     public void success(ActionInvocation<?> invocation) {
-
-        Map<String, ? extends ActionArgumentValue<? extends Service<?, ?, ?>>> outputMap = invocation.getOutputMap();
-        success(new PortMapping(outputMap));
+        try {
+            Map<String, ? extends ActionArgumentValue<? extends Service<?, ?, ?>>> outputMap = invocation.getOutputMap();
+            success(new PortMapping(outputMap));
+        }
+        catch (Exception ex) {
+            invocation.setFailure(
+                    new ActionException(
+                            ErrorCode.ARGUMENT_VALUE_INVALID,
+                            "Invalid status or last error string: " + ex,
+                            ex
+                    )
+            );
+            failure(invocation, null);
+        }
     }
 
     protected abstract void success(PortMapping portMapping);

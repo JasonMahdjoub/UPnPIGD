@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.support.model;
 
+import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.model.action.ActionArgumentValue;
 import com.distrimind.upnp_igd.model.meta.Service;
 import com.distrimind.upnp_igd.model.types.UnsignedIntegerFourBytes;
@@ -96,17 +97,49 @@ public class PortMapping {
                 null
         );
     }
-
+    private static String getString(String s)
+    {
+        return s == null || "-".equals(s) || ModelUtil.isTrimLengthEmpty(s) ? null : s;
+    }
     public PortMapping(boolean enabled, UnsignedIntegerFourBytes leaseDurationSeconds, String remoteHost, UnsignedIntegerTwoBytes externalPort,
                        UnsignedIntegerTwoBytes internalPort, String internalClient, Protocol protocol, String description) {
         this.enabled = enabled;
         this.leaseDurationSeconds = leaseDurationSeconds;
-        this.remoteHost = remoteHost;
+        this.remoteHost = getString(remoteHost);
         this.externalPort = externalPort;
         this.internalPort = internalPort;
-        this.internalClient = internalClient;
+        this.internalClient = getString(internalClient);
         this.protocol = protocol;
-        this.description = description;
+        this.description = getString(description);
+
+        checkInternalData();
+    }
+    public boolean isInternalDataValid()
+    {
+        try {
+            checkInternalData();
+            return true;
+        }
+        catch (NullPointerException | IllegalArgumentException e)
+        {
+            return false;
+        }
+    }
+    public boolean isInternalDataValidForPortAdd()
+    {
+        return isInternalDataValid() && internalPort!=null;
+    }
+    private void checkInternalData() throws NullPointerException
+    {
+        if (protocol==null)
+            throw new NullPointerException();
+        if (externalPort==null)
+            throw new NullPointerException();
+        if (this.internalPort!=null)
+        {
+            if (this.internalClient==null)
+                throw new NullPointerException();
+        }
     }
 
     public boolean isEnabled() {
@@ -134,7 +167,7 @@ public class PortMapping {
     }
 
     public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost == null || "-".equals(remoteHost) || remoteHost.isEmpty() ? null : remoteHost;
+        this.remoteHost = getString(remoteHost);
     }
 
     public UnsignedIntegerTwoBytes getExternalPort() {
@@ -158,7 +191,7 @@ public class PortMapping {
     }
 
     public void setInternalClient(String internalClient) {
-        this.internalClient = internalClient;
+        this.internalClient = getString(internalClient);
     }
 
     public Protocol getProtocol() {
@@ -178,7 +211,7 @@ public class PortMapping {
     }
 
     public void setDescription(String description) {
-        this.description = description == null || "-".equals(description) || description.isEmpty() ? null : description;
+        this.description = getString(description);
     }
 
     @Override

@@ -15,6 +15,7 @@
 
 package com.distrimind.upnp_igd.support.igd;
 
+import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.support.igd.callback.PortMappingAdd;
 import com.distrimind.upnp_igd.support.igd.callback.PortMappingDelete;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
@@ -130,6 +131,8 @@ public class PortMappingListener extends DefaultRegistryListener {
 
 		final List<PortMapping> activeForService = new ArrayList<>();
         for (final PortMapping pm : portMappings) {
+			if (!pm.isInternalDataValidForPortAdd())
+				continue;
             new PortMappingAdd(connectionService, registry.getUpnpService().getControlPoint(), pm) {
 
                 @Override

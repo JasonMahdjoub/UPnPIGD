@@ -14,6 +14,8 @@
  */
 package example.igd;
 
+import com.distrimind.flexilogxml.FlexiLogXML;
+import com.distrimind.flexilogxml.log.Level;
 import com.distrimind.upnp_igd.UpnpService;
 import com.distrimind.upnp_igd.mock.MockUpnpService;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;
@@ -160,6 +162,7 @@ public class PortMappingTest {
                     public void failure(ActionInvocation<?> invocation,
                                         UpnpResponse operation,
                                         String defaultMsg) {
+                        FlexiLogXML.log(Level.ERROR, invocation.getFailure());
                         // Something is wrong
                     }
                 }
@@ -181,7 +184,7 @@ public class PortMappingTest {
                 public void failure(ActionInvocation<?> invocation,
                                     UpnpResponse operation,
                                     String defaultMsg) {
-                    // Something is wrong
+                    FlexiLogXML.log(Level.ERROR, invocation.getFailure());
                 }
             }
         );                                                                                      // DOC: PM1
