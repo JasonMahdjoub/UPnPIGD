@@ -204,7 +204,7 @@ public class XMLUtil {
 
     public static void readRootElement(IXmlReader reader, XMLReadConsumer c, ErrorHandler errorHandler, String nameSpaceURI, String localName, DMLogger log) throws XMLStreamException, DescriptorBindingException {
         boolean rootFound=false;
-        String namespaceFound=null;
+
         try {
             final int level = reader.getCurrentLevel();
 
@@ -215,7 +215,7 @@ public class XMLUtil {
                         String nodeName = reader.getLocalName();
                         boolean nodeOk=nodeName.equals(localName);
                         rootFound|=nodeOk;
-                        if (nodeOk && ((nameSpaceURI!=null && reader.getNamespaceURI() != null && nameSpaceURI.equals(namespaceFound=reader.getNamespaceURI()))) || nameSpaceURI==null) {
+                        if (nodeOk && ((nameSpaceURI!=null && reader.getNamespaceURI() != null && nameSpaceURI.equals(reader.getNamespaceURI()))) || nameSpaceURI==null) {
                             c.accept(reader);
                             while (reader.getCurrentLevel() > level && reader.hasNext()) {
                                 if (reader.next() == XMLType.END_DOCUMENT)
@@ -239,11 +239,10 @@ public class XMLUtil {
             errorHandler.error(e2);
             throw e2;
         }
-        String m=namespaceFound==null?"":" Found instead : "+namespaceFound;
         if (!rootFound)
-            throw new DescriptorBindingException("Root element " + localName + " with name space " + nameSpaceURI + " was not found !"+m);
+            throw new DescriptorBindingException("Root element " + localName + " with name space " + nameSpaceURI + " was not found !");
         else
-            log.warn(() -> "Wrong XML namespace declared on root element: " + nameSpaceURI+"."+m);
+            log.warn(() -> "Wrong XML namespace declared on root element: " + nameSpaceURI);
     }
     public static void readElements(IXmlReader reader, XMLReadConsumer c, ErrorHandler errorHandler) throws DescriptorBindingException, XMLStreamException {
         final int level=reader.getCurrentLevel();
