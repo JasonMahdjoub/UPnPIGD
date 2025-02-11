@@ -15,7 +15,6 @@
 
 package com.distrimind.upnp_igd.support.igd;
 
-import com.distrimind.upnp_igd.model.ModelUtil;
 import com.distrimind.upnp_igd.support.igd.callback.PortMappingAdd;
 import com.distrimind.upnp_igd.support.igd.callback.PortMappingDelete;
 import com.distrimind.upnp_igd.model.action.ActionInvocation;

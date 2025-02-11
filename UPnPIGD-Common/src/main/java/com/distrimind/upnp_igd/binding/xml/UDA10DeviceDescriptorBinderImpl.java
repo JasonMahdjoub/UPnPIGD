@@ -447,9 +447,7 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder, 
 
         try {
             log.debug(() -> "Generating DOM from device model: " + deviceModel);
-            return XMLUtil.generateXMLToString(xmlStreamWriter -> {
-                generateRoot(namespace, deviceModel, xmlStreamWriter, info);
-            });
+            return XMLUtil.generateXMLToString(xmlStreamWriter -> generateRoot(namespace, deviceModel, xmlStreamWriter, info));
 
         } catch (Exception ex) {
             throw DescriptorBindingException.getDescriptorBindingException("Could not generate device descriptor: " + ex.getMessage(), ex);

@@ -24,7 +24,6 @@ import com.distrimind.upnp_igd.transport.spi.UpnpStream;
 import com.distrimind.upnp_igd.util.Exceptions;
 import com.distrimind.upnp_igd.util.io.IO;
 import io.undertow.server.BlockingHttpExchange;
-import io.undertow.server.DefaultResponseListener;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HeaderValues;

@@ -13,9 +13,7 @@
 
 package com.distrimind.upnp_igd.model.types;
 
-import com.distrimind.flexilogxml.ReflectionTools;
 import com.distrimind.upnp_igd.model.ModelUtil;
-import com.distrimind.upnp_igd.util.Reflections;
 
 
 import java.nio.charset.StandardCharsets;

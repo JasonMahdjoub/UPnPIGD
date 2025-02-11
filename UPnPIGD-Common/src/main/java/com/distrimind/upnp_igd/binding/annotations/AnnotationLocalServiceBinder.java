@@ -15,7 +15,6 @@
 
 package com.distrimind.upnp_igd.binding.annotations;
 
-import com.distrimind.flexilogxml.ReflectionTools;
 import com.distrimind.upnp_igd.binding.LocalServiceBindingException;
 import com.distrimind.upnp_igd.binding.LocalServiceBinder;
 import com.distrimind.upnp_igd.model.ValidationError;

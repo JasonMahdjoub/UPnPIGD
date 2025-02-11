@@ -364,9 +364,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
             if (log.isDebugEnabled()) {
                 log.debug("Generating XML descriptor from service model: " + service);
             }
-            return XMLUtil.generateXMLToString(xmlStreamWriter -> {
-                generateScpd(service, xmlStreamWriter);
-            });
+            return XMLUtil.generateXMLToString(xmlStreamWriter -> generateScpd(service, xmlStreamWriter));
 
         } catch (Exception ex) {
             throw DescriptorBindingException.getDescriptorBindingException("Could not generate service descriptor: " + ex.getMessage(), ex);

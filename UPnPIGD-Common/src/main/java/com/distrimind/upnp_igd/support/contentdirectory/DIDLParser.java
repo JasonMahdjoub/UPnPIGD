@@ -290,9 +290,7 @@ public class DIDLParser extends SAXParser {
 
     protected String buildXMLString(DIDLContent content, boolean nestedItems) throws Exception {
 
-        return XMLUtil.generateXMLToString(xmlStreamWriter -> {
-            generateRoot(content, xmlStreamWriter, nestedItems);
-        });
+        return XMLUtil.generateXMLToString(xmlStreamWriter -> generateRoot(content, xmlStreamWriter, nestedItems));
     }
 
     protected void generateRoot(DIDLContent content, IXmlWriter xmlWriter, boolean nestedItems) throws XMLStreamException {

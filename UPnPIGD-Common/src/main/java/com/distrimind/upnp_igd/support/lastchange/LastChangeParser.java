@@ -187,9 +187,7 @@ public abstract class LastChangeParser extends SAXParser {
     }
 
     protected String buildXMLString(Event event) throws Exception {
-        return XMLUtil.generateXMLToString(xmlStreamWriter -> {
-            generateRoot(event, xmlStreamWriter);
-        });
+        return XMLUtil.generateXMLToString(xmlStreamWriter -> generateRoot(event, xmlStreamWriter));
     }
 
     protected void generateRoot(Event event, IXmlWriter xmlWriter) throws XMLStreamException {

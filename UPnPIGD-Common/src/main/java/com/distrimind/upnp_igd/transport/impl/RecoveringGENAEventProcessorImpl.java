@@ -18,7 +18,6 @@ package com.distrimind.upnp_igd.transport.impl;
 import com.distrimind.upnp_igd.model.UnsupportedDataException;
 import com.distrimind.upnp_igd.model.XMLUtil;
 import com.distrimind.upnp_igd.model.message.gena.IncomingEventRequestMessage;
-import com.distrimind.upnp_igd.transport.spi.GENAEventProcessor;
 import com.distrimind.upnp_igd.xml.XmlPullParserUtils;
 
 import jakarta.enterprise.inject.Alternative;

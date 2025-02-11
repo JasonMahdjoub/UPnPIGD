@@ -16,7 +16,6 @@
 package com.distrimind.upnp_igd.transport.impl;
 
 import com.distrimind.upnp_igd.Log;
-import com.distrimind.upnp_igd.binding.xml.Descriptor;
 import com.distrimind.upnp_igd.binding.xml.DescriptorBindingException;
 import com.distrimind.upnp_igd.model.Constants;
 import com.distrimind.upnp_igd.model.XMLUtil;
@@ -91,9 +90,7 @@ public class GENAEventProcessorImpl implements GENAEventProcessor, XMLUtil.Error
         try {
 
             XMLUtil.readXML(xmlReader -> {
-                XMLUtil.readRootElement(xmlReader, xmlReader2 -> {
-                    readProperties(xmlReader2, requestMessage);
-                }, this, Constants.NS_UPNP_EVENT_10, "propertyset", log);
+                XMLUtil.readRootElement(xmlReader, xmlReader2 -> readProperties(xmlReader2, requestMessage), this, Constants.NS_UPNP_EVENT_10, "propertyset", log);
 
                 return null;
             }, this, body);

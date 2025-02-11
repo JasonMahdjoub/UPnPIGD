@@ -17,10 +17,6 @@ package com.distrimind.upnp_igd.util;
 
 
 
-import com.distrimind.flexilogxml.FlexiLogXML;
-
-import com.distrimind.flexilogxml.log.Level;
-
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;

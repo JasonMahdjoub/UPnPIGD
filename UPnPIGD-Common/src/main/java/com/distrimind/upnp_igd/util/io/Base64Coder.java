@@ -1,5 +1,9 @@
 package com.distrimind.upnp_igd.util.io;
 
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
+import com.distrimind.upnp_igd.model.action.AbstractActionExecutor;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -152,7 +156,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class Base64Coder
 {
-    
+    final private static DMLogger log = Log.getLogger(Base64Coder.class);
 /* ********  P U B L I C   F I E L D S  ******** */   
     
     
@@ -1249,7 +1253,7 @@ public class Base64Coder
 					bytes = baos.toByteArray();
 
 				} catch (IOException e) {
-					e.printStackTrace();
+                    log.error(e);
 					// Just return originally-decoded bytes
 				}
 
