@@ -15,6 +15,10 @@
 
 package com.distrimind.upnp_igd.model.message.gena;
 
+import com.distrimind.flexilogxml.log.DMLogger;
+import com.distrimind.upnp_igd.Log;
+import com.distrimind.upnp_igd.model.ModelUtil;
+import com.distrimind.upnp_igd.model.message.IUpnpHeaders;
 import com.distrimind.upnp_igd.model.message.StreamRequestMessage;
 import com.distrimind.upnp_igd.model.message.header.CallbackHeader;
 import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
@@ -23,15 +27,18 @@ import com.distrimind.upnp_igd.model.message.header.TimeoutHeader;
 import com.distrimind.upnp_igd.model.message.header.SubscriptionIdHeader;
 import com.distrimind.upnp_igd.model.meta.LocalService;
 
-import java.net.URL;
+import java.net.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Christian Bauer
  */
 public class IncomingSubscribeRequestMessage extends StreamRequestMessage {
+    final private static DMLogger log = Log.getLogger(IncomingSubscribeRequestMessage.class);
 
     final private LocalService<?> service;
+    private List<URL> callbackURLs=null;
 
     public IncomingSubscribeRequestMessage(StreamRequestMessage source, LocalService<?>  service) {
         super(source);
@@ -42,10 +49,38 @@ public class IncomingSubscribeRequestMessage extends StreamRequestMessage {
         return service;
     }
 
-    public List<URL> getCallbackURLs() {
-        CallbackHeader header = getHeaders().getFirstHeader(UpnpHeader.Type.CALLBACK, CallbackHeader.class);
-        return header != null ? header.getValue() : null;
+    static List<URL> generateCallbackURLs(CallbackHeader header)
+    {
+        List<URL> callbackURLs=new ArrayList<>();
+        if (header != null)
+        {
+            for (URL url : header.getValue()) {
+                try {
+                    InetAddress ia = InetAddress.getByName(url.getHost());
+                    if (ia != null) {
+                        if (!ModelUtil.isLocalAddressReachableFromThisMachine(ia)) {
+                            log.trace("Host not accepted in IncomingSubscribeRequestMessage class");
+                        } else {
+                            callbackURLs.add(url);
+                        }
+                    }
+                } catch (UnknownHostException ignored) {
+                    log.trace("URL not found in IncomingSubscribeRequestMessage class");
+                } catch (SocketException e) {
+                    log.trace("Cannot parse network interfaces", e);
+                }
+            }
+        }
+        return callbackURLs;
     }
+
+    public List<URL> getCallbackURLs() {
+        if (callbackURLs==null) {
+            callbackURLs=generateCallbackURLs(getHeaders().getFirstHeader(UpnpHeader.Type.CALLBACK, CallbackHeader.class));
+        }
+        return callbackURLs;
+    }
+
 
     public boolean hasNotificationHeader() {
         return getHeaders().getFirstHeader(UpnpHeader.Type.NT, NTEventHeader.class) != null;
@@ -59,5 +94,11 @@ public class IncomingSubscribeRequestMessage extends StreamRequestMessage {
     public String getSubscriptionId() {
         SubscriptionIdHeader header = getHeaders().getFirstHeader(UpnpHeader.Type.SID, SubscriptionIdHeader.class);
         return header != null ? header.getValue() : null;
+    }
+
+    @Override
+    public void setHeaders(IUpnpHeaders headers) {
+        super.setHeaders(headers);
+        callbackURLs=null;
     }
 }

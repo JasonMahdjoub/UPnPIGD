@@ -18,8 +18,7 @@ package com.distrimind.upnp_igd.model;
 import com.distrimind.upnp_igd.util.Reflections;
 
 import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import java.net.*;
 import java.util.*;
 
 /**
@@ -241,7 +240,7 @@ public class ModelUtil {
         try {
             Enumeration<NetworkInterface> interfaceEnumeration = NetworkInterface.getNetworkInterfaces();
             for (NetworkInterface iface : Collections.list(interfaceEnumeration)) {
-                if (!iface.isLoopback() && iface.isUp() && iface.getHardwareAddress() != null) {
+                if (isValidInterface(iface)) {
                     return iface.getHardwareAddress();
                 }
             }
@@ -249,6 +248,53 @@ public class ModelUtil {
             throw new RuntimeException("Could not discover first network interface hardware address");
         }
         throw new RuntimeException("Could not discover first network interface hardware address");
+    }
+    private static boolean isValidInterface(NetworkInterface ni) throws SocketException {
+        return !ni.isLoopback() && ni.isUp() && ni.getHardwareAddress()!=null;
+    }
+    public static boolean isLocalAddress(InetAddress inetAddress)
+    {
+        return inetAddress.isAnyLocalAddress() || inetAddress.isLinkLocalAddress() || inetAddress.isSiteLocalAddress();
+    }
+    public static boolean isLocalAddressReachableFromThisMachine(InetAddress inetAddress) throws SocketException {
+        if (!isLocalAddress(inetAddress))
+            return false;
+        Enumeration<NetworkInterface> e=NetworkInterface.getNetworkInterfaces();
+        while (e.hasMoreElements())
+        {
+            NetworkInterface ni=e.nextElement();
+            if (isValidInterface(ni))
+            {
+                for (InterfaceAddress interfaceAddress : ni.getInterfaceAddresses())
+                {
+                    if ((interfaceAddress.getAddress() instanceof Inet4Address && inetAddress instanceof Inet4Address)
+                            ||
+                            (interfaceAddress.getAddress() instanceof Inet6Address && inetAddress instanceof Inet6Address)) {
+                        if (isSameLocalNetwork(interfaceAddress.getAddress().getAddress(), inetAddress.getAddress(), interfaceAddress.getNetworkPrefixLength()))
+                            return true;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
+    public static boolean isSameLocalNetwork(byte[] addr1, byte[] addr2, short network_prefix_length) {
+        int length = network_prefix_length / 8;
+        for (int i = 0; i < length; i++) {
+            if (addr1[i] != addr2[i])
+                return false;
+        }
+
+        int mod = network_prefix_length % 8;
+        if (mod != 0) {
+            int b1 = ((int) addr1[length]) & 0xff;
+            int b2 = ((int) addr2[length]) & 0xff;
+            int filter = (1 << (8 - mod)) - 1;
+            return (b1 | filter) == (b2 | filter);
+        } else
+            return true;
+
     }
     public static int getTrimLength(String s)
     {
