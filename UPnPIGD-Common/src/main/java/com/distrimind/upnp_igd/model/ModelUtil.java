@@ -254,16 +254,20 @@ public class ModelUtil {
     }
     public static boolean isLocalAddress(InetAddress inetAddress)
     {
-        return inetAddress.isAnyLocalAddress() || inetAddress.isLinkLocalAddress() || inetAddress.isSiteLocalAddress();
+        return inetAddress.isLoopbackAddress() || inetAddress.isLinkLocalAddress() || inetAddress.isSiteLocalAddress();
     }
     public static boolean isLocalAddressReachableFromThisMachine(InetAddress inetAddress) throws SocketException {
         if (!isLocalAddress(inetAddress))
             return false;
+
         Enumeration<NetworkInterface> e=NetworkInterface.getNetworkInterfaces();
+        boolean lp=inetAddress.isLoopbackAddress();
         while (e.hasMoreElements())
         {
             NetworkInterface ni=e.nextElement();
-            if (isValidInterface(ni))
+            if (lp && ni.isLoopback() && ni.isUp())
+                return true;
+            else if (isValidInterface(ni))
             {
                 for (InterfaceAddress interfaceAddress : ni.getInterfaceAddresses())
                 {

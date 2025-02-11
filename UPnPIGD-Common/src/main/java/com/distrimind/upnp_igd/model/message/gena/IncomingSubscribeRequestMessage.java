@@ -59,15 +59,15 @@ public class IncomingSubscribeRequestMessage extends StreamRequestMessage {
                     InetAddress ia = InetAddress.getByName(url.getHost());
                     if (ia != null) {
                         if (!ModelUtil.isLocalAddressReachableFromThisMachine(ia)) {
-                            log.trace("Host not accepted in IncomingSubscribeRequestMessage class");
+                            log.debug("Host not accepted in IncomingSubscribeRequestMessage class");
                         } else {
                             callbackURLs.add(url);
                         }
                     }
                 } catch (UnknownHostException ignored) {
-                    log.trace("URL not found in IncomingSubscribeRequestMessage class");
+                    log.debug("URL not found in IncomingSubscribeRequestMessage class");
                 } catch (SocketException e) {
-                    log.trace("Cannot parse network interfaces", e);
+                    log.debug("Cannot parse network interfaces", e);
                 }
             }
         }
