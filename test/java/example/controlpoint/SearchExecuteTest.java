@@ -14,26 +14,26 @@
  */
 package example.controlpoint;
 
-import com.distrimind.upnp_igd.mock.MockUpnpService;
-import com.distrimind.upnp_igd.model.message.UpnpMessage;
-import com.distrimind.upnp_igd.model.message.header.DeviceTypeHeader;
-import com.distrimind.upnp_igd.model.message.header.HostHeader;
-import com.distrimind.upnp_igd.model.message.header.MANHeader;
-import com.distrimind.upnp_igd.model.message.header.MXHeader;
-import com.distrimind.upnp_igd.model.message.header.RootDeviceHeader;
-import com.distrimind.upnp_igd.model.message.header.STAllHeader;
-import com.distrimind.upnp_igd.model.message.header.ServiceTypeHeader;
-import com.distrimind.upnp_igd.model.message.header.UDADeviceTypeHeader;
-import com.distrimind.upnp_igd.model.message.header.UDAServiceTypeHeader;
-import com.distrimind.upnp_igd.model.message.header.UDNHeader;
-import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
-import com.distrimind.upnp_igd.model.types.DeviceType;
-import com.distrimind.upnp_igd.model.types.NotificationSubtype;
-import com.distrimind.upnp_igd.model.types.ServiceType;
-import com.distrimind.upnp_igd.model.types.UDADeviceType;
-import com.distrimind.upnp_igd.model.types.UDAServiceType;
-import com.distrimind.upnp_igd.model.types.UDN;
-import com.distrimind.upnp_igd.protocol.async.SendingSearch;
+import com.distrimind.upnp.mock.MockUpnpService;
+import com.distrimind.upnp.model.message.UpnpMessage;
+import com.distrimind.upnp.model.message.header.DeviceTypeHeader;
+import com.distrimind.upnp.model.message.header.HostHeader;
+import com.distrimind.upnp.model.message.header.MANHeader;
+import com.distrimind.upnp.model.message.header.MXHeader;
+import com.distrimind.upnp.model.message.header.RootDeviceHeader;
+import com.distrimind.upnp.model.message.header.STAllHeader;
+import com.distrimind.upnp.model.message.header.ServiceTypeHeader;
+import com.distrimind.upnp.model.message.header.UDADeviceTypeHeader;
+import com.distrimind.upnp.model.message.header.UDAServiceTypeHeader;
+import com.distrimind.upnp.model.message.header.UDNHeader;
+import com.distrimind.upnp.model.message.header.UpnpHeader;
+import com.distrimind.upnp.model.types.DeviceType;
+import com.distrimind.upnp.model.types.NotificationSubtype;
+import com.distrimind.upnp.model.types.ServiceType;
+import com.distrimind.upnp.model.types.UDADeviceType;
+import com.distrimind.upnp.model.types.UDAServiceType;
+import com.distrimind.upnp.model.types.UDN;
+import com.distrimind.upnp.protocol.async.SendingSearch;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

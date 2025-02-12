@@ -14,7 +14,7 @@
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.distrimind.upnp_igd.android.transport.impl.undertow;
+package com.distrimind.upnp.android.transport.impl.undertow;
 
 import org.wildfly.common.context.ContextManager;
 import org.wildfly.common.function.*;

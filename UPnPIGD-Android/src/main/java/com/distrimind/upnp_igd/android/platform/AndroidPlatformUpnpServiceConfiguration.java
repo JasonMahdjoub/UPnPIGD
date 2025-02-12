@@ -14,25 +14,25 @@
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.distrimind.upnp_igd.android.platform;
+package com.distrimind.upnp.android.platform;
 
 import android.os.Build;
-import com.distrimind.upnp_igd.android.AndroidNetworkAddressFactory;
-import com.distrimind.upnp_igd.android.transport.impl.undertow.UndertowStreamClientConfigurationImpl;
-import com.distrimind.upnp_igd.android.transport.impl.undertow.UndertowStreamClientImpl;
-import com.distrimind.upnp_igd.android.transport.impl.undertow.UndertowStreamServerImpl;
-import com.distrimind.upnp_igd.android.transport.impl.undertow.Worker;
-import com.distrimind.upnp_igd.binding.xml.DeviceDescriptorBinder;
-import com.distrimind.upnp_igd.binding.xml.RecoveringUDA10DeviceDescriptorBinderImpl;
-import com.distrimind.upnp_igd.model.ModelUtil;
-import com.distrimind.upnp_igd.model.Namespace;
-import com.distrimind.upnp_igd.model.ServerClientTokens;
-import com.distrimind.upnp_igd.platform.Platform;
-import com.distrimind.upnp_igd.platform.PlatformUpnpServiceConfiguration;
-import com.distrimind.upnp_igd.transport.impl.RecoveringGENAEventProcessorImpl;
-import com.distrimind.upnp_igd.transport.impl.RecoveringSOAPActionProcessorImpl;
-import com.distrimind.upnp_igd.transport.impl.StreamServerConfigurationImpl;
-import com.distrimind.upnp_igd.transport.spi.*;
+import com.distrimind.upnp.android.AndroidNetworkAddressFactory;
+import com.distrimind.upnp.android.transport.impl.undertow.UndertowStreamClientConfigurationImpl;
+import com.distrimind.upnp.android.transport.impl.undertow.UndertowStreamClientImpl;
+import com.distrimind.upnp.android.transport.impl.undertow.UndertowStreamServerImpl;
+import com.distrimind.upnp.android.transport.impl.undertow.Worker;
+import com.distrimind.upnp.binding.xml.DeviceDescriptorBinder;
+import com.distrimind.upnp.binding.xml.RecoveringUDA10DeviceDescriptorBinderImpl;
+import com.distrimind.upnp.model.ModelUtil;
+import com.distrimind.upnp.model.Namespace;
+import com.distrimind.upnp.model.ServerClientTokens;
+import com.distrimind.upnp.platform.Platform;
+import com.distrimind.upnp.platform.PlatformUpnpServiceConfiguration;
+import com.distrimind.upnp.transport.impl.RecoveringGENAEventProcessorImpl;
+import com.distrimind.upnp.transport.impl.RecoveringSOAPActionProcessorImpl;
+import com.distrimind.upnp.transport.impl.StreamServerConfigurationImpl;
+import com.distrimind.upnp.transport.spi.*;
 import org.xnio.XnioWorker;
 
 import java.io.IOException;

@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-package com.distrimind.upnp_igd.android.transport.spi;
+package com.distrimind.upnp.android.transport.spi;
 
 
 

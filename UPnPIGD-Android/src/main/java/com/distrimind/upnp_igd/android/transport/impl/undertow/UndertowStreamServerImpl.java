@@ -14,17 +14,17 @@
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.distrimind.upnp_igd.android.transport.impl.undertow;
+package com.distrimind.upnp.android.transport.impl.undertow;
 
 import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
-import com.distrimind.upnp_igd.model.message.Connection;
-import com.distrimind.upnp_igd.model.types.HostPort;
-import com.distrimind.upnp_igd.transport.Router;
-import com.distrimind.upnp_igd.transport.impl.StreamServerConfigurationImpl;
-import com.distrimind.upnp_igd.transport.spi.InitializationException;
-import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
-import com.distrimind.upnp_igd.transport.spi.StreamServer;
+import com.distrimind.upnp.Log;
+import com.distrimind.upnp.model.message.Connection;
+import com.distrimind.upnp.model.types.HostPort;
+import com.distrimind.upnp.transport.Router;
+import com.distrimind.upnp.transport.impl.StreamServerConfigurationImpl;
+import com.distrimind.upnp.transport.spi.InitializationException;
+import com.distrimind.upnp.transport.spi.NetworkAddressFactory;
+import com.distrimind.upnp.transport.spi.StreamServer;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;

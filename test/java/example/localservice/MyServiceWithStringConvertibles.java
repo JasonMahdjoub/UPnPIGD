@@ -14,12 +14,12 @@
  */
 package example.localservice;
 
-import com.distrimind.upnp_igd.binding.annotations.*;
+import com.distrimind.upnp.binding.annotations.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
-import com.distrimind.upnp_igd.model.types.csv.CSV;        // DOC:INC1
-import com.distrimind.upnp_igd.model.types.csv.CSVInteger;
+import com.distrimind.upnp.model.types.csv.CSV;        // DOC:INC1
+import com.distrimind.upnp.model.types.csv.CSVInteger;
 
 @UpnpService(
         serviceId = @UpnpServiceId("MyService"),

@@ -15,7 +15,7 @@
         </p>
 
         <dl>
-            <dt><code>com.distrimind.upnp_igd.transport.impl.StreamClientImpl</code> (default)</dt>
+            <dt><code>com.distrimind.upnp.transport.impl.StreamClientImpl</code> (default)</dt>
             <dd>
                 This implementation uses the JDK's <code>HTTPURLConnection</code>, it doesn't require any additional
                 libraries. Note that UPnPIGD has to customize (with an ugly hack, really) the VM's
@@ -27,7 +27,7 @@
                 implementation. Note that this implementation does <em>NOT WORK</em> on Android, the
                 <code>URLStreamHandlerFactory</code> can't be patched on Android!
             </dd>
-            <dt><code>com.distrimind.upnp_igd.android.transport.impl.jetty.StreamClientImpl</code></dt>
+            <dt><code>com.distrimind.upnp.android.transport.impl.jetty.StreamClientImpl</code></dt>
             <dd>
                 This implementation is based on the <em>Jetty 8</em> HTTP client, you need the artifact
                 <code>org.eclipse.jetty:jetty-client:8.1</code> on your classpath to use it. This implementation works
@@ -41,13 +41,13 @@
         </p>
 
         <dl>
-            <dt><code>com.distrimind.upnp_igd.desktop.transport.impl.StreamServerImpl</code> (default)</dt>
+            <dt><code>com.distrimind.upnp.desktop.transport.impl.StreamServerImpl</code> (default)</dt>
             <dd>
                 This implementation uses the built-in webserver of the Sun JDK 6
                 (<code>com.sun.net.httpserver.HttpServer</code>), hence, it does <em>NOT WORK</em> in an
                 Android environment.
             </dd>
-            <dt><code>com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerImpl</code></dt>
+            <dt><code>com.distrimind.upnp.android.transport.impl.AsyncServletStreamServerImpl</code></dt>
             <dd>
                 This implementation is based on the standard <em>Servlet 3.0</em> API and can be used in any environment
                 with a compatible servlet container. It requires a <code>ServletContainerAdapter</code> to integrate
@@ -76,8 +76,8 @@ public class MyUpnpServiceConfiguration extends DefaultUpnpServiceConfiguration 
 
     @Override
     public StreamClient createStreamClient() {
-        return new com.distrimind.upnp_igd.android.transport.impl.jetty.StreamClientImpl(
-            new com.distrimind.upnp_igd.android.transport.impl.jetty.StreamClientConfigurationImpl(
+        return new com.distrimind.upnp.android.transport.impl.jetty.StreamClientImpl(
+            new com.distrimind.upnp.android.transport.impl.jetty.StreamClientConfigurationImpl(
                 getSyncProtocolExecutor()
             )
         );
@@ -85,9 +85,9 @@ public class MyUpnpServiceConfiguration extends DefaultUpnpServiceConfiguration 
 
     @Override
     public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
-        return new com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerImpl(
-            new com.distrimind.upnp_igd.android.transport.impl.AsyncServletStreamServerConfigurationImpl(
-                com.distrimind.upnp_igd.transport.impl.jetty.JettyServletContainer.INSTANCE,
+        return new com.distrimind.upnp.android.transport.impl.AsyncServletStreamServerImpl(
+            new com.distrimind.upnp.android.transport.impl.AsyncServletStreamServerConfigurationImpl(
+                com.distrimind.upnp.transport.impl.jetty.JettyServletContainer.INSTANCE,
                 networkAddressFactory.getStreamListenPort()
             )
         );

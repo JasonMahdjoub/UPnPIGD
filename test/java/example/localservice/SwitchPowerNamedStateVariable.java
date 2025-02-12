@@ -14,7 +14,7 @@
  */
 package example.localservice;
 
-import com.distrimind.upnp_igd.binding.annotations.*;
+import com.distrimind.upnp.binding.annotations.*;
 
 /**
  * Explicitly naming related state variables

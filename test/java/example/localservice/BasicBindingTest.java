@@ -14,22 +14,22 @@
  */
 package example.localservice;
 
-import com.distrimind.upnp_igd.binding.LocalServiceBinder;
-import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
-import com.distrimind.upnp_igd.model.DefaultServiceManager;
-import com.distrimind.upnp_igd.model.action.ActionInvocation;
-import com.distrimind.upnp_igd.model.meta.ActionArgument;
-import com.distrimind.upnp_igd.model.meta.DeviceDetails;
-import com.distrimind.upnp_igd.model.meta.LocalDevice;
-import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.types.Datatype;
-import com.distrimind.upnp_igd.model.types.UDADeviceType;
-import com.distrimind.upnp_igd.model.types.UDAServiceId;
-import com.distrimind.upnp_igd.model.types.UDAServiceType;
-import com.distrimind.upnp_igd.test.data.SampleData;
-import com.distrimind.upnp_igd.test.data.SampleServiceOne;
-import com.distrimind.upnp_igd.test.gena.OutgoingSubscriptionLifecycleTest;
-import com.distrimind.upnp_igd.test.local.LocalActionInvocationEnumTest;
+import com.distrimind.upnp.binding.LocalServiceBinder;
+import com.distrimind.upnp.binding.annotations.AnnotationLocalServiceBinder;
+import com.distrimind.upnp.model.DefaultServiceManager;
+import com.distrimind.upnp.model.action.ActionInvocation;
+import com.distrimind.upnp.model.meta.ActionArgument;
+import com.distrimind.upnp.model.meta.DeviceDetails;
+import com.distrimind.upnp.model.meta.LocalDevice;
+import com.distrimind.upnp.model.meta.LocalService;
+import com.distrimind.upnp.model.types.Datatype;
+import com.distrimind.upnp.model.types.UDADeviceType;
+import com.distrimind.upnp.model.types.UDAServiceId;
+import com.distrimind.upnp.model.types.UDAServiceType;
+import com.distrimind.upnp.test.data.SampleData;
+import com.distrimind.upnp.test.data.SampleServiceOne;
+import com.distrimind.upnp.test.gena.OutgoingSubscriptionLifecycleTest;
+import com.distrimind.upnp.test.local.LocalActionInvocationEnumTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

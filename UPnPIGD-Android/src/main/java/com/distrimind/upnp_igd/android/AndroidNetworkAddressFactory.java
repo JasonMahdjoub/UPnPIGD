@@ -13,10 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-package com.distrimind.upnp_igd.android;
+package com.distrimind.upnp.android;
 
-import com.distrimind.upnp_igd.transport.impl.NetworkAddressFactoryImpl;
-import com.distrimind.upnp_igd.transport.spi.InitializationException;
+import com.distrimind.upnp.transport.impl.NetworkAddressFactoryImpl;
+import com.distrimind.upnp.transport.spi.InitializationException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
@@ -26,7 +26,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
+import com.distrimind.upnp.Log;
 
 /**
  * This factory tries to work around and patch some Android bugs.

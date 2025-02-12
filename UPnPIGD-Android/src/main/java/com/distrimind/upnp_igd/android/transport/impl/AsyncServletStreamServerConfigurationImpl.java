@@ -13,12 +13,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-package com.distrimind.upnp_igd.android.transport.impl;
+package com.distrimind.upnp.android.transport.impl;
 
-import com.distrimind.upnp_igd.transport.Router;
-import com.distrimind.upnp_igd.android.transport.spi.ServletContainerAdapter;
-import com.distrimind.upnp_igd.transport.spi.StreamServerConfiguration;
-import com.distrimind.upnp_igd.transport.spi.UpnpStream;
+import com.distrimind.upnp.transport.Router;
+import com.distrimind.upnp.android.transport.spi.ServletContainerAdapter;
+import com.distrimind.upnp.transport.spi.StreamServerConfiguration;
+import com.distrimind.upnp.transport.spi.UpnpStream;
 
 /**
  * Settings for the async Servlet 3.0 implementation.

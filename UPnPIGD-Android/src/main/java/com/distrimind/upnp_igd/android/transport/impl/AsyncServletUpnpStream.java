@@ -13,13 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-package com.distrimind.upnp_igd.android.transport.impl;
+package com.distrimind.upnp.android.transport.impl;
 
-import com.distrimind.upnp_igd.model.message.*;
-import com.distrimind.upnp_igd.protocol.ProtocolFactory;
-import com.distrimind.upnp_igd.transport.spi.UpnpStream;
-import com.distrimind.upnp_igd.util.Exceptions;
-import com.distrimind.upnp_igd.util.io.IO;
+import com.distrimind.upnp.model.message.*;
+import com.distrimind.upnp.protocol.ProtocolFactory;
+import com.distrimind.upnp.transport.spi.UpnpStream;
+import com.distrimind.upnp.util.Exceptions;
+import com.distrimind.upnp.util.io.IO;
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncEvent;
 import jakarta.servlet.AsyncListener;
@@ -35,7 +35,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
+import com.distrimind.upnp.Log;
 
 /**
  * Implementation based on Servlet 3.0 API.

@@ -15,18 +15,18 @@
 package example.controlpoint;
 
 import example.binarylight.BinaryLightSampleData;
-import com.distrimind.upnp_igd.binding.LocalServiceBinder;
-import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
-import com.distrimind.upnp_igd.controlpoint.ActionCallback;
-import com.distrimind.upnp_igd.mock.MockUpnpService;
-import com.distrimind.upnp_igd.model.DefaultServiceManager;
-import com.distrimind.upnp_igd.model.action.ActionCancelledException;
-import com.distrimind.upnp_igd.model.action.ActionInvocation;
-import com.distrimind.upnp_igd.model.message.UpnpResponse;
-import com.distrimind.upnp_igd.model.meta.Action;
-import com.distrimind.upnp_igd.model.meta.LocalDevice;
-import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.types.UDAServiceId;
+import com.distrimind.upnp.binding.LocalServiceBinder;
+import com.distrimind.upnp.binding.annotations.AnnotationLocalServiceBinder;
+import com.distrimind.upnp.controlpoint.ActionCallback;
+import com.distrimind.upnp.mock.MockUpnpService;
+import com.distrimind.upnp.model.DefaultServiceManager;
+import com.distrimind.upnp.model.action.ActionCancelledException;
+import com.distrimind.upnp.model.action.ActionInvocation;
+import com.distrimind.upnp.model.message.UpnpResponse;
+import com.distrimind.upnp.model.meta.Action;
+import com.distrimind.upnp.model.meta.LocalDevice;
+import com.distrimind.upnp.model.meta.LocalService;
+import com.distrimind.upnp.model.types.UDAServiceId;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -86,19 +86,19 @@ import static org.testng.Assert.assertTrue;
  * <tbody>
  * <tr>
  * <td class="nowrap">
- * <code>com.distrimind.upnp_igd.transport.impl.StreamClientImpl (default)</code>
+ * <code>com.distrimind.upnp.transport.impl.StreamClientImpl (default)</code>
  * </td>
  * <td>NO</td>
  * </tr>
  * <tr>
  * <td class="nowrap">
- * <code>com.distrimind.upnp_igd.transport.impl.apache.StreamClientImpl</code>
+ * <code>com.distrimind.upnp.transport.impl.apache.StreamClientImpl</code>
  * </td>
  * <td>YES</td>
  * </tr>
  * <tr>
  * <td class="nowrap">
- * <code>com.distrimind.upnp_igd.transport.impl.jetty.StreamClientImpl (default on Android)</code>
+ * <code>com.distrimind.upnp.transport.impl.jetty.StreamClientImpl (default on Android)</code>
  * </td>
  * <td>YES</td>
  * </tr>

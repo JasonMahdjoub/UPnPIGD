@@ -13,13 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-package com.distrimind.upnp_igd.android.transport.impl;
+package com.distrimind.upnp.android.transport.impl;
 
-import com.distrimind.upnp_igd.model.message.Connection;
-import com.distrimind.upnp_igd.transport.Router;
-import com.distrimind.upnp_igd.transport.spi.InitializationException;
-import com.distrimind.upnp_igd.transport.spi.NetworkAddressFactory;
-import com.distrimind.upnp_igd.transport.spi.StreamServer;
+import com.distrimind.upnp.model.message.Connection;
+import com.distrimind.upnp.transport.Router;
+import com.distrimind.upnp.transport.spi.InitializationException;
+import com.distrimind.upnp.transport.spi.NetworkAddressFactory;
+import com.distrimind.upnp.transport.spi.StreamServer;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import com.distrimind.flexilogxml.log.DMLogger;
-import com.distrimind.upnp_igd.Log;
+import com.distrimind.upnp.Log;
 
 /**
  * Implementation based on Servlet 3.0 API.

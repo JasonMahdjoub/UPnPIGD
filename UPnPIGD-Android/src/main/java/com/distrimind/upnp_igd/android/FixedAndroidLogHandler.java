@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.distrimind.upnp_igd.android;
+package com.distrimind.upnp.android;
 
 import android.util.Log;
 

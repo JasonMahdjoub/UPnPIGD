@@ -14,27 +14,27 @@
  */
 package example.controlpoint;
 
-import com.distrimind.upnp_igd.test.gena.OutgoingSubscriptionLifecycleTest;
+import com.distrimind.upnp.test.gena.OutgoingSubscriptionLifecycleTest;
 import example.binarylight.BinaryLightSampleData;
 import example.binarylight.SwitchPower;
-import com.distrimind.upnp_igd.controlpoint.SubscriptionCallback;
-import com.distrimind.upnp_igd.mock.MockRouter;
-import com.distrimind.upnp_igd.mock.MockUpnpService;
-import com.distrimind.upnp_igd.model.UnsupportedDataException;
-import com.distrimind.upnp_igd.model.gena.CancelReason;
-import com.distrimind.upnp_igd.model.gena.GENASubscription;
-import com.distrimind.upnp_igd.model.gena.RemoteGENASubscription;
-import com.distrimind.upnp_igd.model.message.StreamResponseMessage;
-import com.distrimind.upnp_igd.model.message.UpnpResponse;
-import com.distrimind.upnp_igd.model.message.header.SubscriptionIdHeader;
-import com.distrimind.upnp_igd.model.message.header.TimeoutHeader;
-import com.distrimind.upnp_igd.model.message.header.UpnpHeader;
-import com.distrimind.upnp_igd.model.meta.LocalDevice;
-import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.state.StateVariableValue;
-import com.distrimind.upnp_igd.model.types.BooleanDatatype;
-import com.distrimind.upnp_igd.model.types.Datatype;
-import com.distrimind.upnp_igd.util.Reflections;
+import com.distrimind.upnp.controlpoint.SubscriptionCallback;
+import com.distrimind.upnp.mock.MockRouter;
+import com.distrimind.upnp.mock.MockUpnpService;
+import com.distrimind.upnp.model.UnsupportedDataException;
+import com.distrimind.upnp.model.gena.CancelReason;
+import com.distrimind.upnp.model.gena.GENASubscription;
+import com.distrimind.upnp.model.gena.RemoteGENASubscription;
+import com.distrimind.upnp.model.message.StreamResponseMessage;
+import com.distrimind.upnp.model.message.UpnpResponse;
+import com.distrimind.upnp.model.message.header.SubscriptionIdHeader;
+import com.distrimind.upnp.model.message.header.TimeoutHeader;
+import com.distrimind.upnp.model.message.header.UpnpHeader;
+import com.distrimind.upnp.model.meta.LocalDevice;
+import com.distrimind.upnp.model.meta.LocalService;
+import com.distrimind.upnp.model.state.StateVariableValue;
+import com.distrimind.upnp.model.types.BooleanDatatype;
+import com.distrimind.upnp.model.types.Datatype;
+import com.distrimind.upnp.util.Reflections;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

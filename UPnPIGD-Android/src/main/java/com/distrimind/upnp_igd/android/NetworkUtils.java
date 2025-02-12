@@ -13,13 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-package com.distrimind.upnp_igd.android;
+package com.distrimind.upnp.android;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import com.distrimind.upnp_igd.Log;
-import com.distrimind.upnp_igd.model.ModelUtil;
+import com.distrimind.upnp.Log;
+import com.distrimind.upnp.model.ModelUtil;
 
 import com.distrimind.flexilogxml.log.DMLogger;
 

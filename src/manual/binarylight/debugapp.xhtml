@@ -25,7 +25,7 @@
         <p>
             For debugging, usually more detailed logging levels for various log categories are required.
             The logging categories in UPnPIGD Core are package names, e.g the root logger is available under
-            the name <code>com.distrimind.upnp_igd</code>. The following tables show typically used categories and the
+            the name <code>com.distrimind.upnp</code>. The following tables show typically used categories and the
             recommended level for debugging:
         </p>
 
@@ -39,40 +39,40 @@
             <tbody>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.transport.spi.DatagramIO (FINE)</code><br/>
-                    <code>com.distrimind.upnp_igd.transport.spi.MulticastReceiver (FINE)</code><br/>
+                    <code>com.distrimind.upnp.transport.spi.DatagramIO (FINE)</code><br/>
+                    <code>com.distrimind.upnp.transport.spi.MulticastReceiver (FINE)</code><br/>
                 </td>
                 <td>UDP communication</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.transport.spi.DatagramProcessor (FINER)</code><br/>
+                    <code>com.distrimind.upnp.transport.spi.DatagramProcessor (FINER)</code><br/>
                 </td>
                 <td>UDP datagram processing and content</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.transport.spi.UpnpStream (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.transport.spi.StreamServer (FINE)</code><br/>
-                    <code>com.distrimind.upnp_igd.transport.spi.StreamClient (FINE)</code><br/>
+                    <code>com.distrimind.upnp.transport.spi.UpnpStream (FINER)</code><br/>
+                    <code>com.distrimind.upnp.transport.spi.StreamServer (FINE)</code><br/>
+                    <code>com.distrimind.upnp.transport.spi.StreamClient (FINE)</code><br/>
                 </td>
                 <td>TCP communication</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.transport.spi.SOAPActionProcessor (FINER)</code><br/>
+                    <code>com.distrimind.upnp.transport.spi.SOAPActionProcessor (FINER)</code><br/>
                 </td>
                 <td>SOAP action message processing and content</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.transport.spi.GENAEventProcessor (FINER)</code><br/>
+                    <code>com.distrimind.upnp.transport.spi.GENAEventProcessor (FINER)</code><br/>
                 </td>
                 <td>GENA event message processing and content</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.transport.impl.HttpHeaderConverter (FINER)</code><br/>
+                    <code>com.distrimind.upnp.transport.impl.HttpHeaderConverter (FINER)</code><br/>
                 </td>
                 <td>HTTP header processing</td>
             </tr>
@@ -91,16 +91,16 @@
             <tbody>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.async (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.ProtocolFactory (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.async (FINER)</code><br/>
                 </td>
                 <td>Discovery (Notification &amp; Search)</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.RetrieveRemoteDescriptors (FINE)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingRetrieval (FINE)</code><br/>
+                    <code>com.distrimind.upnp.protocol.ProtocolFactory (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.RetrieveRemoteDescriptors (FINE)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.ReceivingRetrieval (FINE)</code><br/>
                     <code>DeviceDescriptorBinder (FINE)</code><br/>
                     <code>ServiceDescriptorBinder (FINE)</code><br/>
                 </td>
@@ -108,23 +108,23 @@
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingAction (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.SendingAction (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.ProtocolFactory (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.ReceivingAction (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.SendingAction (FINER)</code><br/>
                 </td>
                 <td>Control</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.model.gena (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.ProtocolFactory (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingEvent (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingSubscribe (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.ReceivingUnsubscribe (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.SendingEvent (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.SendingSubscribe (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.SendingUnsubscribe (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.protocol.sync.SendingRenewal (FINER)</code><br/>
+                    <code>com.distrimind.upnp.model.gena (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.ProtocolFactory (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.ReceivingEvent (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.ReceivingSubscribe (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.ReceivingUnsubscribe (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.SendingEvent (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.SendingSubscribe (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.SendingUnsubscribe (FINER)</code><br/>
+                    <code>com.distrimind.upnp.protocol.sync.SendingRenewal (FINER)</code><br/>
                 </td>
                 <td>GENA</td>
             </tr>
@@ -143,7 +143,7 @@
             <tbody>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.transport.Router (FINER)</code><br/>
+                    <code>com.distrimind.upnp.transport.Router (FINER)</code><br/>
                 </td>
                 <td>
                     Message Router
@@ -151,25 +151,25 @@
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.registry.Registry (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.registry.LocalItems (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.registry.RemoteItems (FINER)</code><br/>
+                    <code>com.distrimind.upnp.registry.Registry (FINER)</code><br/>
+                    <code>com.distrimind.upnp.registry.LocalItems (FINER)</code><br/>
+                    <code>com.distrimind.upnp.registry.RemoteItems (FINER)</code><br/>
                 </td>
                 <td>Registry</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.binding.annotations (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.model.meta.LocalService (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.model.action (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.model.state (FINER)</code><br/>
-                    <code>com.distrimind.upnp_igd.model.DefaultServiceManager (FINER)</code><br/>
+                    <code>com.distrimind.upnp.binding.annotations (FINER)</code><br/>
+                    <code>com.distrimind.upnp.model.meta.LocalService (FINER)</code><br/>
+                    <code>com.distrimind.upnp.model.action (FINER)</code><br/>
+                    <code>com.distrimind.upnp.model.state (FINER)</code><br/>
+                    <code>com.distrimind.upnp.model.DefaultServiceManager (FINER)</code><br/>
                 </td>
                 <td>Local service binding &amp; invocation</td>
             </tr>
             <tr>
                 <td class="nowrap">
-                    <code>com.distrimind.upnp_igd.controlpoint (FINER)</code><br/>
+                    <code>com.distrimind.upnp.controlpoint (FINER)</code><br/>
                 </td>
                 <td>Control Point interaction</td>
             </tr>
@@ -189,13 +189,13 @@ handlers=org.seamless.util.logging.SystemOutLoggingHandler
 
 # Extra settings for various categories
 
-com.distrimind.upnp_igd.level=INFO
+com.distrimind.upnp.level=INFO
 
-com.distrimind.upnp_igd.protocol.level=FINEST
+com.distrimind.upnp.protocol.level=FINEST
 
-com.distrimind.upnp_igd.registry.Registry.level=FINER
-com.distrimind.upnp_igd.registry.LocalItems.level=FINER
-com.distrimind.upnp_igd.registry.RemoteItems.level=FINER ]]></pre></div>
+com.distrimind.upnp.registry.Registry.level=FINER
+com.distrimind.upnp.registry.LocalItems.level=FINER
+com.distrimind.upnp.registry.RemoteItems.level=FINER ]]></pre></div>
 
         <p>
             You can now start your application with a system property that names your logging

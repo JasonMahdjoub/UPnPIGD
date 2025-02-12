@@ -21,7 +21,7 @@ Adapt into your build.gradle file, the next code :
 	    ...
 	    dependencies {
 		    ...
-		    implementation(group:'com.distrimind.upnp_igd.desktop', name: 'UPnPIGD-Desktop', version: '1.4.5-STABLE')
+		    implementation(group:'com.distrimind.upnp.desktop', name: 'UPnPIGD-Desktop', version: '1.4.6-STABLE')
 		    //optional :
 		    implementation(group:'org.slf4j', name: 'slf4j-jdk14', version: '2.0.16')
 		    ...
@@ -35,7 +35,7 @@ Adapt into your build.gradle file, the next code :
 	    ...
 	    dependencies {
 		    ...
-		    implementation(group:'com.distrimind.upnp_igd.android', name: 'UPnPIGD-Android', version: '1.4.5-STABLE')
+		    implementation(group:'com.distrimind.upnp.android', name: 'UPnPIGD-Android', version: '1.4.6-STABLE')
 		    ...
 	    }
 	    ...
@@ -54,7 +54,7 @@ Adapt into your build.gradle file, the next code :
         ...
     ```
 
-To know what is the last uploaded version, please refer to versions available here : [this repository](https://artifactory.distri-mind.fr/ui/native/DistriMind-Public/com/distrimind/upnp_igd/UPnPIGD-Core/)
+To know what is the last uploaded version, please refer to versions available here : [this repository](https://artifactory.distri-mind.fr/ui/native/DistriMind-Public/com/distrimind/upnp/UPnPIGD-Core/)
 ### With Maven :
 Adapt into your pom.xml file, the next code :
  - When using UPnPIGD into desktop environment, please add this dependency (minimum Java version is 11) :
@@ -65,9 +65,9 @@ Adapt into your pom.xml file, the next code :
             <dependencies>
                 ...
                 <dependency>
-                    <groupId>com.distrimind.upnp_igd.desktop</groupId>
+                    <groupId>com.distrimind.upnp.desktop</groupId>
                     <artifactId>UPnPIGD-Desktop</artifactId>
-                    <version>1.4.5-STABLE</version>
+                    <version>1.4.6-STABLE</version>
                 </dependency>
                 <-- optional -->
                 <dependency>
@@ -86,9 +86,9 @@ Adapt into your pom.xml file, the next code :
     ```
         ...
         <dependency>
-            <groupId>com.distrimind.upnp_igd.android</groupId>
+            <groupId>com.distrimind.upnp.android</groupId>
             <artifactId>UPnPIGD-Android</artifactId>
-            <version>1.4.5-STABLE</version>
+            <version>1.4.6-STABLE</version>
         </dependency>
         ...
     ```
@@ -106,6 +106,6 @@ Adapt into your pom.xml file, the next code :
         </repositories>
         ...		
     ```
-To know what last version has been uploaded, please refer to versions available into [this repository](https://artifactory.distri-mind.fr/ui/native/DistriMind-Public/com/distrimind/upnp_igd/UPnPIGD-Core/)
+To know what last version has been uploaded, please refer to versions available into [this repository](https://artifactory.distri-mind.fr/ui/native/DistriMind-Public/com/distrimind/upnp/UPnPIGD-Core/)
 
 

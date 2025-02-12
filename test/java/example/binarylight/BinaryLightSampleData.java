@@ -1,11 +1,11 @@
 package example.binarylight;
 
-import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
-import com.distrimind.upnp_igd.model.meta.DeviceDetails;
-import com.distrimind.upnp_igd.model.meta.LocalDevice;
-import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.types.UDADeviceType;
-import com.distrimind.upnp_igd.test.data.SampleData;
+import com.distrimind.upnp.binding.annotations.AnnotationLocalServiceBinder;
+import com.distrimind.upnp.model.meta.DeviceDetails;
+import com.distrimind.upnp.model.meta.LocalDevice;
+import com.distrimind.upnp.model.meta.LocalService;
+import com.distrimind.upnp.model.types.UDADeviceType;
+import com.distrimind.upnp.test.data.SampleData;
 
 /**
  * @author Christian Bauer

@@ -1,4 +1,4 @@
-<!-- device exception: com.distrimind.upnp_igd.g.b.j: Can't transform message payload: org.xmlpull.v1.XmlPullParserException: processing instructions must not start with xml (position:unknown @8:19 in java.io.StringReader@411fbc70)  -->
+<!-- device exception: com.distrimind.upnp.g.b.j: Can't transform message payload: org.xmlpull.v1.XmlPullParserException: processing instructions must not start with xml (position:unknown @8:19 in java.io.StringReader@411fbc70)  -->
 <!-- context: GetPositionInfo -->
 <!-- Manufacturer: Naim Audio Ltd. -->
 <!-- Model Description: naimuniti -->

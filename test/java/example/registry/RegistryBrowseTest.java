@@ -14,22 +14,22 @@
  */
 package example.registry;
 
-import com.distrimind.upnp_igd.mock.MockUpnpService;
-import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.resource.DeviceDescriptorResource;
-import com.distrimind.upnp_igd.model.resource.Resource;
-import com.distrimind.upnp_igd.model.meta.Device;
-import com.distrimind.upnp_igd.model.meta.LocalDevice;
-import com.distrimind.upnp_igd.model.meta.RemoteDevice;
-import com.distrimind.upnp_igd.model.types.DeviceType;
-import com.distrimind.upnp_igd.model.types.ServiceType;
-import com.distrimind.upnp_igd.model.types.UDADeviceType;
-import com.distrimind.upnp_igd.model.types.UDAServiceType;
-import com.distrimind.upnp_igd.model.types.UDN;
-import com.distrimind.upnp_igd.registry.Registry;
-import com.distrimind.upnp_igd.test.data.SampleData;
-import com.distrimind.upnp_igd.test.data.SampleDeviceRoot;
-import com.distrimind.upnp_igd.test.data.SampleDeviceRootLocal;
+import com.distrimind.upnp.mock.MockUpnpService;
+import com.distrimind.upnp.model.meta.LocalService;
+import com.distrimind.upnp.model.resource.DeviceDescriptorResource;
+import com.distrimind.upnp.model.resource.Resource;
+import com.distrimind.upnp.model.meta.Device;
+import com.distrimind.upnp.model.meta.LocalDevice;
+import com.distrimind.upnp.model.meta.RemoteDevice;
+import com.distrimind.upnp.model.types.DeviceType;
+import com.distrimind.upnp.model.types.ServiceType;
+import com.distrimind.upnp.model.types.UDADeviceType;
+import com.distrimind.upnp.model.types.UDAServiceType;
+import com.distrimind.upnp.model.types.UDN;
+import com.distrimind.upnp.registry.Registry;
+import com.distrimind.upnp.test.data.SampleData;
+import com.distrimind.upnp.test.data.SampleDeviceRoot;
+import com.distrimind.upnp.test.data.SampleDeviceRootLocal;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

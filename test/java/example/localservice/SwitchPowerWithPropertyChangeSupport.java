@@ -1,6 +1,6 @@
 package example.localservice;
 
-import com.distrimind.upnp_igd.binding.annotations.*;
+import com.distrimind.upnp.binding.annotations.*;
 import java.beans.PropertyChangeSupport;
 
 @UpnpService(

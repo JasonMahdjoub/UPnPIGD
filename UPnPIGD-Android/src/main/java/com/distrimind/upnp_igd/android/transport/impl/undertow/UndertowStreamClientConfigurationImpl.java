@@ -14,9 +14,9 @@
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.distrimind.upnp_igd.android.transport.impl.undertow;
+package com.distrimind.upnp.android.transport.impl.undertow;
 
-import com.distrimind.upnp_igd.transport.spi.AbstractStreamClientConfiguration;
+import com.distrimind.upnp.transport.spi.AbstractStreamClientConfiguration;
 import org.xnio.XnioWorker;
 
 import java.util.concurrent.ExecutorService;

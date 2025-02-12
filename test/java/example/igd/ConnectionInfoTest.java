@@ -14,19 +14,19 @@
  */
 package example.igd;
 
-import com.distrimind.upnp_igd.UpnpService;
-import com.distrimind.upnp_igd.mock.MockUpnpService;
-import com.distrimind.upnp_igd.model.action.ActionInvocation;
-import com.distrimind.upnp_igd.model.message.UpnpResponse;
-import com.distrimind.upnp_igd.model.meta.DeviceIdentity;
-import com.distrimind.upnp_igd.model.meta.LocalDevice;
-import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.meta.Service;
-import com.distrimind.upnp_igd.model.types.UDAServiceId;
-import com.distrimind.upnp_igd.support.igd.PortMappingListener;
-import com.distrimind.upnp_igd.support.igd.callback.GetExternalIP;
-import com.distrimind.upnp_igd.support.model.Connection;
-import com.distrimind.upnp_igd.support.igd.callback.GetStatusInfo;
+import com.distrimind.upnp.UpnpService;
+import com.distrimind.upnp.mock.MockUpnpService;
+import com.distrimind.upnp.model.action.ActionInvocation;
+import com.distrimind.upnp.model.message.UpnpResponse;
+import com.distrimind.upnp.model.meta.DeviceIdentity;
+import com.distrimind.upnp.model.meta.LocalDevice;
+import com.distrimind.upnp.model.meta.LocalService;
+import com.distrimind.upnp.model.meta.Service;
+import com.distrimind.upnp.model.types.UDAServiceId;
+import com.distrimind.upnp.support.igd.PortMappingListener;
+import com.distrimind.upnp.support.igd.callback.GetExternalIP;
+import com.distrimind.upnp.support.model.Connection;
+import com.distrimind.upnp.support.igd.callback.GetStatusInfo;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

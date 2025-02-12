@@ -1,5 +1,5 @@
 apply from: ("../common.gradle")
-group='com.distrimind.upnp_igd.android'
+group='com.distrimind.upnp.android'
 
 
 dependencies {
@@ -33,7 +33,7 @@ test {
     // enable TestNG support (default is JUnit)
     useTestNG
             {
-                suites 'src/test/resources/com/distrimind/upnp_igd/android/AllTestsNG.xml'
+                suites 'src/test/resources/com/distrimind/upnp/android/AllTestsNG.xml'
             }
 
     // set heap size for the test JVM(s)

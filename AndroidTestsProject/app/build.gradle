@@ -6,11 +6,11 @@ plugins {
 
 
 android {
-    namespace = 'com.distrimind.upnp_igd.android'
+    namespace = 'com.distrimind.upnp.android'
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.distrimind.upnp_igd"
+        applicationId = "com.distrimind.upnp"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

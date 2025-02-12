@@ -15,7 +15,7 @@
 package example.localservice;
 
 import example.binarylight.SwitchPower;
-import com.distrimind.upnp_igd.binding.annotations.UpnpStateVariable;
+import com.distrimind.upnp.binding.annotations.UpnpStateVariable;
 
 public class SwitchPowerModerated extends SwitchPower {
 

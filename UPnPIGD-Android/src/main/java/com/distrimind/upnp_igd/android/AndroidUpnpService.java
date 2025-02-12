@@ -13,12 +13,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-package com.distrimind.upnp_igd.android;
+package com.distrimind.upnp.android;
 
-import com.distrimind.upnp_igd.UpnpService;
-import com.distrimind.upnp_igd.UpnpServiceConfiguration;
-import com.distrimind.upnp_igd.controlpoint.ControlPoint;
-import com.distrimind.upnp_igd.registry.Registry;
+import com.distrimind.upnp.UpnpService;
+import com.distrimind.upnp.UpnpServiceConfiguration;
+import com.distrimind.upnp.controlpoint.ControlPoint;
+import com.distrimind.upnp.registry.Registry;
 
 /**
  * Interface of the Android UPnP application service component.
@@ -61,7 +61,7 @@ import com.distrimind.upnp_igd.registry.Registry;
  * <pre>{@code
  *<application ...>
  *  ...
- *  <service android:name="com.distrimind.upnp_igd.android.AndroidUpnpServiceImpl"/>
+ *  <service android:name="com.distrimind.upnp.android.AndroidUpnpServiceImpl"/>
  *</application>
  * }</pre>
  *

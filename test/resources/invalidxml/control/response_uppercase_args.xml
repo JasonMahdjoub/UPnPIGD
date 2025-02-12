@@ -1,4 +1,4 @@
-<!-- device exception: com.distrimind.upnp_igd.g.b.j: Can't transform message payload: com.distrimind.upnp_igd.d.a.d: The argument value is invalid. Invalid number of input or output arguments in XML message, expected 2 but found 0. -->
+<!-- device exception: com.distrimind.upnp.g.b.j: Can't transform message payload: com.distrimind.upnp.d.a.d: The argument value is invalid. Invalid number of input or output arguments in XML message, expected 2 but found 0. -->
 <!-- context: GetProtocolInfo -->
 <!-- Manufacturer: Oskar Liljeblad -->
 <!-- Model Description:  -->

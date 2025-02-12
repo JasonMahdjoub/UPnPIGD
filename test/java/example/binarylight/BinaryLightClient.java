@@ -1,20 +1,20 @@
 package example.binarylight;
 
 import com.distrimind.flexilogxml.concurrent.ThreadType;
-import com.distrimind.upnp_igd.controlpoint.ActionCallback;
-import com.distrimind.upnp_igd.model.action.ActionInvocation;
-import com.distrimind.upnp_igd.model.message.UpnpResponse;
-import com.distrimind.upnp_igd.model.message.header.STAllHeader;
-import com.distrimind.upnp_igd.model.meta.RemoteDevice;
-import com.distrimind.upnp_igd.model.meta.Service;
-import com.distrimind.upnp_igd.model.types.InvalidValueException;
-import com.distrimind.upnp_igd.model.types.ServiceId;
-import com.distrimind.upnp_igd.model.types.UDAServiceId;
-import com.distrimind.upnp_igd.registry.DefaultRegistryListener;
-import com.distrimind.upnp_igd.registry.Registry;
-import com.distrimind.upnp_igd.registry.RegistryListener;
-import com.distrimind.upnp_igd.UpnpService;
-import com.distrimind.upnp_igd.UpnpServiceImpl;
+import com.distrimind.upnp.controlpoint.ActionCallback;
+import com.distrimind.upnp.model.action.ActionInvocation;
+import com.distrimind.upnp.model.message.UpnpResponse;
+import com.distrimind.upnp.model.message.header.STAllHeader;
+import com.distrimind.upnp.model.meta.RemoteDevice;
+import com.distrimind.upnp.model.meta.Service;
+import com.distrimind.upnp.model.types.InvalidValueException;
+import com.distrimind.upnp.model.types.ServiceId;
+import com.distrimind.upnp.model.types.UDAServiceId;
+import com.distrimind.upnp.registry.DefaultRegistryListener;
+import com.distrimind.upnp.registry.Registry;
+import com.distrimind.upnp.registry.RegistryListener;
+import com.distrimind.upnp.UpnpService;
+import com.distrimind.upnp.UpnpServiceImpl;
 
 @SuppressWarnings({"PMD.SystemPrintln", "PMD.DoNotTerminateVM"})
 public class BinaryLightClient implements Runnable {

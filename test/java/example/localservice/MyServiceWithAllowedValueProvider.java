@@ -15,14 +15,14 @@
 
 package example.localservice;
 
-import com.distrimind.upnp_igd.binding.AllowedValueProvider;
-import com.distrimind.upnp_igd.binding.annotations.UpnpAction;
-import com.distrimind.upnp_igd.binding.annotations.UpnpInputArgument;
-import com.distrimind.upnp_igd.binding.annotations.UpnpOutputArgument;
-import com.distrimind.upnp_igd.binding.annotations.UpnpService;
-import com.distrimind.upnp_igd.binding.annotations.UpnpServiceId;
-import com.distrimind.upnp_igd.binding.annotations.UpnpServiceType;
-import com.distrimind.upnp_igd.binding.annotations.UpnpStateVariable;
+import com.distrimind.upnp.binding.AllowedValueProvider;
+import com.distrimind.upnp.binding.annotations.UpnpAction;
+import com.distrimind.upnp.binding.annotations.UpnpInputArgument;
+import com.distrimind.upnp.binding.annotations.UpnpOutputArgument;
+import com.distrimind.upnp.binding.annotations.UpnpService;
+import com.distrimind.upnp.binding.annotations.UpnpServiceId;
+import com.distrimind.upnp.binding.annotations.UpnpServiceType;
+import com.distrimind.upnp.binding.annotations.UpnpStateVariable;
 
 import java.util.Collection;
 import java.util.List;

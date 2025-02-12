@@ -14,18 +14,18 @@
  */
 package example.localservice;
 
-import com.distrimind.upnp_igd.binding.LocalServiceBinder;
-import com.distrimind.upnp_igd.binding.annotations.AnnotationLocalServiceBinder;
-import com.distrimind.upnp_igd.model.DefaultServiceManager;
-import com.distrimind.upnp_igd.model.action.ActionInvocation;
-import com.distrimind.upnp_igd.model.meta.ActionArgument;
-import com.distrimind.upnp_igd.model.meta.DeviceDetails;
-import com.distrimind.upnp_igd.model.meta.LocalDevice;
-import com.distrimind.upnp_igd.model.meta.LocalService;
-import com.distrimind.upnp_igd.model.meta.StateVariable;
-import com.distrimind.upnp_igd.model.types.Datatype;
-import com.distrimind.upnp_igd.model.types.DeviceType;
-import com.distrimind.upnp_igd.test.data.SampleData;
+import com.distrimind.upnp.binding.LocalServiceBinder;
+import com.distrimind.upnp.binding.annotations.AnnotationLocalServiceBinder;
+import com.distrimind.upnp.model.DefaultServiceManager;
+import com.distrimind.upnp.model.action.ActionInvocation;
+import com.distrimind.upnp.model.meta.ActionArgument;
+import com.distrimind.upnp.model.meta.DeviceDetails;
+import com.distrimind.upnp.model.meta.LocalDevice;
+import com.distrimind.upnp.model.meta.LocalService;
+import com.distrimind.upnp.model.meta.StateVariable;
+import com.distrimind.upnp.model.types.Datatype;
+import com.distrimind.upnp.model.types.DeviceType;
+import com.distrimind.upnp.test.data.SampleData;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -60,7 +60,7 @@ import static org.testng.Assert.assertNull;
  * the state variable really is a string datatype, it can't infer that
  * from the field type. Then, if an action has this output argument, instead of
  * manually creating the comma-separated string you pick the appropriate converter
- * from the classes in <code>com.distrimind.upnp_igd.model.types.csv.*</code> and return
+ * from the classes in <code>com.distrimind.upnp.model.types.csv.*</code> and return
  * it from your action method. These are actually <code>java.util.List</code>
  * implementations, so you could use them <em>instead</em> of
  * <code>java.util.List</code> if you don't care about the dependency. Any action
